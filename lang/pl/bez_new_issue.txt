@@ -1,0 +1,9 @@
+Witaj, @FULLNAME@!
+
+Zostałeś przypisany do @TYPE@ @NR@ jako koordynator.
+
+@TITLE@
+
+@ISSUE@
+
+Możesz obejrzeć problem bezpośrednio tutaj: @URL@

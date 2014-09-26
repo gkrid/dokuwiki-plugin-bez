@@ -1,0 +1,7 @@
+Hi, @FULLNAME@!
+
+The, new task: @NR@ has been assigned to you.
+
+@TASK@
+
+You can view it directly here: @URL@

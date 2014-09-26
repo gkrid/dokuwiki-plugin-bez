@@ -1,0 +1,9 @@
+Hi, @FULLNAME@!
+
+You have been assigned to @TYPE@ @NR@ as a coordinator.
+
+@TITLE@
+
+@ISSUE@
+
+You can view it directly here: @URL@
