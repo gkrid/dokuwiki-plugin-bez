@@ -1,7 +1,7 @@
 <form action="<?php echo $_SERVER[REQUEST_URI] ?>" method="POST">
 <filedset class="bds_form">
 <div class="row">
-<label for="type"><?php echo $lang['type'] ?>:</label>
+<label for="type"><?php echo $bezlang['type'] ?>:</label>
 
 <span>
 <select name="type" id="type">
@@ -14,7 +14,7 @@
 </div>
 
 <div class="row">
-<label for="entity"><?php echo $lang['entity'] ?>:</label>
+<label for="entity"><?php echo $bezlang['entity'] ?>:</label>
 
 <span>
 <select name="entity" id="entity">
@@ -27,14 +27,14 @@
 </div>
 
 <div class="row">
-<label for="title"><?php echo $lang['title'] ?>:</label>
+<label for="title"><?php echo $bezlang['title'] ?>:</label>
 <span>
 <input name="title" id="title" value="<?php echo $value['title'] ?>">
 </span>
 </div>
 
 <div class="row">
-<label for="description"><?php echo $lang['description'] ?>:</label>
+<label for="description"><?php echo $bezlang['description'] ?>:</label>
 <span>
 <textarea name="description" id="description" class="edit">
 <?php echo $value['description'] ?>
@@ -44,7 +44,7 @@
 <?php if (isset($template['editcase'])): ?>
 	<?php if ($helper->user_is_moderator()): ?>
 		<div class="row">
-		<label for="coordinator"><?php echo $lang['coordinator'] ?>:</label>
+		<label for="coordinator"><?php echo $bezlang['coordinator'] ?>:</label>
 		<span>
 		<select name="coordinator" id="coordinator">
 		<?php foreach ($helper->retrieveUsers() as $key => $data): ?>
@@ -58,7 +58,7 @@
 		</div>
 
 		<div class="row">
-		<label for="state"><?php echo $lang['state'] ?>:</label>
+		<label for="state"><?php echo $bezlang['state'] ?>:</label>
 		<span>
 		<select name="state" id="state">
 		<?php foreach ($this->issue_states as $key => $state): ?>
@@ -70,7 +70,7 @@
 		</div>
 
 		<div class="row">
-		<label for="opinion"><?php echo $lang['opinion'] ?>:</label>
+		<label for="opinion"><?php echo $bezlang['opinion'] ?>:</label>
 		<span>
 		<textarea name="opinion" id="opinion" class="edit"><?php echo $value['opinion'] ?></textarea>
 		</span>
@@ -79,5 +79,5 @@
 <?php endif ?>
 </filedset>
 
-<input type="submit" value="<?php echo $lang['save'] ?>">
+<input type="submit" value="<?php echo $bezlang['save'] ?>">
 </form>

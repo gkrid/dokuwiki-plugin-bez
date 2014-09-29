@@ -70,7 +70,6 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 		if ($this->user_can_edit()) {
 			$renderer->doc .= '<li><a href="?id=bez:issue_report">'.$this->getLang('bds_issue_report').'</a></li>';
 		}
-			$renderer->doc .= '<li><a href="?id=bez:switch_lang">'.$this->getLang('bds_switch_lang').'</a></li>';
 		$renderer->doc .= '</ul>';
 
 		}

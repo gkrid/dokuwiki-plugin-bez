@@ -66,7 +66,7 @@ $lang['error_table_unknown'] = "The table dosn't exist.";
 $lang['error_report_unknown'] = "The report dosn't exist";
 
 $lang['vald_type_required'] = "Specify a type of the problem";
-$lang['vald_entity_required'] = "Choose a source of the problem from the list";
+$lang['vald_entity_required'] = "Choose a source of report from the list";
 $lang['vald_title_required'] = "Provide a title.";
 $lang['vald_title_too_long'] = "Title is too long, max: %d  characters.";
 $lang['vald_title_wrong_chars'] = "Forbidden characters in the title. Only letters, numerals, space, dasches, poins, commas are allowed.";

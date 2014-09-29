@@ -21,6 +21,7 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 	{
 		global $ACT;
 		$this->helper = $this->loadHelper('bez');
+		$this->setupLocale();
 
 		$id = $_GET['id'];
 		$ex = explode(':', $id);
@@ -32,7 +33,7 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 
 	public function action_act_preprocess($event, $param)
 	{
-		global $template, $value;
+		global $template, $bezlang, $value, $errors;
 		if ( ! $this->helper->user_can_view())
 			return false;
 		if ($this->action != '')
@@ -40,6 +41,7 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 
 		$ctl= DOKU_PLUGIN."bez/ctl/".str_replace('/', '', $this->action).".php";
 		if (file_exists($ctl)) {
+			$bezlang = $this->lang;
 			$helper = $this->helper;
 			$params = $this->params;
 			include $ctl;
@@ -50,7 +52,7 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 
 	public function tpl_act_render($event, $param)
 	{
-		global $errors, $template, $value, $lang;
+		global $template, $bezlang, $value, $errors;
 		if ( ! $this->helper->user_can_view())
 			return false;
 		if ($this->action != '')
@@ -64,8 +66,7 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 		}
 		$tpl = DOKU_PLUGIN."bez/tpl/".str_replace('/', '', $this->action).".php";
 		if (file_exists($tpl)) {
-			$this->setupLocale();
-			$lang = $this->lang;
+			$bezlang = $this->lang;
 			$helper = $this->helper;
 			include $tpl;
 		}

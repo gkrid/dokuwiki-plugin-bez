@@ -72,7 +72,4 @@ class helper_plugin_bez extends dokuwiki_plugin
 		global $auth;
 		return $auth->retrieveUsers();
 	}
-	public function issue_types() {
-		return array($this->getLang('type_noneconformity'), $this->getLang('type_complaint'), $this->getLang('type_risk'));
-	}
 }
