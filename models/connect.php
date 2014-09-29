@@ -10,6 +10,15 @@ class Connect {
 		if ($this->db->error) 
 			$errors[] = "MySQL error(".$this->db->errno."): ". $this->db->error;
 	}
+	protected function errinsert($data)
+	{
+		$fields = implode(',', array_keys($data));
+		$values = '';
+		foreach ($data as $v)
+			$values .= "'".$this->db->real_escape_string($v)."',";
+		$values = substr($values, 0, -1);
+		$this->errquery("INSERT INTO issues ($fields) VALUES ($values)");
+	}
 	public function __construct()
 	{
 		global $errors;

@@ -13,19 +13,20 @@ CREATE TABLE IF NOT EXISTS issues (
 	title CHAR(100) NOT NULL,
 	description TEXT NOT NULL,
 	state INT(11) NOT NULL,
+	opinion TEXT NULL,
 	type INT(11) NOT NULL,
 	entity INT(11) NOT NULL,
-	coordinator CHAR(100) NOT NULL,
+	coordinator CHAR(100) NULL,
 	reporter CHAR(100) NOT NULL,
 	date INT(11) NOT NULL,
-	oldrev INT(11) NOT NULL,
+	oldrev INT(11) NULL,
 
 	PRIMARY KEY (id)
 )
 EOM;
 	$this->errquery($q);
 	}
-	public function add($post)
+	public function add($post, $data=array())
 	{
 		global $bezlang, $errors;
 
@@ -62,14 +63,11 @@ EOM;
 		} 
 		$data['description'] = $post['description'];
 
-		if (count($errors) > 0)
-			return;
-		
-
+		$this->errinsert($data);
 	}
 	public function lastid()
 	{
-		return 1;
+		return $this->db->insert_id;
 	}
 }
 
