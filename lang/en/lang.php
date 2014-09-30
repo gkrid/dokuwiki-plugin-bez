@@ -71,7 +71,7 @@ $lang['vald_title_required'] = "Provide a title.";
 $lang['vald_title_too_long'] = "Title is too long, max: %d  characters.";
 $lang['vald_title_wrong_chars'] = "Forbidden characters in the title. Only letters, numerals, space, dasches, poins, commas are allowed.";
 $lang['vald_executor_required'] = "Choose the existing user or leave a problem unspecified.";
-$lang['vald_coordinator_required'] = "Coordinator have to be REB moderator.";
+$lang['vald_coordinator_required'] = "Coordinator have to be REB coordinator.";
 
 $lang['vald_desc_required'] = "Describe a problem";
 $lang['vald_desc_too_long'] = "Too long description, max %d  characters.";
@@ -87,7 +87,7 @@ $lang['vald_state_required'] = "Specified a status of problem";
 $lang['vald_task_state_required'] = "Specified a status of task";
 $lang['vald_task_state_tasks_not_closed'] = "You cannot close the problem before closing all the tasks. Open tasks: %t";
 
-$lang['vald_executor_not_exists'] = "Podany wykonawca nie jest użytkownikiem BEZ Specified performer is nor a user of REB.";
+$lang['vald_executor_not_exists'] = "Specified performer is nor a user of REB.";
 $lang['vald_cost_too_big'] = "Cost is too high, max: %d";
 $lang['vald_cost_wrong_format'] = "Correct format-number. Ex: 300,000.54";
 $lang['vald_class_required'] = "Provide a class of the task";
@@ -102,8 +102,7 @@ $lang['type_risk'] = "risk";
 $lang['state_proposal'] = "proposal";
 $lang['state_opened'] = "open";
 $lang['state_rejected'] = "rejected";
-$lang['state_effective'] = "effectively closed";
-$lang['state_ineffective'] = "ineffectively closed";
+$lang['state_closed'] = "closed";
 
 
 $lang['just_now'] = "minute before";
@@ -248,3 +247,5 @@ $lang['send_mail'] = "Send";
 $lang['average_days'] = "Average time of task closing(days)";
 
 $lang['bds_switch_lang'] = "Wersja polska";
+
+$lang['comments'] = 'Comments';

@@ -2,6 +2,8 @@
 include_once DOKU_PLUGIN."bez/models/connect.php";
 include_once DOKU_PLUGIN."bez/models/entities.php";
 include_once DOKU_PLUGIN."bez/models/issuetypes.php";
+include_once DOKU_PLUGIN."bez/models/states.php";
+include_once DOKU_PLUGIN."bez/models/users.php";
 
 class Issues extends Connect {
 	public function __construct() {
@@ -19,6 +21,7 @@ CREATE TABLE IF NOT EXISTS issues (
 	coordinator CHAR(100) NULL,
 	reporter CHAR(100) NOT NULL,
 	date INT(11) NOT NULL,
+	comment CHAR(100) NULL,
 	oldrev INT(11) NULL,
 
 	PRIMARY KEY (id)
@@ -45,6 +48,12 @@ EOM;
 		} 
 		$data['entity'] = (int)$post['entity'];
 
+		$usro = new Users();
+		if ($post['coordinator'] != NULL && !in_array($post['coordinator'], $usro->coordinators_nicks())) {
+			$errors['coordinator'] = $bezlang['vald_coordinator_required'];
+		} 
+		$data['coordinator'] = $post['coordinator'];
+
 		$post['title'] = trim($post['title']);
 		if (strlen($post['title']) == 0) {
 			$errors['title'] = $bezlang['vald_title_required'];
@@ -68,6 +77,30 @@ EOM;
 	public function lastid()
 	{
 		return $this->db->insert_id;
+	}
+	public function get($id) {
+		global $bezlang, $errors;
+
+		$id = (int) $id;
+		$stao = new States();
+		$a = $this->fetch_assoc("SELECT * FROM issues WHERE id=$id");
+		if (count($a) == 0) {
+			$errors[] = $bezlang['error_issue_id_not_specifed'];
+			return array();
+		}
+		$a = $a[0];
+		$a['state'] = $stao->name($a['state']);
+
+		$isstyo = new Issuetypes();
+		$a['type'] = $isstyo->name($a['type']);
+
+		$ento = new Entities();
+		$a['entity'] = $ento->name($a['entity']);
+
+		$usro = new Users();
+		$a['reporter'] = $usro->name($a['reporter']);
+
+		return $a;
 	}
 }
 

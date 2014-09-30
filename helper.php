@@ -4,33 +4,8 @@ if(!defined('DOKU_INC')) die();
 
 class helper_plugin_bez extends dokuwiki_plugin
 {
-	public function get_user_email($user) {
-		global $auth;
-		$data = $auth->getUserData($user);
-		return $data['mail'];
-
-	}
-
-	public function get_user_name($user) {
-		global $auth;
-		$data = $auth->getUserData($user);
-		return $data['name'];
-
-	}
-
-	public function user_can_edit() {
-		global $INFO;
-		global $auth;
-
-		if ($auth->getUserData($INFO['client']) == true) {
-				return true;
-		} else {
-			return false;
-		}
-	}
 	public function user_can_view() {
-		global $INFO;
-		global $auth;
+		global $auth, $INFO;
 
 		if ($auth->getUserData($INFO['client']) == true) {
 			return true;
@@ -38,38 +13,13 @@ class helper_plugin_bez extends dokuwiki_plugin
 			return false;
 		}
 	}
-	public function user_is_moderator($user=NULL) {
-		global $INFO;
-		global $auth;
-		if ($user == NULL)
-			$user = $INFO['client'];
 
-
-		$data = $auth->getUserData($user);
-		if ($data == false) {
-			return false;
-		/* Obecnie: bez_moderator */
-		} elseif (in_array('bez_moderator', $data['grps'])) {
-			return true;	
-		} elseif (in_array('admin', $data['grps'])) {
-			return true;
-		} else {
-			return false;
-		}
+	public function wiki_parse($content) {
+		$info = array();
+		return p_render('xhtml',p_get_instructions($content), $info);
 	}
-	public function user_exists($user=NULL) {
-		global $INFO;
-		global $auth;
 
-		$data = $auth->getUserData($user);
-		if ($data == false) {
-			return false;
-		} else {
-			return true;
-		}
-	}
-	public function retrieveUsers() {
-		global $auth;
-		return $auth->retrieveUsers();
+	public function html_issue_link($id) {
+		return '<a href="?id=bez:bds_issue_show:'.$id.'">#'.$id.'</a>';
 	}
 }

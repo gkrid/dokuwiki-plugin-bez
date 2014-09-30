@@ -33,6 +33,7 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 
 	public function action_act_preprocess($event, $param)
 	{
+		global $auth, $INFO;
 		global $template, $bezlang, $value, $errors;
 		if ( ! $this->helper->user_can_view())
 			return false;

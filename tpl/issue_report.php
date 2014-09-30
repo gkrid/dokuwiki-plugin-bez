@@ -19,12 +19,27 @@
 <span>
 <select name="entity" id="entity">
 <?php foreach ($template['entities'] as $key => $name): ?>
-	<option <?php if ($value['type'] == $key) echo 'selected' ?>
+	<option <?php if ($value['entity'] == $key) echo 'selected' ?>
 	 value="<?php echo $key ?>"><?php echo $name ?></opiton>
 <?php endforeach ?>
 </select>
 </span>
 </div>
+
+<?php if ($template['user_is_coordinator']): ?>
+<div class="row">
+<label for="coordinator"><?php echo $bezlang['coordinator'] ?>:</label>
+<span>
+<select name="coordinator" id="coordinator">
+<option value="">--- <?php echo $bezlang['state_proposal'] ?> ---</option>
+<?php foreach ($template['coordinators'] as $key => $name): ?>
+	<option <?php if ($value['coordinator'] == $key) echo 'selected' ?>
+	 value="<?php echo $key ?>"><?php echo $name ?></opiton>
+<?php endforeach ?>
+</select>
+</span>
+</div>
+<?php endif ?>
 
 <div class="row">
 <label for="title"><?php echo $bezlang['title'] ?>:</label>
@@ -42,21 +57,7 @@
 </span>
 </div>
 <?php if (isset($template['editcase'])): ?>
-	<?php if ($helper->user_is_moderator()): ?>
-		<div class="row">
-		<label for="coordinator"><?php echo $bezlang['coordinator'] ?>:</label>
-		<span>
-		<select name="coordinator" id="coordinator">
-		<?php foreach ($helper->retrieveUsers() as $key => $data): ?>
-			<?php if ($helper->user_is_moderator($key)): ?>
-				<option <?php if ($value['coordinator'] == $key) echo 'selected' ?>
-				 value="<?php echo $key ?>"><?php echo $data['name'] ?></opiton>
-			<?php endif ?>
-		<?php endforeach ?>
-		</select>
-		</span>
-		</div>
-
+	<?php if ($template['user_is_coordinator']): ?>
 		<div class="row">
 		<label for="state"><?php echo $bezlang['state'] ?>:</label>
 		<span>

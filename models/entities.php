@@ -8,5 +8,9 @@ class Entities extends Connect {
 	public function ids() {
 		return array_keys($this->get());
 	}
+	public function name($id) {
+		$a = $this->get();
+		return $a[$id];
+	}
 }
 
