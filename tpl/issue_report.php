@@ -1,5 +1,5 @@
 <form action="<?php echo $_SERVER[REQUEST_URI] ?>" method="POST">
-<filedset class="bds_form">
+<fieldset class="bds_form">
 <div class="row">
 <label for="type"><?php echo $bezlang['type'] ?>:</label>
 
@@ -78,7 +78,7 @@
 		</div>
 	<?php endif ?>
 <?php endif ?>
-</filedset>
+</fieldset>
 
 <input type="submit" value="<?php echo $bezlang['save'] ?>">
 </form>

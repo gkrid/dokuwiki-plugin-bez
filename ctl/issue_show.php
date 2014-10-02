@@ -2,31 +2,52 @@
 include_once DOKU_PLUGIN."bez/models/issues.php";
 include_once DOKU_PLUGIN."bez/models/comments.php";
 
-if (count($_POST) > 0) {
-	include_once DOKU_PLUGIN."bez/models/users.php";
-	$usro = new Users();
+$como = new Comments();
 
-	$como = new Comments();
-	$data = array('reporter' => $usro->get_nick(), 'date' => time());
-	$como->add($_POST, $data);
+if ($params[1] == 'edit_comment')
+	$value['content'] = $como->getcontent($params[2]);
 
-	if (count($errors) > 0)
-		$value = $_POST;
-	else
-		$redirect = $_SERVER[REQUEST_URI].'#comment_'.$como->lastid();
+
+if (isset($_POST['event'])) 
+switch ($_POST['event']) {
+	case 'comment':
+		include_once DOKU_PLUGIN."bez/models/users.php";
+		$usro = new Users();
+
+		$como = new Comments();
+		$data = array('reporter' => $usro->get_nick(), 'date' => time(), 'issue' => $params[0]);
+
+		if ($params[1] == 'edit_comment')
+			$como->update($_POST, $data, $params[2]);
+		else 
+			$como->add($_POST, $data);
+
+		if (count($errors) > 0)
+			$value = $_POST;
+		else
+			$redirect = '?id=bez:issue_show:'.$params[0].'#bez_comment_'.$como->lastid();
+
+	break;
 }
 
 $isso = new Issues();
 
-$value = $isso->get($params[0]);
+$template['issue'] = $isso->get($params[0]);
 
-$value['description'] = $helper->wiki_parse($value['description']);
+$template['issue']['description'] = $helper->wiki_parse($template['issue']['description']);
 
-$como = new Comments();
-$co = $como->get($value['id']);
-$value['comments'] = array();
-foreach ($co as $v)
-	$value['comments'][] = $helper->wiki_parse($v);
+$co = $como->get($params[0]);
 
-$template['comment_button'] = $bezlang['change_comment_button'];
+foreach ($co as &$v)
+	$v['content'] = $helper->wiki_parse($v['content']);
+
+$template['comments'] = $co;
+
+if ($params[1] == 'edit_comment')
+	$template['comment_button'] = $bezlang['change_comment_button'];
+else
+	$template['comment_button'] = $bezlang['add'];
+
+$template['closed'] = false;
+
 

@@ -11,7 +11,8 @@ class Issues extends Connect {
 		parent::__construct();
 		$q = <<<EOM
 CREATE TABLE IF NOT EXISTS issues (
-	id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+	id INT(11) NOT NULL AUTO_INCREMENT,
+	nr INT(11) NOT NULL,
 	title CHAR(100) NOT NULL,
 	description TEXT NOT NULL,
 	state INT(11) NOT NULL,
@@ -72,16 +73,13 @@ EOM;
 		} 
 		$data['description'] = $post['description'];
 
-		$this->errinsert($data);
-	}
-	public function lastid()
-	{
-		return $this->db->insert_id;
+		$this->errinsert($data, 'issues');
 	}
 	public function get($id) {
 		global $bezlang, $errors;
 
 		$id = (int) $id;
+
 		$stao = new States();
 		$a = $this->fetch_assoc("SELECT * FROM issues WHERE id=$id");
 		if (count($a) == 0) {

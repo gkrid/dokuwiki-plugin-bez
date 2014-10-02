@@ -1,5 +1,6 @@
 <?php
 include_once DOKU_PLUGIN."bez/models/connect.php";
+include_once DOKU_PLUGIN."bez/models/users.php";
 
 class Comments extends Connect {
 	public function __construct() {
@@ -18,8 +19,7 @@ CREATE TABLE IF NOT EXISTS comments (
 EOM;
 	$this->errquery($q);
 	}
-	public function add($post, $data=array())
-	{
+	public function validate($post) {
 		global $bezlang, $errors;
 
 		$content_max = 65000;
@@ -30,15 +30,42 @@ EOM;
 		else if (strlen($post['content']) > $content_max)
 			$errors['content'] = str_replace('%d', $content_max, $bezlang['vald_content_too_long']);
 
-		$this->errinsert($data);
+		$data['content'] = $post['content'];
+
+		return $data;
 	}
-	public function lastid()
+	public function add($post, $data=array())
 	{
-		return $this->db->insert_id;
+		$from_user = $this->validate($post);
+		$data = array_merge($data, $from_user);
+
+		$this->errinsert($data, 'comments');
+	}
+	public function update($post, $data, $id) {
+		$from_user = $this->validate($post);
+		$data = array_merge($data, $from_user);
+
+		$this->errupdate($data, 'comments', $id);
+	}
+	public function getcontent($id) {
+		$id = (int) $id;
+		$a = $this->fetch_assoc("SELECT content FROM comments WHERE id=$id");
+
+		if (isset($a[0]['content']))
+			return $a[0]['content'];
+		else
+			return NULL;
 	}
 	public function get($issue) {
 		$issue = (int) $issue;
-		return $this->fetch_assoc("SELECT * FROM comments WHERE issue=$issue");
+
+		$a = $this->fetch_assoc("SELECT * FROM comments WHERE issue=$issue");
+
+		$usro = new Users();
+		foreach ($a as &$row)
+			$row['reporter'] = $usro->name($row['reporter']);
+
+		return $a;
 	}
 }
 
