@@ -34,7 +34,7 @@
 	display: block;	
 }
 
-#bds_issue_box table, #bds_history table {
+#bds_issue_box table, .bds_block table {
 	border-collapse:collapse;
 
 	border:0;
@@ -43,7 +43,7 @@
 	margin-top: 1.5em;
 }
 
-#bds_issue_box table th, #bds_issue_box table td, #bds_history th, #bds_history td {
+#bds_issue_box table th, #bds_issue_box table td, .bds_block th, .bds_block td {
 	border:0;
 	background: none;
 	border-bottom: 1px dotted #DDDD99;
@@ -79,7 +79,7 @@
     font-size: 90%;
 }
 
-#bds_history h2 span {
+.bds_block h2 span {
 	display:block;
 	float:right;
 	font-size: 100%;
@@ -87,30 +87,30 @@
 	padding-right: 0.4em;
 }
 
-#bds_history h2 span.quoted_in a:before {
+.bds_block h2 span.quoted_in a:before {
 	content: "↓ ";	
 }
 
-#bds_history h2 span.replay_to a:before {
+.bds_block h2 span.replay_to a:before {
 	content: "↑ ";	
 }
 
-#bds_history .bds_block_content > div {
+.bds_block .bds_block_content > div {
 	margin-bottom: 3em;
 }
 
-#bds_history table {
+.bds_block table {
 	clear:both;
 	margin-top: 3em;
 }
 
-#bds_history table {
+.bds_block table {
 	clear:both;
 	border-top-color: #8bbcbc;
 	margin-top: 3em;
 }
 
-#bds_history div.task {
+.bds_block div.task {
 	background: #e4f4f4;
 	border: 1px solid #8bbcbc;
 	border-radius: 0.4em;
@@ -118,7 +118,7 @@
 	padding: 0.5em 1em;
 }
 
-#bds_history td, #bds_history th{
+.bds_block td, .bds_block th{
 	border-bottom-color: #8bbcbc;
 }
 
@@ -166,7 +166,7 @@
 	padding-left: 2.5em;
 }
 
-#bds_history li {
+.bds_block li {
 	color: #000 !important;
 }
 

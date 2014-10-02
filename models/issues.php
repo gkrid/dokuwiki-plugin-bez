@@ -12,7 +12,6 @@ class Issues extends Connect {
 		$q = <<<EOM
 CREATE TABLE IF NOT EXISTS issues (
 	id INT(11) NOT NULL AUTO_INCREMENT,
-	nr INT(11) NOT NULL,
 	title CHAR(100) NOT NULL,
 	description TEXT NOT NULL,
 	state INT(11) NOT NULL,
@@ -23,7 +22,6 @@ CREATE TABLE IF NOT EXISTS issues (
 	reporter CHAR(100) NOT NULL,
 	date INT(11) NOT NULL,
 	comment CHAR(100) NULL,
-	oldrev INT(11) NULL,
 
 	PRIMARY KEY (id)
 )

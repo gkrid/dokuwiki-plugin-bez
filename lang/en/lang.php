@@ -31,6 +31,7 @@ $lang['entity'] = "Source of report";
 
 $lang['opinion'] = "Effectiveness evaluation";
 $lang['root_cause'] = "Cause category";
+$lang['causes'] = "Causes";
 
 $lang['save'] = "Save";
 $lang['proposal'] = "Proposal";
@@ -46,9 +47,9 @@ $lang['change_issue'] = "Change the report of problem ";
 
 $lang['changed'] = "It has been changed";
 $lang['changed_field'] = "It has been changed";
-$lang['by'] = "";
-$lang['from'] = "";
-$lang['to'] = "";
+$lang['by'] = "by";
+$lang['from'] = "from";
+$lang['to'] = "to";
 $lang['diff'] = "Differences";
 $lang['comment'] = "Add";
 $lang['replay'] = "Reply";
@@ -64,6 +65,8 @@ $lang['error_issue_insert'] = "The problem cannot be added. ";
 $lang['error_task_add'] = "You cannot add tasks. Access denied.";
 $lang['error_table_unknown'] = "The table dosn't exist.";
 $lang['error_report_unknown'] = "The report dosn't exist";
+
+$lang['vald_root_cause'] = "Select cause category.";
 
 $lang['vald_type_required'] = "Specify a type of the problem";
 $lang['vald_entity_required'] = "Choose a source of report from the list";
@@ -134,6 +137,11 @@ $lang['task_closed'] = "Task has been completed";
 $lang['task_reopened'] = "Task has been reopend";
 $lang['comment_added'] = "Comment has been added";
 $lang['comment_changed'] = "Comment has been changed";
+
+$lang['cause_added'] = "Cause added";
+$lang['cause_noun'] = "Cause";
+$lang['change_cause_button'] = "Correct the cause";
+
 
 $lang['replay_by_task'] = "Add task in replay";
 $lang['change_made'] = "Change has been made";

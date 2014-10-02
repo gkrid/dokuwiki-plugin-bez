@@ -7,7 +7,7 @@
 <select name="type" id="type">
 <?php foreach ($template['issue_types'] as $key => $name): ?>
 	<option <?php if ($value['type'] == $key) echo 'selected' ?>
-	 value="<?php echo $key ?>"><?php echo $name ?></opiton>
+	 value="<?php echo $key ?>"><?php echo $name ?></option>
 <?php endforeach ?>
 </select>
 </span>
@@ -20,7 +20,7 @@
 <select name="entity" id="entity">
 <?php foreach ($template['entities'] as $key => $name): ?>
 	<option <?php if ($value['entity'] == $key) echo 'selected' ?>
-	 value="<?php echo $key ?>"><?php echo $name ?></opiton>
+	 value="<?php echo $key ?>"><?php echo $name ?></option>
 <?php endforeach ?>
 </select>
 </span>
@@ -34,7 +34,7 @@
 <option value="">--- <?php echo $bezlang['state_proposal'] ?> ---</option>
 <?php foreach ($template['coordinators'] as $key => $name): ?>
 	<option <?php if ($value['coordinator'] == $key) echo 'selected' ?>
-	 value="<?php echo $key ?>"><?php echo $name ?></opiton>
+	 value="<?php echo $key ?>"><?php echo $name ?></option>
 <?php endforeach ?>
 </select>
 </span>
@@ -64,7 +64,7 @@
 		<select name="state" id="state">
 		<?php foreach ($this->issue_states as $key => $state): ?>
 			<option <?php if ($value['state'] == $key) echo 'selected' ?>
-			 value="<?php echo $key ?>"><?php echo $state ?></opiton>
+			 value="<?php echo $key ?>"><?php echo $state ?></option>
 		<?php endforeach ?>
 		</select>
 		</span>

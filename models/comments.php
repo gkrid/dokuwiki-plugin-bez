@@ -47,14 +47,11 @@ EOM;
 
 		$this->errupdate($data, 'comments', $id);
 	}
-	public function getcontent($id) {
+	public function getone($id) {
 		$id = (int) $id;
-		$a = $this->fetch_assoc("SELECT content FROM comments WHERE id=$id");
+		$a = $this->fetch_assoc("SELECT * FROM comments WHERE id=$id");
 
-		if (isset($a[0]['content']))
-			return $a[0]['content'];
-		else
-			return NULL;
+		return $a[0];
 	}
 	public function get($issue) {
 		$issue = (int) $issue;

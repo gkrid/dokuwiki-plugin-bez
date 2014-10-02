@@ -1,104 +1,131 @@
-			<div id="bds_issue_box">
-			<h1>
-			<?php echo $helper->html_issue_link($template['issue']['id']) ?>
-			 
-			<?php echo $template['issue']['type'] ?>
-			 (
-			<?php echo $template['issue']['state'] ?>
-			)
-			</h1>
+<div id="bds_issue_box">
+<h1>
+<?php echo $helper->html_issue_link($template['issue']['id']) ?>
+<?php echo $template['issue']['type'] ?> (<?php echo $template['issue']['state'] ?>)
+</h1>
 
-			<h1>
-			[
-			<?php echo $template['issue']['entity'] ?>
-			] 
-			<?php echo $template['issue']['title'] ?>
-			</h1>
+<h1>[<?php echo $template['issue']['entity'] ?>] <?php echo $template['issue']['title'] ?></h1>
 
-			<div class="time_box">
-			<span>
-			<?php echo $bezlang['opened_for'] ?>
-			: 
-			<?php $template['issue']['date'] ?>
-			</span>
-			<?php if ($template['issue']['moddate'] != NULL): ?>
-				<span>
-				<?php if ($template['closed']): ?>
-					<?php echo $bezlang['closed'] ?>
-				<?php else: ?>
-					<?php echo $bezlang['last_modified'] ?>
-				<?php endif ?>
-				: 
-				<?php echo $helper->string_time_to_now($template['issue']['last_mod_date']) ?>
-				</span>
-			<?php endif ?>
-			</div>
+<div class="time_box">
+<span><?php echo $bezlang['opened_for'] ?>: <?php $template['issue']['date'] ?></span>
+<?php if ($template['issue']['moddate'] != NULL): ?>
+	<span>
+	<?php if ($template['closed']): ?>
+		<?php echo $bezlang['closed'] ?>
+	<?php else: ?>
+		<?php echo $bezlang['last_modified'] ?>
+	<?php endif ?>: <?php echo $helper->string_time_to_now($template['issue']['last_mod_date']) ?>
+	</span>
+<?php endif ?>
+</div>
 
-			<table>
-			<tr>
+<table>
+<tr>
+<th><?php echo $bezlang['reporter'] ?></th>
+<td><?php echo $template['issue']['reporter'] ?></td>
+<th><?php echo $bezlang['coordinator'] ?></th>
+<td><?php echo $template['issue']['coordinator'] ?></td>
+</tr>
+</table>
 
-			<th><?php echo $bezlang['reporter'] ?></th>
+<h2><?php echo $bezlang['description'] ?></h2>
 
-			<td><?php echo $template['issue']['reporter'] ?></td>
+<?php echo $template['issue']['description'] ?>
 
-			<th><?php echo $bezlang['coordinator'] ?></th>
-			<td><?php echo $template['issue']['coordinator'] ?></td>
-			</tr>
-			</table>
+<?php if ($template['closed']): ?>
+	<h2><?php echo $bezlang['opinion'] ?></h2>
+	<?php echo $template['issue']['opinion'] ?>
+<?php endif ?>
+
+<a href="?id=bez:8d:<?php echo $template['issue']['id'] ?>" class="bds_inline_button bds_report_button">
+<?php echo $bezlang['8d_report'] ?></a>
+
+</div>
+
+<!-- Comments -->
+<div class="bds_block" id="bez_comment">
+	<h1><?php echo $bezlang['comments'] ?> <span>(<?php echo count($template['comments']) ?>)</span></h1>
+	<div class="bds_block_content">
+		<?php foreach ($template['comments'] as $comment): ?>
+			<a name="bez_comment_<?php echo $comment['id'] ?>"></a>
+			<div id="<?php echo $comment['id'] ?>" class="comment">
 
 			<h2>
-			<?php echo $bezlang['description'] ?>
+			<?php echo $bezlang['comment_added'] ?>
+			<?php echo $helper->string_time_to_now($comment['date']) ?>
+			<?php echo $bezlang['by'] ?>
+			<?php echo $comment['reporter'] ?>
+			<span><?php echo $bezlang['comment_noun'] ?>: k<?php echo $comment['id'] ?></span>
 			</h2>
-
-			<?php echo $template['issue']['description'] ?>
-
-			<?php if ($template['closed']): ?>
-				<h2>
-				<?php echo $bezlang['opinion'] ?>
-				</h2>
-				<?php echo $template['issue']['opinion'] ?>
+			<?php if ( ! $template['closed']): ?> 
+				<a class="bds_inline_button" href="?id=bez:issue_show:<?php echo $template['issue']['id'] ?>:edit_comment:<?php echo $comment['id'] ?>#bez_comment"><?php echo $bezlang['change'] ?></a>
 			<?php endif ?>
 
-			<a href="?id=bez:8d:<?php echo $template['issue']['id'] ?>" class="bds_inline_button bds_report_button">
-			<?php echo $bezlang['8d_report'] ?>
-			</a>
-
-
+			<?php echo $helper->wiki_parse($comment['content']) ?>
 			</div>
-
-			<div class="bds_block" id="bez_comment">
-			<h1><?php echo $bezlang['comments'] ?> <span>(<?php echo count($template['comments']) ?>)</span></h1>
-			<div class="bds_block_content">
-				<?php foreach ($template['comments'] as $comment): ?>
-					<a name="bez_comment_<?php echo $comment['id'] ?>"></a>
-					<div id="<?php echo $comment['id'] ?>" class="comment">
-
-					<h2>
-					<?php echo $bezlang['comment_added'] ?>
-					<?php echo $comment['date'] ?>
-					<?php echo $bezlang['by'] ?>
-					<?php echo $comment['reporter'] ?>
-					<span><?php echo $bezlang['comment_noun'] ?>: <?php echo $comment['id'] ?></span>
-					</h2>
-					<?php if ( ! $template['closed']): ?> 
-						<a class="bds_inline_button" href="?id=bez:issue_show:<?php echo $template['issue']['id'] ?>:edit_comment:<?php echo $comment['id'] ?>#bez_comment"><?php echo $bezlang['change'] ?></a>
-					<?php endif ?>
-					<?php echo $comment['content'] ?>
-					</div>
-			<?php endforeach ?>
-
-		<a name="bez_comment"></a>
+		<?php endforeach ?>
 		<form action="#bez_comment" method="POST">
-		<input type="hidden" name="event" value="comment">
-		<fieldset class="bds_form">
-			<div class="row">
-			<label for="content"><?php echo $bezlang['description'] ?>:</label>
+			<input type="hidden" name="event" value="comment">
+			<fieldset class="bds_form">
+				<div class="row">
+					<label for="content"><?php echo $bezlang['description'] ?>:</label>
+					<span><textarea name="content" id="content"><?php echo $value['content'] ?></textarea></span>
+				</div>
+			</fieldset>
+			<input type="submit" value="<?php echo $template['comment_button'] ?>">
+		</form>
+		<a name="bez_comment"></a>
+	</div>
+</div>
+
+<!-- Causes -->
+<div class="bds_block" id="bez_cause">
+	<h1><?php echo $bezlang['causes'] ?> <span>(<?php echo count($template['causes']) ?>)</span></h1>
+	<div class="bds_block_content">
+		<?php foreach ($template['causes'] as $cause): ?>
+			<a name="bez_cause_<?php echo $cause['id'] ?>"></a>
+			<div id="<?php echo $cause['id'] ?>" class="cause">
+
+			<h2>
+			<?php echo $bezlang['cause_added'] ?>
+			<?php echo $helper->string_time_to_now($cause['date']) ?>
+			<?php echo $bezlang['by'] ?>
+			<?php echo $cause['reporter'] ?>
+			<span><?php echo $bezlang['cause_noun'] ?>: p<?php echo $cause['id'] ?></span>
+			</h2>
+			<?php if ( ! $template['closed']): ?> 
+				<a class="bds_inline_button" href="?id=bez:issue_show:<?php echo $template['issue']['id'] ?>:edit_cause:<?php echo $cause['id'] ?>#bez_cause"><?php echo $bezlang['change'] ?></a>
+			<?php endif ?>
+			<div class="root_cause">
 			<span>
-			<textarea name="content" id="content"><?php echo $value['content'] ?></textarea>
+			<?php echo lcfirst($bezlang['root_cause']) ?>:
+			<strong><?php echo $cause['rootcause'] ?></strong>
 			</span>
 			</div>
-		</fieldset>
-		<input type="submit" value="<?php echo $template['comment_button'] ?>">
+			<?php echo $helper->wiki_parse($cause['cause']) ?>
+			</div>
+		<?php endforeach ?>
+		<form action="#bez_cause" method="POST">
+			<input type="hidden" name="event" value="cause">
+			<fieldset class="bds_form">
+				<div class="row">
+				<label for="rootcause"><?php echo $bezlang['root_cause'] ?>:</label>
+				<span>
+					<select name="rootcause" id="rootcause">
+					<?php foreach ($template['rootcauses'] as $key => $name): ?>
+						<option <?php if ($value['rootcause'] == $key) echo 'selected' ?>
+						 value="<?php echo $key ?>"><?php echo $name ?></option>
+					<?php endforeach ?>
+					</select>
+				</span>
+				</div>
+				<div class="row">
+					<label for="cause"><?php echo $bezlang['description'] ?>:</label>
+					<span><textarea name="cause" id="cause"><?php echo $value['cause'] ?></textarea></span>
+				</div>
+			</fieldset>
+			<input type="submit" value="<?php echo $template['cause_button'] ?>">
 		</form>
+		<a name="bez_cause"></a>
 	</div>
-			
+</div>
