@@ -63,7 +63,11 @@ class Users {
 
 	public function get() {
 		global $auth;
-		return $auth->retrieveUsers();
+		$wikiusers = $auth->retrieveUsers();
+		$a = array();
+		foreach ($wikiusers as $nick => $data)
+			$a[$nick] = $data['name'];
+		return $a;
 	}
 
 	public function nicks() {

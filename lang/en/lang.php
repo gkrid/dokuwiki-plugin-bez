@@ -93,7 +93,7 @@ $lang['vald_task_state_tasks_not_closed'] = "You cannot close the problem before
 $lang['vald_executor_not_exists'] = "Specified performer is nor a user of REB.";
 $lang['vald_cost_too_big'] = "Cost is too high, max: %d";
 $lang['vald_cost_wrong_format'] = "Correct format-number. Ex: 300,000.54";
-$lang['vald_class_required'] = "Provide a class of the task";
+$lang['vald_action_required'] = "Provide an action of the task";
 
 $lang['vald_days_should_be_numeric'] = "Days have to be decimal.";
 
@@ -119,7 +119,7 @@ $lang['issue_closed'] = "Problem was closed %d, by %u, further changes are disab
 $lang['reopen_issue'] = "Change a status of the problem";
 $lang['add'] = "Add";
 
-$lang['class'] = "Action";
+$lang['action'] = "Action";
 
 $lang['open'] = "Open";
 $lang['closed'] = "Closed";

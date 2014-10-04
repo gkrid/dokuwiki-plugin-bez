@@ -129,3 +129,88 @@
 		<a name="bez_cause"></a>
 	</div>
 </div>
+
+<!-- Tasks -->
+<div class="bds_block" id="bez_task">
+	<h1><?php echo $bezlang['tasks'] ?> <span>(<?php echo count($template['tasks']) ?>)</span></h1>
+	<div class="bds_block_content">
+	<?php foreach ($template['tasks'] as $task): ?>
+			<a name="bez_task_<?php echo $task['id'] ?>"></a>
+			<div id="<?php echo $task['id'] ?>" class="task">
+
+			<h2>
+			<?php echo $bezlang['task_added'] ?>
+			<?php echo $helper->string_time_to_now($task['date']) ?>
+			<?php echo $bezlang['by'] ?>
+			<?php echo $task['reporter'] ?>
+			<span><?php echo $bezlang['task'] ?>: z<?php echo $task['id'] ?></span>
+			</h2>
+			<?php if ( ! $template['closed']): ?> 
+				<a class="bds_inline_button" href="?id=bez:issue_show:<?php echo $template['issue']['id'] ?>:edit_task:<?php echo $task['id'] ?>#bez_task"><?php echo $bezlang['change'] ?></a>
+			<?php endif ?>
+
+			<table>	
+			<tr>
+					<th><?php echo $bezlang['task_state'] ?>:</th>
+					<td><?php echo $task['state'] ?></td>
+
+					<th><?php echo $bezlang['executor'] ?>:</th>
+					<td><?php echo $task['executor'] ?></td>
+
+					<th><?php echo $bezlang['action'] ?>:</th>
+					<td><?php echo $task['action'] ?></td>
+
+					<?php if ($task['cost'] != 0): ?>
+						<th><?php echo $bezlang['cost'] ?>:</th>
+						<td><?php echo $task['cost'] ?></td>
+					<?php endif ?>
+			</tr>
+			</table>	
+
+			<?php echo $helper->wiki_parse($task['task']) ?>
+			</div>
+	<?php endforeach ?>
+	<?php if ($template['user_is_coordinator']): ?>
+		<form action="#bez_task" method="POST">
+			<input type="hidden" name="event" value="task">
+			<fieldset class="bds_form">
+				<div class="row">
+				<label for="executor"><?php echo $bezlang['executor'] ?>:</label>
+				<span>
+				<select name="executor" id="executor">
+				<?php foreach ($template['users'] as $nick => $name): ?>
+					<option <?php if ($value['executor'] == $nick) echo 'selected' ?>
+					 value="<?php echo $nick ?>"><?php echo $name ?></option>
+				<?php endforeach ?>
+				</select>
+				</span>
+				</div>
+
+				<div class="row">
+				<label for="action"><?php echo $bezlang['action'] ?>:</label>
+				<span>
+				<select name="action" id="action">
+				<?php foreach ($template['taskactions'] as $key => $name): ?>
+					<option <?php if ($value['action'] == $key) echo 'selected' ?>
+					 value="<?php echo $key ?>"><?php echo $name ?></option>
+				<?php endforeach ?>
+				</select>
+				</span>
+				</div>
+
+				<div class="row">
+					<label for="task"><?php echo $bezlang['description'] ?>:</label>
+					<span><textarea name="task" id="task"><?php echo $value['task'] ?></textarea></span>
+				</div>
+
+				<div class="row">
+					<label for="cost"><?php echo $bezlang['cost'] ?>:</label>
+					<span><input name="cost" id="cost" value="<?php echo $value['cost'] ?>"></span>
+				</div>
+			</fieldset>
+			<input type="submit" value="<?php echo $template['cause_button'] ?>">
+		</form>
+		<?php endif ?>
+		<a name="bez_task"></a>
+	</div>
+</div>

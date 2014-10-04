@@ -15,7 +15,7 @@ bds.gup = function (name) {
 };
 
 jQuery(document).ready(function() {
-	var ids = ['description', 'cause', 'content_task_form', 'opinion', 'reason', 'content'];
+	var ids = ['description', 'cause', 'content', 'task'];
 
 	for (var i = 0; i < ids.length; i++) {
 		var textarea = jQuery("#" + ids[i]);
@@ -112,8 +112,8 @@ jQuery(document).ready(function() {
 				var showed = "bez_comment";
 			} else if (hash.indexOf("bez_cause") !== -1) {
 				var showed = "bez_cause";
-			} else if (hash === "task_form") {
-				var showed = "task_form";
+			} else if (hash.indexOf("bez_task") !== -1) {
+				var showed = "bez_task";
 			} else if (hash === "bds_change_issue") {
 				var showed = "bds_change_issue";
 			}

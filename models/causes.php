@@ -67,12 +67,11 @@ EOM;
 		$a = $this->fetch_assoc("SELECT * FROM causes WHERE issue=$issue");
 
 		$usro = new Users();
-		foreach ($a as &$row)
-			$row['reporter'] = $usro->name($row['reporter']);
-
 		$rootco = new Rootcauses();
-		foreach ($a as &$row)
+		foreach ($a as &$row) {
+			$row['reporter'] = $usro->name($row['reporter']);
 			$row['rootcause'] = $rootco->name($row['rootcause']);
+		}
 
 		return $a;
 	}

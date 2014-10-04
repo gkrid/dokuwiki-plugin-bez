@@ -8,7 +8,7 @@ class Connect {
 
 		$r = $this->db->query($query);
 		if ($this->db->error) 
-			$errors[] = "MySQL error(".$this->db->errno."): ". $this->db->error;
+			$errors['mysql'] = "MySQL error(".$this->db->errno."): ". $this->db->error;
 		return $r;
 	}
 
@@ -51,6 +51,9 @@ class Connect {
 		global $errors;
 
 		$r = $this->errquery($q);
+		if (isset($errors['mysql']))
+			return array();
+
 		return $r->fetch_all(MYSQLI_ASSOC);
 	}
 	public function __construct()
