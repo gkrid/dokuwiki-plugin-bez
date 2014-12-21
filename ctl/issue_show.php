@@ -15,80 +15,111 @@ $tasko = new Tasks();
 $taskao = new Taskactions();
 $taskso = new Taskstates();
 
-//dwa switche do połączenia
-switch ($params[1]) {
-	case 'edit_comment':
-		$value = $como->getone($params[2]);
-		break;
-	case 'edit_cause':
-		$value = $causo->getone($params[2]);
-		break;
-	case 'edit_task':
-		$value = $causo->getone($params[2]);
-		break;
+$issue_id = $params[0];
+$action = $params[1];
+$table = $params[2];
+$id = $params[3];
+
+$objects = array(
+	'comment'	=> $como,
+	'cause'		=> $causo,
+	'task'		=> $tasko
+);
+/*global: $template, $bezlang, $value, $errors, $uri*/
+
+function post_db($obj, $errors, $table, $issue_id) {
+	$keys = array(
+		'comment'	=> 'k',
+		'cause'		=> 'p',
+		'task'		=> 'z'
+	);
+	if (count($errors) > 0) {
+		$value = $_POST;
+		return '';
+	}
+
+	$archon = '';
+	if ($obj->lastid() >= 0)
+		$archon = '#'.$keys[$table].$obj->lastid();
+
+	return $uri . '?id=bez:issue_show:'.$issue_id.$archon;
 }
 
-if (isset($_POST['event'])) {
-
-	$event = $_POST['event'];
-
-	$o = NULL;
-	$data = array('reporter' => $usro->get_nick(), 'date' => time(), 'issue' => $params[0]);
-	switch ($event) {
-		case 'comment':
-			$o = $como;
-		break;
-		case 'cause':
-			$o = $causo;
-		break;
-		case 'task':
-			$o = $tasko;
-			$data['state'] = $taskso->id('opened');
-		break;
+/*sprawdzamy czy zapytania mają sens*/
+if (array_key_exists($table, $objects)) {
+	$obj = $objects[$table];
+	/*pobierz dane z bazy jeżeli aktualną akcją jest któregoś z rekordów*/
+	switch($action) {
+		case 'edit':
+			$value = $obj->getone($id);
+			break;
+		case 'add':
+			$data = array('reporter' => $usro->get_nick(), 'date' => time(), 'issue' => $issue_id);
+			$obj->add($_POST, $data);
+			$redirect = post_db($obj, $errors, $table, $issue_id);
+			break;
+		case 'update':
+			$obj->update($_POST, array(), $id);
+			$redirect = post_db($obj, $errors, $table, $issue_id);
+			break;
+		case 'delete':
+			$obj->delete($id);
+			$redirect = post_db($obj, $errors, $table, $issue_id);
+			break;
 	}
-
-	if ($o != NULL) {
-		if ($params[1] == 'edit_'.$event)
-			$como->update($_POST, $data, $params[2]);
-		else 
-			$como->add($_POST, $data);
-
-		if (count($errors) > 0)
-			$value = $_POST;
-		else
-			$redirect = '?id=bez:issue_show:'.$params[0].'#bez_'.$event.'_'.$como->lastid();
-	}
+	if ($redirect != '')
+		header('Location: '.$redirect);
 }
 
 $isso = new Issues();
 
-$template['issue'] = $isso->get($params[0]);
+$template['uri'] = $uri . '?id=bez:issue_show:'.$issue_id;
+
+$template['issue'] = $isso->get($issue_id);
 $template['issue']['description'] = $helper->wiki_parse($template['issue']['description']);
 
-$template['comments'] = $como->get($params[0]);
-$template['causes'] = $causo->get($params[0]);
-$template['tasks'] = $tasko->get($params[0]);
+$template['comments'] = $como->get($issue_id);
+$template['causes'] = $causo->get($issue_id);
+$template['tasks'] = $tasko->get($issue_id);
 
 $rootco = new Rootcauses();
 $template['rootcauses'] = $rootco->get();
 
-
-/*powinno iść przez value - w przypadku edycji*/
-if ($params[1] == 'edit_comment')
-	$template['comment_button'] = $bezlang['change_comment_button'];
-else
-	$template['comment_button'] = $bezlang['add'];
-
-if ($params[1] == 'edit_cause')
-	$template['cause_button'] = $bezlang['change_cause_button'];
-else
-	$template['cause_button'] = $bezlang['add'];
-/*koniec*/
-
-$template['user_is_coordinator'] = $usro->is_coordinator();
+/*user is coordinator or admin*/
+$template['user_is_coordinator'] = $helper->user_coordinator($issue_id);
 $template['users'] = $usro->get();
+$template['user'] = $INFO['client'];
 $template['taskactions'] = $taskao->get();
 
-$template['closed'] = false;
+$template['issue_opened'] = true;
 
+/*Domyślne przyciski*/
+$template['comment_button'] = $bezlang['add'];
+$template['comment_action'] = 'add:comment';
 
+$template['cause_button'] = $bezlang['add'];
+$template['cause_action'] = 'add:cause';
+
+/*Ruter*/
+$router = array(
+	'comment' => array(
+		'edit' => function ($id) {
+			global $template, $bezlang;
+			$template['comment_button'] = $bezlang['change_comment_button'];
+			$template['comment_action'] = 'update:comment:'.$id;
+		}
+	),
+	'cause' => array(
+		'edit' => function ($id) {
+			global $template, $bezlang;
+			$template['cause_button'] = $bezlang['change_cause_button'];
+			$template['cause_action'] = 'update:cause:'.$id;
+		}
+	)
+);
+
+if ($router[$table]) {
+	$f = $router[$table][$action];
+	if ($f)
+		$f($id);
+}

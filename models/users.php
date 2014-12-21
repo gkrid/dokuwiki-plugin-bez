@@ -30,23 +30,20 @@ class Users {
 		}
 	}
 
-	public function is_coordinator($user=NULL) {
-		global $INFO;
-		global $auth;
-		if ($user == NULL)
-			$user = $INFO['client'];
-
+	public function is_coordinator($issue_id, $user) {
+		global $auth, $errors;
 
 		$data = $auth->getUserData($user);
-		if ($data == false) {
-			return false;
-		} elseif (in_array('bez_moderator', $data['grps'])) {
-			return true;	
-		} elseif (in_array('admin', $data['grps'])) {
-			return true;
-		} else {
-			return false;
+		if ($data) {
+			if (in_array('admin', $data['grps']))
+				return true;
+
+			$issuo = new Issues();
+			$issue = $issuo->get($issue_id);
+			if (count($errors) > 0 && $issue['coordinator'] == $INFO['client'])
+				return true;
 		}
+		return false;
 	}
 
 	public function exists($user=NULL) {
@@ -82,7 +79,7 @@ class Users {
 		$mod = array();
 		foreach ($this->get() as $k => $v)
 			if ($this->is_coordinator($k))
-				$mod[$k] = $v['name'];
+				$mod[$k] = $v;
 		return $mod;
 	}
 }

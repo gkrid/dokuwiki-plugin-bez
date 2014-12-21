@@ -46,6 +46,16 @@ class Connect {
 
 		$this->lastid = $id;
 	}
+	protected function errdelete($table, $id)
+	{
+		global $errors;
+		if (count($errors) > 0)
+			return;
+		$this->errquery("DELETE FROM $table WHERE id=$id");
+
+		/*nie zawsze trafimy, ale często i to nam wystarczy :)*/
+		$this->lastid = $id-1;
+	}
 	protected function fetch_assoc($q)
 	{
 		global $errors;

@@ -1,6 +1,7 @@
 <?php
 include_once DOKU_PLUGIN."bez/models/connect.php";
 include_once DOKU_PLUGIN."bez/models/users.php";
+include_once DOKU_PLUGIN."bez/models/issues.php";
 
 class Comments extends Connect {
 	public function __construct() {
@@ -17,7 +18,17 @@ CREATE TABLE IF NOT EXISTS comments (
 	PRIMARY KEY (id)
 )
 EOM;
-	$this->errquery($q);
+		$this->errquery($q);
+	}
+	public function can_modify($comment_id) {
+		$helper = plugin_load('helper', 'bez');
+		$comment = $this->getone($comment_id);
+
+		if ($comment)
+			if ($comment['reporter_nick'] == $user || $helper->user_coordinator($comment['issue']) || $helper->user_admin()) 
+				return true;
+
+		return false;
 	}
 	public function validate($post) {
 		global $bezlang, $errors;
@@ -42,16 +53,28 @@ EOM;
 		$this->errinsert($data, 'comments');
 	}
 	public function update($post, $data, $id) {
-		$from_user = $this->validate($post);
-		$data = array_merge($data, $from_user);
-
-		$this->errupdate($data, 'comments', $id);
+		if ($this->can_modify($id)) {
+			$from_user = $this->validate($post);
+			$data = array_merge($data, $from_user);
+			$this->errupdate($data, 'comments', $id);
+		}
+	}
+	public function delete($comment_id) {
+		if ($this->can_modify($comment_id))
+			$this->errdelete('comments', $comment_id);
 	}
 	public function getone($id) {
 		$id = (int) $id;
-		$a = $this->fetch_assoc("SELECT * FROM comments WHERE id=$id");
+		$comment = $this->fetch_assoc("SELECT * FROM comments WHERE id=$id");
 
-		return $a[0];
+		$usro = new Users();
+		$comment['reporter_nick'] = $row['reporter'];
+		$comment['reporter'] = $usro->name($row['reporter']);
+
+		if ($comment)
+			return $comment[0];
+
+		return NULL;
 	}
 	public function get($issue) {
 		$issue = (int) $issue;
@@ -59,8 +82,10 @@ EOM;
 		$a = $this->fetch_assoc("SELECT * FROM comments WHERE issue=$issue");
 
 		$usro = new Users();
-		foreach ($a as &$row)
+		foreach ($a as &$row) {
+			$row['reporter_nick'] = $row['reporter'];
 			$row['reporter'] = $usro->name($row['reporter']);
+		}
 
 		return $a;
 	}

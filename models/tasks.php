@@ -78,6 +78,10 @@ EOM;
 		$from_user = $this->validate($post);
 		$data = array_merge($data, $from_user);
 
+		/*przy dodawaniu domyślnym statusem jest odwarty*/
+		$taskso = new Taskstates();
+		$data['state'] = $taskso->id('opened');
+
 		$this->errinsert($data, 'tasks');
 	}
 	public function update($post, $data, $id) {

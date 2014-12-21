@@ -1,12 +1,12 @@
 <?php
-include DOKU_PLUGIN."bez/models/entities.php";
-include DOKU_PLUGIN."bez/models/issuetypes.php";
+include_once DOKU_PLUGIN."bez/models/entities.php";
+include_once DOKU_PLUGIN."bez/models/issuetypes.php";
 include DOKU_PLUGIN."bez/models/users.php";
 
 $usro = new Users();
 if (count($_POST) > 0) {
-	include DOKU_PLUGIN."bez/models/issues.php";
-	include DOKU_PLUGIN."bez/models/states.php";
+	include_once DOKU_PLUGIN."bez/models/issues.php";
+	include_once DOKU_PLUGIN."bez/models/states.php";
 
 	$stao = new States();
 	if ($_POST['coordinator'] == NULL)

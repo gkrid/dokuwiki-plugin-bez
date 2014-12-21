@@ -78,7 +78,6 @@ jQuery(document).ready(function() {
 	}
 
 	var show = function() {
-			console.log(this);
 			jQuery(this).siblings(".bds_block_content").show();
 			jQuery(this).find(".toggle").css("background-image", "url(lib/plugins/bds/images/expanded.png)");
 		};
@@ -108,12 +107,12 @@ jQuery(document).ready(function() {
 
 
 			var hash = window.location.hash.substring(1);
-			if (hash.indexOf("bez_comment") !== -1) {
-				var showed = "bez_comment";
-			} else if (hash.indexOf("bez_cause") !== -1) {
-				var showed = "bez_cause";
-			} else if (hash.indexOf("bez_task") !== -1) {
-				var showed = "bez_task";
+			if (hash.indexOf("k") === 0) {
+				var showed = "bez_comments";
+			} else if (hash.indexOf("p") === 0) {
+				var showed = "bez_causes";
+			} else if (hash.indexOf("t") === 0) {
+				var showed = "bez_tasks";
 			} else if (hash === "bds_change_issue") {
 				var showed = "bds_change_issue";
 			}

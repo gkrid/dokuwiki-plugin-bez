@@ -35,7 +35,7 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 	{
 		global $auth, $INFO;
 		global $template, $bezlang, $value, $errors;
-		if ( ! $this->helper->user_can_view())
+		if ( ! $this->helper->user_viewer())
 			return false;
 		if ($this->action != '')
 			$event->preventDefault();
@@ -45,16 +45,15 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 			$bezlang = $this->lang;
 			$helper = $this->helper;
 			$params = $this->params;
+			$uri = DOKU_URL . 'doku.php';
 			include $ctl;
 		}
-		if ($redirect != '')
-			header('Location: '.$redirect);
 	}
 
 	public function tpl_act_render($event, $param)
 	{
 		global $template, $bezlang, $value, $errors;
-		if ( ! $this->helper->user_can_view())
+		if ( ! $this->helper->user_viewer())
 			return false;
 		if ($this->action != '')
 			$event->preventDefault();

@@ -257,3 +257,5 @@ $lang['average_days'] = "Average time of task closing(days)";
 $lang['bds_switch_lang'] = "Wersja polska";
 
 $lang['comments'] = 'Comments';
+
+$lang['delete'] = 'Delete';

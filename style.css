@@ -137,7 +137,6 @@
 	padding-top: 0.2em;
 	display:block;
 	float:right;
-
 }
 
 .bds_inline_button:hover {
@@ -145,6 +144,21 @@
     box-shadow: 0.1em 0.1em 0.6em 0 #999999;
     text-shadow: 0.1em 0.1em #FCFCFC;
 	color: #fff;
+	text-decoration:none !important;
+}
+.bez_delete_button {
+    color: #808080 !important;
+    font-size: 70%;
+    height: 1.6em;
+    margin: 0 0.1em 0.1em;
+    padding: 0 0.4em 0.1em;
+	padding-top: 0.2em;
+	display:block;
+	float:right;
+	text-decoration:underline !important;
+}
+
+.bez_delete_button:hover {
 	text-decoration:none !important;
 }
 

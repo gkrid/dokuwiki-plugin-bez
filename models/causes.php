@@ -21,6 +21,16 @@ CREATE TABLE IF NOT EXISTS causes (
 EOM;
 	$this->errquery($q);
 	}
+	public function can_modify($cause_id) {
+		$helper = plugin_load('helper', 'bez');
+		$cause = $this->getone($cause_id);
+
+		if ($cause)
+			if ($helper->user_coordinator($cause['issue']) || $helper->user_admin()) 
+				return true;
+
+		return false;
+	}
 	public function validate($post) {
 		global $bezlang, $errors;
 
@@ -44,16 +54,26 @@ EOM;
 	}
 	public function add($post, $data=array())
 	{
-		$from_user = $this->validate($post);
-		$data = array_merge($data, $from_user);
+		$helper = plugin_load('helper', 'bez');
+		if ($helper->user_coordinator($cause['issue'])) {
+			$from_user = $this->validate($post);
+			$data = array_merge($data, $from_user);
 
-		$this->errinsert($data, 'causes');
+			$this->errinsert($data, 'causes');
+		}
 	}
 	public function update($post, $data, $id) {
-		$from_user = $this->validate($post);
-		$data = array_merge($data, $from_user);
 
-		$this->errupdate($data, 'causes', $id);
+		if ($this->can_modify($id)) {
+			$from_user = $this->validate($post);
+			$data = array_merge($data, $from_user);
+
+			$this->errupdate($data, 'causes', $id);
+		}
+	}
+	public function delete($cause_id) {
+		if ($this->can_modify($cause_id))
+			$this->errdelete('causes', $cause_id);
 	}
 	public function getone($id) {
 		$id = (int) $id;

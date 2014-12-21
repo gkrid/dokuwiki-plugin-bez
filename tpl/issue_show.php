@@ -43,12 +43,12 @@
 </div>
 
 <!-- Comments -->
-<div class="bds_block" id="bez_comment">
+<div class="bds_block" id="bez_comments">
 	<h1><?php echo $bezlang['comments'] ?> <span>(<?php echo count($template['comments']) ?>)</span></h1>
 	<div class="bds_block_content">
 		<?php foreach ($template['comments'] as $comment): ?>
-			<a name="bez_comment_<?php echo $comment['id'] ?>"></a>
-			<div id="<?php echo $comment['id'] ?>" class="comment">
+			<a name="k<?php echo $comment['id'] ?>"></a>
+			<div id="k<?php echo $comment['id'] ?>" class="comment">
 
 			<h2>
 			<?php echo $bezlang['comment_added'] ?>
@@ -57,34 +57,36 @@
 			<?php echo $comment['reporter'] ?>
 			<span><?php echo $bezlang['comment_noun'] ?>: k<?php echo $comment['id'] ?></span>
 			</h2>
-			<?php if ( ! $template['closed']): ?> 
-				<a class="bds_inline_button" href="?id=bez:issue_show:<?php echo $template['issue']['id'] ?>:edit_comment:<?php echo $comment['id'] ?>#bez_comment"><?php echo $bezlang['change'] ?></a>
+			<?php if ($template['issue_opened'] && ($comment['reporter_nick'] == $template['user'] || $template['user_is_coordinator'])): ?> 
+				<a class="bez_delete_button" href="?id=bez:issue_show:<?php echo $template['issue']['id'] ?>:delete:comment:<?php echo $comment['id'] ?>"><?php echo $bezlang['delete'] ?></a>
+				<a class="bds_inline_button" href="?id=bez:issue_show:<?php echo $template['issue']['id'] ?>:edit:comment:<?php echo $comment['id'] ?>#k_"><?php echo $bezlang['change'] ?></a>
 			<?php endif ?>
 
 			<?php echo $helper->wiki_parse($comment['content']) ?>
 			</div>
 		<?php endforeach ?>
-		<form action="#bez_comment" method="POST">
-			<input type="hidden" name="event" value="comment">
-			<fieldset class="bds_form">
-				<div class="row">
-					<label for="content"><?php echo $bezlang['description'] ?>:</label>
-					<span><textarea name="content" id="content"><?php echo $value['content'] ?></textarea></span>
-				</div>
-			</fieldset>
-			<input type="submit" value="<?php echo $template['comment_button'] ?>">
-		</form>
-		<a name="bez_comment"></a>
+		<?php if ($template['issue_opened']): ?> 
+			<form action="<?php echo $template['uri'] ?>:<?php echo $template['comment_action'] ?>#k_" method="POST">
+				<fieldset class="bds_form">
+					<div class="row">
+						<label for="content"><?php echo $bezlang['description'] ?>:</label>
+						<span><textarea name="content" id="content"><?php echo $value['content'] ?></textarea></span>
+					</div>
+				</fieldset>
+				<input type="submit" value="<?php echo $template['comment_button'] ?>">
+			</form>
+			<a name="k_"></a>
+		<?php endif; ?>
 	</div>
 </div>
 
 <!-- Causes -->
-<div class="bds_block" id="bez_cause">
+<div class="bds_block" id="bez_causes">
 	<h1><?php echo $bezlang['causes'] ?> <span>(<?php echo count($template['causes']) ?>)</span></h1>
 	<div class="bds_block_content">
 		<?php foreach ($template['causes'] as $cause): ?>
-			<a name="bez_cause_<?php echo $cause['id'] ?>"></a>
-			<div id="<?php echo $cause['id'] ?>" class="cause">
+			<a name="p<?php echo $cause['id'] ?>"></a>
+			<div id="p<?php echo $cause['id'] ?>" class="cause">
 
 			<h2>
 			<?php echo $bezlang['cause_added'] ?>
@@ -93,8 +95,9 @@
 			<?php echo $cause['reporter'] ?>
 			<span><?php echo $bezlang['cause_noun'] ?>: p<?php echo $cause['id'] ?></span>
 			</h2>
-			<?php if ( ! $template['closed']): ?> 
-				<a class="bds_inline_button" href="?id=bez:issue_show:<?php echo $template['issue']['id'] ?>:edit_cause:<?php echo $cause['id'] ?>#bez_cause"><?php echo $bezlang['change'] ?></a>
+			<?php if ($template['issue_opened'] && $template['user_is_coordinator']): ?> 
+				<a class="bez_delete_button" href="?id=bez:issue_show:<?php echo $template['issue']['id'] ?>:delete:cause:<?php echo $cause['id'] ?>"><?php echo $bezlang['delete'] ?></a>
+				<a class="bds_inline_button" href="?id=bez:issue_show:<?php echo $template['issue']['id'] ?>:edit:cause:<?php echo $cause['id'] ?>#p_"><?php echo $bezlang['change'] ?></a>
 			<?php endif ?>
 			<div class="root_cause">
 			<span>
@@ -105,28 +108,30 @@
 			<?php echo $helper->wiki_parse($cause['cause']) ?>
 			</div>
 		<?php endforeach ?>
-		<form action="#bez_cause" method="POST">
-			<input type="hidden" name="event" value="cause">
-			<fieldset class="bds_form">
-				<div class="row">
-				<label for="rootcause"><?php echo $bezlang['root_cause'] ?>:</label>
-				<span>
-					<select name="rootcause" id="rootcause">
-					<?php foreach ($template['rootcauses'] as $key => $name): ?>
-						<option <?php if ($value['rootcause'] == $key) echo 'selected' ?>
-						 value="<?php echo $key ?>"><?php echo $name ?></option>
-					<?php endforeach ?>
-					</select>
-				</span>
-				</div>
-				<div class="row">
-					<label for="cause"><?php echo $bezlang['description'] ?>:</label>
-					<span><textarea name="cause" id="cause"><?php echo $value['cause'] ?></textarea></span>
-				</div>
-			</fieldset>
-			<input type="submit" value="<?php echo $template['cause_button'] ?>">
-		</form>
-		<a name="bez_cause"></a>
+		<?php if ($template['issue_opened'] && $template['user_is_coordinator']): ?> 
+			<form action="<?php echo $template['uri'] ?>:<?php echo $template['cause_action'] ?>#p_" method="POST">
+				<input type="hidden" name="event" value="cause">
+				<fieldset class="bds_form">
+					<div class="row">
+					<label for="rootcause"><?php echo $bezlang['root_cause'] ?>:</label>
+					<span>
+						<select name="rootcause" id="rootcause">
+						<?php foreach ($template['rootcauses'] as $key => $name): ?>
+							<option <?php if ($value['rootcause'] == $key) echo 'selected' ?>
+							 value="<?php echo $key ?>"><?php echo $name ?></option>
+						<?php endforeach ?>
+						</select>
+					</span>
+					</div>
+					<div class="row">
+						<label for="cause"><?php echo $bezlang['description'] ?>:</label>
+						<span><textarea name="cause" id="cause"><?php echo $value['cause'] ?></textarea></span>
+					</div>
+				</fieldset>
+				<input type="submit" value="<?php echo $template['cause_button'] ?>">
+			</form>
+			<a name="p_"></a>
+		<?php endif ?>
 	</div>
 </div>
 

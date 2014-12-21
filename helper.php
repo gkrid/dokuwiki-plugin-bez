@@ -2,16 +2,52 @@
 
 if(!defined('DOKU_INC')) die();
 
+include_once DOKU_PLUGIN."bez/models/issues.php";
+
 class helper_plugin_bez extends dokuwiki_plugin
 {
-	public function user_can_view() {
+	public function user_viewer() {
 		global $auth, $INFO;
 
-		if ($auth->getUserData($INFO['client']) == true) {
+		if ($auth->getUserData($INFO['client']))
 			return true;
-		} else {
-			return false;
+
+		return false;
+	}
+
+	public function user_editor() {
+		global $INFO, $auth;
+
+		if ($auth->getUserData($INFO['client']))
+			return true;
+
+		return false;
+	}
+
+	public function user_coordinator($issue_id) {
+		global $INFO;
+		global $bezlang, $errors;
+
+		if (self::user_admin())
+			return true;
+
+		if (self::user_editor()) {
+			$issuo = new Issues();
+			$issue = $issuo->get($issue_id);
+			if (count($errors) > 0 && $issue['coordinator'] == $INFO['client'])
+				return true;
 		}
+		return false;
+	}
+
+	public function user_admin() {
+		global $INFO, $auth;
+
+		$userd = $auth->getUserData($INFO['client']); 
+		if ($userd && in_array('admin', $userd['grps']))
+				return true;
+
+		return false;
 	}
 
 	public function wiki_parse($content) {
@@ -20,7 +56,7 @@ class helper_plugin_bez extends dokuwiki_plugin
 	}
 
 	public function html_issue_link($id) {
-		return '<a href="?id=bez:bds_issue_show:'.$id.'">#'.$id.'</a>';
+		return '<a href="?id=bez:issue_show:'.$id.'">#'.$id.'</a>';
 	}
 
 	public function string_time_to_now($value) {
