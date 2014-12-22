@@ -65,7 +65,7 @@
 			<?php echo $helper->wiki_parse($comment['content']) ?>
 			</div>
 		<?php endforeach ?>
-		<?php if ($template['issue_opened']): ?> 
+		<?php if ($template['issue_opened'] && $template['user_editor']): ?> 
 			<form action="<?php echo $template['uri'] ?>:<?php echo $template['comment_action'] ?>#k_" method="POST">
 				<fieldset class="bds_form">
 					<div class="row">
@@ -110,7 +110,6 @@
 		<?php endforeach ?>
 		<?php if ($template['issue_opened'] && $template['user_is_coordinator']): ?> 
 			<form action="<?php echo $template['uri'] ?>:<?php echo $template['cause_action'] ?>#p_" method="POST">
-				<input type="hidden" name="event" value="cause">
 				<fieldset class="bds_form">
 					<div class="row">
 					<label for="rootcause"><?php echo $bezlang['root_cause'] ?>:</label>
@@ -136,12 +135,12 @@
 </div>
 
 <!-- Tasks -->
-<div class="bds_block" id="bez_task">
+<div class="bds_block" id="bez_tasks">
 	<h1><?php echo $bezlang['tasks'] ?> <span>(<?php echo count($template['tasks']) ?>)</span></h1>
 	<div class="bds_block_content">
 	<?php foreach ($template['tasks'] as $task): ?>
-			<a name="bez_task_<?php echo $task['id'] ?>"></a>
-			<div id="<?php echo $task['id'] ?>" class="task">
+			<a name="z<?php echo $task['id'] ?>"></a>
+			<div id="z<?php echo $task['id'] ?>" class="task">
 
 			<h2>
 			<?php echo $bezlang['task_added'] ?>
@@ -150,8 +149,8 @@
 			<?php echo $task['reporter'] ?>
 			<span><?php echo $bezlang['task'] ?>: z<?php echo $task['id'] ?></span>
 			</h2>
-			<?php if ( ! $template['closed']): ?> 
-				<a class="bds_inline_button" href="?id=bez:issue_show:<?php echo $template['issue']['id'] ?>:edit_task:<?php echo $task['id'] ?>#bez_task"><?php echo $bezlang['change'] ?></a>
+			<?php if ($template['issue_opened'] && ($template['user_is_coordinator'] || $task['executor_nick'] == $template['user'])): ?> 
+				<a class="bds_inline_button" href="?id=bez:issue_show:<?php echo $template['issue']['id'] ?>:edit:task:<?php echo $task['id'] ?>#z_"><?php echo $bezlang['change'] ?></a>
 			<?php endif ?>
 
 			<table>	
@@ -170,15 +169,31 @@
 						<td><?php echo $task['cost'] ?></td>
 					<?php endif ?>
 			</tr>
+			<?php if ($task['reason'] != ''): ?>
+			<tr>
+				<td colspan="8">
+				<strong><?php echo $template['reason_labels'][$task['state']] ?>:</strong><br>
+				<?php echo $helper->wiki_parse($task['reason']) ?>
+				</td>
+			</tr>
+			<?php endif ?>
 			</table>	
 
 			<?php echo $helper->wiki_parse($task['task']) ?>
 			</div>
 	<?php endforeach ?>
-	<?php if ($template['user_is_coordinator']): ?>
-		<form action="#bez_task" method="POST">
-			<input type="hidden" name="event" value="task">
+	<?php if ($template['issue_opened'] && ($template['user_is_coordinator'] || strstr($template['task_action'], 'update'))): ?> 
+		<form action="<?php echo $template['uri'] ?>:<?php echo $template['task_action'] ?>#z_" method="POST">
 			<fieldset class="bds_form">
+			<?php if ($template['issue_opened'] && $template['user_is_coordinator']): ?> 
+				<?php if (count($template['causes']) == 0) : ?>
+					<div class="row" >
+						<div style="display:table-cell"><br><br></div>
+						<label style="position: relative">
+							<div class="info" style="position: absolute; left: -7em;"><?php echo $bezlang['info_no_causes_added'] ?></div>
+						</label>
+					</div>
+				<?php endif ?>
 				<div class="row">
 				<label for="executor"><?php echo $bezlang['executor'] ?>:</label>
 				<span>
@@ -190,16 +205,25 @@
 				</select>
 				</span>
 				</div>
-
 				<div class="row">
 				<label for="action"><?php echo $bezlang['action'] ?>:</label>
 				<span>
-				<select name="action" id="action">
-				<?php foreach ($template['taskactions'] as $key => $name): ?>
-					<option <?php if ($value['action'] == $key) echo 'selected' ?>
-					 value="<?php echo $key ?>"><?php echo $name ?></option>
-				<?php endforeach ?>
-				</select>
+				<?php if (count($template['causes']) > 0) : ?>
+					<select name="action" id="action">
+					<?php foreach ($template['taskactions'] as $key => $name): ?>
+						<option <?php if ($value['action'] == $key) echo 'selected' ?>
+						 value="<?php echo $key ?>"><?php echo $name ?></option>
+					<?php endforeach ?>
+					</select>
+				<?php else : ?>
+					<strong>
+						<?php if (isset($value['action'])): ?>
+							<?php echo $template['taskactions'][$value['action']] ?>
+						<?php else : ?>
+							<?php echo $template['taskactions'][0] ?>
+						<?php endif ?>
+					</strong>
+				<?php endif ?>
 				</span>
 				</div>
 
@@ -212,10 +236,28 @@
 					<label for="cost"><?php echo $bezlang['cost'] ?>:</label>
 					<span><input name="cost" id="cost" value="<?php echo $value['cost'] ?>"></span>
 				</div>
+				<?php endif ?>
+				<?php if (strstr($template['task_action'], 'update')): ?>
+					<div class="row">
+					<label for="task_state"><?php echo $bezlang['task_state'] ?>:</label>
+					<span>
+					<select name="state" id="task_state">
+					<?php foreach ($template['task_states'] as $code => $name): ?>
+						<option <?php if ($value['state'] == $code) echo 'selected' ?>
+						 value="<?php echo $code?>"><?php echo $name ?></option>
+					<?php endforeach ?>
+					</select>
+					</span>
+					</div>
+					<div class="row">
+						<label for="reason"><?php echo $bezlang['reason'] ?>:</label>
+						<span><textarea name="reason" id="reason"><?php echo $value['reason'] ?></textarea></span>
+					</div>
+				<?php endif ?>
 			</fieldset>
-			<input type="submit" value="<?php echo $template['cause_button'] ?>">
+			<input type="submit" value="<?php echo $template['task_button'] ?>">
 		</form>
-		<?php endif ?>
-		<a name="bez_task"></a>
+	<?php endif ?>
+	<a name="z_"></a>
 	</div>
 </div>

@@ -90,7 +90,7 @@ $lang['vald_task_state_tasks_not_closed'] = 'Nie możesz zamknąć problemu prze
 
 $lang['vald_executor_not_exists'] = 'Podany wykonawca nie jest użytkownikiem BEZ.';
 $lang['vald_cost_too_big'] = 'Zbyt wysoki koszt, max: %d.';
-$lang['vald_cost_wrong_format'] = 'Popraw format liczby. Np: 300,000.54';
+$lang['vald_cost_wrong_format'] = 'Koszt powinien być liczbą całkowitą.';
 $lang['vald_class_required'] = 'Podaj klasę zadania.';
 
 $lang['vald_days_should_be_numeric'] = 'Ilość dni musi być liczbą.';
@@ -250,3 +250,10 @@ $lang['send_mail'] = "Wyślij";
 $lang['average_days'] = "Średni czas zamykania zadań w dniach";
 
 $lang['bds_switch_lang'] = "English version";
+
+$lang['comments'] = 'Komentarze';
+$lang['causes'] = 'Przyczyny';
+$lang['action'] = 'Akcja';
+
+$lang['delete'] = 'Usuń';
+$lang['info_no_causes_added'] = 'Musisz dodać co najmniej jedną przyczynę, aby dodawać działania korygujące i zapobiegawcze.';

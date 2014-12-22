@@ -92,7 +92,7 @@ $lang['vald_task_state_tasks_not_closed'] = "You cannot close the problem before
 
 $lang['vald_executor_not_exists'] = "Specified performer is nor a user of REB.";
 $lang['vald_cost_too_big'] = "Cost is too high, max: %d";
-$lang['vald_cost_wrong_format'] = "Correct format-number. Ex: 300,000.54";
+$lang['vald_cost_wrong_format'] = "Cost should be integer.";
 $lang['vald_action_required'] = "Provide an action of the task";
 
 $lang['vald_days_should_be_numeric'] = "Days have to be decimal.";
@@ -259,3 +259,5 @@ $lang['bds_switch_lang'] = "Wersja polska";
 $lang['comments'] = 'Comments';
 
 $lang['delete'] = 'Delete';
+$lang['info_no_causes_added'] = 'You have to add cause in order to add corrective and preventive actions.';
+

@@ -28,6 +28,7 @@ $objects = array(
 /*global: $template, $bezlang, $value, $errors, $uri*/
 
 function post_db($obj, $errors, $table, $issue_id) {
+	global $value;
 	$keys = array(
 		'comment'	=> 'k',
 		'cause'		=> 'p',
@@ -87,6 +88,7 @@ $template['rootcauses'] = $rootco->get();
 
 /*user is coordinator or admin*/
 $template['user_is_coordinator'] = $helper->user_coordinator($issue_id);
+$template['user_editor'] = $helper->user_editor();
 $template['users'] = $usro->get();
 $template['user'] = $INFO['client'];
 $template['taskactions'] = $taskao->get();
@@ -100,6 +102,15 @@ $template['comment_action'] = 'add:comment';
 $template['cause_button'] = $bezlang['add'];
 $template['cause_action'] = 'add:cause';
 
+$template['task_button'] = $bezlang['add'];
+$template['task_action'] = 'add:task';
+
+$template['task_states'] = $taskso->get();
+$template['reason_labels'] = array(
+	$template['task_states'][0] => $bezlang['reason_reopen'],
+	$template['task_states'][1] => $bezlang['reason_done'],
+	$template['task_states'][2] => $bezlang['reason_reject'],
+);
 /*Ruter*/
 $router = array(
 	'comment' => array(
@@ -114,6 +125,13 @@ $router = array(
 			global $template, $bezlang;
 			$template['cause_button'] = $bezlang['change_cause_button'];
 			$template['cause_action'] = 'update:cause:'.$id;
+		}
+	),
+	'task' => array(
+		'edit' => function ($id) {
+			global $template, $bezlang;
+			$template['task_button'] = $bezlang['change_task_button'];
+			$template['task_action'] = 'update:task:'.$id;
 		}
 	)
 );

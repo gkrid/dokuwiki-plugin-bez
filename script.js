@@ -15,7 +15,7 @@ bds.gup = function (name) {
 };
 
 jQuery(document).ready(function() {
-	var ids = ['description', 'cause', 'content', 'task'];
+	var ids = ['description', 'cause', 'content', 'task', 'reason'];
 
 	for (var i = 0; i < ids.length; i++) {
 		var textarea = jQuery("#" + ids[i]);
@@ -62,11 +62,11 @@ jQuery(document).ready(function() {
 	}
 
 	//show/hide reason
-	$reason_row = jQuery("#task_form textarea[name=reason]").parents("div[class=row]");
+	$reason_row = jQuery("#bez_tasks textarea[name=reason]").parents("div[class=row]");
 	
 	if ($reason_row.length > 0) {
 		$reason_row.hide();
-		$select = jQuery("#task_form select[name=state]");
+		$select = jQuery("#bez_tasks select[name=state]");
 		var prev_val = $select.val();
 		$select.change(function() {
 			if (jQuery(this).val() === prev_val) {
@@ -111,7 +111,7 @@ jQuery(document).ready(function() {
 				var showed = "bez_comments";
 			} else if (hash.indexOf("p") === 0) {
 				var showed = "bez_causes";
-			} else if (hash.indexOf("t") === 0) {
+			} else if (hash.indexOf("z") === 0) {
 				var showed = "bez_tasks";
 			} else if (hash === "bds_change_issue") {
 				var showed = "bds_change_issue";

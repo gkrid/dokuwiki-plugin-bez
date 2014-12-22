@@ -15,7 +15,8 @@ CREATE TABLE IF NOT EXISTS tasks (
 	state INT(11) NOT NULL,
 	executor CHAR(100) NOT NULL,
 	action INT(11) NOT NULL,
-	cost DOUBLE NULL,
+	cost INT(11) NULL,
+	reason TEXT NOT NULL,
 	reporter CHAR(100) NOT NULL,
 	date INT(11) NOT NULL,
 	issue INT(11) NOT NULL,
@@ -24,6 +25,24 @@ CREATE TABLE IF NOT EXISTS tasks (
 )
 EOM;
 	$this->errquery($q);
+	}
+	public function can_modify($task_id) {
+		$helper = plugin_load('helper', 'bez');
+		$task = $this->getone($task_id);
+
+		if ($task)
+			if ($helper->user_coordinator($task['issue']) || $helper->user_admin()) 
+				return true;
+
+		return false;
+	}
+	public function can_change_state($task_id) {
+		global $INFO;
+		$task = $this->getone($task_id);
+		if ($task['executor'] == $INFO['client'])
+			return true;
+
+		return false;
 	}
 	public function validate($post) {
 		global $bezlang, $errors;
@@ -46,49 +65,77 @@ EOM;
 		$data['executor'] = $post['executor'];
 
 		$taskao = new Taskactions();
-		if ( ! array_key_exists((int)$post['action'], $taskao->get())) {
-			$errors['action'] = $bezlang['vald_action_required'];
-		} 
-		$data['action'] = (int) $post['action'];
+		if (array_key_exists('action', $post)) {
+			if ( ! array_key_exists((int)$post['action'], $taskao->get())) {
+				$errors['action'] = $bezlang['vald_action_required'];
+			} 
+			$data['action'] = (int) $post['action'];
+		} else
+			$data['action'] = $taskao->id('correction');
 
 		//cost is not required
 		if ($post['cost'] != '') {
-			//remove not nessesery chars
-			$locale = localeconv();
-			$separators = array(' ', $locale['thousands_sep']);	
-			$fract_sep = $locale['decimal_point'];
-
-			$cost = str_replace($separators, '', $post['cost']);
-			$cost_ex = explode($fract_sep, $cost);
-
-			if (count($cost_ex) > 2 || ! ctype_digit($cost_ex[0])) {
+			$cost = trim($post['cost']);
+			if ( ! ctype_digit($cost)) {
 				$errors['cost'] = $bezlang['vald_cost_wrong_format'];
-			} elseif (isset($cost_ex[1]) && (strlen($cost_ex[1]) > 2 || ! ctype_digit($cost_ex[1]))) {
-				$errors['cost'] = $bezlang['vald_cost_wrong_format'];
-			} elseif ( (double)$post['cost'] > $cost_max) {
+			} elseif ( (int)$post['cost'] > $cost_max) {
 				$errors['cost'] = str_replace('%d', $cost_max, $bezlang['vald_cost_too_big']);
 			}
-			$data['cost'] = (double) $post['cost'];
+			$data['cost'] = (int) $post['cost'];
 		}
+		
+		/*zmienamy status tylko w przypadku edycji*/
+		if (array_key_exists('state', $post)) 
+			$data['state'] = $this->val_state($post['state']);
+
+		if (array_key_exists('reason', $post))
+			$data['reason'] = $this->val_reason($post['reason']);
 
 		return $data;
 	}
+	public function val_state($state) {
+		$taskso = new Taskstates();
+		if ( ! array_key_exists((int)$state, $taskso->get())) {
+			$errors['state'] = $bezlang['vald_state_required'];
+			return -1;
+		} 
+		return (int) $state;
+	}
+	public function val_reason($reason) {
+		$reason_max = 65000;
+
+		$reason = trim($reason);
+		if (strlen($reason) == 0) 
+			$errors['reason'] = $bezlang['vald_content_required'];
+		else if (strlen($resaon) > $reason_max)
+			$errors['reason'] = str_replace('%d', $task_max, $bezlang['vald_content_too_long']);
+
+		return $reason;
+	}
 	public function add($post, $data=array())
 	{
-		$from_user = $this->validate($post);
-		$data = array_merge($data, $from_user);
+		$helper = plugin_load('helper', 'bez');
+		if ($helper->user_coordinator($data['issue'])) {
+			$from_user = $this->validate($post);
+			$data = array_merge($data, $from_user);
 
-		/*przy dodawaniu domyślnym statusem jest odwarty*/
-		$taskso = new Taskstates();
-		$data['state'] = $taskso->id('opened');
+			/*przy dodawaniu domyślnym statusem jest odwarty*/
+			$taskso = new Taskstates();
+			$data['state'] = $taskso->id('opened');
 
-		$this->errinsert($data, 'tasks');
+			$this->errinsert($data, 'tasks');
+		}
 	}
 	public function update($post, $data, $id) {
-		$from_user = $this->validate($post);
-		$data = array_merge($data, $from_user);
-
-		$this->errupdate($data, 'tasks', $id);
+		if ($this->can_modify($id)) {
+			$from_user = $this->validate($post);
+			$data = array_merge($data, $from_user);
+			$this->errupdate($data, 'tasks', $id);
+		} elseif ($this->can_change_state($id)) {
+			$state = $this->val_state($post['state']);
+			$reason = $this->val_reason($post['reason']);
+			$this->errupdate(array('state' => $state, 'reason' => $reason), 'tasks', $id);
+		}
 	}
 	public function getone($id) {
 		$id = (int) $id;
@@ -106,6 +153,7 @@ EOM;
 		$taskso = new Taskstates();
 		foreach ($a as &$row) {
 			$row['reporter'] = $usro->name($row['reporter']);
+			$row['executor_nick'] = $row['executor'];
 			$row['executor'] = $usro->name($row['executor']);
 			$row['action'] = $taskao->name($row['action']);
 			$row['state'] = $taskso->name($row['state']);

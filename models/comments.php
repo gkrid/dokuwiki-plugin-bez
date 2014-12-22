@@ -21,14 +21,20 @@ EOM;
 		$this->errquery($q);
 	}
 	public function can_modify($comment_id) {
+		global $INFO;
+
 		$helper = plugin_load('helper', 'bez');
 		$comment = $this->getone($comment_id);
 
 		if ($comment)
-			if ($comment['reporter_nick'] == $user || $helper->user_coordinator($comment['issue']) || $helper->user_admin()) 
+			if ($comment['reporter'] == $INFO['client'] || $helper->user_coordinator($comment['issue']) || $helper->user_admin()) 
 				return true;
 
 		return false;
+	}
+	public function can_add() {
+		$helper = plugin_load('helper', 'bez');
+		return $helper->user_editor();
 	}
 	public function validate($post) {
 		global $bezlang, $errors;
@@ -47,10 +53,12 @@ EOM;
 	}
 	public function add($post, $data=array())
 	{
-		$from_user = $this->validate($post);
-		$data = array_merge($data, $from_user);
+		if ($this->can_add()) {
+			$from_user = $this->validate($post);
+			$data = array_merge($data, $from_user);
 
-		$this->errinsert($data, 'comments');
+			$this->errinsert($data, 'comments');
+		}
 	}
 	public function update($post, $data, $id) {
 		if ($this->can_modify($id)) {
@@ -66,10 +74,6 @@ EOM;
 	public function getone($id) {
 		$id = (int) $id;
 		$comment = $this->fetch_assoc("SELECT * FROM comments WHERE id=$id");
-
-		$usro = new Users();
-		$comment['reporter_nick'] = $row['reporter'];
-		$comment['reporter'] = $usro->name($row['reporter']);
 
 		if ($comment)
 			return $comment[0];

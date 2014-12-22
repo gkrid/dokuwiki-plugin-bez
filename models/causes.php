@@ -55,7 +55,7 @@ EOM;
 	public function add($post, $data=array())
 	{
 		$helper = plugin_load('helper', 'bez');
-		if ($helper->user_coordinator($cause['issue'])) {
+		if ($helper->user_coordinator($data['issue'])) {
 			$from_user = $this->validate($post);
 			$data = array_merge($data, $from_user);
 
@@ -77,9 +77,9 @@ EOM;
 	}
 	public function getone($id) {
 		$id = (int) $id;
-		$a = $this->fetch_assoc("SELECT * FROM causes WHERE id=$id");
+		$cause = $this->fetch_assoc("SELECT * FROM causes WHERE id=$id");
 
-		return $a[0];
+		return $cause[0];
 	}
 	public function get($issue) {
 		$issue = (int) $issue;

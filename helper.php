@@ -9,8 +9,11 @@ class helper_plugin_bez extends dokuwiki_plugin
 	public function user_viewer() {
 		global $auth, $INFO;
 
+		return true;
+
 		if ($auth->getUserData($INFO['client']))
 			return true;
+
 
 		return false;
 	}
