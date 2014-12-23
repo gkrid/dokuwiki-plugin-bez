@@ -1,7 +1,12 @@
 <?php
 include_once DOKU_PLUGIN."bez/models/entities.php";
 include_once DOKU_PLUGIN."bez/models/issuetypes.php";
-include DOKU_PLUGIN."bez/models/users.php";
+include_once DOKU_PLUGIN."bez/models/users.php";
+
+if (!$helper->user_editor()) {
+	$errors[] = $bezlang['error_issue_report'];
+	$controller->preventDefault();
+}
 
 $usro = new Users();
 if (count($_POST) > 0) {
@@ -20,7 +25,7 @@ if (count($_POST) > 0) {
 	$isso->add($_POST, $data);
 	$value = $_POST;
 	if (count($errors) == 0)
-		$redirect = '?id=bez:issue_show:'.$isso->lastid();
+		header('Location: ?id=bez:issue_show:'.$isso->lastid());
 }
 
 $ento = new Entities();
@@ -28,5 +33,5 @@ $template['entities'] = $ento->get();
 $isstyo = new Issuetypes();
 $template['issue_types'] = $isstyo->get();
 
-$template['user_is_coordinator'] = $usro->is_coordinator();
-$template['coordinators'] = $usro->coordinators();
+$template['user_admin'] = $helper->user_admin();
+$template['nicks'] = $usro->get();

@@ -23,18 +23,16 @@ EOM;
 	public function can_modify($comment_id) {
 		global $INFO;
 
-		$helper = plugin_load('helper', 'bez');
 		$comment = $this->getone($comment_id);
 
 		if ($comment)
-			if ($comment['reporter'] == $INFO['client'] || $helper->user_coordinator($comment['issue']) || $helper->user_admin()) 
+			if ($comment['reporter'] == $INFO['client'] || $this->helper->user_coordinator($comment['issue']) || $this->helper->user_admin()) 
 				return true;
 
 		return false;
 	}
 	public function can_add() {
-		$helper = plugin_load('helper', 'bez');
-		return $helper->user_editor();
+		return $this->helper->user_editor();
 	}
 	public function validate($post) {
 		global $bezlang, $errors;

@@ -70,16 +70,4 @@ class Users {
 	public function nicks() {
 		return array_keys($this->get());
 	}
-
-	public function coordinators_nicks() {
-		return array_keys($this->coordinators());
-	}
-
-	public function coordinators() {
-		$mod = array();
-		foreach ($this->get() as $k => $v)
-			if ($this->is_coordinator($k))
-				$mod[$k] = $v;
-		return $mod;
-	}
 }

@@ -46,7 +46,9 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 
 			$renderer->doc .= '</ul>';
 			return true;
-		}
+		} else
+			$renderer->meta['plugin_bez_nav']['nocache'] = true;
+
 		return false;
 	}
 }

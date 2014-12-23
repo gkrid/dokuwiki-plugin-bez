@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS issues (
 EOM;
 	$this->errquery($q);
 	}
-	public function add($post, $data=array())
+	public function validate($post)
 	{
 		global $bezlang, $errors;
 
@@ -47,11 +47,14 @@ EOM;
 		} 
 		$data['entity'] = (int)$post['entity'];
 
-		$usro = new Users();
-		if ($post['coordinator'] != NULL && !in_array($post['coordinator'], $usro->coordinators_nicks())) {
-			$errors['coordinator'] = $bezlang['vald_coordinator_required'];
-		} 
-		$data['coordinator'] = $post['coordinator'];
+		/*Koordynator nie jest wymagany*/
+		if ($post['coordinator'] != '') {
+			$usro = new Users();
+			 if (!in_array($post['coordinator'], $usro->nicks()))
+				$errors['coordinator'] = $bezlang['vald_coordinator_required'];
+
+			$data['coordinator'] = $post['coordinator'];
+		}
 
 		$post['title'] = trim($post['title']);
 		if (strlen($post['title']) == 0) {
@@ -71,32 +74,44 @@ EOM;
 		} 
 		$data['description'] = $post['description'];
 
-		$this->errinsert($data, 'issues');
+		return $data;
 	}
+
+	public function add($post, $data=array()) {
+		if ($this->helper->user_editor()) {
+			$from_user = $this->validate($post);
+			$data = array_merge($data, $from_user);
+			$this->errinsert($data, 'issues');
+		}
+	}
+
 	public function get($id) {
 		global $bezlang, $errors;
+		if ($this->helper->user_viewer()) {
+			$id = (int) $id;
 
-		$id = (int) $id;
+			$stao = new States();
+			$a = $this->fetch_assoc("SELECT * FROM issues WHERE id=$id");
+			if (count($a) == 0) {
+				$errors[] = $bezlang['error_issue_id_not_specifed'];
+				return array();
+			}
+			$a = $a[0];
+			$a['state'] = $stao->name($a['state']);
 
-		$stao = new States();
-		$a = $this->fetch_assoc("SELECT * FROM issues WHERE id=$id");
-		if (count($a) == 0) {
-			$errors[] = $bezlang['error_issue_id_not_specifed'];
-			return array();
+			$isstyo = new Issuetypes();
+			$a['type'] = $isstyo->name($a['type']);
+
+			$ento = new Entities();
+			$a['entity'] = $ento->name($a['entity']);
+
+			$usro = new Users();
+			$a['reporter'] = $usro->name($a['reporter']);
+
+			$a['date'] = (int)$a['date'];
+			
+			return $a;
 		}
-		$a = $a[0];
-		$a['state'] = $stao->name($a['state']);
-
-		$isstyo = new Issuetypes();
-		$a['type'] = $isstyo->name($a['type']);
-
-		$ento = new Entities();
-		$a['entity'] = $ento->name($a['entity']);
-
-		$usro = new Users();
-		$a['reporter'] = $usro->name($a['reporter']);
-
-		return $a;
 	}
 }
 

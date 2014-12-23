@@ -7,7 +7,7 @@
 <h1>[<?php echo $template['issue']['entity'] ?>] <?php echo $template['issue']['title'] ?></h1>
 
 <div class="time_box">
-<span><?php echo $bezlang['opened_for'] ?>: <?php $template['issue']['date'] ?></span>
+<span><?php echo $bezlang['opened_for'] ?>: <?php echo $helper->time2date($template['issue']['date']) ?></span>
 <?php if ($template['issue']['moddate'] != NULL): ?>
 	<span>
 	<?php if ($template['closed']): ?>

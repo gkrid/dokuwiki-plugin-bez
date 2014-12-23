@@ -27,11 +27,10 @@ EOM;
 	$this->errquery($q);
 	}
 	public function can_modify($task_id) {
-		$helper = plugin_load('helper', 'bez');
 		$task = $this->getone($task_id);
 
 		if ($task)
-			if ($helper->user_coordinator($task['issue']) || $helper->user_admin()) 
+			if ($this->helper->user_coordinator($task['issue']) || $this->helper->user_admin()) 
 				return true;
 
 		return false;
@@ -114,8 +113,7 @@ EOM;
 	}
 	public function add($post, $data=array())
 	{
-		$helper = plugin_load('helper', 'bez');
-		if ($helper->user_coordinator($data['issue'])) {
+		if ($this->helper->user_coordinator($data['issue'])) {
 			$from_user = $this->validate($post);
 			$data = array_merge($data, $from_user);
 

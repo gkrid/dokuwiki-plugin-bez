@@ -1,6 +1,6 @@
 <?php
 class Connect {
-	protected $db;
+	protected $db, $helper;
 	static protected $lastid;
 	protected function errquery($query)
 	{
@@ -72,5 +72,7 @@ class Connect {
 		$this->db = new mysqli('localhost', 'root', '', 'bez');
 		if ($this->db->connect_errno) 
 			$errors[] = "Failed to connect to MySQL: ". $this->db->connect_error;
+
+		$this->helper = plugin_load('helper', 'bez');
 	}
 }

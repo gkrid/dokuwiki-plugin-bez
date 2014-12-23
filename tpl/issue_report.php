@@ -26,15 +26,15 @@
 </span>
 </div>
 
-<?php if ($template['user_is_coordinator']): ?>
+<?php if ($template['user_admin']): ?>
 <div class="row">
 <label for="coordinator"><?php echo $bezlang['coordinator'] ?>:</label>
 <span>
 <select name="coordinator" id="coordinator">
 <option value="">--- <?php echo $bezlang['state_proposal'] ?> ---</option>
-<?php foreach ($template['coordinators'] as $key => $name): ?>
-	<option <?php if ($value['coordinator'] == $key) echo 'selected' ?>
-	 value="<?php echo $key ?>"><?php echo $name ?></option>
+<?php foreach ($template['nicks'] as $nick => $name): ?>
+	<option <?php if ($value['coordinator'] == $nick) echo 'selected' ?>
+	 value="<?php echo $nick ?>"><?php echo $name ?></option>
 <?php endforeach ?>
 </select>
 </span>

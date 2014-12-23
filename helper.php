@@ -87,4 +87,7 @@ class helper_plugin_bez extends dokuwiki_plugin
 		$time_str .= ' '.$this->getLang('ago');
 		return $time_str;
 	}
+	public function time2date($time) {
+		return date($this->getConf('date_format'), $time);
+	}
 }
