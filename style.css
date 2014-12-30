@@ -219,7 +219,7 @@
 }
 
 .bds_form textarea {
-	width: 100%;
+	width: 100% !important;
 	height: 10em;
 	display: block;
 }
@@ -307,3 +307,23 @@ input.days {
 	background: url('images/closedtask.png') no-repeat 1px 4px;
 }
 
+#entities_form label {
+	display: block;
+}
+
+#entities_form textarea {
+	display: block;
+	height: 40em;
+	width: 20em;
+	margin-bottom: 1em;
+}
+
+#entities_form input[type=reset] {
+	background: none;
+	border: none;
+	text-decoration: underline;
+}
+
+#entities_form input[type=reset]:hover {
+	text-decoration: none;
+}

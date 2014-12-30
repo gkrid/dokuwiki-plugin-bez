@@ -44,6 +44,9 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 			if ($helper->user_editor())
 				$renderer->doc .= '<li><a href="?id=bez:issue_report">'.$this->getLang('bds_issue_report').'</a></li>';
 
+			if ($helper->user_admin())
+				$renderer->doc .= '<li><a href="?id=bez:entity">'.$this->getLang('entity_manage').'</a></li>';
+
 			$renderer->doc .= '</ul>';
 			return true;
 		} else

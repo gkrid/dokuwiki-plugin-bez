@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS issues (
 	state INT(11) NOT NULL,
 	opinion TEXT NULL,
 	type INT(11) NOT NULL,
-	entity INT(11) NOT NULL,
+	entity CHAR(100) NOT NULL,
 	coordinator CHAR(100) NULL,
 	reporter CHAR(100) NOT NULL,
 	date INT(11) NOT NULL,
@@ -42,10 +42,10 @@ EOM;
 		$data['type'] = (int)$post['type'];
 
 		$ento = new Entities();
-		if ( ! in_array($post['entity'], $ento->ids())) {
+		if ( ! in_array($post['entity'], $ento->get_list())) {
 			$errors['entity'] = $bezlang['vald_entity_required'];
 		} 
-		$data['entity'] = (int)$post['entity'];
+		$data['entity'] = $post['entity'];
 
 		/*Koordynator nie jest wymagany*/
 		if ($post['coordinator'] != '') {
@@ -101,9 +101,6 @@ EOM;
 
 			$isstyo = new Issuetypes();
 			$a['type'] = $isstyo->name($a['type']);
-
-			$ento = new Entities();
-			$a['entity'] = $ento->name($a['entity']);
 
 			$usro = new Users();
 			$a['reporter'] = $usro->name($a['reporter']);

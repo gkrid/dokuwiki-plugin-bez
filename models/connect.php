@@ -17,6 +17,29 @@ class Connect {
 		return $this->lastid;
 	}
 
+	protected function mul_errinsert($data, $table)
+	{
+		global $errors;
+		if (count($errors) > 0)
+			return;
+		if (!is_array($data[0]))
+			return;
+
+		$fields = implode(',', array_keys($data[0]));
+		$values = '';
+		foreach ($data as $row) {
+			$values .= '(';
+			foreach ($row as $v)
+				$values .= "'".$this->db->real_escape_string($v)."',";
+			$values = substr($values, 0, -1);
+			$values .= '),';
+		}
+		$values = substr($values, 0, -1);
+		$this->errquery("INSERT INTO $table ($fields) VALUES $values");
+		
+		$this->lastid = $this->db->insert_id;
+	}
+
 	protected function errinsert($data, $table)
 	{
 		global $errors;

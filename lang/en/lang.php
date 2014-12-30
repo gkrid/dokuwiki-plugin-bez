@@ -28,6 +28,7 @@ $lang['last_modified_by'] = "Last changed by";
 $lang['opened_tasks'] = "Open tasks";
 
 $lang['entity'] = "Source of report";
+$lang['entities'] = "Sources of report (one per line)";
 
 $lang['opinion'] = "Effectiveness evaluation";
 $lang['root_cause'] = "Cause category";
@@ -66,6 +67,7 @@ $lang['error_task_add'] = "You cannot add tasks. Access denied.";
 $lang['error_table_unknown'] = "The table dosn't exist.";
 $lang['error_report_unknown'] = "The report dosn't exist";
 $lang['error_issue_report'] = 'You cannot add new issues.';
+$lang['error_entity'] = 'You cannot add new soruces of report.';
 
 $lang['vald_root_cause'] = "Select cause category.";
 
@@ -97,6 +99,8 @@ $lang['vald_cost_wrong_format'] = "Cost should be integer.";
 $lang['vald_action_required'] = "Provide an action of the task";
 
 $lang['vald_days_should_be_numeric'] = "Days have to be decimal.";
+
+$lang['vald_entity_too_long'] = 'Single source of report can have not have more than %d characters.';
 
 
 $lang['type_complaint'] = "complaint";
@@ -262,3 +266,7 @@ $lang['comments'] = 'Comments';
 $lang['delete'] = 'Delete';
 $lang['info_no_causes_added'] = 'You have to add cause in order to add corrective and preventive actions.';
 
+$lang['entity_manage'] = 'Sources of report';
+
+$lang['sort'] = 'Sort';
+$lang['cancel'] = 'Cancel';

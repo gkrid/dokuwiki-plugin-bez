@@ -129,4 +129,12 @@ jQuery(document).ready(function() {
 		show.call(jQuery("#bds_history h1")[0]);
 	});
 
+	//entities sort
+	jQuery("#entities_form input[type=button]").click(function() {
+		var textarea = jQuery(this).parents("form").find("textarea");
+		var lines = jQuery.trim(textarea.val()).split("\n");
+		lines.sort();
+		textarea.val(lines.join("\n"));
+	});
+
 });

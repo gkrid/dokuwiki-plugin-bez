@@ -29,7 +29,7 @@ if (count($_POST) > 0) {
 }
 
 $ento = new Entities();
-$template['entities'] = $ento->get();
+$template['entities'] = $ento->get_list();
 $isstyo = new Issuetypes();
 $template['issue_types'] = $isstyo->get();
 

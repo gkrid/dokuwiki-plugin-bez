@@ -1,3 +1,4 @@
+<div class="bds_block">
 <form action="<?php echo $_SERVER[REQUEST_URI] ?>" method="POST">
 <fieldset class="bds_form">
 <div class="row">
@@ -18,9 +19,9 @@
 
 <span>
 <select name="entity" id="entity">
-<?php foreach ($template['entities'] as $key => $name): ?>
-	<option <?php if ($value['entity'] == $key) echo 'selected' ?>
-	 value="<?php echo $key ?>"><?php echo $name ?></option>
+<?php foreach ($template['entities'] as $entity): ?>
+	<option <?php if ($value['entity'] == $entity) echo 'selected' ?>
+	 value="<?php echo $entity ?>"><?php echo $entity ?></option>
 <?php endforeach ?>
 </select>
 </span>
@@ -82,3 +83,4 @@
 
 <input type="submit" value="<?php echo $bezlang['save'] ?>">
 </form>
+</div>

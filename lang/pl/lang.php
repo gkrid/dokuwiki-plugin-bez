@@ -28,6 +28,7 @@ $lang['last_modified_by'] = 'Ostatnio zmieniony przez';
 $lang['opened_tasks'] = 'Zadania otwarte';
 
 $lang['entity'] = 'Źródło zgłoszenia';
+$lang['entities'] = 'Źródła zgłoszeń (każda linia oznacza jedno źródło zgłoszeń)';
 
 $lang['opinion'] = 'Ocena skuteczności';
 $lang['root_cause'] = 'Kategoria przyczyny';
@@ -65,6 +66,7 @@ $lang['error_task_add'] = 'Nie masz uprawnień aby dodawać zadania.';
 $lang['error_table_unknown'] = 'Wybrana tabela nie istnieje.';
 $lang['error_report_unknown'] = 'Wybrana raport nie istnieje.';
 $lang['error_issue_report'] = 'Nie masz uprawnień aby zgłaszać nowe problemy.';
+$lang['error_entity'] = 'Nie masz uprawnień aby dodawać nowe źródła zgłoszeń.';
 
 $lang['vald_type_required'] = 'Określ typ problemu.';
 $lang['vald_entity_required'] = 'Wybierz źródło zgłoszenia z listy.';
@@ -95,6 +97,8 @@ $lang['vald_cost_wrong_format'] = 'Koszt powinien być liczbą całkowitą.';
 $lang['vald_class_required'] = 'Podaj klasę zadania.';
 
 $lang['vald_days_should_be_numeric'] = 'Ilość dni musi być liczbą.';
+
+$lang['vald_entity_too_long'] = 'Pojedyńcze źródło zgłoszenia może mieć najwyżej %d znaków.';
 
 
 $lang['type_complaint'] = 'reklamacja';
@@ -258,3 +262,8 @@ $lang['action'] = 'Akcja';
 
 $lang['delete'] = 'Usuń';
 $lang['info_no_causes_added'] = 'Musisz dodać co najmniej jedną przyczynę, aby dodawać działania korygujące i zapobiegawcze.';
+
+$lang['entity_manage'] = 'Źródła zgłoszenia';
+
+$lang['sort'] = 'Sortuj';
+$lang['cancel'] = 'Anuluj';
