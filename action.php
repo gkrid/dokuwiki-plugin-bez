@@ -16,7 +16,6 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 	{
 		$controller->register_hook('ACTION_ACT_PREPROCESS', 'BEFORE', $this, 'action_act_preprocess');
 		$controller->register_hook('TPL_ACT_RENDER', 'BEFORE', $this, 'tpl_act_render');
-		$controller->register_hook('PARSER_CACHE_USE', 'BEFORE', $this, 'prevent_cache');
 	}
 
 	public function __construct()
@@ -82,17 +81,6 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 			$bezlang = $this->lang;
 			$helper = $this->helper;
 			include_once $tpl;
-		}
-	}
-	public function prevent_cache($event, $param) {
-		$cache = $event->data;
-		if ($cache->mode == 'xhtml') {
-			$meta = p_get_metadata($cache->page, 'plugin_bez_nav');
-			if (is_array($meta) && $meta['nocache']) {
-				$event->preventDefault();
-				$event->stopPropagation();
-				$event->result = false;
-			}
 		}
 	}
 }

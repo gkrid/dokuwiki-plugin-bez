@@ -1,6 +1,6 @@
 <?php
-$lang['bds'] = "Risk Elimination Base";
-$lang['bds_short'] = "REB";
+$lang['bez'] = "Risk Elimination Base";
+$lang['bez_short'] = "BEZ";
 $lang['bds_timeline'] = "History";
 $lang['bds_issues'] = "Registers";
 $lang['bds_issue_report'] = "Report a problem";

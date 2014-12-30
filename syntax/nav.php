@@ -32,26 +32,66 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 		return true;
     }
 
-    function render($mode, &$renderer, $data) {
+    function render($mode, &$R, $pass) {
+		global $INFO;
 
 		$helper = $this->loadHelper('bez');
-		if ($mode == 'xhtml' && $helper->user_viewer()) {
+		if ($mode != 'xhtml' || !$helper->user_viewer()) return false;
 
-			$renderer->doc .= '<ul>';
-			$renderer->doc .= '<li><a href="?id=bez:timeline">'.$this->getLang('bds_timeline').'</a></li>';
-			$renderer->doc .= '<li><a href="?id=bez:issues">'.$this->getLang('bds_issues').'</a></li>';
+        $R->info['cache'] = false;
 
-			if ($helper->user_editor())
-				$renderer->doc .= '<li><a href="?id=bez:issue_report">'.$this->getLang('bds_issue_report').'</a></li>';
+		$data = array(
+			'bez:timeline' => array('id' => 'bez:timeline', 'type' => 'd', 'level' => 1, 'title' => 'bez'),
+			'bez:issues' => array('id' => 'bez:issues', 'type' => 'f', 'level' => 2, 'title' => 'bds_issues'),
+		);
 
-			if ($helper->user_admin())
-				$renderer->doc .= '<li><a href="?id=bez:entity">'.$this->getLang('entity_manage').'</a></li>';
+		if ($helper->user_editor())
+			$data['bez:issue_report'] = array('id' => 'bez:issue_report', 'type' => 'f', 'level' => 2, 'title' => 'bds_issue_report');
 
-			$renderer->doc .= '</ul>';
-			return true;
-		} else
-			$renderer->meta['plugin_bez_nav']['nocache'] = true;
+		if ($helper->user_admin())
+			$data['bez:entity'] = array('id' => 'bez:entity', 'type' => 'f', 'level' => 2, 'title' => 'entity_manage');
 
-		return false;
+
+		$id = $INFO['id'];
+		$ex = explode(':', $id);
+		$root = $ex[0];
+		if ($root == 'bez') {
+			$data['bez:timeline']['open'] = true;
+		} else {
+			$data['bez:timeline']['open'] = false;
+			array_splice($data, 1);
+		}
+
+        $R->doc .= '<div class="plugin__bez">';
+        $R->doc .= html_buildlist($data,'idx',array($this,'_list'),array($this,'_li'));
+        $R->doc .= '</div>';
+
+		return true;
 	}
+
+	function _bezlink($id, $title) {
+		$uri = wl($id);
+		return '<a href="'.$uri.'">'.$this->getLang($title).'</a>';
+	}
+
+    function _list($item){
+        global $INFO;
+
+        if(($item['type'] == 'd' && $item['open']) || $INFO['id'] == $item['id']){
+            return '<strong>'.$this->_bezlink($item['id'], $item['title']).'</strong>';
+        }else{
+            return $this->_bezlink($item['id'], $item['title']);
+        }
+
+    }
+
+    function _li($item){
+        if($item['type'] == "f"){
+            return '<li class="level'.$item['level'].'">';
+        }elseif($item['open']){
+            return '<li class="open">';
+        }else{
+            return '<li class="closed">';
+        }
+    }
 }

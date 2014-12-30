@@ -1,6 +1,6 @@
 <?php
-$lang['bds'] = 'Baza Doskonalenia Systemu';
-$lang['bds_short'] = 'BDS';
+$lang['bez'] = 'Baza Elimnacji Zagrożeń';
+$lang['bez_short'] = 'BEZ';
 $lang['bds_timeline'] = 'Historia';
 $lang['bds_issues'] = 'Zestawienia';
 $lang['bds_issue_report'] = 'Zgłoś problem';
