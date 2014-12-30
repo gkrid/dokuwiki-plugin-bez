@@ -1,5 +1,5 @@
 <div class="bds_block">
-<form action="<?php echo $_SERVER[REQUEST_URI] ?>" method="POST">
+<form action="<?php echo $template['uri'] ?>?id=bez:issue_report:<?php echo $template['issue_id'] ?>:<?php echo $template['action'] ?>" method="POST">
 <fieldset class="bds_form">
 <div class="row">
 <label for="type"><?php echo $bezlang['type'] ?>:</label>
@@ -82,5 +82,10 @@
 </fieldset>
 
 <input type="submit" value="<?php echo $bezlang['save'] ?>">
+<?php if ($template['action'] == 'update'): ?>
+	 <a href="<?php echo $tepmlate['uri'] ?>?id=bez:issue_show:<?php echo $template['issue_id'] ?>" class="bez_delete_button bez_link_button">
+		<?php echo $bezlang['cancel'] ?>
+	</a>
+<?php endif ?>
 </form>
 </div>

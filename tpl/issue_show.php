@@ -24,7 +24,13 @@
 <th><?php echo $bezlang['reporter'] ?></th>
 <td><?php echo $template['issue']['reporter'] ?></td>
 <th><?php echo $bezlang['coordinator'] ?></th>
-<td><?php echo $template['issue']['coordinator'] ?></td>
+<td>
+<?php if ($template['issue']['coordinator'] != ''): ?>
+<?php echo $template['issue']['coordinator'] ?>
+<?php else: ?>
+<em><?php echo $bezlang['none'] ?> (<?php echo $bezlang['proposal'] ?>)</em>
+<?php endif ?>
+</td>
 </tr>
 </table>
 
@@ -38,7 +44,19 @@
 <?php endif ?>
 
 <a href="?id=bez:8d:<?php echo $template['issue']['id'] ?>" class="bds_inline_button bds_report_button">
-<?php echo $bezlang['8d_report'] ?></a>
+	<?php echo $bezlang['8d_report'] ?>
+</a>
+
+<a class="bds_inline_button bds_send_button" href="mailto:'.$to.'?subject='.rawurlencode($subject).'&body='.rawurlencode($text).'">
+	✉ <?php echo $bezlang['send_mail'] ?>
+</a>
+
+
+<?php if ($template['issue_opened'] && $template['user_is_coordinator']): ?> 
+	<a href="?id=bez:issue_report:<?php echo $template['issue']['id'] ?>" class="bds_inline_button bds_edit_button">
+		<?php echo $bezlang['edit'] ?>
+	</a>
+<?php endif ?>
 
 </div>
 

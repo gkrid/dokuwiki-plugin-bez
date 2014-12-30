@@ -162,11 +162,23 @@
 	text-decoration:none !important;
 }
 
+.bez_link_button {
+	float: none;
+	display: inline;
+}
+
 .bds_report_button {
 	position:absolute;
 	bottom: 0.5em;
 	right: 0.5em;
 }
+
+.bds_edit_button {
+	position:absolute;
+	bottom: 0.5em;
+	right: 13em;
+}
+
 
 .bds_send_button {
 	position:absolute;

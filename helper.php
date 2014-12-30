@@ -36,8 +36,8 @@ class helper_plugin_bez extends dokuwiki_plugin
 
 		if (self::user_editor()) {
 			$issuo = new Issues();
-			$issue = $issuo->get($issue_id);
-			if (count($errors) > 0 && $issue['coordinator'] == $INFO['client'])
+			$issue = $issuo->get_clean($issue_id);
+			if (count($errors) == 0 && $issue['coordinator'] == $INFO['client'])
 				return true;
 		}
 		return false;

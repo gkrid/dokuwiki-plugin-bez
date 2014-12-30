@@ -47,12 +47,15 @@ EOM;
 		} 
 		$data['entity'] = $post['entity'];
 
+		/*Jeżeli nie jesteśmy adminem, to jeżeli chodzi o koordynatorów nie mamy nic do gadania*/
 		/*Koordynator nie jest wymagany*/
-		if ($post['coordinator'] != '') {
-			$usro = new Users();
-			 if (!in_array($post['coordinator'], $usro->nicks()))
-				$errors['coordinator'] = $bezlang['vald_coordinator_required'];
+		if ($this->helper->user_admin()) {
+			if ($post['coordinator'] != '') {
+				$usro = new Users();
+				 if (!in_array($post['coordinator'], $usro->nicks()))
+					$errors['coordinator'] = $bezlang['vald_coordinator_required'];
 
+			}
 			$data['coordinator'] = $post['coordinator'];
 		}
 
@@ -74,6 +77,13 @@ EOM;
 		} 
 		$data['description'] = $post['description'];
 
+		/*zmienamy status tylko w przypadku edycji*/
+		if (array_key_exists('state', $post)) 
+			$data['state'] = $this->val_state($post['state']);
+
+		if (array_key_exists('reason', $post))
+			$data['reason'] = $this->val_reason($post['reason']);
+
 		return $data;
 	}
 
@@ -85,18 +95,40 @@ EOM;
 		}
 	}
 
-	public function get($id) {
+	public function update($post, $data, $id) {
+		global $INFO;
+		$issue = $this->get_clean($id);
+		if ($this->helper->user_admin() || $issue['coordinator'] == $INFO['client']) {
+			$from_user = $this->validate($post);
+			$data = array_merge($data, $from_user);
+			$this->errupdate($data, 'issues', $id);
+		}
+	}
+
+	public function get_clean($id) {
 		global $bezlang, $errors;
 		if ($this->helper->user_viewer()) {
 			$id = (int) $id;
 
-			$stao = new States();
 			$a = $this->fetch_assoc("SELECT * FROM issues WHERE id=$id");
 			if (count($a) == 0) {
 				$errors[] = $bezlang['error_issue_id_not_specifed'];
 				return array();
 			}
 			$a = $a[0];
+			return $a;
+		}
+	}
+
+	public function get($id) {
+		global $bezlang, $errors;
+		if ($this->helper->user_viewer()) {
+
+			$a = $this->get_clean($id);
+			if ($a == array())
+				return $array;
+
+			$stao = new States();
 			$a['state'] = $stao->name($a['state']);
 
 			$isstyo = new Issuetypes();
@@ -104,6 +136,7 @@ EOM;
 
 			$usro = new Users();
 			$a['reporter'] = $usro->name($a['reporter']);
+			$a['coordinator'] = $usro->name($a['coordinator']);
 
 			$a['date'] = (int)$a['date'];
 			
