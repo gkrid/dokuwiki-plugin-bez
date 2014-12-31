@@ -82,6 +82,7 @@ $lang['vald_coordinator_required'] = "Coordinator has to be wiki user.";
 $lang['vald_desc_required'] = "Describe a problem";
 $lang['vald_desc_too_long'] = "Too long description, max %d  characters.";
 $lang['vald_opinion_too_long'] = "Effectiveness of evaluation is too long, max: %d characters.";
+$lang['vald_opinion_required'] = 'Effectiveness of evaluation is required.';
 $lang['vald_cannot_give_opinion'] = "You cannot evaluate effectiveness when a problem is still open.";
 $lang['vald_cannot_give_reason'] = "You didn't change a status of the task.";
 

@@ -41,7 +41,7 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
         $R->info['cache'] = false;
 
 		$data = array(
-			'bez:timeline' => array('id' => 'bez:timeline', 'type' => 'd', 'level' => 1, 'title' => 'bez'),
+			'bez:start' => array('id' => 'bez:start', 'type' => 'd', 'level' => 1, 'title' => 'bez'),
 			'bez:issues' => array('id' => 'bez:issues', 'type' => 'f', 'level' => 2, 'title' => 'bds_issues'),
 		);
 
@@ -56,9 +56,9 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 		$ex = explode(':', $id);
 		$root = $ex[0];
 		if ($root == 'bez') {
-			$data['bez:timeline']['open'] = true;
+			$data['bez:start']['open'] = true;
 		} else {
-			$data['bez:timeline']['open'] = false;
+			$data['bez:start']['open'] = false;
 			array_splice($data, 1);
 		}
 

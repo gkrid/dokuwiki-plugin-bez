@@ -1,6 +1,3 @@
-/* DOKUWIKI:include jquery.dataTables.js */
-/* DOKUWIKI:include jquery.dataTables.yadcf.js */
-
 bds = {};
 
 bds.gup = function (name) {
@@ -15,7 +12,7 @@ bds.gup = function (name) {
 };
 
 jQuery(document).ready(function() {
-	var ids = ['description', 'cause', 'content', 'task', 'reason'];
+	var ids = ['description', 'cause', 'content', 'task', 'reason', 'opinion'];
 
 	for (var i = 0; i < ids.length; i++) {
 		var textarea = jQuery("#" + ids[i]);
@@ -29,35 +26,22 @@ jQuery(document).ready(function() {
 	}
 
 	//show/hide opinion
-	$opinion_row = jQuery("#bds_change_issue textarea[name=opinion]").parents("div[class=row]");
-	
-	if ($opinion_row.length > 0) {
-		var $select = jQuery("#bds_change_issue select[name=state]"); 
-		switch ($select.val()) {
-			case "0":
-			case "1":
-				$opinion_row.hide();
-			break;
+	var $form = jQuery("#bez_issue_report.update"); 
+	if ($form.length > 0) {
+		var $coordinator = $form.find("input[name=coordinator]");
+		var $opinion_row = $form.find("textarea[name=opinion]").parents("div[class=row]");
+		var $state = $form.find("input[name=state]");
 
-			case "2":
-			case "3":
-			case "4":
-				$opinion_row.show();
-			break;
+		if ($form.find("input[name=state]:checked").val() == "0") {
+			$opinion_row.hide();
 		}
-		$select.change(function() {
-			switch (jQuery(this).val()) {
-				case "0":
-				case "1":
-					$opinion_row.hide();
-				break;
-
-				case "2":
-				case "3":
-				case "4":
-					$opinion_row.show();
-				break;
-			}
+		
+		$state.change(function() {
+			$this = jQuery(this);
+			if ($this.val() == "0")
+				$opinion_row.hide();
+			else
+				$opinion_row.show();
 		});
 	}
 

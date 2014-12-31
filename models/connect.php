@@ -79,6 +79,25 @@ class Connect {
 		/*nie zawsze trafimy, ale często i to nam wystarczy :)*/
 		$this->lastid = $id-1;
 	}
+	protected function sort_by_days($res, $field) {
+		$days = 0;
+		$last_day = -1;
+		$rt = array();
+		$today24 = mktime(24, 0, 0);
+		foreach ($res as $issue) {
+			$issue = $this->join($issue);
+			$day = ceil(($today24 - (int)$issue[$field])/(24*60*60)) - 1;
+			if ($last_day != $day) {
+				$rt[$day] = array();
+				$days++;
+				$last_day = $day;
+			}
+			$rt[$day][] = $issue;
+			if ($days >= 7)
+				break;
+		}
+		return $rt;
+	}
 	protected function fetch_assoc($q)
 	{
 		global $errors;

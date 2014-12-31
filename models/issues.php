@@ -6,6 +6,7 @@ include_once DOKU_PLUGIN."bez/models/states.php";
 include_once DOKU_PLUGIN."bez/models/users.php";
 
 class Issues extends Connect {
+	private $coord_special = array('-proposal', '-rejected');
 	public function __construct() {
 		global $errors;
 		parent::__construct();
@@ -21,7 +22,7 @@ CREATE TABLE IF NOT EXISTS issues (
 	coordinator CHAR(100) NULL,
 	reporter CHAR(100) NOT NULL,
 	date INT(11) NOT NULL,
-	comment CHAR(100) NULL,
+	close_date INT(11) NULL,
 
 	PRIMARY KEY (id)
 )
@@ -49,13 +50,11 @@ EOM;
 
 		/*Jeżeli nie jesteśmy adminem, to jeżeli chodzi o koordynatorów nie mamy nic do gadania*/
 		/*Koordynator nie jest wymagany*/
+		$usro = new Users();
 		if ($this->helper->user_admin()) {
-			if ($post['coordinator'] != '') {
-				$usro = new Users();
-				 if (!in_array($post['coordinator'], $usro->nicks()))
+				if (!in_array($post['coordinator'], $usro->nicks()) && !in_array($post['coordinator'], $this->coord_special))
 					$errors['coordinator'] = $bezlang['vald_coordinator_required'];
 
-			}
 			$data['coordinator'] = $post['coordinator'];
 		}
 
@@ -78,11 +77,26 @@ EOM;
 		$data['description'] = $post['description'];
 
 		/*zmienamy status tylko w przypadku edycji*/
-		if (array_key_exists('state', $post)) 
-			$data['state'] = $this->val_state($post['state']);
+		/*oraz gdy istnieje koordynator*/
+		if (array_key_exists('state', $post) && in_array($data['coordinator'], $usro->nicks())) {
+			$post['state'] = (int)$post['state'];
+			$stato = new States();
+			if (!array_key_exists($post['state'], $stato->get()))
+				$errors['state'] = $bezlang['vald_state_required'];
 
-		if (array_key_exists('reason', $post))
-			$data['reason'] = $this->val_reason($post['reason']);
+			$data['state'] = $post['state'];
+		}
+
+		/*Przyczyna zamknięcia*/
+		if (array_key_exists('opinion', $post) && $data['state'] == 1) {
+			$opinion_max = 65000;
+			if (strlen($post['opinion']) == 0) {
+				$errors['opinion'] = $bezlang['vald_opinion_required'];
+			} else if (strlen($post['opinion']) > $opinion_max) {
+				$errors['opinion'] = str_replace('%d', $opinion_max, $bezlang['vald_opinion_too_long']);
+			} 
+			$data['opinion'] = $post['opinion'];
+		}
 
 		return $data;
 	}
@@ -105,6 +119,23 @@ EOM;
 		}
 	}
 
+	public function join($a) {
+		$stao = new States();
+		$a['state'] = $stao->name($a['state']);
+
+		$isstyo = new Issuetypes();
+		$a['type'] = $isstyo->name($a['type']);
+
+		$usro = new Users();
+		$a['reporter'] = $usro->name($a['reporter']);
+
+		if (!in_array($a['coordinator'], $this->coord_special))
+			$a['coordinator'] = $usro->name($a['coordinator']);
+
+		$a['date'] = (int)$a['date'];
+		return $a;
+	}
+
 	public function get_clean($id) {
 		global $bezlang, $errors;
 		if ($this->helper->user_viewer()) {
@@ -120,6 +151,26 @@ EOM;
 		}
 	}
 
+	public function get_by_days() {
+		if (!$this->helper->user_viewer()) return false;
+
+		$res = $this->fetch_assoc("SELECT * FROM issues ORDER BY date DESC");
+		$create = $this->sort_by_days($res, 'date');
+		foreach ($create as $day => $issues)
+			foreach ($issues as $ik => $issue)
+				$create[$day][$ik]['class'] = 'issue_created';
+
+		$res2 = $this->fetch_assoc("SELECT * FROM issues WHERE close_date != NULL ORDER BY close_date DESC");
+		$close = $this->sort_by_days($res2, 'close_date');
+		foreach ($close as $day => $issues)
+			foreach ($issues as $ik => $issue) {
+				$close[$day][$ik]['class'] = 'issue_closed';
+				$close[$day][$ik]['date'] = $close[$day][$ik]['close_date'];
+			}
+
+		return $this->helper->days_array_merge($create, $close, 'date');
+	}
+
 	public function get($id) {
 		global $bezlang, $errors;
 		if ($this->helper->user_viewer()) {
@@ -127,19 +178,9 @@ EOM;
 			$a = $this->get_clean($id);
 			if ($a == array())
 				return $array;
-
-			$stao = new States();
-			$a['state'] = $stao->name($a['state']);
-
-			$isstyo = new Issuetypes();
-			$a['type'] = $isstyo->name($a['type']);
-
-			$usro = new Users();
-			$a['reporter'] = $usro->name($a['reporter']);
-			$a['coordinator'] = $usro->name($a['coordinator']);
-
-			$a['date'] = (int)$a['date'];
 			
+			$a = $this->join($a);
+
 			return $a;
 		}
 	}

@@ -1,4 +1,4 @@
-<div class="bds_block">
+<div id="bez_issue_report" class="bds_block <?php echo $template['action'] ?>">
 <form action="<?php echo $template['uri'] ?>?id=bez:issue_report:<?php echo $template['issue_id'] ?>:<?php echo $template['action'] ?>" method="POST">
 <fieldset class="bds_form">
 <div class="row">
@@ -32,7 +32,10 @@
 <label for="coordinator"><?php echo $bezlang['coordinator'] ?>:</label>
 <span>
 <select name="coordinator" id="coordinator">
-<option value="">--- <?php echo $bezlang['state_proposal'] ?> ---</option>
+<option <?php if ($value['coordinator'] == '-proposal') echo 'selected' ?>
+	value="-proposal">--- <?php echo $bezlang['state_proposal'] ?> ---</option>
+<option <?php if ($value['coordinator'] == '-rejected') echo 'selected' ?>
+	value="-rejected">--- <?php echo $bezlang['state_rejected'] ?> ---</option>
 <?php foreach ($template['nicks'] as $nick => $name): ?>
 	<option <?php if ($value['coordinator'] == $nick) echo 'selected' ?>
 	 value="<?php echo $nick ?>"><?php echo $name ?></option>
@@ -57,27 +60,23 @@
 </textarea>
 </span>
 </div>
-<?php if (isset($template['editcase'])): ?>
-	<?php if ($template['user_is_coordinator']): ?>
-		<div class="row">
-		<label for="state"><?php echo $bezlang['state'] ?>:</label>
-		<span>
-		<select name="state" id="state">
-		<?php foreach ($this->issue_states as $key => $state): ?>
-			<option <?php if ($value['state'] == $key) echo 'selected' ?>
-			 value="<?php echo $key ?>"><?php echo $state ?></option>
-		<?php endforeach ?>
-		</select>
-		</span>
-		</div>
+<?php if ($template['action'] == 'update' && $template['user_coordinator']): ?>
+	<div class="row">
+	<label for="state"><?php echo $bezlang['state'] ?>:</label>
+	<span>
+	<?php foreach ($template['issue_states'] as $key => $state): ?>
+		<label><input name="state" type="radio" <?php if ($value['state'] == $key) echo 'checked' ?>
+		 value="<?php echo $key ?>" /><?php echo $state ?></label>
+	<?php endforeach ?>
+	</span>
+	</div>
 
-		<div class="row">
-		<label for="opinion"><?php echo $bezlang['opinion'] ?>:</label>
-		<span>
-		<textarea name="opinion" id="opinion" class="edit"><?php echo $value['opinion'] ?></textarea>
-		</span>
-		</div>
-	<?php endif ?>
+	<div class="row">
+	<label for="opinion"><?php echo $bezlang['opinion'] ?>:</label>
+	<span>
+	<textarea name="opinion" id="opinion" class="edit"><?php echo $value['opinion'] ?></textarea>
+	</span>
+	</div>
 <?php endif ?>
 </fieldset>
 

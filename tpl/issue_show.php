@@ -25,10 +25,12 @@
 <td><?php echo $template['issue']['reporter'] ?></td>
 <th><?php echo $bezlang['coordinator'] ?></th>
 <td>
-<?php if ($template['issue']['coordinator'] != ''): ?>
-<?php echo $template['issue']['coordinator'] ?>
+<?php if ($template['issue']['coordinator'] == '-proposal'): ?>
+	<em><?php echo $bezlang['none'] ?> (<?php echo $bezlang['state_proposal'] ?>)</em>
+<?php elseif ($template['issue']['coordinator'] == '-rejected'): ?>
+	<em><?php echo $bezlang['none'] ?> (<?php echo $bezlang['state_rejected'] ?>)</em>
 <?php else: ?>
-<em><?php echo $bezlang['none'] ?> (<?php echo $bezlang['proposal'] ?>)</em>
+	<?php echo $template['issue']['coordinator'] ?>
 <?php endif ?>
 </td>
 </tr>

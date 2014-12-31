@@ -17,6 +17,9 @@ class Taskstates {
 			default: return -1;
 		}
 	}
+	public function close_states() {
+		return array(1, 2);
+	}
 	public function name($id) {
 		$a = $this->get();
 		return $a[$id];

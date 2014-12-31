@@ -58,8 +58,11 @@ class helper_plugin_bez extends dokuwiki_plugin
 		return p_render('xhtml',p_get_instructions($content), $info);
 	}
 
+	public function issue_uri($id) {
+		return '?id=bez:issue_show:'.$id;
+	}
 	public function html_issue_link($id) {
-		return '<a href="?id=bez:issue_show:'.$id.'">#'.$id.'</a>';
+		return '<a href="'.self::issue_uri($id).'">#'.$id.'</a>';
 	}
 
 	public function string_time_to_now($value) {
@@ -89,5 +92,20 @@ class helper_plugin_bez extends dokuwiki_plugin
 	}
 	public function time2date($time) {
 		return date($this->getConf('date_format'), $time);
+	}
+	public function array_data_sorty($a, $b, $key) {
+		$a = $a[$key];
+		$b = $b[$key];
+		if ($a == $b)
+			return 0;
+		return ($a > $b) ? -1 : 1;
+	}
+	public function days_array_merge($a, $b, $key) {
+		foreach ($a as $k => $v)
+			if (array_key_exists($k, $b)) {
+				$a[$k] = array_merge($v, $b[$k]);
+				$a[$k] = usort($v, array($this, 'array_data_sort', $key));
+			}
+		return $a;
 	}
 }

@@ -79,6 +79,7 @@ $lang['vald_coordinator_required'] = 'Koordynator musi być użytkownikiem wiki.
 $lang['vald_desc_required'] = 'Opisz problemu.';
 $lang['vald_desc_too_long'] = 'Za długi opis problemu, max: %d znaków.';
 $lang['vald_opinion_too_long'] = 'Za długa ocena skuteczności, max: %d znaków.';
+$lang['vald_opinion_required'] = 'Ocena skuteczności jest wymagana.';
 $lang['vald_cannot_give_opinion'] = 'Nie możesz ocenić skuteczności jeżeli problem pozostanje otwarty.';
 $lang['vald_cannot_give_reason'] = 'Nie zmieniłeś statusu zadania';
 
@@ -108,8 +109,7 @@ $lang['type_risk'] = 'ryzyko';
 $lang['state_proposal'] = 'propozycja';
 $lang['state_opened'] = 'otwarta';
 $lang['state_rejected'] = 'odrzucona';
-$lang['state_effective'] = 'skutecznie zamknięta';
-$lang['state_ineffective'] = 'nieskutecznie zamknięta';
+$lang['state_closed'] = 'zamknięta';
 
 
 $lang['just_now'] = 'przed chwilą';
@@ -259,6 +259,10 @@ $lang['bds_switch_lang'] = "English version";
 $lang['comments'] = 'Komentarze';
 $lang['causes'] = 'Przyczyny';
 $lang['action'] = 'Akcja';
+
+$lang['cause_added'] = "Przyczyna dodana";
+$lang['cause_noun'] = "Przyczyna";
+$lang['change_cause_button'] = "Popraw przyczynę";
 
 $lang['delete'] = 'Usuń';
 $lang['info_no_causes_added'] = 'Musisz dodać co najmniej jedną przyczynę, aby dodawać działania korygujące i zapobiegawcze.';

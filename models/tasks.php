@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS tasks (
 	reason TEXT NOT NULL,
 	reporter CHAR(100) NOT NULL,
 	date INT(11) NOT NULL,
+	close_date INT(11) NOT NULL,
 	issue INT(11) NOT NULL,
 
 	PRIMARY KEY (id)
@@ -128,11 +129,19 @@ EOM;
 		if ($this->can_modify($id)) {
 			$from_user = $this->validate($post);
 			$data = array_merge($data, $from_user);
+			$taskso = new Taskstates();
+			if (in_array($data['state'], $taskso->close_states()))
+				$data['close_date'] = time();
+
 			$this->errupdate($data, 'tasks', $id);
 		} elseif ($this->can_change_state($id)) {
 			$state = $this->val_state($post['state']);
 			$reason = $this->val_reason($post['reason']);
-			$this->errupdate(array('state' => $state, 'reason' => $reason), 'tasks', $id);
+			$data = array('state' => $state, 'reason' => $reason);
+			if (in_array($data['state'], $taskso->close_states()))
+				$data['close_date'] = time();
+
+			$this->errupdate($data, 'tasks', $id);
 		}
 	}
 	public function getone($id) {

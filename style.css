@@ -213,7 +213,7 @@
 	display: table-row;
 }
 
-.bds_form label {
+.bds_form label[for] {
 	display: table-cell;
     padding: 0.4em;
     text-align: right;
