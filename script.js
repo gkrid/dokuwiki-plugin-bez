@@ -28,14 +28,38 @@ jQuery(document).ready(function() {
 	//show/hide opinion
 	var $form = jQuery("#bez_issue_report.update"); 
 	if ($form.length > 0) {
-		var $coordinator = $form.find("input[name=coordinator]");
+		var $coordinator = $form.find("select[name=coordinator]");
 		var $opinion_row = $form.find("textarea[name=opinion]").parents("div[class=row]");
+		var $status_row = $form.find("label[for=state]").parents("div[class=row]");
 		var $state = $form.find("input[name=state]");
 
-		if ($form.find("input[name=state]:checked").val() == "0") {
+		/*state.length == 0 -> nie możemy zmieniać statusu*/
+		if ($state.length == 0)
+			$opinion_row.hide();
+
+		var cval = $coordinator.val();
+		if (cval == '-proposal' || cval == '-rejected' ) {
+			$status_row.hide();
 			$opinion_row.hide();
 		}
 		
+
+		$coordinator.change(function () {
+			var cval = $coordinator.val();
+			if (cval == '-proposal' || cval == '-rejected') {
+				$status_row.hide();
+				$opinion_row.hide();
+			} else {
+				$status_row.show();
+				if ($form.find("input[name=state]:checked").val() == "1")
+					$opinion_row.show();
+			}
+		});
+		
+
+		if ($form.find("input[name=state]:checked").val() == "0")
+			$opinion_row.hide();
+
 		$state.change(function() {
 			$this = jQuery(this);
 			if ($this.val() == "0")
@@ -49,15 +73,16 @@ jQuery(document).ready(function() {
 	$reason_row = jQuery("#bez_tasks textarea[name=reason]").parents("div[class=row]");
 	
 	if ($reason_row.length > 0) {
-		$reason_row.hide();
 		$select = jQuery("#bez_tasks select[name=state]");
-		var prev_val = $select.val();
+
+		if ($select.val() == "0" || $select.val() == "1")
+			$reason_row.hide();
+
 		$select.change(function() {
-			if (jQuery(this).val() === prev_val) {
+			if (jQuery(this).val() == "0" || jQuery(this).val() == "1")
 				$reason_row.hide();
-			} else {
+			else
 				$reason_row.show();
-			}
 		});
 	}
 

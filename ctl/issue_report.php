@@ -4,6 +4,7 @@ include_once DOKU_PLUGIN."bez/models/issuetypes.php";
 include_once DOKU_PLUGIN."bez/models/users.php";
 include_once DOKU_PLUGIN."bez/models/issues.php";
 include_once DOKU_PLUGIN."bez/models/states.php";
+include_once DOKU_PLUGIN."bez/models/tasks.php";
 
 $issue_id = $params[0];
 $action = $params[1];
@@ -19,7 +20,7 @@ $usro = new Users();
 if (count($_POST) > 0) {
 
 	if ($action == 'update') {
-		$isso->update($_POST, array(), $issue_id);
+		$isso->update($_POST, array('close_date' => time()), $issue_id);
 
 	} else {
 		$stao = new States();
@@ -37,6 +38,8 @@ if (count($_POST) > 0) {
 		header('Location: ?id=bez:issue_show:'.$isso->lastid());
 } elseif ($issue_id != NULL) {
 	$value = $isso->get_clean($issue_id);
+	$tasko = new Tasks();
+	$template['any_task_open'] = $tasko->any_open($issue_id);
 	$action = 'update';
 } else {
 	$action = 'add';
@@ -57,3 +60,4 @@ $template['nicks'] = $usro->get();
 
 $template['uri'] = $uri;
 $template['issue_id'] = $issue_id;
+

@@ -4,6 +4,7 @@ include_once DOKU_PLUGIN."bez/models/entities.php";
 include_once DOKU_PLUGIN."bez/models/issuetypes.php";
 include_once DOKU_PLUGIN."bez/models/states.php";
 include_once DOKU_PLUGIN."bez/models/users.php";
+include_once DOKU_PLUGIN."bez/models/tasks.php";
 
 class Issues extends Connect {
 	private $coord_special = array('-proposal', '-rejected');
@@ -29,7 +30,7 @@ CREATE TABLE IF NOT EXISTS issues (
 EOM;
 	$this->errquery($q);
 	}
-	public function validate($post)
+	public function validate($post, $state='add', $issue_id=-1)
 	{
 		global $bezlang, $errors;
 
@@ -78,11 +79,15 @@ EOM;
 
 		/*zmienamy status tylko w przypadku edycji*/
 		/*oraz gdy istnieje koordynator*/
-		if (array_key_exists('state', $post) && in_array($data['coordinator'], $usro->nicks())) {
+		/*oraz gdy nie ma żadnych otwartych zadań*/
+		$tasko = new Tasks();
+		if ($state == 'update' && array_key_exists('state', $post) && in_array($data['coordinator'], $usro->nicks())) {
 			$post['state'] = (int)$post['state'];
 			$stato = new States();
 			if (!array_key_exists($post['state'], $stato->get()))
 				$errors['state'] = $bezlang['vald_state_required'];
+			elseif ($post['state'] != $stato->open() && $tasko->any_open($issue_id))
+				$errors['state'] = $bezlang['vald_state_tasks_not_closed'];
 
 			$data['state'] = $post['state'];
 		}
@@ -113,15 +118,23 @@ EOM;
 		global $INFO;
 		$issue = $this->get_clean($id);
 		if ($this->helper->user_admin() || $issue['coordinator'] == $INFO['client']) {
-			$from_user = $this->validate($post);
+			$from_user = $this->validate($post, 'update', $id);
 			$data = array_merge($data, $from_user);
 			$this->errupdate($data, 'issues', $id);
 		}
 	}
 
+	public function opened($id) {
+		$issue = $this->get_clean($id);
+		if ($issue['state'] == 1 || $issue['coordinator'] == '-rejected')
+			return false;
+
+		return true;
+	}
+
 	public function join($a) {
 		$stao = new States();
-		$a['state'] = $stao->name($a['state']);
+		$a['state'] = $stao->name($a['state'], $a['coordinator']);
 
 		$isstyo = new Issuetypes();
 		$a['type'] = $isstyo->name($a['type']);

@@ -61,13 +61,25 @@
 </span>
 </div>
 <?php if ($template['action'] == 'update' && $template['user_coordinator']): ?>
+	<?php if ($template['any_task_open']) : ?>
+		<div class="row" >
+			<div style="display:table-cell"><br><br></div>
+			<label style="position: relative">
+				<div class="info" style="position: absolute; left: -10em; width:29em;"><?php echo $bezlang['info_no_all_tasks_closed'] ?></div>
+			</label>
+		</div>
+	<?php endif ?>
 	<div class="row">
 	<label for="state"><?php echo $bezlang['state'] ?>:</label>
 	<span>
-	<?php foreach ($template['issue_states'] as $key => $state): ?>
-		<label><input name="state" type="radio" <?php if ($value['state'] == $key) echo 'checked' ?>
-		 value="<?php echo $key ?>" /><?php echo $state ?></label>
-	<?php endforeach ?>
+	<?php if ($template['any_task_open']): ?>
+		<strong><?php echo $bezlang['state_opened'] ?></strong>
+	<?php else: ?>
+		<?php foreach ($template['issue_states'] as $key => $state): ?>
+			<label><input name="state" type="radio" <?php if ($value['state'] == $key) echo 'checked' ?>
+			 value="<?php echo $key ?>" /><?php echo $state ?></label>
+		<?php endforeach ?>
+	<?php endif ?>
 	</span>
 	</div>
 

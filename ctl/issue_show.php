@@ -1,5 +1,6 @@
 <?php
 include_once DOKU_PLUGIN."bez/models/issues.php";
+include_once DOKU_PLUGIN."bez/models/states.php";
 include_once DOKU_PLUGIN."bez/models/comments.php";
 include_once DOKU_PLUGIN."bez/models/causes.php";
 include_once DOKU_PLUGIN."bez/models/rootcauses.php";
@@ -10,6 +11,7 @@ include_once DOKU_PLUGIN."bez/models/taskstates.php";
 
 $como = new Comments();
 $causo = new Causes();
+$stao = new States();
 $usro = new Users();
 $tasko = new Tasks();
 $taskao = new Taskactions();
@@ -78,6 +80,10 @@ $template['uri'] = $uri . '?id=bez:issue_show:'.$issue_id;
 
 $template['issue'] = $isso->get($issue_id);
 $template['issue']['description'] = $helper->wiki_parse($template['issue']['description']);
+$template['closed'] = $stao->closed($template['issue']['state']) || $template['issue']['coordinator'] == '-rejected';
+$template['successfully_closed'] = $stao->closed($template['issue']['state']);
+
+$template['closed_com'] = str_replace('%d', $helper->string_time_to_now($template['issue']['close_date']), $bezlang['issue_closed_com']);
 
 $template['comments'] = $como->get($issue_id);
 $template['causes'] = $causo->get($issue_id);
@@ -93,7 +99,7 @@ $template['users'] = $usro->get();
 $template['user'] = $INFO['client'];
 $template['taskactions'] = $taskao->get();
 
-$template['issue_opened'] = true;
+$template['issue_opened'] = !$template['closed'];
 
 /*Domyślne przyciski*/
 $template['comment_button'] = $bezlang['add'];
@@ -106,11 +112,7 @@ $template['task_button'] = $bezlang['add'];
 $template['task_action'] = 'add:task';
 
 $template['task_states'] = $taskso->get();
-$template['reason_labels'] = array(
-	$template['task_states'][0] => $bezlang['reason_reopen'],
-	$template['task_states'][1] => $bezlang['reason_done'],
-	$template['task_states'][2] => $bezlang['reason_reject'],
-);
+
 /*Ruter*/
 $router = array(
 	'comment' => array(

@@ -2,8 +2,9 @@
 include_once DOKU_PLUGIN."bez/models/connect.php";
 include_once DOKU_PLUGIN."bez/models/users.php";
 include_once DOKU_PLUGIN."bez/models/issues.php";
+include_once DOKU_PLUGIN."bez/models/event.php";
 
-class Comments extends Connect {
+class Comments extends Event {
 	public function __construct() {
 		global $errors;
 		parent::__construct();
@@ -25,14 +26,14 @@ EOM;
 
 		$comment = $this->getone($comment_id);
 
-		if ($comment)
-			if ($comment['reporter'] == $INFO['client'] || $this->helper->user_coordinator($comment['issue']) || $this->helper->user_admin()) 
+		if ($comment && $this->issue->opened($comment['issue']))
+			if ($comment['reporter'] == $INFO['client'] || $this->helper->user_coordinator($comment['issue'])) 
 				return true;
 
 		return false;
 	}
-	public function can_add() {
-		return $this->helper->user_editor();
+	public function can_add($issue_id) {
+		return $this->helper->user_editor() && $this->issue->opened($issue_id);
 	}
 	public function validate($post) {
 		global $bezlang, $errors;
@@ -51,7 +52,7 @@ EOM;
 	}
 	public function add($post, $data=array())
 	{
-		if ($this->can_add()) {
+		if ($this->can_add($data['issue'])) {
 			$from_user = $this->validate($post);
 			$data = array_merge($data, $from_user);
 

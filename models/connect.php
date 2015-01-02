@@ -1,7 +1,7 @@
 <?php
 class Connect {
-	protected $db, $helper;
-	static protected $lastid;
+	protected $helper;
+	static protected $db=NULL, $lastid;
 	protected function errquery($query)
 	{
 		global $errors;
@@ -111,9 +111,11 @@ class Connect {
 	public function __construct()
 	{
 		global $errors;
-		$this->db = new mysqli('localhost', 'root', '', 'bez');
-		if ($this->db->connect_errno) 
-			$errors[] = "Failed to connect to MySQL: ". $this->db->connect_error;
+		if ($this->db == NULL) {
+			$this->db = new mysqli('localhost', 'root', '', 'bez');
+			if ($this->db->connect_errno) 
+				$errors[] = "Failed to connect to MySQL: ". $this->db->connect_error;
+		}
 
 		$this->helper = plugin_load('helper', 'bez');
 	}

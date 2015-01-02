@@ -7,14 +7,14 @@
 <h1>[<?php echo $template['issue']['entity'] ?>] <?php echo $template['issue']['title'] ?></h1>
 
 <div class="time_box">
-<span><?php echo $bezlang['opened_for'] ?>: <?php echo $helper->time2date($template['issue']['date']) ?></span>
-<?php if ($template['issue']['moddate'] != NULL): ?>
+<span><?php echo $bezlang['open'] ?>: <?php echo $helper->time2date($template['issue']['date']) ?></span>
+<?php if ($template['issue']['close_date'] != NULL): ?>
 	<span>
 	<?php if ($template['closed']): ?>
 		<?php echo $bezlang['closed'] ?>
 	<?php else: ?>
 		<?php echo $bezlang['last_modified'] ?>
-	<?php endif ?>: <?php echo $helper->string_time_to_now($template['issue']['last_mod_date']) ?>
+	<?php endif ?>: <?php echo $helper->time2date($template['issue']['close_date']) ?>
 	</span>
 <?php endif ?>
 </div>
@@ -40,7 +40,7 @@
 
 <?php echo $template['issue']['description'] ?>
 
-<?php if ($template['closed']): ?>
+<?php if ($template['successfully_closed']): ?>
 	<h2><?php echo $bezlang['opinion'] ?></h2>
 	<?php echo $template['issue']['opinion'] ?>
 <?php endif ?>
@@ -54,7 +54,7 @@
 </a>
 
 
-<?php if ($template['issue_opened'] && $template['user_is_coordinator']): ?> 
+<?php if ($template['user_is_coordinator']): ?> 
 	<a href="?id=bez:issue_report:<?php echo $template['issue']['id'] ?>" class="bds_inline_button bds_edit_button">
 		<?php echo $bezlang['edit'] ?>
 	</a>
@@ -189,17 +189,14 @@
 						<td><?php echo $task['cost'] ?></td>
 					<?php endif ?>
 			</tr>
-			<?php if ($task['reason'] != ''): ?>
-			<tr>
-				<td colspan="8">
-				<strong><?php echo $template['reason_labels'][$task['state']] ?>:</strong><br>
-				<?php echo $helper->wiki_parse($task['reason']) ?>
-				</td>
-			</tr>
-			<?php endif ?>
 			</table>	
 
 			<?php echo $helper->wiki_parse($task['task']) ?>
+
+			<?php if ($task['rejected']): ?>
+				<h3><?php echo $bezlang['reason'] ?>:</h3>
+				<?php echo $helper->wiki_parse($task['reason']) ?>
+			<?php endif ?>
 			</div>
 	<?php endforeach ?>
 	<?php if ($template['issue_opened'] && ($template['user_is_coordinator'] || strstr($template['task_action'], 'update'))): ?> 
@@ -210,7 +207,7 @@
 					<div class="row" >
 						<div style="display:table-cell"><br><br></div>
 						<label style="position: relative">
-							<div class="info" style="position: absolute; left: -7em;"><?php echo $bezlang['info_no_causes_added'] ?></div>
+							<div class="info" style="position: absolute; left: -7em; width:45em;"><?php echo $bezlang['info_no_causes_added'] ?></div>
 						</label>
 					</div>
 				<?php endif ?>
@@ -280,4 +277,11 @@
 	<?php endif ?>
 	<a name="z_"></a>
 	</div>
+	<?php if ($template['closed']): ?>
+		<div class="bds_block" id="bds_closed">
+			<div class="info">
+				<?php echo $template['closed_com'] ?>
+			</div>
+	<?php endif ?>
+		</div>
 </div>

@@ -88,6 +88,8 @@ $lang['vald_content_required'] = 'Wpisz tekst';
 $lang['vald_content_too_long'] = 'Za długi tekst, max: %d.';
 $lang['vald_replay_to_not_exists'] = 'Comment nie istnieje.';
 $lang['vald_state_required'] = 'Określ status problemu.';
+$lang['vald_state_tasks_not_closed'] = 'Nie możesz zmieniać statusu problemu, jeżeli istnieją jakieś niezamknięte zadania.';
+
 
 $lang['vald_task_state_required'] = 'Określ status zadania.';
 $lang['vald_task_state_tasks_not_closed'] = 'Nie możesz zamknąć problemu przed zamknięciem wszystkich zadań. Otwarte zadania: %t.';
@@ -119,7 +121,7 @@ $lang['hours'] = 'godz.';
 $lang['days'] = 'dn.';
 $lang['ago'] = 'temu';
 
-$lang['issue_closed'] = 'Problem został zamknięty %d, przez %u, dalsze zmiany nie są możliwe.';
+$lang['issue_closed_com'] = 'Problem został zamknięty %d, dalsze zmiany nie są możliwe.';
 $lang['reopen_issue'] = 'Zmień status problemu';
 $lang['add'] = 'Dodaj';
 
@@ -133,7 +135,7 @@ $lang['cost'] = 'Koszt(zł)';
 $lang['executor'] = 'Wykonawca';
 
 $lang['task_state'] = 'Status';
-$lang['reason'] = 'Powód zmiany statusu';
+$lang['reason'] = 'Przyczyna odrzucenia';
 
 $lang['task_added'] = 'Zadanie dodane';
 $lang['task_changed'] = 'Zadanie zmienione';
@@ -266,6 +268,8 @@ $lang['change_cause_button'] = "Popraw przyczynę";
 
 $lang['delete'] = 'Usuń';
 $lang['info_no_causes_added'] = 'Musisz dodać co najmniej jedną przyczynę, aby dodawać działania korygujące i zapobiegawcze.';
+$lang['info_no_all_tasks_closed'] = 'Musisz zamknąć wszystkie zadania, zanim zamkniesz problem.';
+
 
 $lang['entity_manage'] = 'Źródła zgłoszenia';
 

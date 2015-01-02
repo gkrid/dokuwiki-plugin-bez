@@ -2,8 +2,9 @@
 include_once DOKU_PLUGIN."bez/models/connect.php";
 include_once DOKU_PLUGIN."bez/models/users.php";
 include_once DOKU_PLUGIN."bez/models/rootcauses.php";
+include_once DOKU_PLUGIN."bez/models/event.php";
 
-class Causes extends Connect {
+class Causes extends Event {
 	public function __construct() {
 		global $errors;
 		parent::__construct();
@@ -24,7 +25,7 @@ EOM;
 	public function can_modify($cause_id) {
 		$cause = $this->getone($cause_id);
 
-		if ($cause)
+		if ($cause && $this->issue->opened($cause['issue']))
 			if ($this->helper->user_coordinator($cause['issue']) || $this->helper->user_admin()) 
 				return true;
 
@@ -53,7 +54,7 @@ EOM;
 	}
 	public function add($post, $data=array())
 	{
-		if ($this->helper->user_coordinator($data['issue'])) {
+		if ($this->helper->user_coordinator($data['issue']) && $this->issue->opened($data['issue'])) {
 			$from_user = $this->validate($post);
 			$data = array_merge($data, $from_user);
 

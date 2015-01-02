@@ -3,8 +3,10 @@ include_once DOKU_PLUGIN."bez/models/connect.php";
 include_once DOKU_PLUGIN."bez/models/users.php";
 include_once DOKU_PLUGIN."bez/models/taskactions.php";
 include_once DOKU_PLUGIN."bez/models/taskstates.php";
+include_once DOKU_PLUGIN."bez/models/states.php";
+include_once DOKU_PLUGIN."bez/models/event.php";
 
-class Tasks extends Connect {
+class Tasks extends Event {
 	public function __construct() {
 		global $errors;
 		parent::__construct();
@@ -30,7 +32,7 @@ EOM;
 	public function can_modify($task_id) {
 		$task = $this->getone($task_id);
 
-		if ($task)
+		if ($task && $this->issue->opened($task['issue']))
 			if ($this->helper->user_coordinator($task['issue']) || $this->helper->user_admin()) 
 				return true;
 
@@ -39,7 +41,7 @@ EOM;
 	public function can_change_state($task_id) {
 		global $INFO;
 		$task = $this->getone($task_id);
-		if ($task['executor'] == $INFO['client'])
+		if ($task['executor'] == $INFO['client'] && $this->issue->opened($task['issue']))
 			return true;
 
 		return false;
@@ -114,7 +116,7 @@ EOM;
 	}
 	public function add($post, $data=array())
 	{
-		if ($this->helper->user_coordinator($data['issue'])) {
+		if ($this->helper->user_coordinator($data['issue']) && $this->issue->opened($data['issue'])) {
 			$from_user = $this->validate($post);
 			$data = array_merge($data, $from_user);
 
@@ -129,18 +131,12 @@ EOM;
 		if ($this->can_modify($id)) {
 			$from_user = $this->validate($post);
 			$data = array_merge($data, $from_user);
-			$taskso = new Taskstates();
-			if (in_array($data['state'], $taskso->close_states()))
-				$data['close_date'] = time();
-
+			$data['close_date'] = time();
 			$this->errupdate($data, 'tasks', $id);
 		} elseif ($this->can_change_state($id)) {
 			$state = $this->val_state($post['state']);
 			$reason = $this->val_reason($post['reason']);
-			$data = array('state' => $state, 'reason' => $reason);
-			if (in_array($data['state'], $taskso->close_states()))
-				$data['close_date'] = time();
-
+			$data = array('state' => $state, 'reason' => $reason, 'close_date' => time());
 			$this->errupdate($data, 'tasks', $id);
 		}
 	}
@@ -150,6 +146,16 @@ EOM;
 
 		return $a[0];
 	}
+	public function any_open($issue) {
+		$issue = (int)$issue;
+		$a = $this->fetch_assoc("SELECT * FROM tasks WHERE issue=$issue");
+		$stato = new States();
+		foreach ($a as $task) {
+			if ($task['state'] == $stato->open())
+				return true;
+		}
+		return false;
+	}
 	public function get($issue) {
 		$issue = (int) $issue;
 
@@ -158,11 +164,13 @@ EOM;
 		$usro = new Users();
 		$taskao= new Taskactions();
 		$taskso = new Taskstates();
+		$stato = new States();
 		foreach ($a as &$row) {
 			$row['reporter'] = $usro->name($row['reporter']);
 			$row['executor_nick'] = $row['executor'];
 			$row['executor'] = $usro->name($row['executor']);
 			$row['action'] = $taskao->name($row['action']);
+			$row['rejected'] = $row['state'] == $stato->rejected();
 			$row['state'] = $taskso->name($row['state']);
 		}
 

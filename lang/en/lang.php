@@ -90,6 +90,7 @@ $lang['vald_content_required'] = "Insert a text";
 $lang['vald_content_too_long'] = "Text is too long, max: %d";
 $lang['vald_replay_to_not_exists'] = "Comment dosn't exist";
 $lang['vald_state_required'] = "Specified a status of problem";
+$lang['vald_state_tasks_not_closed'] = 'You cannot change issue state unless all tasks are closed.';
 
 $lang['vald_task_state_required'] = "Specified a status of task";
 $lang['vald_task_state_tasks_not_closed'] = "You cannot close the problem before closing all the tasks. Open tasks: %t";
@@ -121,7 +122,7 @@ $lang['hours'] = "hours";
 $lang['days'] = "days";
 $lang['ago'] = "ago";
 
-$lang['issue_closed'] = "Problem was closed %d, by %u, further changes are disabled.";
+$lang['issue_closed_com'] = "Problem was closed %d, futhure changes are disabled.";
 $lang['reopen_issue'] = "Change a status of the problem";
 $lang['add'] = "Add";
 
@@ -134,7 +135,7 @@ $lang['cost'] = "Cost (PLN)";
 $lang['executor'] = "Performer";
 
 $lang['task_state'] = "Status";
-$lang['reason'] = "Reason of status change";
+$lang['reason'] = "Rejection reason";
 
 $lang['task_added'] = "Task has been added";
 $lang['task_changed'] = "Task has been changed";
@@ -266,6 +267,7 @@ $lang['comments'] = 'Comments';
 
 $lang['delete'] = 'Delete';
 $lang['info_no_causes_added'] = 'You have to add cause in order to add corrective and preventive actions.';
+$lang['info_no_all_tasks_closed'] = 'You have to close all tasks before closing the problem.';
 
 $lang['entity_manage'] = 'Sources of report';
 
