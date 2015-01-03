@@ -156,23 +156,48 @@ EOM;
 		}
 		return false;
 	}
+	public function get_by_days() {
+		if (!$this->helper->user_viewer()) return false;
+
+		$res = $this->fetch_assoc("SELECT * FROM tasks ORDER BY date DESC");
+		$create = $this->sort_by_days($res, 'date');
+		foreach ($create as $day => $issues)
+			foreach ($issues as $ik => $issue)
+				$create[$day][$ik]['class'] = 'task_created';
+
+		$taskso = new Taskstates();
+
+		$res2 = $this->fetch_assoc("SELECT * FROM tasks WHERE ".implode(' AND ', $taskso->close_states())." ORDER BY close_date DESC");
+		$close = $this->sort_by_days($res2, 'close_date');
+		foreach ($close as $day => $issues)
+			foreach ($issues as $ik => $issue) {
+				$close[$day][$ik]['class'] = 'task_closed';
+				$close[$day][$ik]['date'] = $close[$day][$ik]['close_date'];
+			}
+		return $this->helper->days_array_merge($create, $close);
+	}
+	public function join($row) {
+		$usro = new Users();
+		$taskao= new Taskactions();
+		$taskso = new Taskstates();
+		$stato = new States();
+
+		$row['reporter'] = $usro->name($row['reporter']);
+		$row['executor_nick'] = $row['executor'];
+		$row['executor'] = $usro->name($row['executor']);
+		$row['action'] = $taskao->name($row['action']);
+		$row['rejected'] = $row['state'] == $stato->rejected();
+		$row['state'] = $taskso->name($row['state']);
+
+		return $row;
+	}
 	public function get($issue) {
 		$issue = (int) $issue;
 
 		$a = $this->fetch_assoc("SELECT * FROM tasks WHERE issue=$issue");
 
-		$usro = new Users();
-		$taskao= new Taskactions();
-		$taskso = new Taskstates();
-		$stato = new States();
-		foreach ($a as &$row) {
-			$row['reporter'] = $usro->name($row['reporter']);
-			$row['executor_nick'] = $row['executor'];
-			$row['executor'] = $usro->name($row['executor']);
-			$row['action'] = $taskao->name($row['action']);
-			$row['rejected'] = $row['state'] == $stato->rejected();
-			$row['state'] = $taskso->name($row['state']);
-		}
+		foreach ($a as &$row)
+			$row = $this->join($row);
 
 		return $a;
 	}

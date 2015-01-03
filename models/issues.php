@@ -173,7 +173,7 @@ EOM;
 			foreach ($issues as $ik => $issue)
 				$create[$day][$ik]['class'] = 'issue_created';
 
-		$res2 = $this->fetch_assoc("SELECT * FROM issues WHERE close_date != NULL ORDER BY close_date DESC");
+		$res2 = $this->fetch_assoc("SELECT * FROM issues WHERE state = 1 AND coordinator != '-rejected' AND coordinator != '-proposal' ORDER BY close_date DESC");
 		$close = $this->sort_by_days($res2, 'close_date');
 		foreach ($close as $day => $issues)
 			foreach ($issues as $ik => $issue) {
@@ -181,7 +181,15 @@ EOM;
 				$close[$day][$ik]['date'] = $close[$day][$ik]['close_date'];
 			}
 
-		return $this->helper->days_array_merge($create, $close, 'date');
+		$res3 = $this->fetch_assoc("SELECT * FROM issues WHERE coordinator = '-rejected 'ORDER BY close_date DESC");
+		$rejected = $this->sort_by_days($res3, 'close_date');
+		foreach ($rejected as $day => $issues)
+			foreach ($issues as $ik => $issue) {
+				$rejected[$day][$ik]['class'] = 'issue_rejected';
+				$rejected[$day][$ik]['date'] = $rejected[$day][$ik]['close_date'];
+			}
+
+		return $this->helper->days_array_merge($create, $close, $rejected);
 	}
 
 	public function get($id) {

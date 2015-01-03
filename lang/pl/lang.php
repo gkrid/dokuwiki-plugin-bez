@@ -188,9 +188,9 @@ $lang['reason_done']  = 'Przyczyna zakończenia';
 $lang['reason_reject'] = 'Przyczyna odrzucenia';
 
 $lang['issue_created'] = 'Zgłoszono';
-
-$lang['issue_closed'] = 'Zamknięto problem';
+$lang['issue_closed'] = 'Zamknięto';
 $lang['issue_reopened'] = 'Ponownie otwarto problem';
+$lang['issue_rejected'] = 'Odrzucono';
 
 $lang['today'] = 'Dzisiaj';
 $lang['yesterday'] = 'Wczoraj';

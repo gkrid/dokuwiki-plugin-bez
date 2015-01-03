@@ -115,13 +115,13 @@ class helper_plugin_bez extends dokuwiki_plugin
 		$array = array();
 		for (;;) {
 			/*czy to już koniec*/
-			if ($i == count($a)) {
+			if ($i == count($adict)) {
 				for ($n = $j; $n < count($b); $n++) {
 					$k = $bdict[$n];
 					$array[$k] = $b[$k];
 				}
 				break;
-			} else if ($j == count($b)) {
+			} else if ($j == count($bdict)) {
 				for ($n = $i; $n < count($a); $n++) {
 					$k = $adict[$n];
 					$array[$k] = $a[$k];
@@ -129,8 +129,11 @@ class helper_plugin_bez extends dokuwiki_plugin
 				break;
 			}
 
-			if ($adict[$i] == $bdict[$j]) {
+			if ($adict[$i] == $bdicj[$j]) {
 				$k = $adict[$i];
+				var_dump($i);
+				var_dump($k);
+				var_dump($b);
 				$array[$k] = array_merge($a[$k], $b[$k]);
 				usort($array[$k], array($this, 'array_data_sort'));
 				$i++;

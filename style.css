@@ -310,13 +310,23 @@ input.days {
 	background: url('images/newticket.png') no-repeat 1px 4px;
 }
 
+#bds_timeline .issue_rejected > a {
+	background: url('images/rejectedticket.png') no-repeat 1px 4px;
+}
+
 	
-#bds_timeline .task > a {
+#bds_timeline .task_created > a {
 	background: url('images/newtask.png') no-repeat 1px 4px;
 }
 
 #bds_timeline .task_closed > a {
 	background: url('images/closedtask.png') no-repeat 1px 4px;
+}
+
+#bds_timeline h3 {
+	font-size: 1em;
+	border-bottom: 1px dotted #ddd;
+	margin-bottom: 0;
 }
 
 #entities_form label {

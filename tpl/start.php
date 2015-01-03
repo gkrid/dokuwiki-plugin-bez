@@ -1,22 +1,6 @@
 <h1><?php echo $bezlang['bds_timeline'] ?></h1>
-	<dl id="bds_timeline">
 
-			$class = $cursor['type'];
-			if (isset($cursor['info']['new']) && isset($cursor['info']['new']['state'])) {
-				if (in_array($cursor['info']['new']['state'], $this->blocking_states)) {
-					$class = 'issue_closed
-				} else {
-					$class = 'issue_created
-				}
-			} elseif ($cursor['type'] == 'task_rev') {
-				if ($cursor['info']['state'] != $cursor['info']['old']['state']) {
-					if ($cursor['info']['state'] != 0) {
-						$class = 'task_closed
-					} else {
-						$class = 'task
-					}
-				}
-			}
+<dl id="bds_timeline">
 <?php foreach ($template['timeline'] as $day => $elms): ?>
 	<h2>	
 		<?php echo $helper->time2date(strtotime("-$day days")) ?><?php if ($day < 2) echo ':' ?>
@@ -28,29 +12,48 @@
 	</h2>
 	<?php foreach ($elms as $elm): ?>
 		<dt class="<?php echo $elm['class'] ?>">
-			<?php if ($elm['class'] == 'issue_created'): ?>
+			<?php if (strstr($elm['class'], 'issue')): ?>
 				<a href="<?php echo $helper->issue_uri($elm['id']) ?>">
 					<span class="time"><?php echo date('H:i', $elm['date']) ?></span>
-						<?php echo $bezlang['issue_created'] ?>
+						<?php if ($elm['class'] == 'issue_created'): ?>
+							<?php echo $bezlang['issue_created'] ?>
+						<?php elseif ($elm['class'] == 'issue_closed'): ?>
+							<?php echo $bezlang['issue_closed'] ?>
+						<?php elseif ($elm['class'] == 'issue_rejected'): ?>
+							<?php echo $bezlang['issue_rejected'] ?>
+						<?php endif ?>
+						<?php echo $elm['type'] ?>
 						<span class="id">#<?php echo $elm['id'] ?></span>
-						(<?php echo $elm['title'] ?>)
+						[<?php echo $elm['entity'] ?>] <?php echo $elm['title'] ?>
 						<?php echo $bezlang['by'] ?>
 						<span class="author"><?php echo $elm['reporter'] ?></span>
 				</a>
-			<?php elseif ($elm['class'] == 'issue_closed'): ?>
-				<a href="<?php echo $helper->issue_uri($elm['id']) ?>">
+			<?php elseif (strstr($elm['class'], 'task')): ?>
+				<a href="<?php echo $helper->issue_uri($elm['id']) ?>#z<?php echo $elm['id'] ?>">
 					<span class="time"><?php echo date('H:i', $elm['date']) ?></span>
-						<?php echo $bezlang['issue_closed'] ?>
-						<span class="id">#<?php echo $elm['id'] ?></span>
-						(<?php echo $elm['title'] ?>)
-						<?php echo $bezlang['by'] ?>
+						<?php if ($elm['class'] == 'task_added'): ?>
+							<?php echo $bezlang['task_created'] ?>
+						<?php elseif ($elm['class'] == 'issue_closed'): ?>
+							<?php echo $bezlang['issue_closed'] ?>
+						<?php elseif ($elm['class'] == 'issue_rejected'): ?>
+							<?php echo $bezlang['issue_rejected'] ?>
+						<?php endif ?>
+						<?php echo $elm['type'] ?>
+						<span class="id">z<?php echo $elm['id'] ?></span>
+						<?php echo $elm['title'] ?> <?php echo $bezlang['by'] ?>
 						<span class="author"><?php echo $elm['reporter'] ?></span>
 				</a>
 			<?php endif ?>
 		</dt>
 		<dd>
-			<?php if ($elm['class'] == 'issue_created'): ?>
+			<?php if (strstr($elm['class'], 'issue')): ?>
 				<?php echo $helper->wiki_parse($elm['description']) ?>
+				<?php if ($elm['class'] == 'issue_closed'): ?>
+					<h3><?php echo $bezlang['opinion'] ?></h3>
+					<?php echo $helper->wiki_parse($elm['opinion']) ?>
+				<?php endif ?>
+			<?php elseif (strstr($elm['class'], 'task')): ?>
+				<?php echo $helper->wiki_parse($elm['task']) ?>
 			<?php endif ?>
 		</dd>
 	<?php endforeach ?>

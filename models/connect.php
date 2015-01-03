@@ -84,15 +84,15 @@ class Connect {
 		$last_day = -1;
 		$rt = array();
 		$today24 = mktime(24, 0, 0);
-		foreach ($res as $issue) {
-			$issue = $this->join($issue);
-			$day = ceil(($today24 - (int)$issue[$field])/(24*60*60)) - 1;
+		foreach ($res as $obj) {
+			$obj = $this->join($obj);
+			$day = ceil(($today24 - (int)$obj[$field])/(24*60*60)) - 1;
 			if ($last_day != $day) {
 				$rt[$day] = array();
 				$days++;
 				$last_day = $day;
 			}
-			$rt[$day][] = $issue;
+			$rt[$day][] = $obj;
 			if ($days >= 7)
 				break;
 		}
