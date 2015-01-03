@@ -133,6 +133,7 @@ EOM;
 	}
 
 	public function join($a) {
+		global $bezlang;
 		$stao = new States();
 		$a['state'] = $stao->name($a['state'], $a['coordinator']);
 
@@ -144,6 +145,10 @@ EOM;
 
 		if (!in_array($a['coordinator'], $this->coord_special))
 			$a['coordinator'] = $usro->name($a['coordinator']);
+		else if ($a['coordinator'] == '-proposal')
+			$a['coordinator'] = $bezlang['none'].' ('.$bezlang['state_proposal'].')';
+		else if ($a['coordinator'] == '-rejected')
+			$a['coordinator'] = $bezlang['none'].' ('.$bezlang['state_rejected'].')';
 
 		$a['date'] = (int)$a['date'];
 		return $a;

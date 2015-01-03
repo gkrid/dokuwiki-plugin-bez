@@ -315,12 +315,16 @@ input.days {
 }
 
 	
-#bds_timeline .task_created > a {
+#bds_timeline .task_opened > a {
 	background: url('images/newtask.png') no-repeat 1px 4px;
 }
 
-#bds_timeline .task_closed > a {
+#bds_timeline .task_done > a {
 	background: url('images/closedtask.png') no-repeat 1px 4px;
+}
+
+#bds_timeline .task_rejected > a {
+	background: url('images/rejectedtask.png') no-repeat 1px 4px;
 }
 
 #bds_timeline h3 {

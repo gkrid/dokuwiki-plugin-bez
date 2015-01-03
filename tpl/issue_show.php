@@ -24,15 +24,7 @@
 <th><?php echo $bezlang['reporter'] ?></th>
 <td><?php echo $template['issue']['reporter'] ?></td>
 <th><?php echo $bezlang['coordinator'] ?></th>
-<td>
-<?php if ($template['issue']['coordinator'] == '-proposal'): ?>
-	<em><?php echo $bezlang['none'] ?> (<?php echo $bezlang['state_proposal'] ?>)</em>
-<?php elseif ($template['issue']['coordinator'] == '-rejected'): ?>
-	<em><?php echo $bezlang['none'] ?> (<?php echo $bezlang['state_rejected'] ?>)</em>
-<?php else: ?>
-	<?php echo $template['issue']['coordinator'] ?>
-<?php endif ?>
-</td>
+<td><?php echo $template['issue']['coordinator'] ?></td>
 </tr>
 </table>
 
@@ -194,7 +186,7 @@
 			<?php echo $helper->wiki_parse($task['task']) ?>
 
 			<?php if ($task['rejected']): ?>
-				<h3><?php echo $bezlang['reason'] ?>:</h3>
+				<h3><?php echo $bezlang['reason'] ?></h3>
 				<?php echo $helper->wiki_parse($task['reason']) ?>
 			<?php endif ?>
 			</div>

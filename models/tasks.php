@@ -163,18 +163,25 @@ EOM;
 		$create = $this->sort_by_days($res, 'date');
 		foreach ($create as $day => $issues)
 			foreach ($issues as $ik => $issue)
-				$create[$day][$ik]['class'] = 'task_created';
+				$create[$day][$ik]['class'] = 'task_opened';
 
-		$taskso = new Taskstates();
-
-		$res2 = $this->fetch_assoc("SELECT * FROM tasks WHERE ".implode(' AND ', $taskso->close_states())." ORDER BY close_date DESC");
+		$res2 = $this->fetch_assoc("SELECT * FROM tasks WHERE state = 1 ORDER BY close_date DESC");
 		$close = $this->sort_by_days($res2, 'close_date');
 		foreach ($close as $day => $issues)
 			foreach ($issues as $ik => $issue) {
-				$close[$day][$ik]['class'] = 'task_closed';
+				$close[$day][$ik]['class'] = 'task_done';
 				$close[$day][$ik]['date'] = $close[$day][$ik]['close_date'];
 			}
-		return $this->helper->days_array_merge($create, $close);
+
+		$res3 = $this->fetch_assoc("SELECT * FROM tasks WHERE state = 2 ORDER BY close_date DESC");
+		$rejected = $this->sort_by_days($res3, 'close_date');
+		foreach ($rejected as $day => $issues)
+			foreach ($issues as $ik => $issue) {
+				$rejected[$day][$ik]['class'] = 'task_rejected';
+				$rejected[$day][$ik]['date'] = $rejected[$day][$ik]['close_date'];
+			}
+
+		return $this->helper->days_array_merge($create, $close, $rejected);
 	}
 	public function join($row) {
 		$usro = new Users();
