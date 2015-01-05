@@ -8,7 +8,7 @@ class Connect {
 
 		$r = $this->db->query($query);
 		if ($this->db->error) 
-			$errors['mysql'] = "MySQL error(".$this->db->errno."): ". $this->db->error;
+			$errors['mysql'] = "MySQL error(".$this->db->errno."): ". $this->db->error."\nQuery: $query";
 		return $r;
 	}
 

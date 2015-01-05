@@ -24,6 +24,7 @@ CREATE TABLE IF NOT EXISTS issues (
 	reporter CHAR(100) NOT NULL,
 	date INT(11) NOT NULL,
 	close_date INT(11) NULL,
+	last_mod INT(11) NOT NULL,
 
 	PRIMARY KEY (id)
 )
@@ -57,6 +58,10 @@ EOM;
 					$errors['coordinator'] = $bezlang['vald_coordinator_required'];
 
 			$data['coordinator'] = $post['coordinator'];
+		} else if ($state == 'update') {
+			/*ta informacja jest potrzebna na potem*/
+			$issue = $this->get_clean($issue_id);
+			$data['coordinator'] = $issue['coordinator'];
 		}
 
 		$post['title'] = trim($post['title']);
@@ -110,6 +115,7 @@ EOM;
 		if ($this->helper->user_editor()) {
 			$from_user = $this->validate($post);
 			$data = array_merge($data, $from_user);
+			$data['last_mod'] = time();
 			$this->errinsert($data, 'issues');
 		}
 	}
@@ -120,8 +126,14 @@ EOM;
 		if ($this->helper->user_admin() || $issue['coordinator'] == $INFO['client']) {
 			$from_user = $this->validate($post, 'update', $id);
 			$data = array_merge($data, $from_user);
+			$data['last_mod'] = time();
 			$this->errupdate($data, 'issues', $id);
 		}
+	}
+
+	public function update_last_mod($id) {
+		if ($this->helper->user_editor())
+			$this->errupdate(array('last_mod' => time()), 'issues', $id);
 	}
 
 	public function opened($id) {
@@ -209,6 +221,45 @@ EOM;
 
 			return $a;
 		}
+	}
+	public function get_close_issue() {
+		global $INFO;
+		$coordinator = $INFO['client'];
+		$a = $this->fetch_assoc("
+			SELECT issues.id, issues.type, issues.title, issues.date, issues.last_mod, COUNT(tasks.id) AS tasks_opened
+			FROM issues LEFT JOIN tasks ON issues.id = tasks.issue
+			WHERE issues.coordinator='$coordinator' AND issues.state=0
+			GROUP BY issues.id, issues.type, issues.title, issues.date, issues.last_mod
+			ORDER BY issues.last_mod DESC, issues.date DESC
+			");
+
+		foreach ($a as &$row)
+			$row = $this->join($row);
+		return $a;
+	}
+
+	public function get_comment_issue() {
+		$a = $this->fetch_assoc("
+			SELECT issues.id, issues.type, issues.title, issues.date, issues.last_mod, COUNT(tasks.id) AS tasks_opened
+			FROM issues LEFT JOIN tasks ON issues.id = tasks.issue
+			WHERE issues.state = 0 AND tasks.state = 0
+			GROUP BY issues.id, issues.type, issues.title, issues.date, issues.last_mod
+			ORDER BY issues.last_mod DESC, issues.date DESC
+			");
+
+		foreach ($a as &$row)
+			$row = $this->join($row);
+		return $a;
+	}
+
+	public function get_stats() {
+		$all = $this->fetch_assoc("SELECT COUNT(*) AS issues_all FROM issues;");
+		$opened = $this->fetch_assoc("SELECT COUNT(*) as issues_opened FROM issues WHERE state=0;");
+
+		$stats = array();
+		$stats['all'] = $all[0]['issues_all'];
+		$stats['opened'] = $opened[0]['issues_opened'];
+		return $stats;
 	}
 }
 

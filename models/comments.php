@@ -55,8 +55,8 @@ EOM;
 		if ($this->can_add($data['issue'])) {
 			$from_user = $this->validate($post);
 			$data = array_merge($data, $from_user);
-
 			$this->errinsert($data, 'comments');
+			$this->issue->update_last_mod($data['issue']);
 		}
 	}
 	public function update($post, $data, $id) {
@@ -64,11 +64,17 @@ EOM;
 			$from_user = $this->validate($post);
 			$data = array_merge($data, $from_user);
 			$this->errupdate($data, 'comments', $id);
+
+			$comment = $this->getone($id);
+			$this->issue->update_last_mod($comment['issue']);
 		}
 	}
 	public function delete($comment_id) {
-		if ($this->can_modify($comment_id))
+		if ($this->can_modify($comment_id)) {
+			$comment = $this->getone($comment_id);
 			$this->errdelete('comments', $comment_id);
+			$this->issue->update_last_mod($comment['issue']);
+		}
 	}
 	public function getone($id) {
 		$id = (int) $id;

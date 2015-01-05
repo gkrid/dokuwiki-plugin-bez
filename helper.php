@@ -9,8 +9,6 @@ class helper_plugin_bez extends dokuwiki_plugin
 	public function user_viewer() {
 		global $auth, $INFO;
 
-		return true;
-
 		if ($auth->getUserData($INFO['client']))
 			return true;
 
@@ -37,7 +35,7 @@ class helper_plugin_bez extends dokuwiki_plugin
 		if (self::user_editor()) {
 			$issuo = new Issues();
 			$issue = $issuo->get_clean($issue_id);
-			if (count($errors) == 0 && $issue['coordinator'] == $INFO['client'])
+			if ($issue['coordinator'] == $INFO['client'])
 				return true;
 		}
 		return false;
@@ -58,11 +56,18 @@ class helper_plugin_bez extends dokuwiki_plugin
 		return p_render('xhtml',p_get_instructions($content), $info);
 	}
 
+	public function bez_uri($site) {
+		return '?id=bez:'.$site;
+	}
+
 	public function issue_uri($id) {
 		return '?id=bez:issue_show:'.$id;
 	}
 	public function html_issue_link($id) {
 		return '<a href="'.self::issue_uri($id).'">#'.$id.'</a>';
+	}
+	public function html_task_link($issue, $task) {
+		return '<a href="'.self::issue_uri($issue).'#z'.$task.'">#'.$issue.':z'.$task.'</a>';
 	}
 
 	public function string_time_to_now($value) {

@@ -353,3 +353,40 @@ input.days {
 #entities_form input[type=reset]:hover {
 	text-decoration: none;
 }
+
+#bez_removal_confirm {
+	max-width: 15em;
+	background: #f7F7F0;
+	border: 1px solid #D7D7D7;
+	border-radius: 0.4em;
+	box-shadow: 0.1em 0.1em 1em 0px #E7E7E7 inset;
+	margin: 1em 0px;
+	padding: 0.5em;
+	width: 100%;
+	text-align: left;
+}
+
+#bez_report_issue_button {
+    background: url("images/newticket.png") no-repeat 4px 50% #fafafa;
+	border: 1px solid #eee;
+	border-radius: 0.3em;
+	color: #222;
+	padding: 0.7em 0.7em 0.6em 24px;
+	text-shadow: 0.1em 0.1em #FCFCFC;
+	cursor: pointer;
+}
+
+#bez_report_issue_button:hover {
+	background-color: #fcfcfc;
+	border: 1px solid #bbb;
+	text-decoration: none;
+}
+
+#bez_info {
+	text-align: center;
+}
+
+#bez_info span {
+	margin-left: 4em;	
+}
+

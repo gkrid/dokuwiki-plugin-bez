@@ -25,6 +25,23 @@ jQuery(document).ready(function() {
 		}
 	}
 
+	//delete_button 
+	jQuery(".bez_delete_button").each(function() {
+		jQuery(this).toggle(function(e) {
+			e.preventDefault();
+			var $click = jQuery(this);
+			var off = $click.offset();
+			var $conf = jQuery("#bez_removal_confirm");
+			$conf.appendTo("body");
+			$conf.css({
+					'position': 'absolute',
+					'left':		off.left-$conf.width()+$click.width(),
+					'top':	off.top+2,
+				});
+			$conf.fadeIn(400).delay(3000).fadeOut(400);
+		});
+	});
+
 	//show/hide opinion
 	var $form = jQuery("#bez_issue_report.update"); 
 	if ($form.length > 0) {
@@ -88,11 +105,11 @@ jQuery(document).ready(function() {
 
 	var show = function() {
 			jQuery(this).siblings(".bds_block_content").show();
-			jQuery(this).find(".toggle").css("background-image", "url(lib/plugins/bds/images/expanded.png)");
+			jQuery(this).find(".toggle").css("background-image", "url(lib/plugins/bez/images/expanded.png)");
 		};
 	var hide = function() {
 			jQuery(this).siblings(".bds_block_content").hide();
-			jQuery(this).find(".toggle").css("background-image", "url(lib/plugins/bds/images/collapsed.png)");
+			jQuery(this).find(".toggle").css("background-image", "url(lib/plugins/bez/images/collapsed.png)");
 		};
 
 	jQuery(".bds_block")
@@ -104,7 +121,7 @@ jQuery(document).ready(function() {
 
 			$h1.find(".toggle").css(
 				{
-					'background': 'url("lib/plugins/bds/images/collapsed.png") no-repeat scroll 4px 50% rgba(0, 0, 0, 0)',
+					'background': 'url("lib/plugins/bez/images/collapsed.png") no-repeat scroll 4px 50% rgba(0, 0, 0, 0)',
 					'border': 'medium none',
 					'border-radius': '0.3em',
 					'box-shadow': '0.1em 0.1em 0.3em 0 #BBBBBB',
@@ -127,7 +144,7 @@ jQuery(document).ready(function() {
 			}
 
 			if (jQuery(this).attr("id") === showed) {
-				jQuery(this).find(".toggle").css("background-image", "url(lib/plugins/bds/images/expanded.png)");
+				jQuery(this).find(".toggle").css("background-image", "url(lib/plugins/bez/images/expanded.png)");
 				jQuery(this).find("h1").toggle(hide, show);
 			} else {
 				jQuery(this).find(".bds_block_content").hide();

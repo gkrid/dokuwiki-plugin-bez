@@ -80,7 +80,7 @@ $template['uri'] = $uri . '?id=bez:issue_show:'.$issue_id;
 
 $template['issue'] = $isso->get($issue_id);
 $template['issue']['description'] = $helper->wiki_parse($template['issue']['description']);
-$template['closed'] = $stao->closed($template['issue']['state']) || $template['issue']['coordinator'] == '-rejected';
+$template['closed'] = !$isso->opened($issue_id);
 $template['successfully_closed'] = $stao->closed($template['issue']['state']);
 
 $template['closed_com'] = str_replace('%d', $helper->string_time_to_now($template['issue']['close_date']), $bezlang['issue_closed_com']);

@@ -1,5 +1,4 @@
 <?php
-include_once DOKU_PLUGIN."bez/models/connect.php";
 include_once DOKU_PLUGIN."bez/models/users.php";
 include_once DOKU_PLUGIN."bez/models/taskactions.php";
 include_once DOKU_PLUGIN."bez/models/taskstates.php";
@@ -21,7 +20,7 @@ CREATE TABLE IF NOT EXISTS tasks (
 	reason TEXT NOT NULL,
 	reporter CHAR(100) NOT NULL,
 	date INT(11) NOT NULL,
-	close_date INT(11) NOT NULL,
+	close_date INT(11) NULL,
 	issue INT(11) NOT NULL,
 
 	PRIMARY KEY (id)
@@ -125,19 +124,24 @@ EOM;
 			$data['state'] = $taskso->id('opened');
 
 			$this->errinsert($data, 'tasks');
+			$this->issue->update_last_mod($data['issue']);
 		}
 	}
 	public function update($post, $data, $id) {
+		$task = $this->getone($id);
+
 		if ($this->can_modify($id)) {
 			$from_user = $this->validate($post);
 			$data = array_merge($data, $from_user);
 			$data['close_date'] = time();
 			$this->errupdate($data, 'tasks', $id);
+			$this->issue->update_last_mod($task['issue']);
 		} elseif ($this->can_change_state($id)) {
 			$state = $this->val_state($post['state']);
 			$reason = $this->val_reason($post['reason']);
 			$data = array('state' => $state, 'reason' => $reason, 'close_date' => time());
 			$this->errupdate($data, 'tasks', $id);
+			$this->issue->update_last_mod($task['issue']);
 		}
 	}
 	public function getone($id) {
@@ -207,6 +211,23 @@ EOM;
 			$row = $this->join($row);
 
 		return $a;
+	}
+	public function get_close_task() {
+		global $INFO;
+		$executor = $INFO['client'];
+		$a = $this->fetch_assoc("SELECT * FROM tasks WHERE executor='$executor' AND state=0 ORDER BY date DESC");
+		foreach ($a as &$row)
+			$row = $this->join($row);
+		return $a;
+	}
+	public function get_stats() {
+		$all = $this->fetch_assoc("SELECT COUNT(*) AS tasks_all FROM tasks;");
+		$opened = $this->fetch_assoc("SELECT COUNT(*) as tasks_opened FROM tasks WHERE state=0;");
+
+		$stats = array();
+		$stats['all'] = $all[0]['tasks_all'];
+		$stats['opened'] = $opened[0]['tasks_opened'];
+		return $stats;
 	}
 }
 

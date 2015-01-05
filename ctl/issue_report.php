@@ -23,13 +23,13 @@ if (count($_POST) > 0) {
 		$isso->update($_POST, array('close_date' => time()), $issue_id);
 
 	} else {
+		$data = array('reporter' => $usro->get_nick(), 'date' => time());
+
 		$stao = new States();
 		if ($_POST['coordinator'] == NULL)
-			$state = $stao->id('proposal');
-		else
-			$state = $stao->id('opened');
+			$data['coordinator'] = $stao->proposal();;
 
-		$data = array('state' => $state, 'reporter' => $usro->get_nick(), 'date' => time());
+		$data['state'] = $stao->id('opened');
 
 		$isso->add($_POST, $data);
 	}
@@ -44,6 +44,7 @@ if (count($_POST) > 0) {
 } else {
 	$action = 'add';
 }
+
 $template['action'] = $action;
 
 $ento = new Entities();
@@ -55,9 +56,11 @@ $stao = new States();
 $template['issue_states'] = $stao->get();
 
 $template['user_admin'] = $helper->user_admin();
-$template['user_coordinator'] = $helper->user_coordinator($issue_id);
+if ($issue_id != NULL) 
+	$template['user_coordinator'] = $helper->user_coordinator($issue_id);
 $template['nicks'] = $usro->get();
 
 $template['uri'] = $uri;
 $template['issue_id'] = $issue_id;
+
 

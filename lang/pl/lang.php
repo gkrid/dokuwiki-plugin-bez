@@ -275,3 +275,11 @@ $lang['entity_manage'] = 'Źródła zgłoszenia';
 
 $lang['sort'] = 'Sortuj';
 $lang['cancel'] = 'Anuluj';
+
+$lang['menu_close_task'] = 'Moje zadania (%d)';
+$lang['menu_close_issue'] = 'Moje problemy (%d)';
+$lang['menu_comment_issue'] = 'Otwarte problemy (%d)';
+
+$lang['do_you_want_remove'] = 'Czy na pewno chcesz usunąć ten rekord?';
+$lang['yes'] = 'Tak';
+$lang['no'] = 'Nie';

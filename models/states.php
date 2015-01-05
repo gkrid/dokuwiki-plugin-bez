@@ -39,5 +39,8 @@ class States {
 	public function rejected() {
 		return 2;
 	}
+	public function proposal() {
+		return '-proposal';
+	}
 }
 

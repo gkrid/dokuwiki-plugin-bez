@@ -273,3 +273,11 @@ $lang['entity_manage'] = 'Sources of report';
 
 $lang['sort'] = 'Sort';
 $lang['cancel'] = 'Cancel';
+
+$lang['menu_close_task'] = 'My tasks (%d)';
+$lang['menu_close_issue'] = 'My issues(%d)';
+$lang['menu_comment_issue'] = 'Opened issues (%d)';
+
+$lang['do_you_want_remove'] = 'Do you really want to remove this row?';
+$lang['yes'] = 'Yes';
+$lang['no'] = 'No';

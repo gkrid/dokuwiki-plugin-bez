@@ -13,3 +13,11 @@ $tasks = $tasko->get_by_days();
 $timeline = $helper->days_array_merge($issues, $tasks);
 
 $template['timeline'] = $timeline;
+
+$stats_i = $isso->get_stats();
+$template['issues_opened'] = $stats_i['opened'];
+$template['issues_all'] = $stats_i['all'];
+
+$stats_t = $tasko->get_stats();
+$template['tasks_opened'] = $stats_t['opened'];
+$template['tasks_all'] = $stats_t['all'];

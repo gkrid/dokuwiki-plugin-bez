@@ -1,0 +1,2 @@
+#! /bin/bash
+find . -name "*.php" -o -name '*.js' -o -name '*.css' -o -name '*.txt'|xargs wc -l

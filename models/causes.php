@@ -59,6 +59,7 @@ EOM;
 			$data = array_merge($data, $from_user);
 
 			$this->errinsert($data, 'causes');
+			$this->issue->update_last_mod($data['issue']);
 		}
 	}
 	public function update($post, $data, $id) {
@@ -68,11 +69,17 @@ EOM;
 			$data = array_merge($data, $from_user);
 
 			$this->errupdate($data, 'causes', $id);
+
+			$cause = $this->getone($id);
+			$this->issue->update_last_mod($cause['issue']);
 		}
 	}
 	public function delete($cause_id) {
-		if ($this->can_modify($cause_id))
+		if ($this->can_modify($cause_id)) {
+			$data = $this->getone($cause_id);
 			$this->errdelete('causes', $cause_id);
+			$this->issue->update_last_mod($data['issue']);
+		}
 	}
 	public function getone($id) {
 		$id = (int) $id;
