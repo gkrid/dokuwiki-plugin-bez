@@ -227,7 +227,7 @@ EOM;
 		$coordinator = $INFO['client'];
 		$a = $this->fetch_assoc("
 			SELECT issues.id, issues.type, issues.title, issues.date, issues.last_mod, COUNT(tasks.id) AS tasks_opened
-			FROM issues LEFT JOIN tasks ON issues.id = tasks.issue
+			FROM issues LEFT JOIN (SELECT * FROM tasks WHERE state = 0) AS tasks ON issues.id = tasks.issue
 			WHERE issues.coordinator='$coordinator' AND issues.state=0
 			GROUP BY issues.id, issues.type, issues.title, issues.date, issues.last_mod
 			ORDER BY issues.last_mod DESC, issues.date DESC
@@ -241,8 +241,8 @@ EOM;
 	public function get_comment_issue() {
 		$a = $this->fetch_assoc("
 			SELECT issues.id, issues.type, issues.title, issues.date, issues.last_mod, COUNT(tasks.id) AS tasks_opened
-			FROM issues LEFT JOIN tasks ON issues.id = tasks.issue
-			WHERE issues.state = 0 AND tasks.state = 0
+			FROM issues LEFT JOIN (SELECT * FROM tasks WHERE state = 0) AS tasks ON issues.id = tasks.issue
+			WHERE issues.state = 0 
 			GROUP BY issues.id, issues.type, issues.title, issues.date, issues.last_mod
 			ORDER BY issues.last_mod DESC, issues.date DESC
 			");
@@ -260,6 +260,43 @@ EOM;
 		$stats['all'] = $all[0]['issues_all'];
 		$stats['opened'] = $opened[0]['issues_opened'];
 		return $stats;
+	}
+
+	public function get_years() {
+		$all = $this->fetch_assoc("SELECT FROM_UNIXTIME(date, '%Y') AS year FROM issues GROUP BY year ORDER BY year DESC;");
+		$years = array();
+		foreach ($all as $row)
+			$years[] = $row['year'];
+		return $years;
+	}
+
+	/*waliduje te pola które są brane przy filtrowaniu*/
+	public function validate_filters($filters) {
+		$data = array();
+
+		$stato = new States();
+		if ($filters['state'] != '-all' || !array_key_exists($post['state'], $stato->get_all()))
+			$data['state'] = '-all';
+		else
+			$data['state'] = $filters['state'];
+
+		$isstyo = new Issuetypes();
+		if ($filters['state'] != '-all' || !array_key_exists($filters['type'], $isstyo->get()))
+			$data['type'] = '-all';
+		else
+			$data['type'] = $filters['type'];
+
+		$ento = new Entities();
+		if ($filters['entity'] != '-all' && !in_array($post['entity'], $ento->get_list()))
+			$data['entity'] = '-all';	
+		else
+			$data['entity'] = $post['entity'];
+
+		return $data;
+	}
+
+	public function get_filtered($filters) {
+		$vfilters = $this->validate_filters($filters);
 	}
 }
 

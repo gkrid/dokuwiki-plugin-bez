@@ -203,7 +203,7 @@
     border: 1px solid #D7D7D7;
     border-radius: 0.4em;
     box-shadow: 0.1em 0.1em 1em 0 #E7E7E7 inset;
-    margin: 1em 0;
+    margin-bottom: 1em;
 	padding: 0.5em;
 	width: 100%;
 	text-align: left;
@@ -390,3 +390,9 @@ input.days {
 	margin-left: 4em;	
 }
 
+#bez_issue_filter label {
+	margin-right: 1em;
+	padding-top: 0.2em;
+	display: block;
+	float: left;
+}

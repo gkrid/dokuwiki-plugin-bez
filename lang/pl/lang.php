@@ -67,6 +67,7 @@ $lang['error_table_unknown'] = 'Wybrana tabela nie istnieje.';
 $lang['error_report_unknown'] = 'Wybrana raport nie istnieje.';
 $lang['error_issue_report'] = 'Nie masz uprawnień aby zgłaszać nowe problemy.';
 $lang['error_entity'] = 'Nie masz uprawnień aby dodawać nowe źródła zgłoszeń.';
+$lang['error_issues'] = 'Nie masz uprawnień aby przeglądać problemy.';
 
 $lang['vald_type_required'] = 'Określ typ problemu.';
 $lang['vald_entity_required'] = 'Wybierz źródło zgłoszenia z listy.';
@@ -283,3 +284,7 @@ $lang['menu_comment_issue'] = 'Otwarte problemy (%d)';
 $lang['do_you_want_remove'] = 'Czy na pewno chcesz usunąć ten rekord?';
 $lang['yes'] = 'Tak';
 $lang['no'] = 'Nie';
+
+$lang['all'] = 'wszystkie';
+$lang['year'] = 'Rok';
+$lang['filter'] = 'Filtruj';

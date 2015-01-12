@@ -68,6 +68,7 @@ $lang['error_table_unknown'] = "The table dosn't exist.";
 $lang['error_report_unknown'] = "The report dosn't exist";
 $lang['error_issue_report'] = 'You cannot add new issues.';
 $lang['error_entity'] = 'You cannot add new soruces of report.';
+$lang['error_issues'] = 'You cannot view issues.';
 
 $lang['vald_root_cause'] = "Select cause category.";
 
@@ -281,3 +282,5 @@ $lang['menu_comment_issue'] = 'Opened issues (%d)';
 $lang['do_you_want_remove'] = 'Do you really want to remove this row?';
 $lang['yes'] = 'Yes';
 $lang['no'] = 'No';
+$lang['year'] = 'Year';
+$lang['filter'] = 'Filter';

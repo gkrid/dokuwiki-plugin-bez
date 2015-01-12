@@ -8,6 +8,13 @@ class States {
 						$bezlang['state_closed']
 					);
 	}
+	public function get_all() {
+			global $bezlang;
+			$ret = $this->get();
+			$ret['-proposal'] = $bezlang['state_proposal'];
+			$ret['-rejected'] = $bezlang['state_rejected'];
+			return $ret;
+	}
 	public function id($name) {
 		switch ($name) {
 			case 'opened': return 0;
@@ -23,13 +30,8 @@ class States {
 	/*pobierz nazwę stanu, uwzględniając -proposal i -rejected*/
 	public function name($id, $coordinator) {
 		global $bezlang;
-		switch($coordinator) {
-			case '-proposal': return $bezlang['state_proposal'];
-			case '-rejected': return $bezlang['state_rejected'];
-			default:
-				$a = $this->get();
-				return $a[$id];
-		}
+		$a = $this->get_all();
+		return $a[$id];
 	}
 
 	public function open() {
