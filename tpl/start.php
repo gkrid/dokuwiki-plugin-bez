@@ -8,7 +8,7 @@
 		<?php echo $bezlang['close_issues'] ?>:
 		<strong><?php echo $template['my_issues'] ?></strong>
 	</a>
-	<a href="<?php echo $helper->bez_uri('close_tasks') ?>" class="bez_start_button" id="bez_info_tasks">
+	<a href="<?php echo $helper->bez_uri('close_task') ?>" class="bez_start_button" id="bez_info_tasks">
 		<?php echo $bezlang['close_tasks'] ?>:
 		<strong><?php echo $template['my_tasks'] ?></strong>
 	</a>

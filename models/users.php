@@ -16,7 +16,6 @@ class Users {
 		global $auth;
 		$data = $auth->getUserData($user);
 		return $data['name'];
-
 	}
 
 	public function can_edit() {

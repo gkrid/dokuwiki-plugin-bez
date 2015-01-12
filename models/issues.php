@@ -154,9 +154,10 @@ EOM;
 		$usro = new Users();
 		$a['reporter'] = $usro->name($a['reporter']);
 
-		if (!in_array($a['coordinator'], $this->coord_special))
+		if (!in_array($a['coordinator'], $this->coord_special)) {
+			$a['coordinator_email'] = $usro->email($a['coordinator']);
 			$a['coordinator'] = $usro->name($a['coordinator']);
-		else if ($a['coordinator'] == '-proposal')
+		} else if ($a['coordinator'] == '-proposal')
 			$a['coordinator'] = $bezlang['none'].' ('.$bezlang['state_proposal'].')';
 		else if ($a['coordinator'] == '-rejected')
 			$a['coordinator'] = $bezlang['none'].' ('.$bezlang['state_rejected'].')';

@@ -41,10 +41,12 @@
 	<?php echo $bezlang['8d_report'] ?>
 </a>
 
-<a class="bds_inline_button bds_send_button" href="mailto:'.$to.'?subject='.rawurlencode($subject).'&body='.rawurlencode($text).'">
+<a class="bds_inline_button bds_send_button" href="
+	<?php echo $helper->mailto($template['issue']['coordinator_email'],
+	$bezlang['new_issue'].': #'.$template['issue']['id'].' ['.$template['issue']['entity'].'] '.$template['issue']['title'],
+	$template['token_link']) ?>">
 	✉ <?php echo $bezlang['send_mail'] ?>
 </a>
-
 
 <?php if ($template['user_is_coordinator']): ?> 
 	<a href="?id=bez:issue_report:<?php echo $template['issue']['id'] ?>" class="bds_inline_button bds_edit_button">
@@ -279,9 +281,7 @@
 </div>
 
 <div id="bez_removal_confirm" style="display:none;">
-	<label>
-		<?php echo $bezlang['do_you_want_remove'] ?>
-		<input type="button" class="yes" value="<?php echo $bezlang['yes'] ?>" />
-	</label>
+	<?php echo $bezlang['do_you_want_remove'] ?>
+	<input type="button" class="yes" value="<?php echo $bezlang['yes'] ?>" />
 	<a href="#" class="no bez_delete_button bez_link_button"><?php echo $bezlang['no'] ?></a>
 </div>

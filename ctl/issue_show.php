@@ -8,6 +8,7 @@ include_once DOKU_PLUGIN."bez/models/users.php";
 include_once DOKU_PLUGIN."bez/models/tasks.php";
 include_once DOKU_PLUGIN."bez/models/taskactions.php";
 include_once DOKU_PLUGIN."bez/models/taskstates.php";
+include_once DOKU_PLUGIN."bez/models/tokens.php";
 
 $como = new Comments();
 $causo = new Causes();
@@ -100,6 +101,10 @@ $template['user'] = $INFO['client'];
 $template['taskactions'] = $taskao->get();
 
 $template['issue_opened'] = !$template['closed'];
+
+/*mailto ustawienia*/
+$toko = new Tokens();
+$template['token_link'] = $template['uri'].'&token='.$toko->get($issue_id);
 
 /*Domyślne przyciski*/
 $template['comment_button'] = $bezlang['add'];

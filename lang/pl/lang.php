@@ -2,7 +2,7 @@
 $lang['bez'] = 'Baza Elimnacji Zagrożeń';
 $lang['bez_short'] = 'BEZ';
 $lang['bds_timeline'] = 'Historia';
-$lang['bds_issues'] = 'Zestawienia';
+$lang['bds_issues'] = 'Problemy';
 $lang['bds_issue_report'] = 'Zgłoś problem';
 $lang['bds_reports'] = 'Raporty';
 

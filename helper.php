@@ -3,23 +3,35 @@
 if(!defined('DOKU_INC')) die();
 
 include_once DOKU_PLUGIN."bez/models/issues.php";
+include_once DOKU_PLUGIN."bez/models/tokens.php";
 
 class helper_plugin_bez extends dokuwiki_plugin
 {
-	public function user_viewer() {
-		global $auth, $INFO;
+	/*najniższe stadium użytkownika. Może oglądać tylko to na co pozwala mu jego token*/
+	public function token_viewer() {
+		global $ID;
 
-		if ($auth->getUserData($INFO['client']))
+		if (!array_key_exists('token', $_GET));
+			return false;
+
+		$toko = new Tokens();
+		if ($toko->check($_GET['token'], $ID))
 			return true;
+		return false;
+	}
+	public function user_viewer() {
+		global $ID;
 
+		if (auth_quickaclcheck($ID) >= AUTH_READ || self::token_viewer())
+			return true;
 
 		return false;
 	}
 
 	public function user_editor() {
-		global $INFO, $auth;
+		global $ID;
 
-		if ($auth->getUserData($INFO['client']))
+		if (auth_quickaclcheck($ID) >= AUTH_EDIT)
 			return true;
 
 		return false;
@@ -54,6 +66,10 @@ class helper_plugin_bez extends dokuwiki_plugin
 	public function wiki_parse($content) {
 		$info = array();
 		return p_render('xhtml',p_get_instructions($content), $info);
+	}
+
+	public function mailto($to, $subject, $body) {
+		return 'mailto:'.$to.'?subject='.rawurlencode($subject).'&body='.rawurlencode($body);
 	}
 
 	public function bez_uri($site) {
