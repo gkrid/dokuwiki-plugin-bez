@@ -288,3 +288,8 @@ $lang['no'] = 'Nie';
 $lang['all'] = 'wszystkie';
 $lang['year'] = 'Rok';
 $lang['filter'] = 'Filtruj';
+
+$lang['close_issues'] = 'Moje problemy';
+$lang['close_tasks'] = 'Moje zadania';
+
+$lang['proposals'] = 'Propozycje';

@@ -284,3 +284,8 @@ $lang['yes'] = 'Yes';
 $lang['no'] = 'No';
 $lang['year'] = 'Year';
 $lang['filter'] = 'Filter';
+
+$lang['close_issues'] = 'My issues';
+$lang['close_tasks'] = 'My tasks';
+
+$lang['proposals'] = 'Proposals';

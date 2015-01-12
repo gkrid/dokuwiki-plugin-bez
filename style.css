@@ -374,6 +374,14 @@ input.days {
     background: url("images/newticket.png") no-repeat 4px 50% #fafafa;
 }
 
+#bez_info_tasks {
+    background: url("images/newtask.png") no-repeat 4px 50% #fafafa;
+}
+
+#bez_info_proposals {
+    background: url("images/newticket.png") no-repeat 4px 50% #fafafa;
+}
+
 .bez_start_button {
 	border: 1px solid #eee;
 	border-radius: 0.3em;
@@ -393,8 +401,8 @@ input.days {
 	text-align: center;
 }
 
-#bez_info a, #bez_info span{
-	margin-left: 4em;	
+#bez_info a {
+	margin-left: 2em;	
 }
 
 #bez_info a:first-child {

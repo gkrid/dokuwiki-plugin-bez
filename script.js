@@ -25,20 +25,37 @@ jQuery(document).ready(function() {
 		}
 	}
 
+	var $conf = jQuery("#bez_removal_confirm");
+	$conf.find(".no").click(function(e) {
+		e.preventDefault();
+		$conf.hide();
+	});
+
 	//delete_button 
-	jQuery("#bez_comments, #bez_causes").find(".bez_delete_button").each(function() {
-		jQuery(this).toggle(function(e) {
+	$delete_buts = jQuery("#bez_comments, #bez_causes").find(".bez_delete_button");
+	jQuery("body").bind("click", function (e) {
+		var $target = jQuery(e.target);
+		if (!$target.is($delete_buts))
+			$conf.hide();
+	});
+
+	$delete_buts.each(function() {
+		jQuery(this).click(function(e) {
 			e.preventDefault();
 			var $click = jQuery(this);
 			var off = $click.offset();
-			var $conf = jQuery("#bez_removal_confirm");
 			$conf.appendTo("body");
 			$conf.css({
 					'position': 'absolute',
 					'left':		off.left-$conf.width()+$click.width(),
 					'top':	off.top+2,
 				});
-			$conf.fadeIn(400).delay(3000).fadeOut(400);
+			$conf.find("input").unbind("click");
+			$conf.find("input").bind("click", function(e) {
+				e.preventDefault();
+				window.location = $click.attr("href");
+			});
+			$conf.show();
 		});
 	});
 

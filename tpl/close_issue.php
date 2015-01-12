@@ -1,6 +1,7 @@
 <table>
 	<tr>
 		<th><?php echo $bezlang['id'] ?></th>
+		<th><?php echo $bezlang['state'] ?></th>
 		<th><?php echo $bezlang['type'] ?></th>
 		<th><?php echo $bezlang['title'] ?></th>
 		<th><?php echo $bezlang['date'] ?></th>
@@ -10,8 +11,9 @@
 	<?php foreach ($template['issues'] as $issue): ?>
 		<tr>
 			<td><?php echo $helper->html_issue_link($issue['id']) ?></td>
+			<td><?php echo $issue['state'] ?></td>
 			<td><?php echo $issue['type'] ?></td>
-			<td><?php echo $issue['title'] ?></td>
+			<td>[<?php echo $issue['entity'] ?>] <?php echo $issue['title'] ?></td>
 			<td><?php echo $helper->string_time_to_now($issue['date']) ?></td>
 			<td>
 				<?php if ($issue['last_mod'] == ''): ?>

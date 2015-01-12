@@ -1,11 +1,23 @@
 <div id="bez_info">
 	<?php if ($helper->user_editor()): ?>
-		<a href="<?php echo $helper->bez_uri('issue_report') ?>" class="bez_start_button" id="bez_report_issue_button">Zgłoś problem</a>
+		<a href="<?php echo $helper->bez_uri('issue_report') ?>" class="bez_start_button" id="bez_report_issue_button">
+			<?php echo $bezlang['report_issue'] ?>
+		</a>
 	<?php endif ?>
-	<a href="<?php echo $helper->bez_uri('comment_issue') ?>" class="bez_start_button" id="bez_info_issues"><?php echo $bezlang['issues'] ?>:
-		<strong><?php echo $template['issues_opened'] ?>/<?php echo $template['issues_all'] ?></strong></a>
-	<span id="bez_info_tasks"><?php echo $bezlang['tasks'] ?>:
-		<strong><?php echo $template['tasks_opened'] ?>/<?php echo $template['tasks_all'] ?></strong></span>
+	<a href="<?php echo $helper->bez_uri('close_issue') ?>" class="bez_start_button" id="bez_info_issues">
+		<?php echo $bezlang['close_issues'] ?>:
+		<strong><?php echo $template['my_issues'] ?></strong>
+	</a>
+	<a href="<?php echo $helper->bez_uri('close_tasks') ?>" class="bez_start_button" id="bez_info_tasks">
+		<?php echo $bezlang['close_tasks'] ?>:
+		<strong><?php echo $template['my_tasks'] ?></strong>
+	</a>
+	<?php if ($helper->user_admin()): ?>
+		<a href="<?php echo $helper->bez_uri('issues:state:-proposal') ?>" class="bez_start_button" id="bez_info_proposals">
+			<?php echo $bezlang['proposals'] ?>:
+			<strong><?php echo $template['proposals'] ?></strong>
+		</a>
+	<?php endif ?>
 </div>
 
 <dl id="bds_timeline">

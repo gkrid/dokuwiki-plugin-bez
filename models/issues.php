@@ -225,24 +225,10 @@ EOM;
 		global $INFO;
 		$coordinator = $INFO['client'];
 		$a = $this->fetch_assoc("
-			SELECT issues.id, issues.type, issues.title, issues.date, issues.last_mod, COUNT(tasks.id) AS tasks_opened
+			SELECT issues.id, issues.state, issues.entity, issues.type, issues.title, issues.date, issues.last_mod, COUNT(tasks.id) AS tasks_opened
 			FROM issues LEFT JOIN (SELECT * FROM tasks WHERE state = 0) AS tasks ON issues.id = tasks.issue
 			WHERE issues.coordinator='$coordinator' AND issues.state=0
-			GROUP BY issues.id, issues.type, issues.title, issues.date, issues.last_mod
-			ORDER BY issues.last_mod DESC, issues.date DESC
-			");
-
-		foreach ($a as &$row)
-			$row = $this->join($row);
-		return $a;
-	}
-
-	public function get_comment_issue() {
-		$a = $this->fetch_assoc("
-			SELECT issues.id, issues.type, issues.title, issues.date, issues.last_mod, COUNT(tasks.id) AS tasks_opened
-			FROM issues LEFT JOIN (SELECT * FROM tasks WHERE state = 0) AS tasks ON issues.id = tasks.issue
-			WHERE issues.state = 0 
-			GROUP BY issues.id, issues.type, issues.title, issues.date, issues.last_mod
+			GROUP BY issues.id, issues.state, issues.type, issues.entity, issues.title, issues.date, issues.last_mod
 			ORDER BY issues.last_mod DESC, issues.date DESC
 			");
 

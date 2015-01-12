@@ -58,11 +58,6 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 		$title = str_replace('%d', $no, $this->getLang('menu_close_task'));
 		$data['bez:close_task'] = array('id' => 'bez:close_task', 'type' => 'f', 'level' => 2, 'title' => $title);
 
-		$no = count($isso->get_comment_issue());
-		$title = str_replace('%d', $no, $this->getLang('menu_comment_issue'));
-		$data['bez:comment_issue'] = array('id' => 'bez:comment_issue', 'type' => 'f', 'level' => 2, 'title' => $title);
-
-
 		$data['bez:issues'] = array('id' => 'bez:issues', 'type' => 'f', 'level' => 2, 'title' => $this->getLang('bds_issues'));
 
 		if ($helper->user_admin())
