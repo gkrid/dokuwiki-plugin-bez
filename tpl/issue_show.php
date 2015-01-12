@@ -8,13 +8,13 @@
 
 <div class="time_box">
 <span><?php echo $bezlang['open'] ?>: <?php echo $helper->time2date($template['issue']['date']) ?></span>
-<?php if ($template['issue']['close_date'] != NULL): ?>
+<?php if ($template['issue']['last_mod'] != NULL): ?>
 	<span>
 	<?php if ($template['closed']): ?>
 		<?php echo $bezlang['closed'] ?>
 	<?php else: ?>
 		<?php echo $bezlang['last_modified'] ?>
-	<?php endif ?>: <?php echo $helper->time2date($template['issue']['close_date']) ?>
+	<?php endif ?>: <?php echo $helper->time2date($template['issue']['last_mod']) ?>
 	</span>
 <?php endif ?>
 </div>

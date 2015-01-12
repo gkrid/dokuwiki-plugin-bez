@@ -26,7 +26,7 @@ jQuery(document).ready(function() {
 	}
 
 	//delete_button 
-	jQuery(".bez_delete_button").each(function() {
+	jQuery("#bez_comments, #bez_causes").find(".bez_delete_button").each(function() {
 		jQuery(this).toggle(function(e) {
 			e.preventDefault();
 			var $click = jQuery(this);

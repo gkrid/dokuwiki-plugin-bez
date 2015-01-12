@@ -23,7 +23,6 @@ CREATE TABLE IF NOT EXISTS issues (
 	coordinator CHAR(100) NULL,
 	reporter CHAR(100) NOT NULL,
 	date INT(11) NOT NULL,
-	close_date INT(11) NULL,
 	last_mod INT(11) NOT NULL,
 
 	PRIMARY KEY (id)
@@ -190,20 +189,20 @@ EOM;
 			foreach ($issues as $ik => $issue)
 				$create[$day][$ik]['class'] = 'issue_created';
 
-		$res2 = $this->fetch_assoc("SELECT * FROM issues WHERE state = 1 AND coordinator != '-rejected' AND coordinator != '-proposal' ORDER BY close_date DESC");
-		$close = $this->sort_by_days($res2, 'close_date');
+		$res2 = $this->fetch_assoc("SELECT * FROM issues WHERE state = 1 AND coordinator != '-rejected' AND coordinator != '-proposal' ORDER BY last_mod DESC");
+		$close = $this->sort_by_days($res2, 'last_mod');
 		foreach ($close as $day => $issues)
 			foreach ($issues as $ik => $issue) {
 				$close[$day][$ik]['class'] = 'issue_closed';
-				$close[$day][$ik]['date'] = $close[$day][$ik]['close_date'];
+				$close[$day][$ik]['date'] = $close[$day][$ik]['last_mod'];
 			}
 
-		$res3 = $this->fetch_assoc("SELECT * FROM issues WHERE coordinator = '-rejected 'ORDER BY close_date DESC");
-		$rejected = $this->sort_by_days($res3, 'close_date');
+		$res3 = $this->fetch_assoc("SELECT * FROM issues WHERE coordinator = '-rejected 'ORDER BY last_mod DESC");
+		$rejected = $this->sort_by_days($res3, 'last_mod');
 		foreach ($rejected as $day => $issues)
 			foreach ($issues as $ik => $issue) {
 				$rejected[$day][$ik]['class'] = 'issue_rejected';
-				$rejected[$day][$ik]['date'] = $rejected[$day][$ik]['close_date'];
+				$rejected[$day][$ik]['date'] = $rejected[$day][$ik]['last_mod'];
 			}
 
 		return $this->helper->days_array_merge($create, $close, $rejected);
@@ -275,28 +274,70 @@ EOM;
 		$data = array();
 
 		$stato = new States();
-		if ($filters['state'] != '-all' || !array_key_exists($post['state'], $stato->get_all()))
-			$data['state'] = '-all';
-		else
+		if ($filters['state'] == '-all' || array_key_exists($filters['state'], $stato->get_all()))
 			$data['state'] = $filters['state'];
+		else
+			$data['state'] = '-all';
 
 		$isstyo = new Issuetypes();
-		if ($filters['state'] != '-all' || !array_key_exists($filters['type'], $isstyo->get()))
-			$data['type'] = '-all';
-		else
+		if ($filters['state'] == '-all' || array_key_exists($filters['type'], $isstyo->get()))
 			$data['type'] = $filters['type'];
+		else
+			$data['type'] = '-all';
 
 		$ento = new Entities();
-		if ($filters['entity'] != '-all' && !in_array($post['entity'], $ento->get_list()))
-			$data['entity'] = '-all';	
+		if ($filters['entity'] == '-all' || in_array($filters['entity'], $ento->get_list()))
+			$data['entity'] = $filters['entity'];
 		else
-			$data['entity'] = $post['entity'];
+			$data['entity'] = '-all';	
+
+		$years = $this->get_years();
+		if ($filters['year'] == '-all' || in_array($filters['year'], $years))
+			$data['year'] = $filters['year'];
+		else
+			$data['year'] = '-all';
 
 		return $data;
 	}
 
 	public function get_filtered($filters) {
 		$vfilters = $this->validate_filters($filters);
+
+		$where = array();
+
+		$year = $vfilters['year'];
+		$state = $vfilters['state'];
+
+		unset($vfilters['year']);
+		unset($vfilters['state']);
+
+		foreach ($vfilters as $name => $value)
+			if ($value != '-all')
+				$where[] = "$name = '".$this->db->real_escape_string($value)."'";
+
+		if ($year != '-all') {
+			$year = (int)$year;
+			$where[] = 'date >= '.mktime(0,0,0,1,1,$year);
+			$where[] = 'date < '.mktime(0,0,0,1,1,$year+1);
+		}
+		if ($state != '-all') {
+			/*-proposal or -rejected*/
+			if (strstr($state, '-')) 
+				$where[] = "coordinator = '$state'";
+			else {
+				$where[] = "state = $state";
+				$where[] = "coordinator != '-proposal'";
+				$where[] = "coordinator != '-rejected'";
+			}
+		}
+		$where_q = '';
+		if (count($where) > 0)
+			$where_q = 'WHERE '.implode(' AND ', $where);
+
+		$a = $this->fetch_assoc("SELECT * FROM issues $where_q ORDER BY date DESC");
+		foreach ($a as &$row)
+			$row = $this->join($row);
+		return $a;
 	}
 }
 

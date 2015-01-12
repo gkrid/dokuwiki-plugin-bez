@@ -1,9 +1,9 @@
 <div id="bez_info">
 	<?php if ($helper->user_editor()): ?>
-		<a href="<?php echo $helper->bez_uri('issue_report') ?>" id="bez_report_issue_button">Zgłoś problem</a>
+		<a href="<?php echo $helper->bez_uri('issue_report') ?>" class="bez_start_button" id="bez_report_issue_button">Zgłoś problem</a>
 	<?php endif ?>
-	<span id="bez_info_issues"><?php echo $bezlang['issues'] ?>:
-		<strong><?php echo $template['issues_opened'] ?>/<?php echo $template['issues_all'] ?></strong></span>
+	<a href="<?php echo $helper->bez_uri('comment_issue') ?>" class="bez_start_button" id="bez_info_issues"><?php echo $bezlang['issues'] ?>:
+		<strong><?php echo $template['issues_opened'] ?>/<?php echo $template['issues_all'] ?></strong></a>
 	<span id="bez_info_tasks"><?php echo $bezlang['tasks'] ?>:
 		<strong><?php echo $template['tasks_opened'] ?>/<?php echo $template['tasks_all'] ?></strong></span>
 </div>

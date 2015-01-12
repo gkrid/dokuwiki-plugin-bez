@@ -29,9 +29,11 @@ class States {
 	}
 	/*pobierz nazwę stanu, uwzględniając -proposal i -rejected*/
 	public function name($id, $coordinator) {
-		global $bezlang;
 		$a = $this->get_all();
-		return $a[$id];
+		if (strstr($coordinator, '-'))
+			return $a[$coordinator];
+		 else
+			return $a[$id];
 	}
 
 	public function open() {

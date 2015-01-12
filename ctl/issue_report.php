@@ -20,7 +20,7 @@ $usro = new Users();
 if (count($_POST) > 0) {
 
 	if ($action == 'update') {
-		$isso->update($_POST, array('close_date' => time()), $issue_id);
+		$isso->update($_POST, array(), $issue_id);
 
 	} else {
 		$data = array('reporter' => $usro->get_nick(), 'date' => time());

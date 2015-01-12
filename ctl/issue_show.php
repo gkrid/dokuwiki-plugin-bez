@@ -83,7 +83,7 @@ $template['issue']['description'] = $helper->wiki_parse($template['issue']['desc
 $template['closed'] = !$isso->opened($issue_id);
 $template['successfully_closed'] = $stao->closed($template['issue']['state']);
 
-$template['closed_com'] = str_replace('%d', $helper->string_time_to_now($template['issue']['close_date']), $bezlang['issue_closed_com']);
+$template['closed_com'] = str_replace('%d', $helper->string_time_to_now($template['issue']['last_mod']), $bezlang['issue_closed_com']);
 
 $template['comments'] = $como->get($issue_id);
 $template['causes'] = $causo->get($issue_id);

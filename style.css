@@ -367,27 +367,38 @@ input.days {
 }
 
 #bez_report_issue_button {
+    background: url("images/addticket.png") no-repeat 4px 50% #fafafa;
+}
+
+#bez_info_issues {
     background: url("images/newticket.png") no-repeat 4px 50% #fafafa;
+}
+
+.bez_start_button {
 	border: 1px solid #eee;
 	border-radius: 0.3em;
-	color: #222;
+	color: #222 !important;
 	padding: 0.7em 0.7em 0.6em 24px;
 	text-shadow: 0.1em 0.1em #FCFCFC;
 	cursor: pointer;
 }
 
-#bez_report_issue_button:hover {
+.bez_start_button:hover {
 	background-color: #fcfcfc;
 	border: 1px solid #bbb;
-	text-decoration: none;
+	text-decoration: none !important;
 }
 
 #bez_info {
 	text-align: center;
 }
 
-#bez_info span {
+#bez_info a, #bez_info span{
 	margin-left: 4em;	
+}
+
+#bez_info a:first-child {
+	margin-left: 0;	
 }
 
 #bez_issue_filter label {
