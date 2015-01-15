@@ -23,7 +23,7 @@ class Tokens extends Connect {
 		if ($this->helper->user_viewer()) {
 			$data = array('page' => $id, 'date' => time());
 			$this->errinsert($data, 'tokens');
-			$token = sha1($password.$this->lastid);
+			$token = sha1($this->password.$this->lastid);
 			$this->errupdate(array('token' => $token), 'tokens', $this->lastid);
 
 			if (count($errors) == 0)
@@ -35,7 +35,7 @@ class Tokens extends Connect {
 	/*sprawdź czy użytkownik o podanym $tokenie, może oglądać stronę o id = $page*/
 	public function check($token, $page) {
 		$a = $this->fetch_assoc("SELECT page FROM tokens WHERE token='".$this->db->real_escape_string($token)."'");
-		if (count($a) > 1 && $a[0]['page'] == $page)
+		if (count($a) >= 1 && $a[0]['page'] == $page)
 			return true;
 		return false;
 	}

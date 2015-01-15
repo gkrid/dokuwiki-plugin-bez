@@ -7,16 +7,18 @@ include_once DOKU_PLUGIN."bez/models/tokens.php";
 
 class helper_plugin_bez extends dokuwiki_plugin
 {
-	/*najniższe stadium użytkownika. Może oglądać tylko to na co pozwala mu jego token*/
+	/*najniższe stadium rozwoju użytkownika. Może oglądać tylko to na co pozwala mu jego token*/
 	public function token_viewer() {
 		global $ID;
 
-		if (!array_key_exists('token', $_GET));
+			
+		if (!isset($_GET['token']))
 			return false;
 
 		$toko = new Tokens();
-		if ($toko->check($_GET['token'], $ID))
+		if ($toko->check(trim($_GET['token']), $ID))
 			return true;
+
 		return false;
 	}
 	public function user_viewer() {

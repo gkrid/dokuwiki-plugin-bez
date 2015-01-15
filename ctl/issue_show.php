@@ -75,6 +75,7 @@ if (array_key_exists($table, $objects)) {
 		header('Location: '.$redirect);
 }
 
+
 $isso = new Issues();
 
 $template['uri'] = $uri . '?id=bez:issue_show:'.$issue_id;
@@ -104,7 +105,7 @@ $template['issue_opened'] = !$template['closed'];
 
 /*mailto ustawienia*/
 $toko = new Tokens();
-$template['token_link'] = $template['uri'].'&token='.$toko->get($issue_id);
+$template['token_link'] = $template['uri'].'&token='.$toko->get('bez:issue_show:'.$issue_id);
 
 /*Domyślne przyciski*/
 $template['comment_button'] = $bezlang['add'];

@@ -101,5 +101,17 @@ EOM;
 
 		return $a;
 	}
+
+	public function get_by_rootcause($issue) {
+		$a = $this->get($issue);
+		$b = array();
+		foreach ($a as $row) {
+			$k = $row['rootcause'];
+			if ( !isset($b[$k]) )
+				$b[$k] = array();
+			$b[$k][] = $row;
+		}
+		return $b;
+	}
 }
 

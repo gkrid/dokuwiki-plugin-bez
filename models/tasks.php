@@ -189,7 +189,7 @@ EOM;
 	}
 	public function join($row) {
 		$usro = new Users();
-		$taskao= new Taskactions();
+		$taskao = new Taskactions();
 		$taskso = new Taskstates();
 		$stato = new States();
 
@@ -202,11 +202,12 @@ EOM;
 
 		return $row;
 	}
-	public function get($issue) {
+	public function get_clean($issue) {
 		$issue = (int) $issue;
-
-		$a = $this->fetch_assoc("SELECT * FROM tasks WHERE issue=$issue");
-
+		return $this->fetch_assoc("SELECT * FROM tasks WHERE issue=$issue");
+	}
+	public function get($issue) {
+		$a = $this->get_clean($issue);
 		foreach ($a as &$row)
 			$row = $this->join($row);
 
@@ -228,6 +229,25 @@ EOM;
 		$stats['all'] = $all[0]['tasks_all'];
 		$stats['opened'] = $opened[0]['tasks_opened'];
 		return $stats;
+	}
+
+	public function get_by_8d($issue) {
+		$a = $this->get_clean($issue);
+		$b = array();
+		$taskao = new Taskactions();
+		foreach ($a as $row) {
+			$k = $taskao->map_8d($row['action']);
+			if ( !isset($b[$k]) )
+				$b[$k] = array();
+			$b[$k][] = $this->join($row);
+		}
+		ksort($b);
+		return $b;
+	}
+	public function get_total_cost($issue) {
+		$issue = (int) $issue;
+		$a = $this->fetch_assoc("SELECT SUM(cost) AS 'cost_total' FROM tasks WHERE issue=$issue GROUP BY issue");
+		return $a[0]['cost_total'];
 	}
 }
 

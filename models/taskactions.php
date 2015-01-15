@@ -17,6 +17,14 @@ class Taskactions {
 			default: return -1;
 		}
 	}
+	public function map_8d($name) {
+		switch ($name) {
+			case 0: return '4d';
+			case 1: return '5d';
+			case 2: return '6d';
+			default: return '';
+		}
+	}
 	public function name($id) {
 		$a = $this->get();
 		return $a[$id];
