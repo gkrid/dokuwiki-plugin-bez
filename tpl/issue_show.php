@@ -37,14 +37,14 @@
 	<?php echo $template['issue']['opinion'] ?>
 <?php endif ?>
 
-<a href="?id=bez:8d:<?php echo $template['issue']['id'] ?>" class="bds_inline_button bds_report_button">
+<a href="<?php echo $template['8d_link'] ?>" class="bds_inline_button bds_report_button">
 	<?php echo $bezlang['8d_report'] ?>
 </a>
 
 <a class="bds_inline_button bds_send_button" href="
 	<?php echo $helper->mailto($template['issue']['coordinator_email'],
 	$bezlang['new_issue'].': #'.$template['issue']['id'].' ['.$template['issue']['entity'].'] '.$template['issue']['title'],
-	$template['token_link']) ?>">
+	$template['uri']) ?>">
 	✉ <?php echo $bezlang['send_mail'] ?>
 </a>
 

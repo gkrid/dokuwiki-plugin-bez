@@ -105,7 +105,7 @@ $template['issue_opened'] = !$template['closed'];
 
 /*mailto ustawienia*/
 $toko = new Tokens();
-$template['token_link'] = $template['uri'].'&token='.$toko->get('bez:issue_show:'.$issue_id);
+$template['8d_link'] = $uri.'?id=bez:8d:'.$issue_id.'&token='.$toko->get('bez:8d:'.$issue_id);
 
 /*Domyślne przyciski*/
 $template['comment_button'] = $bezlang['add'];

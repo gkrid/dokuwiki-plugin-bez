@@ -37,10 +37,12 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 
 	public function action_act_preprocess($event, $param)
 	{
-		global $auth, $INFO;
+		global $auth, $INFO, $ID;
 		global $template, $bezlang, $value, $errors;
+
 		if ( ! $this->helper->user_viewer())
 			return false;
+
 		if ($this->action != '')
 			$event->preventDefault();
 
@@ -65,6 +67,16 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 		global $template, $bezlang, $value, $errors;
 		if ($this->action != '')
 			$event->preventDefault();
+
+		/*przerywamy wyświetlanie*/
+		if ($this->norender)
+			return false;
+
+		if (!$this->helper->user_viewer()) {
+			html_denied();
+			return false;
+		}
+
 		if (!isset($errors))
 			$errors= array();
 		foreach ($errors as $error) {
@@ -72,9 +84,6 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 			echo $error;
 			echo '</div>';
 		}
-		/*przerywamy wyświetlanie*/
-		if (!$this->helper->user_viewer() || $this->norender)
-			return false;
 
 		$tpl = DOKU_PLUGIN."bez/tpl/".str_replace('/', '', $this->action).".php";
 		if (file_exists($tpl)) {

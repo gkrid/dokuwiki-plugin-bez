@@ -1,4 +1,12 @@
-<h1><?php echo $bezlang['8d_report'] ?></h1>
+<h1>
+	<?php echo $bezlang['8d_report'] ?>
+	<span id="bez_8d_send_button">[<a href="
+		<?php echo $helper->mailto($template['issue']['coordinator_email'],
+		$bezlang['8d_report'].': #'.$template['issue']['id'].' ['.$template['issue']['entity'].'] '.$template['issue']['title'],
+		$template['uri']) ?>">
+		✉ <?php echo $bezlang['send_mail'] ?>
+	</a>]</span>
+</h1>
 
 <table>
 <tr>

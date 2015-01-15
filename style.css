@@ -415,3 +415,8 @@ input.days {
 	display: block;
 	float: left;
 }
+
+#bez_8d_send_button {
+	font-size: 50%;
+	font-weight: normal;
+}
