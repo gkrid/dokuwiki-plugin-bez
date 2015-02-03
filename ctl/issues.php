@@ -28,7 +28,7 @@ if (count($_POST) > 0) {
 
 /*rekordy parzyste to nagłówki, nieparzyste to ich wartości.*/
 /*np. status:1:type:2:podmiot:PCA*/
-$value = array('state' => '-all', 'type' => '-all', 'entity' => '-all', 'year' => '-all');
+$value = array('state' => '-all', 'type' => '-all', 'entity' => '-all', 'coordinator' => '-all', 'year' => '-all');
 for ($i = 0; $i < count($params); $i += 2)
 	$value[urldecode($params[$i])] = urldecode($params[$i+1]);
 
@@ -38,6 +38,7 @@ $template['uri'] = $uri;
 $template['states'] = $stao->get_all();
 $template['issue_types'] = $issto->get();
 $template['entities'] = $ento->get_list();
+$template['coordinators'] = $isso->get_coordinators();
 $template['years'] = $isso->get_years();
 
 $template['issues'] = $isso->get_filtered($value);

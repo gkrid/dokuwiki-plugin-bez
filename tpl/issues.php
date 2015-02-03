@@ -34,6 +34,19 @@
 		</select>
 	</label>
 
+	<label><?php echo $bezlang['coordinator'] ?>:
+		<select name="coordinator">
+			<option <?php if ($value['coordinator'] == '-all') echo 'selected' ?>
+				value="-all">--- <?php echo $bezlang['all'] ?> ---</option>
+			<option <?php if ($value['coordinator'] == '-none') echo 'selected' ?>
+				value="-none">--- <?php echo $bezlang['none'] ?> ---</option>
+		<?php foreach ($template['coordinators'] as $nick => $name): ?>
+			<option <?php if ($value['coordinator'] == $nick) echo 'selected' ?>
+				value="<?php echo $nick ?>"><?php echo $name ?></option>
+		<?php endforeach ?>
+		</select>
+	</label>
+
 	<label><?php echo $bezlang['year'] ?>:
 		<select name="year">
 			<option <?php if ($value['year'] == '-all') echo 'selected' ?>
@@ -55,6 +68,7 @@
 		<th><?php echo $bezlang['state'] ?></th>
 		<th><?php echo $bezlang['type'] ?></th>
 		<th><?php echo $bezlang['title'] ?></th>
+		<th><?php echo $bezlang['coordinator'] ?></th>
 		<th><?php echo $bezlang['date'] ?></th>
 		<th><?php echo $bezlang['last_mod_date'] ?></th>
 	</tr>
@@ -64,6 +78,7 @@
 			<td><?php echo $issue['state'] ?></td>
 			<td><?php echo $issue['type'] ?></td>
 			<td>[<?php echo $issue['entity'] ?>] <?php echo $issue['title'] ?></td>
+			<td><?php echo $issue['coordinator'] ?></td>
 			<td><?php echo $helper->string_time_to_now($issue['date']) ?></td>
 			<td>
 				<?php if ($issue['last_mod'] == ''): ?>

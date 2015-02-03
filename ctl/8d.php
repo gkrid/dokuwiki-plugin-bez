@@ -16,7 +16,10 @@ $tasko = new Tasks();
 
 $template['issue'] = $isso->get($issue_id);
 
+$template['team'] = $isso->get_team($issue_id);
+
 $template['causes'] = $causo->get_by_rootcause($issue_id);
+
 
 $template['tasks'] = $tasko->get_by_8d($issue_id);
 $template['cost_total'] = $tasko->get_total_cost($issue_id);

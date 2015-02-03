@@ -143,8 +143,18 @@ EOM;
 		return true;
 	}
 
-	public function join($a) {
+	public function join_coordinator($coord) {
 		global $bezlang;
+		$usro = new Users();
+		if (!in_array($coord, $this->coord_special))
+			return $usro->name($coord);
+		else if ($coord == '-proposal')
+			return $bezlang['none'].' ('.$bezlang['state_proposal'].')';
+		else if ($coord == '-rejected')
+			return $bezlang['none'].' ('.$bezlang['state_rejected'].')';
+	}
+
+	public function join($a) {
 		$stao = new States();
 		$a['state'] = $stao->name($a['state'], $a['coordinator']);
 
@@ -154,13 +164,8 @@ EOM;
 		$usro = new Users();
 		$a['reporter'] = $usro->name($a['reporter']);
 
-		if (!in_array($a['coordinator'], $this->coord_special)) {
-			$a['coordinator_email'] = $usro->email($a['coordinator']);
-			$a['coordinator'] = $usro->name($a['coordinator']);
-		} else if ($a['coordinator'] == '-proposal')
-			$a['coordinator'] = $bezlang['none'].' ('.$bezlang['state_proposal'].')';
-		else if ($a['coordinator'] == '-rejected')
-			$a['coordinator'] = $bezlang['none'].' ('.$bezlang['state_rejected'].')';
+		$a['coordinator_email'] = $usro->email($a['coordinator']);
+		$a['coordinator'] = $this->join_coordinator($a['coordinator']);
 
 		$a['date'] = (int)$a['date'];
 		return $a;
@@ -248,12 +253,69 @@ EOM;
 		return $stats;
 	}
 
+	public function get_coordinators() {
+		$all = $this->fetch_assoc("SELECT coordinator FROM issues GROUP BY coordinator");
+		$coordinators = array();
+
+		$usro = new Users();
+		foreach ($all as $row)
+			if (!in_array($row['coordinator'], $this->coord_special))
+				$coordinators[$row['coordinator']] = $usro->name($row['coordinator']);
+
+		asort($coordinators);
+		return $coordinators;
+	}
+
 	public function get_years() {
-		$all = $this->fetch_assoc("SELECT FROM_UNIXTIME(date, '%Y') AS year FROM issues GROUP BY year ORDER BY year DESC;");
+		$all = $this->fetch_assoc("SELECT FROM_UNIXTIME(date, '%Y') AS year FROM issues GROUP BY year ORDER BY year DESC");
 		$years = array();
 		foreach ($all as $row)
 			$years[] = $row['year'];
 		return $years;
+	}
+
+	/*Zwróć wszystkie osoby, które w jakikolwiek sposób były zaangażowane w problem.*/
+	public function get_team($issue_id) {
+		$issue_id = (int)$issue_id;
+
+		$team = array();
+		$a = $this->fetch_assoc('SELECT coordinator, reporter FROM issues WHERE id='.$issue_id);
+		if (count($a) == 0) {
+			$errors[] = $bezlang['error_issue_id_not_specifed'];
+			return array();
+		}
+		$team[] = $a[0]['coordinator'];
+		$team[] = $a[0]['reporter'];
+
+		/*komentarze*/
+		$a = $this->fetch_assoc('SELECT reporter FROM comments WHERE issue='.$issue_id);
+		if (count($a) > 0)
+			foreach ($a as $comment)
+				$team[] = $comment['reporter'];
+
+		/*przyczyny źródłowe*/
+		$a = $this->fetch_assoc('SELECT reporter FROM causes WHERE issue='.$issue_id);
+		if (count($a) > 0)
+			foreach ($a as $causes)
+				$team[] = $causes['reporter'];
+
+		/*zadania*/
+		$a = $this->fetch_assoc('SELECT executor, reporter FROM tasks WHERE issue='.$issue_id);
+		if (count($a) > 0)
+			foreach ($a as $task)
+				$team[] = $task['reporter'];
+				$team[] = $task['executor'];
+
+
+		/*usuń duplikaty*/
+		$team = array_unique($team);
+		sort($team);
+
+		$usro = new Users();
+		foreach ($team as &$member)
+			$member = $usro->name($member);
+
+		return $team;
 	}
 
 	/*waliduje te pola które są brane przy filtrowaniu*/
@@ -278,6 +340,14 @@ EOM;
 		else
 			$data['entity'] = '-all';	
 
+
+		$coords = array_keys($this->get_coordinators());
+		if ($filters['coordinator'] == '-all' || $filters['coordinator'] == '-none' ||
+			in_array($filters['coordinator'], $coords))
+			$data['coordinator'] = $filters['coordinator'];
+		else
+			$data['coordinator'] = '-all';	
+
 		$years = $this->get_years();
 		if ($filters['year'] == '-all' || in_array($filters['year'], $years))
 			$data['year'] = $filters['year'];
@@ -294,9 +364,11 @@ EOM;
 
 		$year = $vfilters['year'];
 		$state = $vfilters['state'];
+		$coordinator = $vfilters['coordinator'];
 
 		unset($vfilters['year']);
 		unset($vfilters['state']);
+		unset($vfilters['coordinator']);
 
 		foreach ($vfilters as $name => $value)
 			if ($value != '-all')
@@ -317,6 +389,13 @@ EOM;
 				$where[] = "coordinator != '-rejected'";
 			}
 		}
+		if ($coordinator != '-all') {
+			if ($coordinator == '-none') 
+				$where[] = "(coordinator = '-proposal' OR coordinator = '-rejected')";
+			else 
+				$where[] = "coordinator = '$coordinator'";
+		}
+
 		$where_q = '';
 		if (count($where) > 0)
 			$where_q = 'WHERE '.implode(' AND ', $where);

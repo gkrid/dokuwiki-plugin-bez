@@ -202,6 +202,7 @@ $lang['content'] = 'Opis';
 $lang['8d_report'] = 'Raport 8D';
 $lang['8d_report_for'] = 'dla';
 $lang['open_date'] = 'Data otwarcia';
+$lang['1d'] = '1D - Zespół';
 $lang['2d'] = '2D - Problem';
 $lang['3d'] = '3D - Przyczyna';
 $lang['4d'] = '4D - Korekcja';

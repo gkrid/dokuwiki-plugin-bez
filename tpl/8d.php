@@ -38,6 +38,12 @@
 	</td>
 </tr>
 </table>
+<h2><?php echo $bezlang['1d'] ?></h2>
+<ul>
+	<?php foreach($template['team'] as $user): ?>
+		<li><?php echo  $user ?></li>
+	<?php endforeach ?>
+</ul>
 
 <h2><?php echo $bezlang['2d'] ?></h2>
 <?php echo  $helper->wiki_parse($template['issue']['description']) ?>
