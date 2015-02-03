@@ -81,6 +81,15 @@ EOM;
 			$this->issue->update_last_mod($data['issue']);
 		}
 	}
+
+	public function join($a) {
+		$usro = new Users();
+		$rootco = new Rootcauses();
+		$a['reporter'] = $usro->name($a['reporter']);
+		$a['rootcause'] = $rootco->name($a['rootcause']);
+		return $a;
+	}
+
 	public function getone($id) {
 		$id = (int) $id;
 		$cause = $this->fetch_assoc("SELECT * FROM causes WHERE id=$id");
@@ -91,15 +100,7 @@ EOM;
 		$issue = (int) $issue;
 
 		$a = $this->fetch_assoc("SELECT * FROM causes WHERE issue=$issue");
-
-		$usro = new Users();
-		$rootco = new Rootcauses();
-		foreach ($a as &$row) {
-			$row['reporter'] = $usro->name($row['reporter']);
-			$row['rootcause'] = $rootco->name($row['rootcause']);
-		}
-
-		return $a;
+		return $this->join_all($a);
 	}
 
 	public function get_by_rootcause($issue) {

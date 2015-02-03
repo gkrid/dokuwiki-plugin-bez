@@ -2,6 +2,19 @@
 class Connect {
 	protected $helper;
 	static protected $db=NULL, $lastid;
+
+	public function __construct()
+	{
+		global $errors;
+		if ($this->db == NULL) {
+			$this->db = new mysqli('localhost', 'root', '', 'bez');
+			if ($this->db->connect_errno) 
+				$errors[] = "Failed to connect to MySQL: ". $this->db->connect_error;
+		}
+
+		$this->helper = plugin_load('helper', 'bez');
+	}
+
 	protected function errquery($query)
 	{
 		global $errors;
@@ -15,6 +28,12 @@ class Connect {
 	public function lastid()
 	{
 		return $this->lastid;
+	}
+	
+	public function join_all($a) {
+		foreach ($a as &$v)
+			$v = $this->join($v);
+		return $a;
 	}
 
 	protected function mul_errinsert($data, $table)
@@ -107,16 +126,5 @@ class Connect {
 			return array();
 
 		return $r->fetch_all(MYSQLI_ASSOC);
-	}
-	public function __construct()
-	{
-		global $errors;
-		if ($this->db == NULL) {
-			$this->db = new mysqli('localhost', 'root', '', 'bez');
-			if ($this->db->connect_errno) 
-				$errors[] = "Failed to connect to MySQL: ". $this->db->connect_error;
-		}
-
-		$this->helper = plugin_load('helper', 'bez');
 	}
 }

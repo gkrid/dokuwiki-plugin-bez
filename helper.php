@@ -88,11 +88,7 @@ class helper_plugin_bez extends dokuwiki_plugin
 		return '<a href="'.self::issue_uri($issue).'#z'.$task.'">#'.$issue.' #z'.$task.'</a>';
 	}
 
-	public function string_time_to_now($value) {
-		$diff = time() - $value;
-		if ($diff < 5) {
-			return $this->getLang('just_now');
-		}
+	public function days($diff) {
 		$time_str = '';
 		$minutes = floor($diff/60);
 		if ($minutes > 0) {
@@ -110,8 +106,15 @@ class helper_plugin_bez extends dokuwiki_plugin
 		} else {
 			$time_str = $diff.' '.$this->getLang('seconds');
 		}
-		$time_str .= ' '.$this->getLang('ago');
 		return $time_str;
+	}
+
+	public function string_time_to_now($value) {
+		$diff = time() - $value;
+		if ($diff < 5) {
+			return $this->getLang('just_now');
+		}
+		return self::days($diff).' '.$this->getLang('ago');
 	}
 	public function time2date($time) {
 		return date($this->getConf('date_format'), $time);

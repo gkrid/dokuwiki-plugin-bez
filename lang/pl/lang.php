@@ -4,7 +4,7 @@ $lang['bez_short'] = 'BEZ';
 $lang['bds_timeline'] = 'Historia';
 $lang['bds_issues'] = 'Problemy';
 $lang['bds_issue_report'] = 'Zgłoś problem';
-$lang['bds_reports'] = 'Raporty';
+$lang['report'] = 'Raport';
 $lang['bez_tasks'] = 'Zadania';
 
 
@@ -14,6 +14,7 @@ $lang['reports'] = 'Wykazy';
 
 $lang['issue'] = 'Problem';
 $lang['task'] = 'Zadanie';
+
 
 $lang['report_issue'] = 'Zgłoś problem';
 $lang['id'] = 'Nr';
@@ -220,36 +221,20 @@ $lang['6d'] = '6D - Działania zapobiegawcze';
 $lang['7d'] = '7D - Ocena skuteczności';
 $lang['8d'] = '8D - Zakończenie';
 
-$lang['cost_total'] = 'Koszt całkowity(zł)';
 $lang['number'] = 'Ilość';
 $lang['true_date'] = 'Data';
 
-$lang['newest_to_oldest'] = 'Otwarte od najnowszych do najstarszych';
-$lang['issues_newest_to_oldest'] = 'Problemy otwarte od najnowszych do najstarszych';
-$lang['tasks_newest_to_oldest'] = 'Zadania otwarte od najnowszych do najstarszych';
-$lang['tasks_newest_than_rep'] = 'Zadania od %d';
+$lang['report_issues'] = 'Problemy';
+$lang['report_tasks'] = 'Zadania';
+$lang['report_causes'] = 'Przyczyny';
+$lang['report_priority'] = 'Czas reakcji';
 
-$lang['newest_than'] = 'Wszystkie od';
-$lang['newest_than_cost'] = "Zestawienie kosztów od";
-$lang['issues_newest_than'] = 'Problemy od';
-$lang['issues_cost_statement'] = 'Zestawienie kosztów od %d';
+$lang['priority'] = 'Priorytet';
+$lang['average'] = 'Średnia';
 
+$lang['totalcost'] = 'Wartość';
+$lang['report_total'] = 'Razem';
 
-$lang['my_opened_issues'] = 'Problemy otwarte w które jestem zaangażowany';
-$lang['my_opened'] = 'Otwarte w które jestem zaangażowany';
-
-$lang['me_executor'] = 'Moje';
-$lang['task_me_executor'] = 'Moje zadania';
-
-$lang['issues_newest_than'] = 'Wszystkie od';
-$lang['issues_newest_than_rep'] = 'Problemy nowsze niż %d';
-
-$lang['report_issues'] = 'Wykaz problemów z ostatnich';
-$lang['report_issues_from'] = 'Wykaz problemów z ostatnich %d';
-$lang['report_tasks'] = 'Wykaz zadań z ostatnich';
-$lang['report_tasks_from'] = 'Wykaz zadań z ostatnich %d';
-$lang['report_causes'] = 'Wykaz przyczyn z ostatnich';
-$lang['report_causes_from'] = 'Wykaz przyczyn z ostatnich %d';
 
 $lang['show'] = 'Pokaż';
 

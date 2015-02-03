@@ -4,7 +4,7 @@ $lang['bez_short'] = "BEZ";
 $lang['bds_timeline'] = "History";
 $lang['bds_issues'] = "Registers";
 $lang['bds_issue_report'] = "Report a problem";
-$lang['bds_reports'] = "Reports";
+$lang['report'] = "Reports";
 $lang['bez_tasks'] = 'Tasks';
 
 $lang['issues'] = "Problems";
@@ -224,36 +224,20 @@ $lang['6d'] = "6D - Preventive action";
 $lang['7d'] = "7D - Effectiveness evaluation";
 $lang['8d'] = "8D - Conclusion";
 
-$lang['cost_total'] = "Total cost (PLN)";
 $lang['number'] = 'Quantity';
 $lang['true_date'] = "Date";
 
-$lang['newest_to_oldest'] = "Open problems from latest to earliest";
-$lang['issues_newest_to_oldest'] = "";
-$lang['tasks_newest_to_oldest'] = "Open tasks from latest to earliest";
-$lang['tasks_newest_than_rep'] = "Tasks for %d";
 
-$lang['newest_than'] = "All for";
-$lang['newest_than_cost'] = "Cost statement for";
-$lang['issues_newest_than'] = "Problems for ";
-$lang['issues_cost_statement'] = 'Cost statement for %d';
+$lang['report_issues'] = 'Issues';
+$lang['report_tasks'] = 'Tasks';
+$lang['report_causes'] = 'Causes';
+$lang['report_priority'] = 'Raction time';
 
-$lang['my_opened_issues'] = "Open problems which I am involved";
-$lang['my_opened'] = "Open, which I am involved";
+$lang['priority'] = 'Priority';
+$lang['average'] = 'Average';
 
-$lang['me_executor'] = "My";
-$lang['task_me_executor'] = "My tasks";
-
-$lang['issues_newest_than'] = "All for";
-$lang['issues_newest_than_rep'] = "Problems for %d";
-$lang['newest_than_cost_rep'] = "Cost statement for %d";
-
-$lang['report_issues'] = 'Register of problems for';
-$lang['report_issues_from'] = 'Register of problems for %d';
-$lang['report_tasks'] = 'Register of tasks for';
-$lang['report_tasks_from'] = 'Register of tasks for %d';
-$lang['report_causes'] = 'Register of causes for';
-$lang['report_causes_from'] = 'Register of causes for %d';
+$lang['totalcost'] = 'Value';
+$lang['report_total'] = 'Total';
 
 $lang['show'] = "show";
 

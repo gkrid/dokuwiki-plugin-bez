@@ -203,6 +203,7 @@ EOM;
 
 		return $row;
 	}
+
 	public function get_clean($issue) {
 		$issue = (int) $issue;
 		return $this->fetch_assoc("SELECT * FROM tasks WHERE issue=$issue");

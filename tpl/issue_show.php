@@ -15,8 +15,9 @@
 		<?php echo $bezlang['closed'] ?>:
 	<?php else: ?>
 		<?php echo $bezlang['last_modified'] ?>:
+	<?php endif ?> 
 	</strong>
-	<?php endif ?> <?php echo $helper->time2date($template['issue']['last_mod']) ?>
+	<?php echo $helper->time2date($template['issue']['last_mod']) ?>
 	</span>
 <?php endif ?>
 </div>

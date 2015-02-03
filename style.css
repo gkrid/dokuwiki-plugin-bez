@@ -108,6 +108,14 @@ table.bez .pr2 , #bds_timeline dt.pr2 {
     padding: 0 0.2em;
 }
 
+.bez_standard_block h2 span {
+	display: block;
+	float: right;
+	font-size: 100%;
+	color: #999;
+	padding-right: 0.4em;
+}
+
 #bez_tasks .task {
 	position: relative;
 }
@@ -459,4 +467,19 @@ input.days {
 #bez_8d_send_button {
 	font-size: 50%;
 	font-weight: normal;
+}
+
+.bez_sumarise {
+	border: 0;
+}
+
+.bez_sumarise tr:last-child th {
+	background-color: transparent;
+	border-left: 0;
+	border-right: 0;
+}
+
+.bez_sumarise tr:last-child td {
+	border-left: 0;
+	border-right: 0;
 }
