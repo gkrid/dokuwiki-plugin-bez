@@ -7,9 +7,13 @@ $lang['bds_issue_report'] = 'Zgłoś problem';
 $lang['bds_reports'] = 'Raporty';
 $lang['bez_tasks'] = 'Zadania';
 
+
 $lang['issues'] = 'Problemy';
 $lang['tasks'] = 'Zadania';
 $lang['reports'] = 'Wykazy';
+
+$lang['issue'] = 'Problem';
+$lang['task'] = 'Zadanie';
 
 $lang['report_issue'] = 'Zgłoś problem';
 $lang['id'] = 'Nr';

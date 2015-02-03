@@ -61,8 +61,11 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 		$data['bez:issues'] = array('id' => 'bez:issues', 'type' => 'f', 'level' => 2, 'title' => $this->getLang('bds_issues'));
 		$data['bez:tasks'] = array('id' => 'bez:tasks', 'type' => 'f', 'level' => 2, 'title' => $this->getLang('bez_tasks'));
 
+		$data['bez:reports'] = array('id' => 'bez:report', 'type' => 'd', 'level' => 2, 'title' => $this->getLang('bds_reports'));
+
 		if ($helper->user_admin())
 			$data['bez:entity'] = array('id' => 'bez:entity', 'type' => 'f', 'level' => 2, 'title' => $this->getLang('entity_manage'));
+
 
 
 		$id = $INFO['id'];

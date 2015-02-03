@@ -31,7 +31,7 @@
 		<?php endif ?>
 	</h2>
 	<?php foreach ($elms as $elm): ?>
-		<dt class="<?php echo $elm['class'] ?>">
+		<dt class="<?php echo $elm['class'] ?> pr<?php echo $elm['priority'] ?>">
 			<?php if (strstr($elm['class'], 'issue')): ?>
 				<a href="<?php echo $helper->issue_uri($elm['id']) ?>">
 					<span class="time"><?php echo date('H:i', $elm['date']) ?></span>

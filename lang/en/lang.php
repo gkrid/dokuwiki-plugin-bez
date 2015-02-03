@@ -11,6 +11,9 @@ $lang['issues'] = "Problems";
 $lang['tasks'] = "Tasks";
 $lang['reports'] = 'Registers';
 
+$lang['issue'] = 'Issue';
+$lang['task'] = 'Task';
+
 $lang['report_issue'] = "Report a problem";
 $lang['id'] = "No";
 $lang['_id'] = "No";

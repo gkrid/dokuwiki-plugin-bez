@@ -6,24 +6,26 @@
 
 <h1>[<?php echo $template['issue']['entity'] ?>] <?php echo $template['issue']['title'] ?></h1>
 
-<div class="time_box">
-<span><?php echo $bezlang['open'] ?>: <?php echo $helper->time2date($template['issue']['date']) ?></span>
+<div class="bez_timebox">
+<span><strong><?php echo $bezlang['open'] ?>:</strong> <?php echo $helper->time2date($template['issue']['date']) ?></span>
 <?php if ($template['issue']['last_mod'] != NULL): ?>
 	<span>
+	<strong>
 	<?php if ($template['closed']): ?>
-		<?php echo $bezlang['closed'] ?>
+		<?php echo $bezlang['closed'] ?>:
 	<?php else: ?>
-		<?php echo $bezlang['last_modified'] ?>
-	<?php endif ?>: <?php echo $helper->time2date($template['issue']['last_mod']) ?>
+		<?php echo $bezlang['last_modified'] ?>:
+	</strong>
+	<?php endif ?> <?php echo $helper->time2date($template['issue']['last_mod']) ?>
 	</span>
 <?php endif ?>
 </div>
 
 <table>
 <tr>
-<th><?php echo $bezlang['reporter'] ?></th>
+<th><?php echo $bezlang['reporter'] ?>:</th>
 <td><?php echo $template['issue']['reporter'] ?></td>
-<th><?php echo $bezlang['coordinator'] ?></th>
+<th><?php echo $bezlang['coordinator'] ?>:</th>
 <td><?php echo $template['issue']['coordinator'] ?></td>
 </tr>
 </table>
@@ -43,7 +45,7 @@
 
 <a class="bds_inline_button bds_send_button" href="
 	<?php echo $helper->mailto($template['issue']['coordinator_email'],
-	$bezlang['new_issue'].': #'.$template['issue']['id'].' ['.$template['issue']['entity'].'] '.$template['issue']['title'],
+	$bezlang['issue'].': #'.$template['issue']['id'].' ['.$template['issue']['entity'].'] '.$template['issue']['title'],
 	$template['uri']) ?>">
 	✉ <?php echo $bezlang['send_mail'] ?>
 </a>
@@ -57,7 +59,7 @@
 </div>
 
 <!-- Comments -->
-<div class="bds_block" id="bez_comments">
+<div class="bds_block bez_standard_block" id="bez_comments">
 	<h1><?php echo $bezlang['comments'] ?> <span>(<?php echo count($template['comments']) ?>)</span></h1>
 	<div class="bds_block_content">
 		<?php foreach ($template['comments'] as $comment): ?>
@@ -95,7 +97,7 @@
 </div>
 
 <!-- Causes -->
-<div class="bds_block" id="bez_causes">
+<div class="bds_block bez_standard_block" id="bez_causes">
 	<h1><?php echo $bezlang['causes'] ?> <span>(<?php echo count($template['causes']) ?>)</span></h1>
 	<div class="bds_block_content">
 		<?php foreach ($template['causes'] as $cause): ?>
@@ -156,27 +158,29 @@
 			<a name="z<?php echo $task['id'] ?>"></a>
 			<div id="z<?php echo $task['id'] ?>" class="task">
 
+			<div class="bez_timebox">
+				<span><strong><?php echo $bezlang['open'] ?>:</strong> <?php echo $helper->time2date($task['date']) ?></span>
+				<?php if ($task['state'] != $bezlang['task_opened']): ?>
+					<span>
+						<strong><?php echo $task['state']?>:</strong>
+						<?php echo $helper->time2date($template['issue']['last_mod']) ?>
+					</span>
+				<?php endif ?>
+			</div>
+
 			<h2>
-			<?php echo $bezlang['task_added'] ?>
-			<?php echo $helper->string_time_to_now($task['date']) ?>
-			<?php echo $bezlang['by'] ?>
-			<?php echo $task['reporter'] ?>
-			<span><?php echo $bezlang['task'] ?>: z<?php echo $task['id'] ?></span>
+				<a href="<?php echo $helper->issue_uri($task['issue']).'#z'.$task['id'] ?>">#z<?php echo $task['id'] ?></a>
+				<?php echo lcfirst($task['action']) ?>
+				(<?php echo lcfirst($task['state']) ?>)
 			</h2>
-			<?php if ($template['issue_opened'] && ($template['user_is_coordinator'] || $task['executor_nick'] == $template['user'])): ?> 
-				<a class="bds_inline_button" href="?id=bez:issue_show:<?php echo $template['issue']['id'] ?>:edit:task:<?php echo $task['id'] ?>#z_"><?php echo $bezlang['change'] ?></a>
-			<?php endif ?>
 
 			<table>	
 			<tr>
-					<th><?php echo $bezlang['task_state'] ?>:</th>
-					<td><?php echo $task['state'] ?></td>
+					<th><?php echo $bezlang['reporter'] ?>:</th>
+					<td><?php echo $task['reporter'] ?></td>
 
 					<th><?php echo $bezlang['executor'] ?>:</th>
 					<td><?php echo $task['executor'] ?></td>
-
-					<th><?php echo $bezlang['action'] ?>:</th>
-					<td><?php echo $task['action'] ?></td>
 
 					<?php if ($task['cost'] != 0): ?>
 						<th><?php echo $bezlang['cost'] ?>:</th>
@@ -185,11 +189,23 @@
 			</tr>
 			</table>	
 
+			<h3><?php echo $bezlang['description'] ?></h3>
 			<?php echo $helper->wiki_parse($task['task']) ?>
 
 			<?php if ($task['rejected']): ?>
 				<h3><?php echo $bezlang['reason'] ?></h3>
 				<?php echo $helper->wiki_parse($task['reason']) ?>
+			<?php endif ?>
+
+			<?php if ($template['issue_opened'] && ($template['user_is_coordinator'] || $task['executor_nick'] == $template['user'])): ?> 
+				<a class="bds_inline_button bds_edit_button" href="?id=bez:issue_show:<?php echo $template['issue']['id'] ?>:edit:task:<?php echo $task['id'] ?>#z_"><?php echo $bezlang['edit'] ?></a>
+
+			<a class="bds_inline_button bds_send_button" href="
+				<?php echo $helper->mailto($task['executor_email'],
+				$bezlang['task'].': #'.$task['issue'].' ['.$template['issue']['entity'].'] '.$template['issue']['title'].' | #z'.$task['id'].' '.$task['action'],
+				$template['uri'].'#z'.$task['id']) ?>">
+				✉ <?php echo $bezlang['send_mail'] ?>
+			</a>
 			<?php endif ?>
 			</div>
 	<?php endforeach ?>

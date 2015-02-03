@@ -11,7 +11,7 @@
 	border-color: #B0D2B6;
 	background-color: #EEF6F0;
 }
-table.bez .pr0 {
+table.bez .pr0, #bds_timeline dt.pr0 {
 	background-color: #EEF6F0;
 }
 #bds_issue_box.pr0 table, #bds_issue_box.pr0 td, #bds_issue_box.pr0 th,#bds_issue_box.pr0 h2 {
@@ -22,7 +22,7 @@ table.bez .pr0 {
 	background-color: #ffd;
 	border-color: #dd9;
 }
-table.bez .pr1 {
+table.bez .pr1 , #bds_timeline dt.pr1 {
 	background-color: #ffd;
 }
 #bds_issue_box.pr1 table, #bds_issue_box.pr1 td, #bds_issue_box.pr1 th,#bds_issue_box.pr1 h2 {
@@ -33,7 +33,7 @@ table.bez .pr1 {
 	border-color: #F0AFAD;
 	background-color: #F8E8E8;
 }
-table.bez .pr2 {
+table.bez .pr2 , #bds_timeline dt.pr2 {
 	background-color: #F8E8E8;
 }
 
@@ -57,14 +57,14 @@ table.bez .pr2 {
 #bds_issue_box a {
 }
 
-#bds_issue_box .time_box {
+.bez_timebox {
 	position: absolute;
 	top: 2px;
 	right: 5px;
 	font-size: 0.8em;
 }
 
-#bds_issue_box .time_box span {
+.bez_timebox span {
 	display: block;	
 }
 
@@ -98,7 +98,7 @@ table.bez .pr2 {
 	color:#999;
 }
 
-.bds_block h2 {
+.bez_standard_block h2 {
     border-bottom: 1px solid #D7D7D7;
     box-shadow: 0.1em 0.4em 0.7em 0 #F2F2F2;
     color: #999999;
@@ -108,43 +108,38 @@ table.bez .pr2 {
     padding: 0 0.2em;
 }
 
-.bds_block h3 {
+#bez_tasks .task {
+	position: relative;
+}
+
+#bez_tasks h2 {
+	font-size: 1.2em;
+}
+#bez_tasks h2 a {
+	font-size: 1.3em;
+}
+
+#bez_tasks h3 {
     border-bottom: 1px dotted #8bbcbc;
     font-size: 90%;
 }
 
-.bds_block h2 span {
-	display:block;
-	float:right;
-	font-size: 100%;
-    color: #999999;
-	padding-right: 0.4em;
-}
-
-.bds_block h2 span.quoted_in a:before {
-	content: "↓ ";	
-}
-
-.bds_block h2 span.replay_to a:before {
-	content: "↑ ";	
-}
-
-.bds_block .bds_block_content > div {
+.bds_block_content > div {
 	margin-bottom: 3em;
 }
 
-.bds_block table {
+#bez_tasks table {
 	clear:both;
 	margin-top: 3em;
 }
 
-.bds_block table {
+#bez_tasks table {
 	clear:both;
 	border-top-color: #8bbcbc;
 	margin-top: 3em;
 }
 
-.bds_block div.task {
+#bez_tasks div.task {
 	background: #e4f4f4;
 	border: 1px solid #8bbcbc;
 	border-radius: 0.4em;
@@ -152,8 +147,19 @@ table.bez .pr2 {
 	padding: 0.5em 1em;
 }
 
-.bds_block td, .bds_block th{
+#bez_tasks td, #bez_tasks th{
 	border-bottom-color: #8bbcbc;
+}
+
+#bez_tasks .bds_edit_button {
+	position:absolute;
+	bottom: 0.5em;
+	right: 6em;
+}
+#bez_tasks .bds_send_button {
+	position:absolute;
+	bottom: 0.5em;
+	right: 0.5em;
 }
 
 .bds_inline_button {

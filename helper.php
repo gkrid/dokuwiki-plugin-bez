@@ -85,7 +85,7 @@ class helper_plugin_bez extends dokuwiki_plugin
 		return '<a href="'.self::issue_uri($id).'">#'.$id.'</a>';
 	}
 	public function html_task_link($issue, $task) {
-		return '<a href="'.self::issue_uri($issue).'#z'.$task.'">#'.$issue.':z'.$task.'</a>';
+		return '<a href="'.self::issue_uri($issue).'#z'.$task.'">#'.$issue.' #z'.$task.'</a>';
 	}
 
 	public function string_time_to_now($value) {
