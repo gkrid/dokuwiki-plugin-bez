@@ -5,6 +5,7 @@ $lang['bds_timeline'] = "History";
 $lang['bds_issues'] = "Registers";
 $lang['bds_issue_report'] = "Report a problem";
 $lang['bds_reports'] = "Reports";
+$lang['bez_tasks'] = 'Tasks';
 
 $lang['issues'] = "Problems";
 $lang['tasks'] = "Tasks";
@@ -105,10 +106,14 @@ $lang['vald_days_should_be_numeric'] = "Days have to be decimal.";
 
 $lang['vald_entity_too_long'] = 'Single source of report can have not have more than %d characters.';
 
+$lang['priority_marginal'] = 'marginal';
+$lang['priority_important'] = 'important';
+$lang['priority_crucial'] = 'crucial';
 
 $lang['type_complaint'] = "complaint";
 $lang['type_noneconformity'] = "nonconformity";
-$lang['type_risk'] = "risk";
+$lang['type_opportunity'] = 'opportunity';
+$lang['type_threat'] = 'threat';
 
 $lang['state_proposal'] = "proposal";
 $lang['state_opened'] = "open";

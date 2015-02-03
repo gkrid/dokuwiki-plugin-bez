@@ -5,6 +5,7 @@ $lang['bds_timeline'] = 'Historia';
 $lang['bds_issues'] = 'Problemy';
 $lang['bds_issue_report'] = 'Zgłoś problem';
 $lang['bds_reports'] = 'Raporty';
+$lang['bez_tasks'] = 'Zadania';
 
 $lang['issues'] = 'Problemy';
 $lang['tasks'] = 'Zadania';
@@ -104,10 +105,14 @@ $lang['vald_days_should_be_numeric'] = 'Ilość dni musi być liczbą.';
 
 $lang['vald_entity_too_long'] = 'Pojedyńcze źródło zgłoszenia może mieć najwyżej %d znaków.';
 
+$lang['priority_marginal'] = 'marginalny';
+$lang['priority_important'] = 'istotny';
+$lang['priority_crucial'] = 'krytyczny';
 
 $lang['type_complaint'] = 'reklamacja';
 $lang['type_noneconformity'] = 'niezgodność';
-$lang['type_risk'] = 'ryzyko';
+$lang['type_opportunity'] = 'szansa';
+$lang['type_threat'] = 'zagrożenie';
 
 $lang['state_proposal'] = 'propozycja';
 $lang['state_opened'] = 'otwarta';

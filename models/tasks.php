@@ -216,7 +216,8 @@ EOM;
 	public function get_close_task() {
 		global $INFO;
 		$executor = $INFO['client'];
-		$a = $this->fetch_assoc("SELECT * FROM tasks WHERE executor='$executor' AND state=0 ORDER BY date DESC");
+		$a = $this->fetch_assoc("SELECT tasks.id, tasks.task, tasks.state, tasks.action, tasks.cost, tasks.date, tasks.issue, issues.priority
+		FROM tasks JOIN issues ON tasks.issue = issues.id WHERE executor='$executor' AND tasks.state=0 ORDER BY priority DESC, tasks.date DESC");
 		foreach ($a as &$row)
 			$row = $this->join($row);
 		return $a;
@@ -248,6 +249,85 @@ EOM;
 		$issue = (int) $issue;
 		$a = $this->fetch_assoc("SELECT SUM(cost) AS 'cost_total' FROM tasks WHERE issue=$issue GROUP BY issue");
 		return $a[0]['cost_total'];
+	}
+
+	public function get_executors() {
+		$all = $this->fetch_assoc("SELECT executor FROM tasks GROUP BY executor");
+		$execs = array();
+
+		$usro = new Users();
+		foreach ($all as $row)
+			$execs[$row['executor']] = $usro->name($row['executor']);
+
+		asort($execs);
+		return $execs;
+	}
+
+	public function get_years() {
+		$all = $this->fetch_assoc("SELECT FROM_UNIXTIME(date, '%Y') AS year FROM tasks GROUP BY year ORDER BY year DESC");
+		$years = array();
+		foreach ($all as $row)
+			$years[] = $row['year'];
+		return $years;
+	}
+
+	public function validate_filters($filters) {
+
+		$taskao = new Taskactions();
+		if ($filters['action'] == '-all' || in_array($filters['action'], array_keys($taskao->get())))
+			$data['action'] = $filters['action'];
+		else
+			$data['action'] = '-all';	
+
+		$taskso = new Taskstates();
+		if ($filters['state'] == '-all' || array_key_exists($filters['state'], array_keys($taskso->get())))
+			$data['state'] = $filters['state'];
+		else
+			$data['state'] = '-all';
+
+
+		$excs = array_keys($this->get_executors());
+		if ($filters['executor'] == '-all' || in_array($filters['executor'], $excs))
+			$data['executor'] = $filters['executor'];
+		else
+			$data['executor'] = '-all';	
+
+		$years = $this->get_years();
+		if ($filters['year'] == '-all' || in_array($filters['year'], $years))
+			$data['year'] = $filters['year'];
+		else
+			$data['year'] = '-all';
+
+		return $data;
+	}
+
+	public function get_filtered($filters) {
+		$vfilters = $this->validate_filters($filters);
+
+		$year = $vfilters['year'];
+		unset($vfilters['year']);
+
+		$where = array();
+
+		foreach ($vfilters as $name => $value)
+			if ($value != '-all')
+				$where[] = "tasks.$name = '".$this->db->real_escape_string($value)."'";
+
+		if ($year != '-all') {
+			$year = (int)$year;
+			$where[] = 'tasks.date >= '.mktime(0,0,0,1,1,$year);
+			$where[] = 'tasks.date < '.mktime(0,0,0,1,1,$year+1);
+		}
+
+		$where_q = '';
+		if (count($where) > 0)
+			$where_q = 'WHERE '.implode(' AND ', $where);
+
+		$a = $this->fetch_assoc("SELECT tasks.id,tasks.state, tasks.action, tasks.executor, tasks.cost, tasks.date, tasks.close_date, tasks.issue, tasks.close_date, issues.priority
+		FROM tasks JOIN issues ON tasks.issue = issues.id $where_q ORDER BY priority DESC, date DESC");
+		foreach ($a as &$row)
+			$row = $this->join($row);
+		return $a;
 	}
 }
 

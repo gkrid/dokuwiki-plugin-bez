@@ -1,4 +1,4 @@
-<table>
+<table class="bez">
 	<tr>
 		<th><?php echo $bezlang['id'] ?></th>
 		<th><?php echo $bezlang['state'] ?></th>
@@ -9,7 +9,7 @@
 		<th><?php echo $bezlang['opened_tasks'] ?></th>
 	</tr>
 	<?php foreach ($template['issues'] as $issue): ?>
-		<tr>
+		<tr class="pr<?php echo $issue['priority'] ?>">
 			<td><?php echo $helper->html_issue_link($issue['id']) ?></td>
 			<td><?php echo $issue['state'] ?></td>
 			<td><?php echo $issue['type'] ?></td>

@@ -14,6 +14,7 @@ class Issues extends Connect {
 		$q = <<<EOM
 CREATE TABLE IF NOT EXISTS issues (
 	id INT(11) NOT NULL AUTO_INCREMENT,
+	priority INT(11) NOT NULL DEFAULT 0,
 	title CHAR(100) NOT NULL,
 	description TEXT NOT NULL,
 	state INT(11) NOT NULL,
@@ -62,6 +63,14 @@ EOM;
 			$issue = $this->get_clean($issue_id);
 			$data['coordinator'] = $issue['coordinator'];
 		}
+
+		/*priorytet z przedziału 0-2, w razie co poprawiamy*/
+		$post['priority'] = (int)$post['priority'];
+		if ($post['priority'] > 2)
+			$post['priority'] = 2;
+		else if ($post['priority'] < 0)
+			$post['priority'] = 0;
+		$data['priority'] = $post['priority'];
 
 		$post['title'] = trim($post['title']);
 		if (strlen($post['title']) == 0) {
@@ -231,11 +240,11 @@ EOM;
 		global $INFO;
 		$coordinator = $INFO['client'];
 		$a = $this->fetch_assoc("
-			SELECT issues.id, issues.state, issues.entity, issues.type, issues.title, issues.date, issues.last_mod, COUNT(tasks.id) AS tasks_opened
+			SELECT issues.id, issues.priority, issues.state, issues.entity, issues.type, issues.title, issues.date, issues.last_mod, COUNT(tasks.id) AS tasks_opened
 			FROM issues LEFT JOIN (SELECT * FROM tasks WHERE state = 0) AS tasks ON issues.id = tasks.issue
 			WHERE issues.coordinator='$coordinator' AND issues.state=0
 			GROUP BY issues.id, issues.state, issues.type, issues.entity, issues.title, issues.date, issues.last_mod
-			ORDER BY issues.last_mod DESC, issues.date DESC
+			ORDER BY issues.priority DESC, issues.last_mod DESC, issues.date DESC
 			");
 
 		foreach ($a as &$row)
@@ -284,7 +293,9 @@ EOM;
 			$errors[] = $bezlang['error_issue_id_not_specifed'];
 			return array();
 		}
-		$team[] = $a[0]['coordinator'];
+		if (!in_array($a[0]['coordinator'], $this->coord_special))
+			$team[] = $a[0]['coordinator'];
+
 		$team[] = $a[0]['reporter'];
 
 		/*komentarze*/
@@ -292,6 +303,7 @@ EOM;
 		if (count($a) > 0)
 			foreach ($a as $comment)
 				$team[] = $comment['reporter'];
+
 
 		/*przyczyny źródłowe*/
 		$a = $this->fetch_assoc('SELECT reporter FROM causes WHERE issue='.$issue_id);
@@ -301,10 +313,11 @@ EOM;
 
 		/*zadania*/
 		$a = $this->fetch_assoc('SELECT executor, reporter FROM tasks WHERE issue='.$issue_id);
-		if (count($a) > 0)
-			foreach ($a as $task)
+		if (count($a) > 0) 
+			foreach ($a as $task) {
 				$team[] = $task['reporter'];
 				$team[] = $task['executor'];
+			}
 
 
 		/*usuń duplikaty*/
@@ -400,7 +413,7 @@ EOM;
 		if (count($where) > 0)
 			$where_q = 'WHERE '.implode(' AND ', $where);
 
-		$a = $this->fetch_assoc("SELECT * FROM issues $where_q ORDER BY date DESC");
+		$a = $this->fetch_assoc("SELECT * FROM issues $where_q ORDER BY priority DESC, date DESC");
 		foreach ($a as &$row)
 			$row = $this->join($row);
 		return $a;

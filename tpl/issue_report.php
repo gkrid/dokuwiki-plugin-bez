@@ -1,9 +1,22 @@
 <div id="bez_issue_report" class="bds_block <?php echo $template['action'] ?>">
 <form action="<?php echo $template['uri'] ?>?id=bez:issue_report:<?php echo $template['issue_id'] ?>:<?php echo $template['action'] ?>" method="POST">
+<div class="priorities">
+<label><input <?php if ($value['priority'] == '0') echo 'checked' ?> type="radio" name="priority" value="0"><?php echo $bezlang['priority_marginal'] ?></label>
+<label><input <?php if (!isset($value['priority']) || $value['priority'] == '1') echo 'checked' ?> type="radio" name="priority" value="1"><?php echo $bezlang['priority_important'] ?></label>
+<label><input <?php if ($value['priority'] == '2') echo 'checked' ?> type="radio" name="priority" value="2"><?php echo $bezlang['priority_crucial'] ?></label>
+</div>
 <fieldset class="bds_form">
+
+<?php if ($template['action'] == 'update'): ?>
+<div class="row">
+<label for="id"><?php echo $bezlang['id'] ?>:</label>
+<span><strong>#<?php echo $template['issue_id'] ?></strong></span>
+</div>
+<?php endif ?>
+
+
 <div class="row">
 <label for="type"><?php echo $bezlang['type'] ?>:</label>
-
 <span>
 <select name="type" id="type">
 <?php foreach ($template['issue_types'] as $key => $name): ?>
@@ -14,7 +27,9 @@
 </span>
 </div>
 
+
 <div class="row">
+
 <label for="entity"><?php echo $bezlang['entity'] ?>:</label>
 
 <span>
@@ -34,8 +49,11 @@
 <select name="coordinator" id="coordinator">
 <option <?php if ($value['coordinator'] == '-proposal') echo 'selected' ?>
 	value="-proposal">--- <?php echo $bezlang['state_proposal'] ?> ---</option>
-<option <?php if ($value['coordinator'] == '-rejected') echo 'selected' ?>
-	value="-rejected">--- <?php echo $bezlang['state_rejected'] ?> ---</option>
+
+<?php if ($template['action'] == 'update'): ?>
+	<option <?php if ($value['coordinator'] == '-rejected') echo 'selected' ?>
+		value="-rejected">--- <?php echo $bezlang['state_rejected'] ?> ---</option>
+<?php endif ?>
 <?php foreach ($template['nicks'] as $nick => $name): ?>
 	<option <?php if ($value['coordinator'] == $nick) echo 'selected' ?>
 	 value="<?php echo $nick ?>"><?php echo $name ?></option>

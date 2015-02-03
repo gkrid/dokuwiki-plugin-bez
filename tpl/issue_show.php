@@ -1,4 +1,4 @@
-<div id="bds_issue_box">
+<div id="bds_issue_box" class="pr<?php echo $template['issue']['priority'] ?>">
 <h1>
 <?php echo $helper->html_issue_link($template['issue']['id']) ?>
 <?php echo $template['issue']['type'] ?> (<?php echo $template['issue']['state'] ?>)
