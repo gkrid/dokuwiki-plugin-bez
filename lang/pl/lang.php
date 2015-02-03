@@ -288,3 +288,4 @@ $lang['close_issues'] = 'Moje problemy';
 $lang['close_tasks'] = 'Moje zadania';
 
 $lang['proposals'] = 'Propozycje';
+

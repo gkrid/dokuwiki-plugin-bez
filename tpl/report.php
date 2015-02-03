@@ -1,5 +1,5 @@
 <div  class="bds_block">
-<form action="<?php echo $template['uri'] ?>?id=bez:issues" method="POST">
+<form action="<?php echo $template['uri'] ?>?id=bez:report" method="POST">
 <fieldset class="bds_form">
 	<label><?php echo $bezlang['entity'] ?>:
 		<select name="entity">
@@ -11,6 +11,8 @@
 		<?php endforeach ?>
 		</select>
 	</label>
+	<label><input type="submit" value="<?php echo $bezlang['filter'] ?>" />
+
 	<span id="bez_8d_send_button">[<a href="
 		<?php echo $helper->mailto($template['issue']['coordinator_email'],
 		$bezlang['8d_report'].': #'.$template['issue']['id'].' ['.$template['issue']['entity'].'] '.$template['issue']['title'],

@@ -418,4 +418,11 @@ EOM;
 			$row = $this->join($row);
 		return $a;
 	}
+	public function get_oldest_date() {
+		$a = $this->fetch_assoc("SELECT date FROM issues ORDER BY date LIMIT 1");
+		if (count($a) > 0)
+			return (int)$a[0]['date'];
+		else
+			return time();
+	}
 }
