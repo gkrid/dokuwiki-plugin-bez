@@ -18,6 +18,7 @@ include_once DOKU_PLUGIN."bez/models/issues.php";
  * need to inherit from this class
  */
 class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
+	private $value = array();
 
     function getPType() { return 'block'; }
     function getType() { return 'substition'; }
@@ -27,6 +28,13 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
     function connectTo($mode) {
 		$this->Lexer->addSpecialPattern('~~BEZNAV~~',$mode,'plugin_bez_nav');
     }
+
+	function __construct() {
+
+		$ex = explode(':', $_GET['id']);
+		for ($i = 0; $i < count($ex); $i += 2)
+			$this->value[urldecode($ex[$i])] = urldecode($ex[$i+1]);
+	}
 
     function handle($match, $state, $pos, &$handler)
     {
@@ -66,51 +74,54 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 
 
 		
-		$oldest = $isso->get_oldest_date();
-		$year_old = (int)date('Y', $oldest);
-		$mon_old = (int)date('n', $oldest);
-		$year_now = (int)date('Y');
-		$mon_now = (int)date('n');
+		if ($this->value['bez'] == 'report') {
+			$data['bez:report']['open'] = true;
 
-		$id = $_GET['id'];
-		$ex = explode(':', $id);
-		$root = $ex[0];
+			$oldest = $isso->get_oldest_date();
+			$year_old = (int)date('Y', $oldest);
+			$mon_old = (int)date('n', $oldest);
+			$year_now = (int)date('Y');
+			$mon_now = (int)date('n');
 
-		for ($i = 0; $i < count($ex); $i += 2)
-			$value[urldecode($ex[$i])] = urldecode($ex[$i+1]);
+			$entity = '';
+			if (array_key_exists('entity', $this->value)) {
+				$entity = ':entity:'.urlencode($this->value['entity']);
+			}
 
-		$entity = '';
-		if (array_key_exists('entity', $value)) {
-			$entity = ':entity:'.$value['entity'];
+			$mon = $mon_old;
+			for ($year = $year_old; $year <= $year_now; $year++) {
+
+				$y_key = 'bez:report:year:'.$year;
+				$data[$y_key] = array('id' => $y_key.$entity, 'type' => 'd', 'level' => 3, 'title' => $year);
+
+				if (isset($this->value['year']) && (int)$this->value['year'] == $year) {
+					$data['bez:report:year:'.$year]['open'] = true;
+
+					if ($year == $year_now)
+						$mon_max = $mon_now;
+					else
+						$mon_max = 12;
+					for ( ; $mon <= $mon_max; $mon++) {
+						$m_key = $y_key.':month:'.$mon;
+						$data[$m_key] = array('id' => $m_key.$entity, 'type' => 'f', 'level' => 4,
+						'title' => $mon < 10 ? '0'.$mon : $mon);
+					}	
+				}
+				$mon = 1;
+			}
 		}
 
-		$mon = $mon_old;
-		for ($year = $year_old; $year <= $year_now; $year++) {
-			$y_key = 'bez:report'.$entity.':year:'.$year;
-			$data[$y_key] = array('id' => $y_key, 'type' => 'd', 'level' => 3, 'title' => $year);
-			if ($year == $year_now)
-				$mon_max = $mon_now;
-			else
-				$mon_max = 12;
-			for ( ; $mon <= $mon_max; $mon++) {
-				$m_key = $y_key.':month:'.$mon;
-				$data[$m_key] = array('id' => $m_key, 'type' => 'f', 'level' => 4,
-				'title' => $mon < 10 ? '0'.$mon : $mon);
-			}	
-			$mon = 1;
-		}
-
-		if ($helper->user_admin())
-			$data['bez:entity'] = array('id' => 'bez:entity', 'type' => 'f', 'level' => 2, 'title' => $this->getLang('entity_manage'));
 
 
-
-		if ($root == 'bez') {
+		if (isset($this->value['bez'])) {
 			$data['bez:start']['open'] = true;
 		} else {
 			$data['bez:start']['open'] = false;
 			array_splice($data, 1);
 		}
+
+		if ($helper->user_admin() && $data['bez:start']['open'] == true)
+			$data['bez:entity'] = array('id' => 'bez:entity', 'type' => 'f', 'level' => 2, 'title' => $this->getLang('entity_manage'));
 
         $R->doc .= '<div class="plugin__bez">';
         $R->doc .= html_buildlist($data,'idx',array($this,'_list'),array($this,'_li'));
@@ -120,14 +131,32 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 	}
 
 	function _bezlink($id, $title) {
-		$uri = wl($id);
+		//$uri = wl($id);
+		$uri = DOKU_URL . 'doku.php?id='.$id;
 		return '<a href="'.$uri.'">'.($title).'</a>';
 	}
 
     function _list($item){
-        global $INFO;
 
-        if(($item['type'] == 'd' && $item['open']) || $INFO['id'] == $item['id']){
+		$ex = explode(':', $item['id']);
+		for ($i = 0; $i < count($ex); $i += 2)
+			$item_value[urldecode($ex[$i])] = urldecode($ex[$i+1]);
+
+		//pola brane pod uwagę przy określaniu aktualnej strony
+		$fields = array('bez');
+		if ($item_value['bez'] == 'report') {
+			$fields[] = 'month';
+			$fields[] = 'year';
+		}
+
+		$actual_page = true;
+		foreach ($fields as $field)
+			if ($item_value[$field] != $this->value[$field])
+				$actual_page = false;
+
+
+
+        if(($item['type'] == 'd' && $item['open']) ||  $actual_page) {
             return '<strong>'.$this->_bezlink($item['id'], $item['title']).'</strong>';
         }else{
             return $this->_bezlink($item['id'], $item['title']);

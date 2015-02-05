@@ -22,14 +22,14 @@ class Report extends Connect {
 			$data['entity'] = '-all';	
 
 		$month = (int)$filters['month'];
-		if ($filters['month'] == '-all' && $month > 0 && $month <= 12)
-			$data['month'] = $month;
+		if ($filters['month'] == '-all' || ($month > 0 && $month <= 12))
+			$data['month'] = $filters['month'];
 		else
 			$data['month'] = '-all';	
 
 		$year = (int)$filters['year'];
-		if ($filters['year'] == '-all' && $year > 2013 && $year <= (int)date('Y'))
-			$data['year'] = $month;
+		if ($filters['year'] == '-all' || ($year > 2013 && $year <= (int)date('Y')))
+			$data['year'] = $filters['year'];
 		else
 			$data['year'] = '-all';	
 
@@ -49,8 +49,8 @@ class Report extends Connect {
 		
 		if ($year != '-all') {
 			$year = (int)$year;
-			$where[] = 'date >= '.mktime(0,0,0,1,1,$year);
-			$where[] = 'date < '.mktime(0,0,0,1,1,$year+1);
+			$where[] = "$data_field >= ".mktime(0,0,0,1,1,$year);
+			$where[] = "$data_field < ".mktime(0,0,0,1,1,$year+1);
 		}
 
 		if (count($where) > 0)
@@ -63,7 +63,7 @@ class Report extends Connect {
 
 
 		$isso = new Issues();
-		$where = $this->where('issue.last_mod', $filters);
+		$where = $this->where('issues.last_mod', $filters);
 
 		$report['issues'] = $this->fetch_assoc("SELECT issues.type, COUNT(DISTINCT issues.id) AS number,
 												SUM(tasks.cost) as totalcost
@@ -95,7 +95,7 @@ class Report extends Connect {
 		$report['tasks_totalcost'] = $a[0]['totalcost'];
 
 
-		$where = $this->where('issue.last_mod', $filters);
+		$where = $this->where('issues.last_mod', $filters);
 
 		$caso = new Causes();
 		$report['causes'] = $this->fetch_assoc("SELECT rootcause, COUNT(*) AS number
@@ -110,7 +110,7 @@ class Report extends Connect {
 		$report['causes_total'] = $a[0]['total'];
 
 
-		$where = $this->where('issue.last_mod', $filters);
+		$where = $this->where('issues.last_mod', $filters);
 		$report['priorities'] = $this->fetch_assoc("SELECT priority, COUNT(*) AS number, AVG(last_mod-date) AS average
 													FROM issues
 													WHERE state = 1 $where

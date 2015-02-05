@@ -12,20 +12,21 @@ $ento = new Entities();
 
 $value = array('entity' => '-all', 'year' => '-all', 'month' => '-all');
 if (count($_POST) > 0) {
-	$post = $_POST;
+	/*$post = $_POST;
 	for ($i = 0; $i < count($params); $i += 2) {
 		$key = urldecode($params[$i]);
 		if (array_key_exists($key, $value) && !array_key_exists($post))
 			$post[$key] = urldecode($params[$i+1]);
 	}
+	var_dump($post);
+	die();*/
 
-	$filters = $repo->validate_filters($post);
+	$filters = $repo->validate_filters($_POST);
 
 	$query_uri = '';
 	foreach ($filters as $k => $v)
 		if ($v != '-all')
 			$query_uri .= ':'.urlencode($k).':'.urlencode($v);
-
 
 	header('Location: ?id=bez:report'.$query_uri);
 }
@@ -36,5 +37,12 @@ for ($i = 0; $i < count($params); $i += 2)
 	$value[urldecode($params[$i])] = urldecode($params[$i+1]);
 
 $template['entities'] = $ento->get_list();
+
+$template['uri'] = $uri;
+$template['hidden'] = array();
+if (isset($value['year']))
+	$template['hidden']['year'] = $value['year'];
+if (isset($value['month']))
+	$template['hidden']['month'] = $value['month'];
 
 $template['report'] = $repo->report($value);

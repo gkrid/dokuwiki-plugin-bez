@@ -1,5 +1,8 @@
 <div  class="bds_block">
 <form action="<?php echo $template['uri'] ?>?id=bez:report" method="POST">
+<?php foreach ($template['hidden'] as $name => $val): ?>
+	<input type="hidden" name="<?php echo $name ?>" value="<?php echo $val ?>" />
+<?php endforeach ?>
 <fieldset class="bds_form">
 	<label><?php echo $bezlang['entity'] ?>:
 		<select name="entity">
