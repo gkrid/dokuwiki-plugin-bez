@@ -8,17 +8,12 @@ class Comments extends Event {
 	public function __construct() {
 		global $errors;
 		parent::__construct();
-		$q = <<<EOM
-CREATE TABLE IF NOT EXISTS comments (
-	id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-	content TEXT NOT NULL,
-	reporter CHAR(100) NOT NULL,
-	date INT(11) NOT NULL,
-	issue INT(11) NOT NULL,
-
-	PRIMARY KEY (id)
-)
-EOM;
+		$q = "CREATE TABLE IF NOT EXISTS comments (
+				id INTEGER PRIMARY KEY,
+				content TEXT NOT NULL,
+				reporter TEXT NOT NULL,
+				date INTEGER NOT NULL,
+				issue INTEGER NOT NULL)";
 		$this->errquery($q);
 	}
 	public function can_modify($comment_id) {

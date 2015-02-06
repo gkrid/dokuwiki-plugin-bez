@@ -17,7 +17,7 @@ class Issues extends Connect {
 				title TEXT NOT NULL,
 				description TEXT NOT NULL,
 				state INTEGER NOT NULL,
-				opinion TEXT NOT NULL,
+				opinion TEXT NULL,
 				type INTEGER NOT NULL,
 				entity INTEGER NOT NULL,
 				coordinator TEXT NOT NULL,
@@ -234,8 +234,13 @@ class Issues extends Connect {
 	public function get_close_issue() {
 		global $INFO;
 		$coordinator = $INFO['client'];
+
+		//w rasie co utwórz tabelę zadań
+		$tasko = new Tasks();
+
 		$a = $this->fetch_assoc("
-			SELECT issues.id, issues.priority, issues.state, issues.entity, issues.type, issues.title, issues.date, issues.last_mod, COUNT(tasks.id) AS tasks_opened
+			SELECT issues.id, issues.priority, issues.state, issues.entity, issues.type,
+				issues.title, issues.date, issues.last_mod, COUNT(tasks.id) AS tasks_opened
 			FROM issues LEFT JOIN (SELECT * FROM tasks WHERE state = 0) AS tasks ON issues.id = tasks.issue
 			WHERE issues.coordinator='$coordinator' AND issues.state=0
 			GROUP BY issues.id, issues.state, issues.type, issues.entity, issues.title, issues.date, issues.last_mod
@@ -271,10 +276,14 @@ class Issues extends Connect {
 	}
 
 	public function get_years() {
-		$all = $this->fetch_assoc("SELECT FROM_UNIXTIME(date, '%Y') AS year FROM issues GROUP BY year ORDER BY year DESC");
+		$all = $this->fetch_assoc("SELECT date FROM issues ORDER BY date LIMIT 1");
+		if (count($all) == 0)
+			return array();
+		$oldest = date('Y', $all[0]['date']);
+		
 		$years = array();
-		foreach ($all as $row)
-			$years[] = $row['year'];
+		for ($year = $oldest; $year <= (int)date('Y'); $year++)
+			$years[] = $year;
 		return $years;
 	}
 

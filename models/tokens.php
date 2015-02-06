@@ -7,11 +7,10 @@ class Tokens extends Connect {
 		global $errors;
 		parent::__construct();
 		$q = "CREATE TABLE IF NOT EXISTS tokens (
-				id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-				token CHAR(100) NOT NULL,
-				page  CHAR(200) NOT NULL,
-				date INT(11) NOT NULL,
-				PRIMARY KEY (id))";
+				id INTEGER PRIMARY KEY,
+				token TEXT NULL,
+				page TEXT NOT NULL,
+				date INTEGER NOT NULL)";
 		$this->errquery($q);
 
 		$this->password = 'mlecznakrowa';
@@ -34,14 +33,14 @@ class Tokens extends Connect {
 
 	/*sprawdź czy użytkownik o podanym $tokenie, może oglądać stronę o id = $page*/
 	public function check($token, $page) {
-		$a = $this->fetch_assoc("SELECT page FROM tokens WHERE token='".$this->db->real_escape_string($token)."'");
+		$a = $this->fetch_assoc("SELECT page FROM tokens WHERE token='".$this->escape($token)."'");
 		if (count($a) >= 1 && $a[0]['page'] == $page)
 			return true;
 		return false;
 	}
 
 	public function get($id) {
-		$a = $this->fetch_assoc("SELECT token FROM tokens WHERE page='".$this->db->real_escape_string($id)."'");
+		$a = $this->fetch_assoc("SELECT token FROM tokens WHERE page='".$this->escape($id)."'");
 		if (count($a) == 0)
 			return $this->save($id);
 		else

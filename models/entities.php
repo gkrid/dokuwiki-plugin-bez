@@ -59,7 +59,7 @@ class Entities extends Connect {
 		if ($this->can_modify()) {
 			$data = $this->validate($post);
 
-			$this->errquery('START TRANSACTION');
+			$this->errquery('BEGIN TRANSACTION');
 			$this->errquery('DELETE FROM entities');
 			$this->mul_errinsert($data, 'entities');
 			if (count($errors) > 0)

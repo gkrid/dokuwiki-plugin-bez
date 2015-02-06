@@ -14,6 +14,9 @@ class Connect {
 
 		$this->helper = plugin_load('helper', 'bez');
 	}
+	protected function escape($s) {
+		return $s;
+	}
 
 	protected function errquery($query)
 	{
@@ -49,7 +52,7 @@ class Connect {
 		foreach ($data as $row) {
 			$values .= '(';
 			foreach ($row as $v)
-				$values .= "'".$this->db->real_escape_string($v)."',";
+				$values .= "'".$this->escape($v)."',";
 			$values = substr($values, 0, -1);
 			$values .= '),';
 		}
@@ -68,7 +71,7 @@ class Connect {
 		$fields = implode(',', array_keys($data));
 		$values = '';
 		foreach ($data as $v)
-			$values .= "'".$this->db->real_escape_string($v)."',";
+			$values .= "'".$this->escape($v)."',";
 		$values = substr($values, 0, -1);
 		$this->errquery("INSERT INTO $table ($fields) VALUES ($values)");
 		
@@ -82,7 +85,7 @@ class Connect {
 
 		$values = '';
 		foreach ($data as $k => $v)
-			$values .= "$k='".$this->db->real_escape_string($v)."',";
+			$values .= "$k='".$this->escape($v)."',";
 		$values = substr($values, 0, -1);
 		$this->errquery("UPDATE $table SET $values WHERE id=$id");
 
@@ -125,7 +128,10 @@ class Connect {
 		if (isset($errors['sqlite']))
 			return array();
 
+		$ar = array();
 		while ($w = $r->fetchArray(SQLITE3_ASSOC)) {
+			$ar[] = $w;
 		}
+		return $ar;
 	}
 }

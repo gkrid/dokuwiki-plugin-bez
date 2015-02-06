@@ -44,7 +44,7 @@ class Report extends Connect {
 		$month = $vfilters['month'];
 
 		if ($entity != '-all') {
-			$where[] = "issues.entity = '".$this->db->real_escape_string($entity)."'";
+			$where[] = "issues.entity = '".$this->escape($entity)."'";
 		}
 		
 		if ($year != '-all') {

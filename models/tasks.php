@@ -9,24 +9,19 @@ class Tasks extends Event {
 	public function __construct() {
 		global $errors;
 		parent::__construct();
-		$q = <<<EOM
-CREATE TABLE IF NOT EXISTS tasks (
-	id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-	task TEXT NOT NULL,
-	state INT(11) NOT NULL,
-	executor CHAR(100) NOT NULL,
-	action INT(11) NOT NULL,
-	cost INT(11) NULL,
-	reason TEXT NOT NULL,
-	reporter CHAR(100) NOT NULL,
-	date INT(11) NOT NULL,
-	close_date INT(11) NULL,
-	issue INT(11) NOT NULL,
-
-	PRIMARY KEY (id)
-)
-EOM;
-	$this->errquery($q);
+		$q = "CREATE TABLE IF NOT EXISTS tasks (
+				id INTEGER PRIMARY KEY,
+				task TEXT NOT NULL,
+				state INTEGER NOT NULL,
+				executor TEXT NOT NULL,
+				action INTEGER NOT NULL,
+				cost INTEGER NULL,
+				reason TEXT NULL,
+				reporter TEXT NOT NULL,
+				date INTEGER NOT NULL,
+				close_date INTEGER NULL,
+				issue INTEGER NOT NULL)";
+		$this->errquery($q);
 	}
 	public function can_modify($task_id) {
 		$task = $this->getone($task_id);
@@ -266,10 +261,15 @@ EOM;
 	}
 
 	public function get_years() {
-		$all = $this->fetch_assoc("SELECT FROM_UNIXTIME(date, '%Y') AS year FROM tasks GROUP BY year ORDER BY year DESC");
+		$all = $this->fetch_assoc("SELECT date FROM tasks ORDER BY date LIMIT 1");
+		if (count($all) == 0)
+			return array();
+		$oldest = date('Y', $all[0]['date']);
+		
 		$years = array();
-		foreach ($all as $row)
-			$years[] = $row['year'];
+		for ($year = $oldest; $year <= (int)date('Y'); $year++)
+			$years[] = $year;
+
 		return $years;
 	}
 
@@ -326,7 +326,7 @@ EOM;
 			$where_q = 'WHERE '.implode(' AND ', $where);
 
 		$a = $this->fetch_assoc("SELECT tasks.id,tasks.state, tasks.action, tasks.executor, tasks.cost, tasks.date, tasks.close_date, tasks.issue, tasks.close_date, issues.priority
-		FROM tasks JOIN issues ON tasks.issue = issues.id $where_q ORDER BY priority DESC, date DESC");
+		FROM tasks JOIN issues ON tasks.issue = issues.id $where_q ORDER BY priority DESC, tasks.date DESC");
 		foreach ($a as &$row)
 			$row = $this->join($row);
 		return $a;

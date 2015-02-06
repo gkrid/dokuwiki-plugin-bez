@@ -8,19 +8,14 @@ class Causes extends Event {
 	public function __construct() {
 		global $errors;
 		parent::__construct();
-		$q = <<<EOM
-CREATE TABLE IF NOT EXISTS causes (
-	id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-	cause TEXT NOT NULL,
-	rootcause INT(11) NOT NULL,
-	reporter CHAR(100) NOT NULL,
-	date INT(11) NOT NULL,
-	issue INT(11) NOT NULL,
-
-	PRIMARY KEY (id)
-)
-EOM;
-	$this->errquery($q);
+		$q = "CREATE TABLE IF NOT EXISTS causes (
+				id INTEGER PRIMARY KEY,
+				cause TEXT NOT NULL,
+				rootcause INTEGER NOT NULL,
+				reporter INTEGER NOT NULL,
+				date INTEGER NOT NULL,
+				issue INTEGER NOT NULL)";
+		$this->errquery($q);
 	}
 	public function can_modify($cause_id) {
 		$cause = $this->getone($cause_id);
