@@ -210,15 +210,6 @@ class Tasks extends Event {
 
 		return $a;
 	}
-	public function get_close_task() {
-		global $INFO;
-		$executor = $INFO['client'];
-		$a = $this->fetch_assoc("SELECT tasks.id, tasks.task, tasks.state, tasks.action, tasks.cost, tasks.date, tasks.issue, issues.priority
-		FROM tasks JOIN issues ON tasks.issue = issues.id WHERE executor='$executor' AND tasks.state=0 ORDER BY priority DESC, tasks.date DESC");
-		foreach ($a as &$row)
-			$row = $this->join($row);
-		return $a;
-	}
 	public function get_stats() {
 		$all = $this->fetch_assoc("SELECT COUNT(*) AS tasks_all FROM tasks;");
 		$opened = $this->fetch_assoc("SELECT COUNT(*) as tasks_opened FROM tasks WHERE state=0;");
@@ -288,7 +279,9 @@ class Tasks extends Event {
 			$data['state'] = '-all';
 
 
-		$excs = array_keys($this->get_executors());
+		//$excs = array_keys($this->get_executors());
+		$usro = new Users();
+		$excs = $usro->nicks();
 		if ($filters['executor'] == '-all' || in_array($filters['executor'], $excs))
 			$data['executor'] = $filters['executor'];
 		else
@@ -313,7 +306,7 @@ class Tasks extends Event {
 
 		foreach ($vfilters as $name => $value)
 			if ($value != '-all')
-				$where[] = "tasks.$name = '".$this->db->real_escape_string($value)."'";
+				$where[] = "tasks.$name = '".$this->escape($value)."'";
 
 		if ($year != '-all') {
 			$year = (int)$year;

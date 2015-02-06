@@ -276,6 +276,7 @@ $lang['do_you_want_remove'] = 'Do you really want to remove this row?';
 $lang['yes'] = 'Yes';
 $lang['no'] = 'No';
 $lang['year'] = 'Year';
+$lang['in_year'] = 'in year';
 $lang['filter'] = 'Filter';
 
 $lang['close_issues'] = 'My issues';

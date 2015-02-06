@@ -231,26 +231,6 @@ class Issues extends Connect {
 			return $a;
 		}
 	}
-	public function get_close_issue() {
-		global $INFO;
-		$coordinator = $INFO['client'];
-
-		//w rasie co utwórz tabelę zadań
-		$tasko = new Tasks();
-
-		$a = $this->fetch_assoc("
-			SELECT issues.id, issues.priority, issues.state, issues.entity, issues.type,
-				issues.title, issues.date, issues.last_mod, COUNT(tasks.id) AS tasks_opened
-			FROM issues LEFT JOIN (SELECT * FROM tasks WHERE state = 0) AS tasks ON issues.id = tasks.issue
-			WHERE issues.coordinator='$coordinator' AND issues.state=0
-			GROUP BY issues.id, issues.state, issues.type, issues.entity, issues.title, issues.date, issues.last_mod
-			ORDER BY issues.priority DESC, issues.last_mod DESC, issues.date DESC
-			");
-
-		foreach ($a as &$row)
-			$row = $this->join($row);
-		return $a;
-	}
 
 	public function get_stats() {
 		$all = $this->fetch_assoc("SELECT COUNT(*) AS issues_all FROM issues;");
@@ -340,33 +320,39 @@ class Issues extends Connect {
 		$data = array();
 
 		$stato = new States();
-		if ($filters['state'] == '-all' || array_key_exists($filters['state'], $stato->get_all()))
+		if (isset($filters['state']) &&
+			($filters['state'] == '-all' || array_key_exists($filters['state'], $stato->get_all())))
 			$data['state'] = $filters['state'];
 		else
 			$data['state'] = '-all';
 
 		$isstyo = new Issuetypes();
-		if ($filters['state'] == '-all' || array_key_exists($filters['type'], $isstyo->get()))
+		if (isset($filters['type']) &&
+			($filters['type'] == '-all' || array_key_exists($filters['type'], $isstyo->get())))
 			$data['type'] = $filters['type'];
 		else
 			$data['type'] = '-all';
 
 		$ento = new Entities();
-		if ($filters['entity'] == '-all' || in_array($filters['entity'], $ento->get_list()))
+		if (isset($filters['entity']) &&
+			($filters['entity'] == '-all' || in_array($filters['entity'], $ento->get_list())))
 			$data['entity'] = $filters['entity'];
 		else
 			$data['entity'] = '-all';	
 
 
-		$coords = array_keys($this->get_coordinators());
-		if ($filters['coordinator'] == '-all' || $filters['coordinator'] == '-none' ||
-			in_array($filters['coordinator'], $coords))
-			$data['coordinator'] = $filters['coordinator'];
-		else
-			$data['coordinator'] = '-all';	
+		if (isset($filters['coordinator'])) {
+			$coords = array_keys($this->get_coordinators());
+			if ($filters['coordinator'] == '-all' || $filters['coordinator'] == '-none' ||
+				in_array($filters['coordinator'], $coords))
+				$data['coordinator'] = $filters['coordinator'];
+			else
+				$data['coordinator'] = '-all';	
+		}
 
 		$years = $this->get_years();
-		if ($filters['year'] == '-all' || in_array($filters['year'], $years))
+		if (isset($filters['year']) &&
+			($filters['year'] == '-all' || in_array($filters['year'], $years)))
 			$data['year'] = $filters['year'];
 		else
 			$data['year'] = '-all';
@@ -389,35 +375,42 @@ class Issues extends Connect {
 
 		foreach ($vfilters as $name => $value)
 			if ($value != '-all')
-				$where[] = "$name = '".$this->db->real_escape_string($value)."'";
+				$where[] = "issues.$name = '".$this->escape($value)."'";
 
 		if ($year != '-all') {
 			$year = (int)$year;
-			$where[] = 'date >= '.mktime(0,0,0,1,1,$year);
-			$where[] = 'date < '.mktime(0,0,0,1,1,$year+1);
+			$where[] = 'issues.date >= '.mktime(0,0,0,1,1,$year);
+			$where[] = 'issues.date < '.mktime(0,0,0,1,1,$year+1);
 		}
 		if ($state != '-all') {
 			/*-proposal or -rejected*/
 			if (strstr($state, '-')) 
-				$where[] = "coordinator = '$state'";
+				$where[] = "issues.coordinator = '$state'";
 			else {
-				$where[] = "state = $state";
-				$where[] = "coordinator != '-proposal'";
-				$where[] = "coordinator != '-rejected'";
+				$where[] = "issues.state = $state";
+				$where[] = "issues.coordinator != '-proposal'";
+				$where[] = "issues.coordinator != '-rejected'";
 			}
 		}
 		if ($coordinator != '-all') {
 			if ($coordinator == '-none') 
-				$where[] = "(coordinator = '-proposal' OR coordinator = '-rejected')";
+				$where[] = "(issues.coordinator = '-proposal' OR issues.coordinator = '-rejected')";
 			else 
-				$where[] = "coordinator = '$coordinator'";
+				$where[] = "issues.coordinator = '$coordinator'";
 		}
 
 		$where_q = '';
 		if (count($where) > 0)
 			$where_q = 'WHERE '.implode(' AND ', $where);
 
-		$a = $this->fetch_assoc("SELECT * FROM issues $where_q ORDER BY priority DESC, date DESC");
+		$a = $this->fetch_assoc("
+			SELECT issues.id, issues.priority, issues.state, issues.entity, issues.type,
+				issues.title, issues.coordinator, issues.date, issues.last_mod, COUNT(tasks.id) AS tasks_opened
+			FROM issues LEFT JOIN (SELECT * FROM tasks WHERE state = 0) AS tasks ON issues.id = tasks.issue
+			$where_q
+			GROUP BY issues.id, issues.state, issues.type, issues.entity, issues.title, issues.date, issues.last_mod
+			ORDER BY issues.priority DESC, issues.last_mod DESC, issues.date DESC
+			");
 		foreach ($a as &$row)
 			$row = $this->join($row);
 		return $a;

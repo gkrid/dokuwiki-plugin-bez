@@ -4,11 +4,11 @@
 			<?php echo $bezlang['report_issue'] ?>
 		</a>
 	<?php endif ?>
-	<a href="<?php echo $helper->bez_uri('close_issue') ?>" class="bez_start_button" id="bez_info_issues">
+	<a href="<?php echo $helper->bez_uri('issues:state:0:coordinator:'.$template['client']) ?>" class="bez_start_button" id="bez_info_issues">
 		<?php echo $bezlang['close_issues'] ?>:
 		<strong><?php echo $template['my_issues'] ?></strong>
 	</a>
-	<a href="<?php echo $helper->bez_uri('close_task') ?>" class="bez_start_button" id="bez_info_tasks">
+	<a href="<?php echo $helper->bez_uri('tasks:state:0:executor:'.$template['client']) ?>" class="bez_start_button" id="bez_info_tasks">
 		<?php echo $bezlang['close_tasks'] ?>:
 		<strong><?php echo $template['my_tasks'] ?></strong>
 	</a>

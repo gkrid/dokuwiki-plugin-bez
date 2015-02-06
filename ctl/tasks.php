@@ -2,6 +2,7 @@
 include_once DOKU_PLUGIN."bez/models/tasks.php";
 include_once DOKU_PLUGIN."bez/models/taskactions.php";
 include_once DOKU_PLUGIN."bez/models/taskstates.php";
+include_once DOKU_PLUGIN."bez/models/users.php";
 
 if	(!$helper->user_viewer()) {
 	$errors[] = $bezlang['error_issues'];
@@ -11,6 +12,7 @@ if	(!$helper->user_viewer()) {
 $tasko = new Tasks();
 $taskao = new Taskactions();
 $taskso = new Taskstates();
+$usro = new Users();
 
 if (count($_POST) > 0) {
 	$filters = $tasko->validate_filters($_POST);
@@ -34,7 +36,7 @@ $template['uri'] = $uri;
 
 $template['actions'] = $taskao->get();
 $template['states'] = $taskso->get();
-$template['executors'] = $tasko->get_executors();
+$template['executors'] = $usro->get();
 $template['years'] = $tasko->get_years();
 
 $template['tasks'] = $tasko->get_filtered($value);

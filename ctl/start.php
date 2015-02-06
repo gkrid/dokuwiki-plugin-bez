@@ -15,13 +15,14 @@ $timeline = $helper->days_array_merge($issues, $tasks);
 $template['timeline'] = $timeline;
 
 $isso = new Issues();
-$no = count($isso->get_close_issue());
+$no = count($isso->get_filtered(array('state' => '0', 'coordinator' => $INFO['client'])));
 $template['my_issues'] = $no;
 
 $tasko = new Tasks();
-$no = count($tasko->get_close_task());
+$no = count($tasko->get_filtered(array('state' => '0', 'coordinator' => $INFO['client'])));
 $template['my_tasks'] = $no;
 
 $no = count($isso->get_filtered( array('state' => '-proposal') ));
 $template['proposals'] = $no;
 
+$template['client'] = $INFO['client'];

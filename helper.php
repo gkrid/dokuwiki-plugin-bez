@@ -117,7 +117,7 @@ class helper_plugin_bez extends dokuwiki_plugin
 		return self::days($diff).' '.$this->getLang('ago');
 	}
 	public function time2date($time) {
-		return date($this->getConf('date_format'), $time);
+		return date('Y-m-d', $time);
 	}
 	public function array_data_sort($a, $b) {
 		$a = $a['date'];

@@ -11,7 +11,6 @@ if(!defined('DOKU_INC')) die();
 
 if(!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
 require_once DOKU_PLUGIN.'syntax.php';
-include_once DOKU_PLUGIN."bez/models/tasks.php";
 include_once DOKU_PLUGIN."bez/models/issues.php";
 /**
  * All DokuWiki plugins to extend the parser/rendering mechanism
@@ -56,16 +55,6 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 		if ($helper->user_editor())
 			$data['bez:issue_report'] = array('id' => 'bez:issue_report', 'type' => 'f', 'level' => 2, 'title' => $this->getLang('bds_issue_report'));
 
-		$isso = new Issues();
-		$no = count($isso->get_close_issue());
-		$title = str_replace('%d', $no, $this->getLang('menu_close_issue'));
-		$data['bez:close_issue'] = array('id' => 'bez:close_issue', 'type' => 'f', 'level' => 2, 'title' => $title);
-
-		$tasko = new Tasks();
-		$no = count($tasko->get_close_task());
-		$title = str_replace('%d', $no, $this->getLang('menu_close_task'));
-		$data['bez:close_task'] = array('id' => 'bez:close_task', 'type' => 'f', 'level' => 2, 'title' => $title);
-
 		$data['bez:issues'] = array('id' => 'bez:issues:year:'.date('Y'), 'type' => 'f', 'level' => 2, 'title' => $this->getLang('bds_issues'));
 		$data['bez:tasks'] = array('id' => 'bez:tasks:year:'.date('Y'), 'type' => 'f', 'level' => 2, 'title' => $this->getLang('bez_tasks'));
 
@@ -74,6 +63,7 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 
 
 		
+		$isso = new Issues();
 		if ($this->value['bez'] == 'report') {
 			$data['bez:report']['open'] = true;
 

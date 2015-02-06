@@ -261,7 +261,7 @@ table.bez .pr2 , #bds_timeline dt.pr2 {
 	display: table-row;
 }
 
-.bds_form label[for] {
+.bds_form label {
 	display: table-cell;
     padding: 0.4em;
     text-align: right;
@@ -457,13 +457,6 @@ input.days {
 	margin-left: 0;	
 }
 
-#bez_issue_filter label {
-	margin-right: 1em;
-	padding-top: 0.2em;
-	display: block;
-	float: left;
-}
-
 #bez_8d_send_button {
 	font-size: 50%;
 	font-weight: normal;
@@ -488,4 +481,29 @@ h1.bez_report span {
 	display:block;
 	font-size: 50%;
 	font-weight: normal;
+}
+
+.bez_filter_form {
+	display: block;
+	width: 100%;
+	background-color: #F7F7F0;
+    border: 1px solid #D7D7D7;
+    border-radius: 0.4em;
+    margin-bottom: 1em;
+	text-align: left;
+}
+
+.bez_filter_form fieldset {
+	border: 0 !important;
+}
+
+.bez_filter_form div {
+	white-space: nowrap;
+	overflow: auto;
+	text-align: left;
+	margin-bottom: 1em;
+}
+
+.bez_filter_form label {
+	margin-right: 0.4em;
 }

@@ -282,6 +282,7 @@ $lang['no'] = 'Nie';
 
 $lang['all'] = 'wszystkie';
 $lang['year'] = 'Rok';
+$lang['in_year'] = 'w roku';
 $lang['filter'] = 'Filtruj';
 
 $lang['close_issues'] = 'Moje problemy';
