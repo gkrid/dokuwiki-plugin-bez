@@ -16,6 +16,7 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 	{
 		$controller->register_hook('ACTION_ACT_PREPROCESS', 'BEFORE', $this, 'action_act_preprocess');
 		$controller->register_hook('TPL_ACT_RENDER', 'BEFORE', $this, 'tpl_act_render');
+		$controller->register_hook('TEMPLATE_PAGETOOLS_DISPLAY', 'BEFORE', $this, 'tpl_pagetools_display');
 	}
 
 	public function __construct()
@@ -31,6 +32,10 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 			$this->params = array_slice($ex, 2);
 		}
 	}
+	public function tpl_pagetools_display($event, $param) {
+		if ($this->action != '') 
+			$event->preventDefault();
+	}
 	public function preventDefault() {
 		throw new Exception('preventDefault');
 	}
@@ -40,11 +45,13 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 		global $auth, $INFO, $ID;
 		global $template, $bezlang, $value, $errors;
 
-		if ( ! $this->helper->user_viewer())
+		if ($this->action == '')
 			return false;
 
-		if ($this->action != '')
-			$event->preventDefault();
+		$event->preventDefault();
+
+		if ( ! $this->helper->user_viewer())
+			return false;
 
 		$ctl= DOKU_PLUGIN."bez/ctl/".str_replace('/', '', $this->action).".php";
 		if (file_exists($ctl)) {
@@ -65,8 +72,10 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 	public function tpl_act_render($event, $param)
 	{
 		global $template, $bezlang, $value, $errors;
-		if ($this->action != '')
-			$event->preventDefault();
+		if ($this->action == '')
+			return false;
+
+		$event->preventDefault();
 
 		/*przerywamy wyświetlanie*/
 		if ($this->norender)

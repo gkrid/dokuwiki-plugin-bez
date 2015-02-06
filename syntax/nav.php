@@ -66,8 +66,8 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 		$title = str_replace('%d', $no, $this->getLang('menu_close_task'));
 		$data['bez:close_task'] = array('id' => 'bez:close_task', 'type' => 'f', 'level' => 2, 'title' => $title);
 
-		$data['bez:issues'] = array('id' => 'bez:issues', 'type' => 'f', 'level' => 2, 'title' => $this->getLang('bds_issues'));
-		$data['bez:tasks'] = array('id' => 'bez:tasks', 'type' => 'f', 'level' => 2, 'title' => $this->getLang('bez_tasks'));
+		$data['bez:issues'] = array('id' => 'bez:issues:year:'.date('Y'), 'type' => 'f', 'level' => 2, 'title' => $this->getLang('bds_issues'));
+		$data['bez:tasks'] = array('id' => 'bez:tasks:year:'.date('Y'), 'type' => 'f', 'level' => 2, 'title' => $this->getLang('bez_tasks'));
 
 		$data['bez:report'] = array('id' => 'bez:report', 'type' => 'd', 'level' => 2, 'title' => $this->getLang('report'));
 
@@ -77,7 +77,7 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 		if ($this->value['bez'] == 'report') {
 			$data['bez:report']['open'] = true;
 
-			$oldest = $isso->get_oldest_date();
+			$oldest = $isso->get_oldest_close_date();
 			$year_old = (int)date('Y', $oldest);
 			$mon_old = (int)date('n', $oldest);
 			$year_now = (int)date('Y');

@@ -12,11 +12,11 @@ class helper_plugin_bez extends dokuwiki_plugin
 		global $ID;
 
 			
-		if (!isset($_GET['token']))
+		if (!isset($_GET['t']))
 			return false;
 
 		$toko = new Tokens();
-		if ($toko->check(trim($_GET['token']), $ID))
+		if ($toko->check(trim($_GET['t']), $ID))
 			return true;
 
 		return false;

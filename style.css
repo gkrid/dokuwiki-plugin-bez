@@ -483,3 +483,9 @@ input.days {
 	border-left: 0;
 	border-right: 0;
 }
+
+h1.bez_report span {
+	display:block;
+	font-size: 50%;
+	font-weight: normal;
+}

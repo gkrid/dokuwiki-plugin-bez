@@ -28,7 +28,7 @@ class Report extends Connect {
 			$data['month'] = '-all';	
 
 		$year = (int)$filters['year'];
-		if ($filters['year'] == '-all' || ($year > 2013 && $year <= (int)date('Y')))
+		if ($filters['year'] == '-all' || ($year >= 2013 && $year <= (int)date('Y')))
 			$data['year'] = $filters['year'];
 		else
 			$data['year'] = '-all';	
@@ -49,8 +49,26 @@ class Report extends Connect {
 		
 		if ($year != '-all') {
 			$year = (int)$year;
-			$where[] = "$data_field >= ".mktime(0,0,0,1,1,$year);
-			$where[] = "$data_field < ".mktime(0,0,0,1,1,$year+1);
+			if ($month == '-all') {
+				$year_from = $year;
+				$year_to = $year+1;
+				$month_from = 1;
+				$month_to = 1;
+			} else if ($month < 12) {
+				$month = (int)$month;
+				$year_from = $year;
+				$year_to = $year;
+				$month_from = $month;
+				$month_to = $month+1;
+			} else {
+				$month = (int)$month;
+				$year_from = $year;
+				$year_to = $year+1;
+				$month_from = 12;
+				$month_to = 1;
+			}
+			$where[] = "$data_field >= ".mktime(0,0,0,$month_from,1,$year_from);
+			$where[] = "$data_field < ".mktime(0,0,0,$month_to,1,$year_to);
 		}
 
 		if (count($where) > 0)

@@ -26,7 +26,19 @@
 </form>
 </div>
 
-<h1><?php echo $bezlang['report'] ?></h1>
+<h1 class="bez_report">
+<?php echo $bezlang['report'] ?>
+
+<?php if ($value['year'] != '-all'): ?>
+<?php echo $value['year'] ?><?php if ($value['month'] != '-all'): ?>/<?php echo $value['month'] > 10 ? $value['month'] : '0'.$value['month'] ?><?php endif ?>
+<?php endif ?>
+
+
+<span>dotyczy zamkniętych problemów</span>
+<?php if ($value['entity'] != '-all'): ?>
+<span>Klient: <strong><?php echo $value['entity'] ?></strong></span>
+<?php endif ?>
+</h1>
 
 <h2><?php echo $bezlang['report_issues'] ?></h2>
 <table class="bez_sumarise">

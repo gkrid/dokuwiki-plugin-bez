@@ -418,10 +418,10 @@ EOM;
 			$row = $this->join($row);
 		return $a;
 	}
-	public function get_oldest_date() {
-		$a = $this->fetch_assoc("SELECT date FROM issues ORDER BY date LIMIT 1");
+	public function get_oldest_close_date() {
+		$a = $this->fetch_assoc("SELECT last_mod FROM issues ORDER BY last_mod LIMIT 1");
 		if (count($a) > 0)
-			return (int)$a[0]['date'];
+			return (int)$a[0]['last_mod'];
 		else
 			return time();
 	}

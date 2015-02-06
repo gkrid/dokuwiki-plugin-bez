@@ -112,7 +112,7 @@
 
 <tr>
 	<td>
-		<strong><?php echo $bezlang['cost_total'] ?>:</strong>
+		<strong><?php echo $bezlang['totalcost'] ?>:</strong>
 		<?php echo $template['cost_total'] ?>
 	</td>
 	<td>

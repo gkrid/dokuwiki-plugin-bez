@@ -62,7 +62,7 @@
 </form>
 </div>
 
-<table class="bez">
+<table class="bez bez_sumarise">
 	<tr>
 		<th><?php echo $bezlang['id'] ?></th>
 		<th><?php echo $bezlang['state'] ?></th>
@@ -89,6 +89,10 @@
 			</td>
 		</tr>
 	<?php endforeach ?>
+	<tr>
+		<th><?php echo $bezlang['report_total'] ?></th>
+		<td colspan="6"><?php echo count($template['issues']) ?></td>
+	</tr>
 </table>
 
 </div>
