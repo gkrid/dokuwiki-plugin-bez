@@ -11,24 +11,19 @@ class Issues extends Connect {
 	public function __construct() {
 		global $errors;
 		parent::__construct();
-		$q = <<<EOM
-CREATE TABLE IF NOT EXISTS issues (
-	id INT(11) NOT NULL AUTO_INCREMENT,
-	priority INT(11) NOT NULL DEFAULT 0,
-	title CHAR(100) NOT NULL,
-	description TEXT NOT NULL,
-	state INT(11) NOT NULL,
-	opinion TEXT NULL,
-	type INT(11) NOT NULL,
-	entity CHAR(100) NOT NULL,
-	coordinator CHAR(100) NULL,
-	reporter CHAR(100) NOT NULL,
-	date INT(11) NOT NULL,
-	last_mod INT(11) NOT NULL,
-
-	PRIMARY KEY (id)
-)
-EOM;
+		$q = "CREATE TABLE IF NOT EXISTS issues (
+				id INTEGER PRIMARY KEY,
+				priority INTEGER NOT NULL DEFAULT 0,
+				title TEXT NOT NULL,
+				description TEXT NOT NULL,
+				state INTEGER NOT NULL,
+				opinion TEXT NOT NULL,
+				type INTEGER NOT NULL,
+				entity INTEGER NOT NULL,
+				coordinator TEXT NOT NULL,
+				reporter TEXT NOT NULL,
+				date INTEGER NOT NULL,
+				last_mod INTEGER)";
 	$this->errquery($q);
 	}
 	public function validate($post, $state='add', $issue_id=-1)

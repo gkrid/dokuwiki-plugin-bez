@@ -7,9 +7,9 @@ class Connect {
 	{
 		global $errors;
 		if ($this->db == NULL) {
-			$this->db = new mysqli('localhost', 'root', '', 'bez');
-			if ($this->db->connect_errno) 
-				$errors[] = "Failed to connect to MySQL: ". $this->db->connect_error;
+			$this->db = new SQLite3(DOKU_INC . 'data/bez.sqlite');
+			if (!$this->db) 
+				$errors[] = "Failed to open SQLite DB file($file): ". $this->db->lastErrorMsg();
 		}
 
 		$this->helper = plugin_load('helper', 'bez');
@@ -20,8 +20,8 @@ class Connect {
 		global $errors;
 
 		$r = $this->db->query($query);
-		if ($this->db->error) 
-			$errors['mysql'] = "MySQL error(".$this->db->errno."): ". $this->db->error."\nQuery: $query";
+		if (!$r) 
+			$errors['sqlite'] = "SQLite error(".$this->db->lastErrorCode()."): ". $this->db->lastErrorMsg()."\nQuery: $query";
 		return $r;
 	}
 
@@ -56,7 +56,7 @@ class Connect {
 		$values = substr($values, 0, -1);
 		$this->errquery("INSERT INTO $table ($fields) VALUES $values");
 		
-		$this->lastid = $this->db->insert_id;
+		$this->lastid = $this->db->lastInsertRowId();
 	}
 
 	protected function errinsert($data, $table)
@@ -72,7 +72,7 @@ class Connect {
 		$values = substr($values, 0, -1);
 		$this->errquery("INSERT INTO $table ($fields) VALUES ($values)");
 		
-		$this->lastid = $this->db->insert_id;
+		$this->lastid = $this->db->lastInsertRowId();
 	}
 	protected function errupdate($data, $table, $id)
 	{
@@ -122,9 +122,10 @@ class Connect {
 		global $errors;
 
 		$r = $this->errquery($q);
-		if (isset($errors['mysql']))
+		if (isset($errors['sqlite']))
 			return array();
 
-		return $r->fetch_all(MYSQLI_ASSOC);
+		while ($w = $r->fetchArray(SQLITE3_ASSOC)) {
+		}
 	}
 }

@@ -5,15 +5,10 @@ class Entities extends Connect {
 	public function __construct() {
 		global $errors;
 		parent::__construct();
-		$q = <<<EOM
-CREATE TABLE IF NOT EXISTS entities (
-	id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-	entity CHAR(100) NOT NULL,
-
-	PRIMARY KEY (id)
-)
-EOM;
-	$this->errquery($q);
+		$q = "CREATE TABLE IF NOT EXISTS entities (
+				id INTEGER PRIMARY KEY,
+				entity INTEGER NOT NULL)";
+		$this->errquery($q);
 	}
 	public function can_modify() {
 		if ($this->helper->user_admin()) 
