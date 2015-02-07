@@ -341,8 +341,9 @@ class Issues extends Connect {
 			$data['entity'] = '-all';	
 
 
+		$usro = new Users();
 		if (isset($filters['coordinator'])) {
-			$coords = array_keys($this->get_coordinators());
+			$coords = $usro->nicks();
 			if ($filters['coordinator'] == '-all' || $filters['coordinator'] == '-none' ||
 				in_array($filters['coordinator'], $coords))
 				$data['coordinator'] = $filters['coordinator'];
