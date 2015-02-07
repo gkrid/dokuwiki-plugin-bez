@@ -317,46 +317,41 @@ class Issues extends Connect {
 
 	/*waliduje te pola które są brane przy filtrowaniu*/
 	public function validate_filters($filters) {
-		$data = array();
 
-		$stato = new States();
-		if (isset($filters['state']) &&
-			($filters['state'] == '-all' || array_key_exists($filters['state'], $stato->get_all())))
-			$data['state'] = $filters['state'];
-		else
-			$data['state'] = '-all';
+		$data = array('state' => '-all', 'type' => '-all', 'entity' => '-all', 'coordinator' => '-all', 'year' => '-all');
 
-		$isstyo = new Issuetypes();
-		if (isset($filters['type']) &&
-			($filters['type'] == '-all' || array_key_exists($filters['type'], $isstyo->get())))
-			$data['type'] = $filters['type'];
-		else
-			$data['type'] = '-all';
+		if (isset($filters['state'])) {
+			$stato = new States();
+			if ($filters['state'] == '-all' || array_key_exists($filters['state'], $stato->get_all()))
+				$data['state'] = $filters['state'];
+		}
 
-		$ento = new Entities();
-		if (isset($filters['entity']) &&
-			($filters['entity'] == '-all' || in_array($filters['entity'], $ento->get_list())))
-			$data['entity'] = $filters['entity'];
-		else
-			$data['entity'] = '-all';	
+		if (isset($filters['type'])) {
+			$isstyo = new Issuetypes();
+			if ($filters['type'] == '-all' || array_key_exists($filters['type'], $isstyo->get()))
+				$data['type'] = $filters['type'];
+		}
+
+		if (isset($filters['entity'])) {
+			$ento = new Entities();
+			if ($filters['entity'] == '-all' || in_array($filters['entity'], $ento->get_list()))
+				$data['entity'] = $filters['entity'];
+		}
 
 
-		$usro = new Users();
 		if (isset($filters['coordinator'])) {
+			$usro = new Users();
 			$coords = $usro->nicks();
 			if ($filters['coordinator'] == '-all' || $filters['coordinator'] == '-none' ||
 				in_array($filters['coordinator'], $coords))
 				$data['coordinator'] = $filters['coordinator'];
-			else
-				$data['coordinator'] = '-all';	
 		}
 
-		$years = $this->get_years();
-		if (isset($filters['year']) &&
-			($filters['year'] == '-all' || in_array($filters['year'], $years)))
-			$data['year'] = $filters['year'];
-		else
-			$data['year'] = '-all';
+		if (isset($filters['year'])) {
+			$years = $this->get_years();
+			if ($filters['year'] == '-all' || in_array($filters['year'], $years))
+				$data['year'] = $filters['year'];
+		}
 
 		return $data;
 	}

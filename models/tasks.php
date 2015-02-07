@@ -266,32 +266,34 @@ class Tasks extends Event {
 
 	public function validate_filters($filters) {
 
-		$taskao = new Taskactions();
-		if ($filters['action'] == '-all' || in_array($filters['action'], array_keys($taskao->get())))
-			$data['action'] = $filters['action'];
-		else
-			$data['action'] = '-all';	
+		$data = array('action' => '-all', 'state' => '-all', 'executor' => '-all', 'year' => '-all');
 
-		$taskso = new Taskstates();
-		if ($filters['state'] == '-all' || array_key_exists($filters['state'], array_keys($taskso->get())))
-			$data['state'] = $filters['state'];
-		else
-			$data['state'] = '-all';
+		if (isset($filters['action'])) {
+			$taskao = new Taskactions();
+			if ($filters['action'] == '-all' || in_array($filters['action'], array_keys($taskao->get())))
+				$data['action'] = $filters['action'];
+		}
+
+		if (isset($filters['state'])) {
+			$taskso = new Taskstates();
+			if ($filters['state'] == '-all' || array_key_exists($filters['state'], array_keys($taskso->get())))
+				$data['state'] = $filters['state'];
+		}
 
 
-		//$excs = array_keys($this->get_executors());
-		$usro = new Users();
-		$excs = $usro->nicks();
-		if ($filters['executor'] == '-all' || in_array($filters['executor'], $excs))
-			$data['executor'] = $filters['executor'];
-		else
-			$data['executor'] = '-all';	
+		if (isset($filters['executor'])) {
+			//$excs = array_keys($this->get_executors());
+			$usro = new Users();
+			$excs = $usro->nicks();
+			if ($filters['executor'] == '-all' || in_array($filters['executor'], $excs))
+				$data['executor'] = $filters['executor'];
+		}
 
-		$years = $this->get_years();
-		if ($filters['year'] == '-all' || in_array($filters['year'], $years))
-			$data['year'] = $filters['year'];
-		else
-			$data['year'] = '-all';
+		if (isset($filters['year'])) {
+			$years = $this->get_years();
+			if ($filters['year'] == '-all' || in_array($filters['year'], $years))
+				$data['year'] = $filters['year'];
+		}
 
 		return $data;
 	}
