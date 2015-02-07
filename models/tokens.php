@@ -8,22 +8,32 @@ class Tokens extends Connect {
 		parent::__construct();
 		$q = "CREATE TABLE IF NOT EXISTS tokens (
 				id INTEGER PRIMARY KEY,
-				token TEXT NULL,
+				token TEXT NOT NULL,
 				page TEXT NOT NULL,
 				date INTEGER NOT NULL)";
 		$this->errquery($q);
 
-		$this->password = 'mlecznakrowa';
+	}
+	private function salt() {
+		$length = 10;
+		$characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		$charactersLength = strlen($characters);
+		$randomString = '';
+		for ($i = 0; $i < $length; $i++) {
+			$randomString .= $characters[rand(0, $charactersLength - 1)];
+		}
+		return $randomString;
 	}
 	/*returns new token*/
 	public function save($id) {
 		global $errors;
 		/*najpierw dodaj, a potem wygeneruj nowy token na podstawie id*/
 		if ($this->helper->user_viewer()) {
-			$data = array('page' => $id, 'date' => time());
+			
+			$salt = $this->salt();
+			$token = md5($salt.$id);
+			$data = array('token' => $token, 'page' => $id, 'date' => time());
 			$this->errinsert($data, 'tokens');
-			$token = sha1($this->password.$this->lastid);
-			$this->errupdate(array('token' => $token), 'tokens', $this->lastid);
 
 			if (count($errors) == 0)
 				return $token;

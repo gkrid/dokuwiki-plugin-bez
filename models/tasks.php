@@ -309,9 +309,15 @@ class Tasks extends Event {
 				$where[] = "tasks.$name = '".$this->escape($value)."'";
 
 		if ($year != '-all') {
+			$state = $vfilters['state'];
+			if ($state == '0')
+				$date_field = 'tasks.date';
+			else
+				$date_field = 'tasks.close_date';
+
 			$year = (int)$year;
-			$where[] = 'tasks.date >= '.mktime(0,0,0,1,1,$year);
-			$where[] = 'tasks.date < '.mktime(0,0,0,1,1,$year+1);
+			$where[] = "$date_field >= ".mktime(0,0,0,1,1,$year);
+			$where[] = "$date_field < ".mktime(0,0,0,1,1,$year+1);
 		}
 
 		$where_q = '';

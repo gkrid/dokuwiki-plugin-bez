@@ -1,3 +1,13 @@
 #bez_8d_send_button {
 	display:none;
 }
+
+.bez_filter_form {
+	display: none;
+}
+
+h1.bez_report span {
+	display:block;
+	font-size: 50%;
+	font-weight: normal;
+}

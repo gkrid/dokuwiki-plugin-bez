@@ -1,42 +1,38 @@
-<div  class="bds_block">
-<form action="<?php echo $template['uri'] ?>?id=bez:report" method="POST">
-<?php foreach ($template['hidden'] as $name => $val): ?>
-	<input type="hidden" name="<?php echo $name ?>" value="<?php echo $val ?>" />
-<?php endforeach ?>
-<fieldset class="bds_form">
-	<label><?php echo $bezlang['entity'] ?>:
-		<select name="entity">
-			<option <?php if ($value['entity'] == '-all') echo 'selected' ?>
-				value="-all">--- <?php echo $bezlang['all'] ?> ---</option>
-		<?php foreach ($template['entities'] as $entity): ?>
-			<option <?php if ($value['entity'] == $entity) echo 'selected' ?>
-				value="<?php echo $entity ?>"><?php echo $entity ?></option>
-		<?php endforeach ?>
-		</select>
-	</label>
-	<label><input type="submit" value="<?php echo $bezlang['filter'] ?>" />
+<?php if (!$helper->token_viewer()): ?>
+	<div  class="bez_filter_form">
+	<form action="<?php echo $template['uri'] ?>?id=bez:report" method="POST">
+	<?php foreach ($template['hidden'] as $name => $val): ?>
+		<input type="hidden" name="<?php echo $name ?>" value="<?php echo $val ?>" />
+	<?php endforeach ?>
+	<fieldset>
+		<label><?php echo $bezlang['entity'] ?>:
+			<select name="entity">
+				<option <?php if ($value['entity'] == '-all') echo 'selected' ?>
+					value="-all">--- <?php echo $bezlang['all'] ?> ---</option>
+			<?php foreach ($template['entities'] as $entity): ?>
+				<option <?php if ($value['entity'] == $entity) echo 'selected' ?>
+					value="<?php echo $entity ?>"><?php echo $entity ?></option>
+			<?php endforeach ?>
+			</select>
+		</label>
+		<input type="submit" value="<?php echo $bezlang['filter'] ?>" />
 
-	<span id="bez_8d_send_button">[<a href="
-		<?php echo $helper->mailto($template['issue']['coordinator_email'],
-		$bezlang['8d_report'].': #'.$template['issue']['id'].' ['.$template['issue']['entity'].'] '.$template['issue']['title'],
-		$template['uri']) ?>">
-		✉ <?php echo $bezlang['send_mail'] ?>
-	</a>]</span>
-</fieldset>
-</form>
-</div>
-
-<h1 class="bez_report">
-<?php echo $bezlang['report'] ?>
-
-<?php if ($value['year'] != '-all'): ?>
-<?php echo $value['year'] ?><?php if ($value['month'] != '-all'): ?>/<?php echo $value['month'] > 10 ? $value['month'] : '0'.$value['month'] ?><?php endif ?>
+		<span>[<a href="
+			<?php echo $helper->mailto('',
+			$template['title'].($value['entity'] != '-all' ? ' ['.$value['entity'].']' : ''),
+			$template['uri']) ?>">
+			✉ <?php echo $bezlang['send_mail'] ?>
+		</a>]</span>
+	</fieldset>
+	</form>
+	</div>
 <?php endif ?>
 
-
-<span>dotyczy zamkniętych problemów</span>
+<h1 class="bez_report">
+<?php echo $template['title'] ?>
+<span><?php echo $bezlang['report_subhead'] ?></span>
 <?php if ($value['entity'] != '-all'): ?>
-<span>Klient: <strong><?php echo $value['entity'] ?></strong></span>
+<span><?php echo $bezlang['entity'] ?>: <strong><?php echo $value['entity'] ?></strong></span>
 <?php endif ?>
 </h1>
 

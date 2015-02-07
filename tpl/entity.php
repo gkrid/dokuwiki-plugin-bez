@@ -1,3 +1,6 @@
+<?php if (isset($template['confirm'])): ?>
+	<div class="success"><?php echo $bezlang['entities_confirm'] ?></div>
+<?php endif ?>
 <form method="post" action="<?php echo $template['uri'] ?>:save" id="entities_form">
 	<label for="entities"><?php echo $bezlang['entities'] ?>:</label>
 	<textarea id="entities" name="entities"><?php echo $template['entities'] ?></textarea>

@@ -377,11 +377,6 @@ class Issues extends Connect {
 			if ($value != '-all')
 				$where[] = "issues.$name = '".$this->escape($value)."'";
 
-		if ($year != '-all') {
-			$year = (int)$year;
-			$where[] = 'issues.date >= '.mktime(0,0,0,1,1,$year);
-			$where[] = 'issues.date < '.mktime(0,0,0,1,1,$year+1);
-		}
 		if ($state != '-all') {
 			/*-proposal or -rejected*/
 			if (strstr($state, '-')) 
@@ -391,6 +386,16 @@ class Issues extends Connect {
 				$where[] = "issues.coordinator != '-proposal'";
 				$where[] = "issues.coordinator != '-rejected'";
 			}
+		}
+		if ($year != '-all') {
+			if ($state == '-all' || $state == '-proposal' || $state == '0')
+				$data_field = 'issues.date';
+			else
+				$data_field = 'issues.last_mod';
+
+			$year = (int)$year;
+			$where[] = "$data_field >= ".mktime(0,0,0,1,1,$year);
+			$where[] = "$data_field < ".mktime(0,0,0,1,1,$year+1);
 		}
 		if ($coordinator != '-all') {
 			if ($coordinator == '-none') 
@@ -416,7 +421,7 @@ class Issues extends Connect {
 		return $a;
 	}
 	public function get_oldest_close_date() {
-		$a = $this->fetch_assoc("SELECT last_mod FROM issues ORDER BY last_mod LIMIT 1");
+		$a = $this->fetch_assoc("SELECT last_mod FROM issues WHERE state=1 ORDER BY last_mod LIMIT 1");
 		if (count($a) > 0)
 			return (int)$a[0]['last_mod'];
 		else

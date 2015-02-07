@@ -2,7 +2,7 @@
 <form action="<?php echo $template['uri'] ?>?id=bez:issues" method="POST">
 <fieldset>
 <div>
-	<label for="type"><?php echo $bezlang['type'] ?>:
+	<label><?php echo $bezlang['just_type'] ?>:
 		<select name="type">
 			<option <?php if ($value['type'] == '-all') echo 'selected' ?>
 				value="-all">--- <?php echo $bezlang['all'] ?> ---</option>
@@ -12,7 +12,7 @@
 		<?php endforeach ?>
 		</select>
 	</label>
-	<label for="entity"><?php echo $bezlang['entity'] ?>:
+	<label><?php echo $bezlang['entity'] ?>:
 		<select name="entity">
 			<option <?php if ($value['entity'] == '-all') echo 'selected' ?>
 				value="-all">--- <?php echo $bezlang['all'] ?> ---</option>
@@ -22,31 +22,7 @@
 		<?php endforeach ?>
 		</select>
 	</label>
-	<input type="submit" value="<?php echo $bezlang['filter'] ?>" />
-</div>
-<div>
-	<label for="state"><?php echo $bezlang['issue'] ?>:
-		<select name="state">
-			<option <?php if ($value['state'] == '-all') echo 'selected' ?>
-				value="-all">--- <?php echo $bezlang['all'] ?> ---</option>
-		<?php foreach ($template['states'] as $key => $name): ?>
-			<option <?php if ($value['state'] == (string)$key) echo 'selected' ?>
-				value="<?php echo $key ?>"><?php echo $name ?></option>
-		<?php endforeach ?>
-		</select>
-	</label>
-
-	<label for="year"><?php echo $bezlang['in_year'] ?>:
-		<select name="year">
-			<option <?php if ($value['year'] == '-all') echo 'selected' ?>
-				value="-all">--- <?php echo $bezlang['all'] ?> ---</option>
-		<?php foreach ($template['years'] as $year): ?>
-			<option <?php if ($value['year'] == $year) echo 'selected' ?>
-				value="<?php echo $year ?>"><?php echo $year ?></option>
-		<?php endforeach ?>
-		</select>
-	</label>
-	<label for="coordinator"><?php echo $bezlang['coordinator'] ?>:
+	<label><?php echo $bezlang['coordinator'] ?>:
 		<select name="coordinator">
 			<option <?php if ($value['coordinator'] == '-all') echo 'selected' ?>
 				value="-all">--- <?php echo $bezlang['all'] ?> ---</option>
@@ -58,6 +34,30 @@
 		<?php endforeach ?>
 		</select>
 	</label>
+</div>
+<div>
+	<label><?php echo $bezlang['state'] ?>:
+		<select name="state">
+			<option <?php if ($value['state'] == '-all') echo 'selected' ?>
+				value="-all">--- <?php echo $bezlang['all'] ?> ---</option>
+		<?php foreach ($template['states'] as $key => $name): ?>
+			<option <?php if ($value['state'] == (string)$key) echo 'selected' ?>
+				value="<?php echo $key ?>"><?php echo $name ?></option>
+		<?php endforeach ?>
+		</select>
+	</label>
+
+	<label><?php echo $bezlang['year'] ?>:
+		<select name="year">
+			<option <?php if ($value['year'] == '-all') echo 'selected' ?>
+				value="-all">--- <?php echo $bezlang['all'] ?> ---</option>
+		<?php foreach ($template['years'] as $year): ?>
+			<option <?php if ($value['year'] == $year) echo 'selected' ?>
+				value="<?php echo $year ?>"><?php echo $year ?></option>
+		<?php endforeach ?>
+		</select>
+	</label>
+	<input type="submit" value="<?php echo $bezlang['filter'] ?>" />
 </div>
 
 </fieldset>

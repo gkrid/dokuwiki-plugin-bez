@@ -9,6 +9,8 @@ if (!$helper->user_admin()) {
 $ento = new Entities();
 if (count($_POST) > 0) {
 	$ento->save($_POST);
+	if (count($errors) == 0)
+		$template['confirm'] = true;
 }
 
 $template['entities'] = $ento->get_string();

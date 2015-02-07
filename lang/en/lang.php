@@ -18,6 +18,7 @@ $lang['report_issue'] = "Report a problem";
 $lang['id'] = "No";
 $lang['_id'] = "No";
 $lang['type'] = "Type of problem";
+$lang['just_type'] = 'Type';
 $lang['title'] = "Title";
 $lang['state'] = "Status";
 $lang['reporter'] = "Person reporting the problem";
@@ -33,6 +34,7 @@ $lang['opened_tasks'] = "Open tasks";
 
 $lang['entity'] = "Source of report";
 $lang['entities'] = "Sources of report (one per line)";
+$lang['entities_confirm'] = 'New sources of report saved.';
 
 $lang['opinion'] = "Effectiveness evaluation";
 $lang['root_cause'] = "Cause category";
@@ -115,6 +117,9 @@ $lang['priority_crucial'] = 'crucial';
 
 $lang['type_complaint'] = "complaint";
 $lang['type_noneconformity'] = "nonconformity";
+$lang['type_noneconformity_internal'] = 'internal noneconformity';
+$lang['type_noneconformity_customer'] = 'customer noneconformity';
+$lang['type_noneconformity_supplier'] = 'supplier noneconformity';
 $lang['type_opportunity'] = 'opportunity';
 $lang['type_threat'] = 'threat';
 
@@ -232,6 +237,7 @@ $lang['report_issues'] = 'Issues';
 $lang['report_tasks'] = 'Tasks';
 $lang['report_causes'] = 'Causes';
 $lang['report_priority'] = 'Raction time';
+$lang['report_subhead'] = 'for closed issues';
 
 $lang['priority'] = 'Priority';
 $lang['average'] = 'Average';

@@ -20,6 +20,7 @@ $lang['report_issue'] = 'Zgłoś problem';
 $lang['id'] = 'Nr';
 $lang['_id'] = 'Nr';
 $lang['type'] = 'Typ problemu';
+$lang['just_type'] = 'Typ';
 $lang['title'] = 'Tytuł';
 $lang['state'] = 'Status';
 $lang['reporter'] = 'Zgłaszający';
@@ -35,6 +36,7 @@ $lang['opened_tasks'] = 'Zadania otwarte';
 
 $lang['entity'] = 'Źródło zgłoszenia';
 $lang['entities'] = 'Źródła zgłoszeń (każda linia oznacza jedno źródło zgłoszeń)';
+$lang['entities_confirm'] = 'Zapisano nowe źródła zgłoszeń.';
 
 $lang['opinion'] = 'Ocena skuteczności';
 $lang['root_cause'] = 'Kategoria przyczyny';
@@ -116,6 +118,9 @@ $lang['priority_crucial'] = 'krytyczny';
 
 $lang['type_complaint'] = 'reklamacja';
 $lang['type_noneconformity'] = 'niezgodność';
+$lang['type_noneconformity_internal'] = 'niezgodność wewnętrzna';
+$lang['type_noneconformity_customer'] = 'niezgodność klienta';
+$lang['type_noneconformity_supplier'] = 'niezgodność dostawcy';
 $lang['type_opportunity'] = 'szansa';
 $lang['type_threat'] = 'zagrożenie';
 
@@ -228,6 +233,7 @@ $lang['report_issues'] = 'Problemy';
 $lang['report_tasks'] = 'Zadania';
 $lang['report_causes'] = 'Przyczyny';
 $lang['report_priority'] = 'Czas reakcji';
+$lang['report_subhead'] = 'dotyczy zamkniętych problemów';
 
 $lang['priority'] = 'Priorytet';
 $lang['average'] = 'Średnia';

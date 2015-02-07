@@ -2,6 +2,11 @@
 include_once DOKU_PLUGIN."bez/models/report.php";
 include_once DOKU_PLUGIN."bez/models/entities.php";
 
+/*jeżeli nie mamy tokenu generujemy nowy i przekierowujemy*/
+$toko = new Tokens();
+if (!isset($_GET['t']) || ! $toko->check(trim($_GET['t']), $ID))
+	header('Location: '.$uri.'?'.$_SERVER['QUERY_STRING'].'&t='.$toko->get($ID));
+
 if	(!$helper->user_viewer()) {
 	$errors[] = $bezlang['error_issues'];
 	$controller->preventDefault();
@@ -12,15 +17,6 @@ $ento = new Entities();
 
 $value = array('entity' => '-all', 'year' => '-all', 'month' => '-all');
 if (count($_POST) > 0) {
-	/*$post = $_POST;
-	for ($i = 0; $i < count($params); $i += 2) {
-		$key = urldecode($params[$i]);
-		if (array_key_exists($key, $value) && !array_key_exists($post))
-			$post[$key] = urldecode($params[$i+1]);
-	}
-	var_dump($post);
-	die();*/
-
 	$filters = $repo->validate_filters($_POST);
 
 	$query_uri = '';
@@ -46,3 +42,8 @@ if (isset($value['month']))
 	$template['hidden']['month'] = $value['month'];
 
 $template['report'] = $repo->report($value);
+
+$template['title'] = $bezlang['report'].($value['year'] != '-all' ? ' '.$value['year'] : '').
+					($value['month'] != '-all' ? '/'.($value['month'] > 10 ? $value['month'] : '0'.$value['month']) : '');
+
+$template['uri'] = $uri.'?'.$_SERVER['QUERY_STRING'];

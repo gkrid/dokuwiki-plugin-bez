@@ -261,7 +261,7 @@ table.bez .pr2 , #bds_timeline dt.pr2 {
 	display: table-row;
 }
 
-.bds_form label {
+.bds_form label[for] {
 	display: table-cell;
     padding: 0.4em;
     text-align: right;
@@ -484,13 +484,12 @@ h1.bez_report span {
 }
 
 .bez_filter_form {
-	display: block;
-	width: 100%;
 	background-color: #F7F7F0;
     border: 1px solid #D7D7D7;
     border-radius: 0.4em;
     margin-bottom: 1em;
 	text-align: left;
+	display:block;
 }
 
 .bez_filter_form fieldset {
