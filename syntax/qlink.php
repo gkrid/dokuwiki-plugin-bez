@@ -23,17 +23,14 @@ class syntax_plugin_bez_qlink extends DokuWiki_Syntax_Plugin {
 
 
     function handle($match, $state, $pos, &$handler) {
-		$whash = substr($match, 1, strlen($match));
-		$ex = explode(':', $whash);
-		return array($ex[0], isset($ex[1]) ? $ex[1] : 0);
+		$nr = substr($match, 1, strlen($match));
+		return $nr;
     }
 
-    function render($mode, &$renderer, $data) {
+    function render($mode, &$renderer, $nr) {
 		if ($mode == 'xhtml') {
-			list($issue, $event) = $data;
-
 			$helper = $this->loadHelper('bez');
-			$renderer->doc .= $bds->html_anchor_to_event($issue, $event, true);
+			$renderer->doc .= $helper->html_issue_link($nr);
 
 			return true;
 		}

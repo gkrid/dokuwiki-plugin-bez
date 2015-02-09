@@ -15,7 +15,7 @@ class Connect {
 		$this->helper = plugin_load('helper', 'bez');
 	}
 	protected function escape($s) {
-		return $s;
+		return $this->db->escapeString($s);
 	}
 
 	protected function errquery($query)
