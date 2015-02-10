@@ -119,9 +119,9 @@ $lang['priority_crucial'] = 'krytyczny';
 
 $lang['type_complaint'] = 'reklamacja';
 $lang['type_noneconformity'] = 'niezgodność';
-$lang['type_noneconformity_internal'] = 'niezgodność wewnętrzna';
-$lang['type_noneconformity_customer'] = 'niezgodność klienta';
-$lang['type_noneconformity_supplier'] = 'niezgodność dostawcy';
+$lang['type_noneconformity_internal'] = 'niezgodność';
+$lang['type_noneconformity_customer'] = 'reklamacja od klienta';
+$lang['type_noneconformity_supplier'] = 'reklamacja do dostawcy';
 $lang['type_opportunity'] = 'szansa';
 $lang['type_threat'] = 'zagrożenie';
 

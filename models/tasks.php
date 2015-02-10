@@ -163,13 +163,13 @@ class Tasks extends Event {
 	public function get_by_days() {
 		if (!$this->helper->user_viewer()) return false;
 
-		$res = $this->fetch_assoc("SELECT tasks.issue, tasks.task, tasks.date, tasks.executor, tasks.reason, issues.priority FROM tasks JOIN issues ON tasks.issue = issues.id ORDER BY tasks.date DESC");
+		$res = $this->fetch_assoc("SELECT tasks.id, tasks.issue, tasks.task, tasks.date, tasks.executor, tasks.reason, issues.priority FROM tasks JOIN issues ON tasks.issue = issues.id ORDER BY tasks.date DESC");
 		$create = $this->sort_by_days($res, 'date');
 		foreach ($create as $day => $issues)
 			foreach ($issues as $ik => $issue)
 				$create[$day][$ik]['class'] = 'task_opened';
 
-		$res2 = $this->fetch_assoc("SELECT tasks.issue, tasks.task, tasks.close_date, tasks.executor, tasks.reason, issues.priority FROM tasks JOIN issues ON tasks.issue = issues.id WHERE tasks.state = 1 ORDER BY tasks.close_date DESC");
+		$res2 = $this->fetch_assoc("SELECT tasks.id, tasks.issue, tasks.task, tasks.close_date, tasks.executor, tasks.reason, issues.priority FROM tasks JOIN issues ON tasks.issue = issues.id WHERE tasks.state = 1 ORDER BY tasks.close_date DESC");
 		$close = $this->sort_by_days($res2, 'close_date');
 		foreach ($close as $day => $issues)
 			foreach ($issues as $ik => $issue) {
@@ -177,7 +177,7 @@ class Tasks extends Event {
 				$close[$day][$ik]['date'] = $close[$day][$ik]['close_date'];
 			}
 
-		$res3 = $this->fetch_assoc("SELECT tasks.issue, tasks.task, tasks.close_date, tasks.executor, tasks.reason, issues.priority FROM tasks JOIN issues ON tasks.issue = issues.id WHERE tasks.state = 2 ORDER BY tasks.close_date DESC");
+		$res3 = $this->fetch_assoc("SELECT tasks.id, tasks.issue, tasks.task, tasks.close_date, tasks.executor, tasks.reason, issues.priority FROM tasks JOIN issues ON tasks.issue = issues.id WHERE tasks.state = 2 ORDER BY tasks.close_date DESC");
 		$rejected = $this->sort_by_days($res3, 'close_date');
 		foreach ($rejected as $day => $issues)
 			foreach ($issues as $ik => $issue) {

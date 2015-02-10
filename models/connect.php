@@ -16,11 +16,11 @@ class Connect {
 		if (function_exists('plugin_load'))
 			$this->helper = plugin_load('helper', 'bez');
 	}
-	protected function escape($s) {
+	public function escape($s) {
 		return $this->db->escapeString($s);
 	}
 
-	protected function errquery($query)
+	public function errquery($query)
 	{
 		global $errors;
 

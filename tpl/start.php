@@ -50,7 +50,7 @@
 			<?php elseif (strstr($elm['class'], 'task')): ?>
 				<a href="<?php echo $helper->issue_uri($elm['issue']) ?>#z<?php echo $elm['id'] ?>">
 					<span class="time"><?php echo date('H:i', $elm['date']) ?></span>
-						<span class="id">#<?php echo $elm['issue'] ?>:z<?php echo $elm['id'] ?></span>
+						<span class="id">#<?php echo $elm['issue'] ?> #z<?php echo $elm['id'] ?></span>
 						<?php echo $bezlang['task'] ?>
 						<?php echo lcfirst($elm['action']) ?>
 						<?php if ($elm['class'] == 'task_opened'): ?>
