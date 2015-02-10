@@ -42,7 +42,7 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 
 	public function action_act_preprocess($event, $param)
 	{
-		global $auth, $INFO, $ID;
+		global $auth, $conf, $INFO, $ID;
 		global $template, $bezlang, $value, $errors;
 
 		if ($this->action == '')

@@ -120,7 +120,9 @@ class Tasks extends Event {
 
 			$this->errinsert($data, 'tasks');
 			$this->issue->update_last_mod($data['issue']);
+			return $data;
 		}
+		return false;
 	}
 	public function update($post, $data, $id) {
 		$task = $this->getone($id);
@@ -131,13 +133,16 @@ class Tasks extends Event {
 			$data['close_date'] = time();
 			$this->errupdate($data, 'tasks', $id);
 			$this->issue->update_last_mod($task['issue']);
+			return $data;
 		} elseif ($this->can_change_state($id)) {
 			$state = $this->val_state($post['state']);
 			$reason = $this->val_reason($post['reason']);
 			$data = array('state' => $state, 'reason' => $reason, 'close_date' => time());
 			$this->errupdate($data, 'tasks', $id);
 			$this->issue->update_last_mod($task['issue']);
+			return $data;
 		}
+		return false;
 	}
 	public function getone($id) {
 		$id = (int) $id;

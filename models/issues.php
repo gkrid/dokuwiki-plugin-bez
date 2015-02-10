@@ -7,7 +7,7 @@ include_once DOKU_PLUGIN."bez/models/users.php";
 include_once DOKU_PLUGIN."bez/models/tasks.php";
 
 class Issues extends Connect {
-	private $coord_special = array('-proposal', '-rejected');
+	public $coord_special = array('-proposal', '-rejected');
 	public function __construct() {
 		global $errors;
 		parent::__construct();
@@ -120,7 +120,9 @@ class Issues extends Connect {
 			$data = array_merge($data, $from_user);
 			$data['last_mod'] = time();
 			$this->errinsert($data, 'issues');
+			return $data;
 		}
+		return false;
 	}
 
 	public function update($post, $data, $id) {
@@ -131,7 +133,9 @@ class Issues extends Connect {
 			$data = array_merge($data, $from_user);
 			$data['last_mod'] = time();
 			$this->errupdate($data, 'issues', $id);
+			return $data;
 		}
+		return false;
 	}
 
 	public function update_last_mod($id) {

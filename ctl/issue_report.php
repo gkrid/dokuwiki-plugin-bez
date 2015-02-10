@@ -17,26 +17,36 @@ if	(!$helper->user_editor() ||
 
 $isso = new Issues();
 $usro = new Users();
+
 if (count($_POST) > 0) {
 
 	if ($action == 'update') {
-		$isso->update($_POST, array(), $issue_id);
-
+		$updated = $isso->update($_POST, array(), $issue_id);
+		if (count($errors) == 0 && !in_array($updated['coordinator'], $isso->coord_special)) {
+			$coord = $updated['coordinator'];
+			$mail = new Mailer();
+			$mail->subject("[$conf[title]] Zmiana w problemie: #".$isso->lastid());
+			$mail->to($usro->name($coord).' <'.$usro->email($coord).'>');
+			$mail->setBody("$uri".$this->helper->issue_uri($isso->lastid()), array());
+			$mail->send();
+		}
 	} else {
 		$data = array('reporter' => $usro->get_nick(), 'date' => time());
 
 		$stao = new States();
 		if ($_POST['coordinator'] == NULL)
 			$data['coordinator'] = $stao->proposal();
-		else {
-			//wyślij powiadomienie
-			$to = '';
-			$subject = '';
-		}
-
 		$data['state'] = $stao->id('opened');
 
-		$isso->add($_POST, $data);
+		$inserted = $isso->add($_POST, $data);
+		if (count($errors) == 0 && !in_array($inserted['coordinator'], $isso->coord_special)) {
+			$coord = $inserted['coordinator'];
+			$mail = new Mailer();
+			$mail->subject("[$conf[title]] Zostałeś przypisany do problemu: #".$isso->lastid());
+			$mail->to($usro->name($coord).' <'.$usro->email($coord).'>');
+			$mail->setBody("$uri".$this->helper->issue_uri($isso->lastid()), array());
+			$mail->send();
+		}
 	}
 	$value = $_POST;
 	if (count($errors) == 0)

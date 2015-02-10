@@ -59,17 +59,30 @@ if (array_key_exists($table, $objects)) {
 			break;
 		case 'add':
 			$data = array('reporter' => $usro->get_nick(), 'date' => time(), 'issue' => $issue_id);
-			$obj->add($_POST, $data);
+			$data = $obj->add($_POST, $data);
 			$redirect = post_db($obj, $errors, $table, $issue_id);
 			break;
 		case 'update':
-			$obj->update($_POST, array(), $id);
-			$redirect = post_db($obj, $errors, $table, $issue_id);
+			$data = $obj->update($_POST, array(), $id);
+			$redirect = post_db($obj, $errors, $table, $issue_id, 'update');
 			break;
 		case 'delete':
 			$obj->delete($id);
 			$redirect = post_db($obj, $errors, $table, $issue_id);
 			break;
+	}
+	//powiadomienie
+	if (($action == 'update' || $action == 'add') && $data != NULL && $table == 'task' && $redirect != '') {
+		$subject = 'Dodano zadanie';
+		if ($action == 'update')
+			$subject = 'Zmiana w zadaniu';
+
+		$exec = $data['executor'];
+		$mail = new Mailer();
+		$mail->subject("[$conf[title]] $subject: #$issue_id #z".$obj->lastid());
+		$mail->to($usro->name($exec).' <'.$usro->email($exec).'>');
+		$mail->setBody("$uri".$this->helper->issue_uri($issue_id).'#z'.$obj->lastid(), array());
+		$mail->send();
 	}
 	if ($redirect != '')
 		header('Location: '.$redirect);
