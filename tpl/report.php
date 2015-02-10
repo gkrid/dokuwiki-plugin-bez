@@ -1,4 +1,4 @@
-<?php if (!$helper->token_viewer()): ?>
+<?php if ($helper->user_viewer()): ?>
 	<div  class="bez_filter_form">
 	<form action="<?php echo $template['uri'] ?>?id=bez:report" method="POST">
 	<?php foreach ($template['hidden'] as $name => $val): ?>

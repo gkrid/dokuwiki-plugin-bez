@@ -110,6 +110,7 @@ $lang['vald_action_required'] = "Provide an action of the task";
 $lang['vald_days_should_be_numeric'] = "Days have to be decimal.";
 
 $lang['vald_entity_too_long'] = 'Single source of report can have not have more than %d characters.';
+$lang['vald_entity_no_ascii'] = 'Source of report contains non-ASCII charters.';
 
 $lang['priority_marginal'] = 'marginal';
 $lang['priority_important'] = 'important';

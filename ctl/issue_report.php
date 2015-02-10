@@ -27,7 +27,12 @@ if (count($_POST) > 0) {
 
 		$stao = new States();
 		if ($_POST['coordinator'] == NULL)
-			$data['coordinator'] = $stao->proposal();;
+			$data['coordinator'] = $stao->proposal();
+		else {
+			//wyślij powiadomienie
+			$to = '';
+			$subject = '';
+		}
 
 		$data['state'] = $stao->id('opened');
 

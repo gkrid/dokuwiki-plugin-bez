@@ -39,4 +39,15 @@ $template['states'] = $taskso->get();
 $template['executors'] = $usro->get();
 $template['years'] = $tasko->get_years();
 
-$template['tasks'] = $tasko->get_filtered($value);
+$tasks = $tasko->get_filtered($value);
+$template['tasks'] = $tasks;
+
+$template['tasks_stats']['total'] = count($tasks);
+
+$tcost = 0;
+foreach ($tasks as $task) {
+	$tcost += (int)$task['cost'];
+}
+$template['tasks_stats']['totalcost'] = $tcost;
+
+

@@ -177,17 +177,18 @@ class Issues extends Connect {
 
 	public function get_clean($id) {
 		global $bezlang, $errors;
-		if ($this->helper->user_viewer()) {
-			$id = (int) $id;
+		if	( ! ($this->helper->token_viewer() || $this->helper->user_viewer()))
+			return false;
 
-			$a = $this->fetch_assoc("SELECT * FROM issues WHERE id=$id");
-			if (count($a) == 0) {
-				$errors[] = $bezlang['error_issue_id_not_specifed'];
-				return array();
-			}
-			$a = $a[0];
-			return $a;
+		$id = (int) $id;
+
+		$a = $this->fetch_assoc("SELECT * FROM issues WHERE id=$id");
+		if (count($a) == 0) {
+			$errors[] = $bezlang['error_issue_id_not_specifed'];
+			return array();
 		}
+		$a = $a[0];
+		return $a;
 	}
 
 	public function get_by_days() {
@@ -220,16 +221,16 @@ class Issues extends Connect {
 
 	public function get($id) {
 		global $bezlang, $errors;
-		if ($this->helper->user_viewer()) {
+		if	( ! ($this->helper->token_viewer() || $this->helper->user_viewer()))
+			return false;
 
-			$a = $this->get_clean($id);
-			if ($a == array())
-				return $array;
-			
-			$a = $this->join($a);
+		$a = $this->get_clean($id);
+		if ($a == array())
+			return $array;
+		
+		$a = $this->join($a);
 
-			return $a;
-		}
+		return $a;
 	}
 
 	public function get_stats() {

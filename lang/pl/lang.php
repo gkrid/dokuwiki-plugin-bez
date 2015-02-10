@@ -35,7 +35,7 @@ $lang['last_modified_by'] = 'Ostatnio zmieniony przez';
 $lang['opened_tasks'] = 'Zadania otwarte';
 
 $lang['entity'] = 'Źródło zgłoszenia';
-$lang['entities'] = 'Źródła zgłoszeń (każda linia oznacza jedno źródło zgłoszeń)';
+$lang['entities'] = 'Źródła zgłoszeń(bez polskich znaków; jedna linia jedno źródło zgłoszenia)';
 $lang['entities_confirm'] = 'Zapisano nowe źródła zgłoszeń.';
 
 $lang['opinion'] = 'Ocena skuteczności';
@@ -111,6 +111,7 @@ $lang['vald_class_required'] = 'Podaj klasę zadania.';
 $lang['vald_days_should_be_numeric'] = 'Ilość dni musi być liczbą.';
 
 $lang['vald_entity_too_long'] = 'Pojedyńcze źródło zgłoszenia może mieć najwyżej %d znaków.';
+$lang['vald_entity_no_ascii'] = 'Zródło zgłoszenia zawiera znaki spoza ASCII.';
 
 $lang['priority_marginal'] = 'marginalny';
 $lang['priority_important'] = 'istotny';

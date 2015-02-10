@@ -24,7 +24,7 @@ class helper_plugin_bez extends dokuwiki_plugin
 	public function user_viewer() {
 		global $ID;
 
-		if (auth_quickaclcheck($ID) >= AUTH_READ || self::token_viewer())
+		if (auth_quickaclcheck($ID) >= AUTH_READ)
 			return true;
 
 		return false;
@@ -85,7 +85,7 @@ class helper_plugin_bez extends dokuwiki_plugin
 		return '<a href="'.self::issue_uri($id).'">#'.$id.'</a>';
 	}
 	public function html_task_link($issue, $task) {
-		return '<a href="'.self::issue_uri($issue).'#z'.$task.'">#z'.$task.'</a>';
+		return '<a href="'.self::issue_uri($issue).'#z'.$task.'">#'.$issue.' #z'.$task.'</a>';
 	}
 
 	public function days($diff) {

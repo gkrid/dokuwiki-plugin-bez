@@ -11,7 +11,8 @@ if (count($_POST) > 0) {
 	$ento->save($_POST);
 	if (count($errors) == 0)
 		$template['confirm'] = true;
+} else {
+	$value['entities'] = $ento->get_string();
 }
 
-$template['entities'] = $ento->get_string();
 $template['uri'] = $uri . '?id=bez:entity';

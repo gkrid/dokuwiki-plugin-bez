@@ -21,6 +21,7 @@ class Entities extends Connect {
 
 		$entity_max = 100;
 
+
 		$post['entities'] = trim($post['entities']);
 		$entites = explode("\n", $post['entities']);
 
@@ -28,9 +29,14 @@ class Entities extends Connect {
 		foreach ($entites as $entity) {
 			if (strlen($entity) > $entity_max) {
 				$errors['entities'] = str_replace('%d', $entity_max, $bezlang['vald_entity_too_long']);
-				break;
+				return false;
 			}
-		array_push($array, array('entity' => trim($entity)));
+			if ( ! mb_detect_encoding($entity, 'ASCII', true)) {
+				$errors['entities'] = str_replace('%d', $entity_max, $bezlang['vald_entity_no_ascii']);
+				return false;
+			}
+
+			array_push($array, array('entity' => trim($entity)));
 		}
 
 		return $array;
@@ -56,8 +62,13 @@ class Entities extends Connect {
 		return $s;
 	}
 	public function save($post) {
+		global $value;
+		$value['entities'] = $post['entities'];
 		if ($this->can_modify()) {
 			$data = $this->validate($post);
+			if (!$data) {
+				return;
+			}
 
 			$this->errquery('BEGIN TRANSACTION');
 			$this->errquery('DELETE FROM entities');

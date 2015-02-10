@@ -312,7 +312,7 @@ class Tasks extends Event {
 
 		if ($year != '-all') {
 			$state = $vfilters['state'];
-			if ($state == '0')
+			if ($state == '-all' || $state == '0')
 				$date_field = 'tasks.date';
 			else
 				$date_field = 'tasks.close_date';

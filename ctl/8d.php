@@ -8,11 +8,6 @@ $toko = new Tokens();
 if (!isset($_GET['t']) || ! $toko->check(trim($_GET['t']), $ID))
 	header('Location: '.$uri.'?'.$_SERVER['QUERY_STRING'].'&t='.$toko->get($ID));
 
-if	(!$helper->user_viewer()) {
-	$errors[] = $bezlang['error_issues'];
-	$controller->preventDefault();
-} 
-
 $issue_id = $params[0];
 
 $isso = new Issues();
@@ -20,7 +15,6 @@ $causo = new Causes();
 $tasko = new Tasks();
 
 $template['issue'] = $isso->get($issue_id);
-
 $template['team'] = $isso->get_team($issue_id);
 
 $template['causes'] = $causo->get_by_rootcause($issue_id);

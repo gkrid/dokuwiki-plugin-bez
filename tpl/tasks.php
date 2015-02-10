@@ -88,7 +88,8 @@
 	<?php endforeach ?>
 	<tr>
 		<th><?php echo $bezlang['report_total'] ?></th>
-		<td colspan="6"><?php echo count($template['tasks']) ?></td>
+		<td colspan="3"><?php echo $template['tasks_stats']['total'] ?></td>
+		<td colspan="3"><?php echo $template['tasks_stats']['totalcost'] ?></td>
 	</tr>
 </table>
 

@@ -50,7 +50,8 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 
 		$event->preventDefault();
 
-		if ( ! $this->helper->user_viewer())
+
+		if	( ! ($this->helper->token_viewer() || $this->helper->user_viewer()))
 			return false;
 
 		$ctl= DOKU_PLUGIN."bez/ctl/".str_replace('/', '', $this->action).".php";
@@ -81,7 +82,7 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 		if ($this->norender)
 			return false;
 
-		if (!$this->helper->user_viewer()) {
+		if	( ! ($this->helper->token_viewer() || $this->helper->user_viewer())) {
 			html_denied();
 			return false;
 		}
