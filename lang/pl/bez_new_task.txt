@@ -1,7 +1,0 @@
-Witaj, @FULLNAME@!
-
-Zostałeś przypisany do nowego zadania: @NR@ 
-
-@TASK@
-
-Możesz zobaczyć je bezpośrednio tutaj: @URL@

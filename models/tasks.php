@@ -332,5 +332,11 @@ class Tasks extends Event {
 			$row = $this->join($row);
 		return $a;
 	}
+
+	public function cron_get_unsolved() {
+		$a = $this->fetch_assoc("SELECT id, issue, executor FROM tasks 
+								WHERE state=0");
+		return $a;
+	}
 }
 

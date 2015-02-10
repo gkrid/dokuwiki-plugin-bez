@@ -255,6 +255,7 @@ class Issues extends Connect {
 		return $coordinators;
 	}
 
+
 	public function get_years() {
 		$all = $this->fetch_assoc("SELECT date FROM issues ORDER BY date LIMIT 1");
 		if (count($all) == 0)
@@ -422,5 +423,11 @@ class Issues extends Connect {
 			return (int)$a[0]['last_mod'];
 		else
 			return time();
+	}
+
+	public function cron_get_unsolved() {
+		$a = $this->fetch_assoc("SELECT id, title, coordinator FROM issues
+								WHERE state=0 AND coordinator <> '-proposal' AND coordinator <> '-rejected'");
+		return $a;
 	}
 }

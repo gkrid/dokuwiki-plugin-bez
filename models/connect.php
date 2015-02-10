@@ -1,6 +1,6 @@
 <?php
 class Connect {
-	protected $helper;
+	protected $helper=NULL;
 	static protected $db=NULL, $lastid;
 
 	public function __construct()
@@ -12,7 +12,9 @@ class Connect {
 				$errors[] = "Failed to open SQLite DB file($file): ". $this->db->lastErrorMsg();
 		}
 
-		$this->helper = plugin_load('helper', 'bez');
+		//jeżeli możemy, wczytujemy helpera
+		if (function_exists('plugin_load'))
+			$this->helper = plugin_load('helper', 'bez');
 	}
 	protected function escape($s) {
 		return $this->db->escapeString($s);
