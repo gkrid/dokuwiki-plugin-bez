@@ -77,12 +77,6 @@ foreach ($tasks as $task) {
 
 	$msg[$key]['tasks'][] = $task;
 }
-function test_mail($to, $subject, $body) {
-	echo $to."\n";
-	echo $subject."\n";
-	echo $body;
-	echo "\n\n";
-}
 
 
 $auth = new auth_plugin_authplain();
