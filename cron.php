@@ -105,6 +105,6 @@ foreach ($msg as $user => $data) {
 			$body .= "http://$URI/doku.php".$helper->issue_uri($task['issue']).'#z'.$task['id']."\r\n";
 		}
 	}
-	mail($to, $subject, $body);
+	$helper->mail($to, $subject, $body, $URI);
 }
 

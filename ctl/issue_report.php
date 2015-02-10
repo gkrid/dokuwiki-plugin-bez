@@ -24,11 +24,11 @@ if (count($_POST) > 0) {
 		$updated = $isso->update($_POST, array(), $issue_id);
 		if (count($errors) == 0 && !in_array($updated['coordinator'], $isso->coord_special)) {
 			$coord = $updated['coordinator'];
-			$mail = new Mailer();
-			$mail->subject("[$conf[title]] Zmiana w problemie: #".$isso->lastid());
-			$mail->to($usro->name($coord).' <'.$usro->email($coord).'>');
-			$mail->setBody("$uri".$this->helper->issue_uri($isso->lastid()), array());
-			$mail->send();
+
+			$to = $usro->name($coord).' <'.$usro->email($coord).'>';
+			$subject = "[$conf[title]] Zmiana w problemie: #".$isso->lastid();
+			$body = "$uri".$this->helper->issue_uri($isso->lastid());
+			$this->helper->mail($to, $subject, $body);
 		}
 	} else {
 		$data = array('reporter' => $usro->get_nick(), 'date' => time());
@@ -41,11 +41,10 @@ if (count($_POST) > 0) {
 		$inserted = $isso->add($_POST, $data);
 		if (count($errors) == 0 && !in_array($inserted['coordinator'], $isso->coord_special)) {
 			$coord = $inserted['coordinator'];
-			$mail = new Mailer();
-			$mail->subject("[$conf[title]] Zostałeś przypisany do problemu: #".$isso->lastid());
-			$mail->to($usro->name($coord).' <'.$usro->email($coord).'>');
-			$mail->setBody("$uri".$this->helper->issue_uri($isso->lastid()), array());
-			$mail->send();
+			$to = $usro->name($coord).' <'.$usro->email($coord).'>';
+			$subject = "[$conf[title]] Zostałeś przypisany do problemu: #".$isso->lastid();
+			$body = "$uri".$this->helper->issue_uri($isso->lastid());
+			$this->helper->mail($to, $subject, $body);
 		}
 	}
 	$value = $_POST;

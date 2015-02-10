@@ -72,17 +72,16 @@ if (array_key_exists($table, $objects)) {
 			break;
 	}
 	//powiadomienie
-	if (($action == 'update' || $action == 'add') && $data != NULL && $table == 'task' && $redirect != '') {
+	if (($action == 'update' || $action == 'add') && $table == 'task' && $redirect != '') {
 		$subject = 'Dodano zadanie';
 		if ($action == 'update')
 			$subject = 'Zmiana w zadaniu';
 
 		$exec = $data['executor'];
-		$mail = new Mailer();
-		$mail->subject("[$conf[title]] $subject: #$issue_id #z".$obj->lastid());
-		$mail->to($usro->name($exec).' <'.$usro->email($exec).'>');
-		$mail->setBody("$uri".$this->helper->issue_uri($issue_id).'#z'.$obj->lastid(), array());
-		$mail->send();
+		$subject = "[$conf[title]] $subject: #$issue_id #z".$obj->lastid();
+		$to = $usro->name($exec).' <'.$usro->email($exec).'>';
+		$body = "$uri".$this->helper->issue_uri($issue_id).'#z'.$obj->lastid();
+		$this->helper->mail($to, $subject, $body);
 	}
 	if ($redirect != '')
 		header('Location: '.$redirect);
@@ -153,6 +152,7 @@ $router = array(
 			global $template, $bezlang;
 			$template['task_button'] = $bezlang['change_task_button'];
 			$template['task_action'] = 'update:task:'.$id;
+			$template['task_id'] = $id;
 		}
 	)
 );

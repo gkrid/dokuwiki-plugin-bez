@@ -181,4 +181,10 @@ class helper_plugin_bez extends dokuwiki_plugin
 
 		return $array;
 	}
+	public function mail($to, $title, $body, $URI='') {
+		if ($URI == '')
+			$URI = $_SERVER['SERVER_NAME'];
+		$headers = 	"From: noreplay@$URI";
+		mail($to, $subject, $body, $headers);
+	}
 }

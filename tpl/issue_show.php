@@ -222,6 +222,12 @@
 						</label>
 					</div>
 				<?php endif ?>
+				<?php if (strpos($template['task_action'], 'update') === 0): ?>
+					<div class="row">
+					<label for="id"><?php echo $bezlang['id'] ?>:</label>
+					<span><strong>#z<?php echo $template['task_id'] ?></strong></span>
+					</div>
+				<?php endif ?>
 				<div class="row">
 				<label for="executor"><?php echo $bezlang['executor'] ?>:</label>
 				<span>
