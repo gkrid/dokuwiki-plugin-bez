@@ -73,14 +73,16 @@ if (array_key_exists($table, $objects)) {
 	}
 	//powiadomienie
 	if (($action == 'update' || $action == 'add') && $table == 'task' && $redirect != '') {
-		$subject = 'Dodano zadanie';
+		$title = 'Dodano zadanie';
 		if ($action == 'update')
-			$subject = 'Zmiana w zadaniu';
+			$title = 'Zmiana w zadaniu';
+
+		$action = $taskao->name($data['action']);
 
 		$exec = $data['executor'];
-		$subject = "[$conf[title]] $subject: #$issue_id #z".$obj->lastid();
+		$subject = "[$conf[title]] $action: #$issue_id #z".$obj->lastid();
 		$to = $usro->name($exec).' <'.$usro->email($exec).'>';
-		$body = "$uri".$this->helper->issue_uri($issue_id).'#z'.$obj->lastid();
+		$body = "$title: $uri".$this->helper->issue_uri($issue_id).'#z'.$obj->lastid();
 		$this->helper->mail($to, $subject, $body);
 	}
 	if ($redirect != '')

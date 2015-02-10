@@ -25,9 +25,13 @@ if (count($_POST) > 0) {
 		if (count($errors) == 0 && !in_array($updated['coordinator'], $isso->coord_special)) {
 			$coord = $updated['coordinator'];
 
+			$issto = new Issuetypes();
+			$types = $issto->get();
+			$type = $types[$updated['type']];
+
 			$to = $usro->name($coord).' <'.$usro->email($coord).'>';
-			$subject = "[$conf[title]] Zmiana w problemie: #".$isso->lastid();
-			$body = "$uri".$this->helper->issue_uri($isso->lastid());
+			$subject = "[$conf[title]] #".$isso->lastid()." $type";
+			$body = "Zmiana w problemie: $uri".$this->helper->issue_uri($isso->lastid());
 			$this->helper->mail($to, $subject, $body);
 		}
 	} else {
@@ -41,9 +45,14 @@ if (count($_POST) > 0) {
 		$inserted = $isso->add($_POST, $data);
 		if (count($errors) == 0 && !in_array($inserted['coordinator'], $isso->coord_special)) {
 			$coord = $inserted['coordinator'];
+
+			$issto = new Issuetypes();
+			$types = $issto->get();
+			$type = $types[$inserted['type']];
+
 			$to = $usro->name($coord).' <'.$usro->email($coord).'>';
-			$subject = "[$conf[title]] Zostałeś przypisany do problemu: #".$isso->lastid();
-			$body = "$uri".$this->helper->issue_uri($isso->lastid());
+			$subject = "[$conf[title]] #".$isso->lastid()." $type";
+			$body = "Zostałeś przypisany do problemu: $uri".$this->helper->issue_uri($isso->lastid());
 			$this->helper->mail($to, $subject, $body);
 		}
 	}

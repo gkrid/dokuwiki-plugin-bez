@@ -187,6 +187,7 @@ class helper_plugin_bez extends dokuwiki_plugin
 			echo $subject."\n";
 			echo $body;
 			echo "\n\n";
+			die();
 		}
 		if ($URI == '')
 			$URI = $_SERVER['SERVER_NAME'];
