@@ -1,3 +1,0 @@
-[10-Feb-2015 10:02:46 Europe/Berlin] PHP Notice:  Undefined property: Issues::$db in /home/ghi/public_html/dokuwiki/lib/plugins/bez/models/connect.php on line 9
-[10-Feb-2015 10:02:46 Europe/Berlin] PHP Notice:  Use of undefined constant DOKU_INC - assumed 'DOKU_INC' in /home/ghi/public_html/dokuwiki/lib/plugins/bez/models/connect.php on line 10
-[10-Feb-2015 10:02:46 Europe/Berlin] Unable to open database: unable to open database file: /home/ghi/public_html/dokuwiki/lib/plugins/bez/models/connect.php
