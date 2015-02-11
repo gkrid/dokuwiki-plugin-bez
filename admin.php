@@ -27,7 +27,6 @@ class admin_plugin_bez extends DokuWiki_Admin_Plugin {
 	  $sqlite = new Connect();
 
 		$db_name = preg_replace('/[^a-zA-Z0-9]/', '', $_SERVER['SERVER_NAME']);
-	  $db_name = 'simisowikieu';
 
 		$m = new MongoClient();
 		$mongo = $m->selectDB($db_name);
