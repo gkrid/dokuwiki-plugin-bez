@@ -27,6 +27,7 @@ class admin_plugin_bez extends DokuWiki_Admin_Plugin {
 	  $sqlite = new Connect();
 
 		$db_name = preg_replace('/[^a-zA-Z0-9]/', '', $_SERVER['SERVER_NAME']);
+	  $db_name = 'simisowikieu';
 
 		$m = new MongoClient();
 		$mongo = $m->selectDB($db_name);
@@ -44,10 +45,18 @@ class admin_plugin_bez extends DokuWiki_Admin_Plugin {
 			$priority = 1;
 			$title = $v['title'];
 			$description = $v['description'];
-			if ($v['state'] == 0)
+			$coordinator = $v['coordinator'];
+			if ($v['state'] == 0) {
 				$state = 0;
-			else
+				$coordinator = '-proposal';
+			} else if ($v['state'] == 1) {
+				$state = 0;
+			} else if ($v['state'] == 2) {
+				$state = 0;
+				$coordinator = '-rejected';
+			} else {
 				$state = 1;
+			}
 
 			$opinion = $v['opinion'];
 			switch($v['type']) {
@@ -65,7 +74,6 @@ class admin_plugin_bez extends DokuWiki_Admin_Plugin {
 					break;
 			}
 			$entity = $v['entity'];
-			$coordinator = $v['coordinator'];
 			$reporter = $v['reporter'];
 			$date = $v['date'];
 			$last_mod = $v['last_mod_date'];
@@ -83,9 +91,9 @@ class admin_plugin_bez extends DokuWiki_Admin_Plugin {
 				$date = $e['date'];
 				$issue = $v['_id'];
 				if ($e['type'] == 'comment') {
-					if (isset($e['root_cause'])) {
+					if (isset($e['root_cause']) && $e['root_cause'] != 0) {
 						$cause = $e['content'];
-						$rootcause = $e['root_cause'];
+						$rootcause = (int)$e['root_cause']-1;
 						$q = "INSERT INTO causes(cause,rootcause,reporter,date,issue)
 							VALUES ('".$sqlite->escape($cause)."',$rootcause,'$reporter',$date,$issue)";
 					} else {

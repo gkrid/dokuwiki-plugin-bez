@@ -68,19 +68,29 @@
 		<tr>
 			<th><?php echo $bezlang['id'] ?></th>
 			<th><?php echo $bezlang['class'] ?></th>
-			<th><?php echo $bezlang['date'] ?></th>
+			<th><?php echo $bezlang['state'] ?></th>
 			<th><?php echo $bezlang['cost'] ?></th>
+			<th><?php echo $bezlang['date'] ?></th>
+			<th><?php echo $bezlang['closed'] ?></th>
 		</tr>
 		<?php foreach($tasks as $task): ?>
 			<tr>
 				<td><?php echo $helper->html_task_link($task['issue'], $task['id']) ?></td>
 				<td><?php echo $task['action'] ?></td>
-				<td><?php echo $helper->string_time_to_now($task['date']) ?></td>
+				<td><?php echo $task['state'] ?></td>
 				<td>
 					<?php if ($task['cost'] == ''): ?>
 						<em><?php echo $bezlang['ns'] ?></em>
 					<?php else: ?>
 						<?php echo $task['cost'] ?>
+					<?php endif ?>
+				</td>
+				<td><?php echo $helper->time2date($task['date']) ?></td>
+				<td>
+					<?php if ($task['state'] == $bezlang['task_opened']): ?>
+						<em><?php echo $bezlang['ns'] ?></em>
+					<?php else: ?>
+						<?php echo $helper->time2date($task['close_date']) ?>
 					<?php endif ?>
 				</td>
 			</tr>

@@ -39,7 +39,6 @@
 	<h2><?php echo $bezlang['opinion'] ?></h2>
 	<?php echo $template['issue']['opinion'] ?>
 <?php endif ?>
-
 <a href="<?php echo $template['8d_link'] ?>" class="bds_inline_button bds_report_button">
 	<?php echo $bezlang['8d_report'] ?>
 </a>
