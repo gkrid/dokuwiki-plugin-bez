@@ -226,7 +226,7 @@ class Tasks extends Event {
 	}
 
 	public function get_by_8d($issue) {
-		$a = $this->get_clean($issue);
+		$a = $this->fetch_assoc("SELECT * FROM tasks WHERE issue=$issue AND state != 2");
 		$b = array();
 		$taskao = new Taskactions();
 		foreach ($a as $row) {
