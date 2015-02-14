@@ -66,8 +66,7 @@
 		<h2><?php echo $bezlang[$nd] ?></h2>
 		<table>
 		<tr>
-			<th><?php echo $bezlang['id'] ?></th>
-			<th><?php echo $bezlang['class'] ?></th>
+			<th><?php echo $bezlang['task'] ?></th>
 			<th><?php echo $bezlang['state'] ?></th>
 			<th><?php echo $bezlang['cost'] ?></th>
 			<th><?php echo $bezlang['date'] ?></th>
@@ -75,8 +74,7 @@
 		</tr>
 		<?php foreach($tasks as $task): ?>
 			<tr>
-				<td><?php echo $helper->html_task_link($task['issue'], $task['id']) ?></td>
-				<td><?php echo $task['action'] ?></td>
+				<td><?php echo  $helper->wiki_parse($task['task']) ?></td>
 				<td><?php echo $task['state'] ?></td>
 				<td>
 					<?php if ($task['cost'] == ''): ?>
