@@ -8,6 +8,7 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 	private $action = '';
 	private $params = array();
 	private $norender = false;
+	private $lang_code = '';
 
 	/**
 	 * Register its handlers with the DokuWiki's event controller
@@ -30,8 +31,43 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 		if ($ex[0] == 'bez' && $ACT == 'show') {
 			$this->action = $ex[1];
 			$this->params = array_slice($ex, 2);
+		/*BEZ w innym języku*/
+		} else if ($ex[1] == 'bez' && $ACT == 'show') {
+			$l = $ex[0];
+			$p = DOKU_PLUGIN.'bez/lang/';
+			$f = $p.$ex[0].'/lang.php';
+			if ( ! file_exists($f))
+				$f = $p.'en/lang.php';
+
+			$this->lang_code = $l;
+			include $f;
+			$this->lang = $lang;
+
+			$this->action = $ex[2];
+			$this->params = array_slice($ex, 3);
 		}
 	}
+
+	public function id() {
+		$args = func_get_args();
+		array_unshift($args, 'bez');
+		if ($this->lang_code != '')
+			array_unshift($args, $this->lang_code);
+		return implode(':', $args);
+	}
+
+	public function issue_uri($id) {
+		return '?id='.$this->id('issue_show', $id);
+	}
+
+	public function html_issue_link($id) {
+		return '<a href="'.$this->issue_uri($id).'">#'.$id.'</a>';
+	}
+	public function html_task_link($issue, $task) {
+		return '<a href="'.$this->issue_uri($issue).'#z'.$task.'">#'.$issue.' #z'.$task.'</a>';
+	}
+
+
 	public function tpl_pagetools_display($event, $param) {
 		if ($this->action != '') 
 			$event->preventDefault();
@@ -58,6 +94,8 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 		if (file_exists($ctl)) {
 			$bezlang = $this->lang;
 			$helper = $this->helper;
+			$helper->lang_code = $this->lang_code;
+
 			$params = $this->params;
 			$uri = DOKU_URL . 'doku.php';
 			$controller = $this;
@@ -99,6 +137,7 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 		if (file_exists($tpl)) {
 			$bezlang = $this->lang;
 			$helper = $this->helper;
+			$helper->lang_code = $this->lang_code;
 			include_once $tpl;
 		}
 	}

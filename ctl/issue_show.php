@@ -30,7 +30,7 @@ $objects = array(
 );
 /*global: $template, $bezlang, $value, $errors, $uri*/
 
-function post_db($obj, $errors, $table, $issue_id) {
+function post_db($obj, $errors, $table, $issue_id, $action) {
 	global $value;
 	$keys = array(
 		'comment'	=> 'k',
@@ -46,7 +46,7 @@ function post_db($obj, $errors, $table, $issue_id) {
 	if ($obj->lastid() >= 0)
 		$archon = '#'.$keys[$table].$obj->lastid();
 
-	return $uri . '?id=bez:issue_show:'.$issue_id.$archon;
+	return $uri . '?id='.$action->id('issue_show', $issue_id).$archon;
 }
 
 /*sprawdzamy czy zapytania mają sens*/
@@ -60,15 +60,15 @@ if (array_key_exists($table, $objects)) {
 		case 'add':
 			$data = array('reporter' => $usro->get_nick(), 'date' => time(), 'issue' => $issue_id);
 			$data = $obj->add($_POST, $data);
-			$redirect = post_db($obj, $errors, $table, $issue_id);
+			$redirect = post_db($obj, $errors, $table, $issue_id, $this);
 			break;
 		case 'update':
 			$data = $obj->update($_POST, array(), $id);
-			$redirect = post_db($obj, $errors, $table, $issue_id, 'update');
+			$redirect = post_db($obj, $errors, $table, $issue_id, $this);
 			break;
 		case 'delete':
 			$obj->delete($id);
-			$redirect = post_db($obj, $errors, $table, $issue_id);
+			$redirect = post_db($obj, $errors, $table, $issue_id, $this);
 			break;
 	}
 	//powiadomienie
@@ -82,7 +82,7 @@ if (array_key_exists($table, $objects)) {
 		$exec = $data['executor'];
 		$subject = "[$conf[title]] $action: #$issue_id #z".$obj->lastid();
 		$to = $usro->name($exec).' <'.$usro->email($exec).'>';
-		$body = "$title: $uri".$this->helper->issue_uri($issue_id).'#z'.$obj->lastid();
+		$body = "$title: $uri".$this->issue_uri($issue_id).'#z'.$obj->lastid();
 		$this->helper->mail($to, $subject, $body);
 	}
 	if ($redirect != '')
@@ -92,7 +92,7 @@ if (array_key_exists($table, $objects)) {
 
 $isso = new Issues();
 
-$template['uri'] = $uri . '?id=bez:issue_show:'.$issue_id;
+$template['uri'] = $uri . '?id='.$this->id('issue_show', $issue_id);
 
 $template['issue'] = $isso->get($issue_id);
 $template['issue']['description'] = $helper->wiki_parse($template['issue']['description']);
@@ -121,7 +121,7 @@ $template['issue_opened'] = !$template['closed'];
 
 /*mailto ustawienia*/
 $toko = new Tokens();
-$template['8d_link'] = $uri.'?id=bez:8d:'.$issue_id.'&t='.$toko->get('bez:8d:'.$issue_id);
+$template['8d_link'] = $uri.'?id='.$this->id('8d', $issue_id).'&t='.$toko->get($this->id('8d', $issue_id));
 
 /*Domyślne przyciski*/
 $template['comment_button'] = $bezlang['add'];

@@ -1,5 +1,5 @@
 <div class="bez_filter_form">
-<form action="<?php echo $template['uri'] ?>?id=bez:issues" method="POST">
+<form action="<?php echo $template['uri'] ?>?id=<?php echo $this->id('issues') ?>" method="POST">
 <fieldset>
 <div>
 	<label><?php echo $bezlang['just_type'] ?>:
@@ -77,7 +77,7 @@
 	</tr>
 	<?php foreach ($template['issues'] as $issue): ?>
 		<tr class="pr<?php echo $issue['priority'] ?>">
-			<td><?php echo $helper->html_issue_link($issue['id']) ?></td>
+			<td><?php echo $this->html_issue_link($issue['id']) ?></td>
 			<td><?php echo $issue['state'] ?></td>
 			<td><?php echo $issue['type'] ?></td>
 			<td>[<?php echo $issue['entity'] ?>] <?php echo $issue['title'] ?></td>

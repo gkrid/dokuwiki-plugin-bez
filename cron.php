@@ -90,13 +90,13 @@ foreach ($msg as $user => $data) {
 	if (count($data['issues']) > 0) {
 		$body = "Moje problemy:\r\n";
 		foreach ($data['issues'] as $isuse) {
-			$body .= "http://$URI/doku.php".$helper->issue_uri($issue['id'])."\r\n";
+			$body .= "http://$URI/doku.php?id=bez:issue_show:".$issue['id']."\r\n";
 		}
 	}
 	if (count($data['tasks']) > 0) {
 		$body .= "Moje zadania:\r\n";
 		foreach ($data['tasks'] as $task) {
-			$body .= "http://$URI/doku.php".$helper->issue_uri($task['issue']).'#z'.$task['id']."\r\n";
+			$body .= "http://$URI/doku.php?id=bez:issue_show:".$issue['id'].'#z'.$task['id']."\r\n";
 		}
 	}
 	$helper->mail($to, $subject, $body, $URI);

@@ -74,20 +74,6 @@ class helper_plugin_bez extends dokuwiki_plugin
 		return 'mailto:'.$to.'?subject='.rawurlencode($subject).'&body='.rawurlencode($body);
 	}
 
-	public function bez_uri($site) {
-		return '?id=bez:'.$site;
-	}
-
-	public function issue_uri($id) {
-		return '?id=bez:issue_show:'.$id;
-	}
-	public function html_issue_link($id) {
-		return '<a href="'.self::issue_uri($id).'">#'.$id.'</a>';
-	}
-	public function html_task_link($issue, $task) {
-		return '<a href="'.self::issue_uri($issue).'#z'.$task.'">#'.$issue.' #z'.$task.'</a>';
-	}
-
 	public function days($diff) {
 		$time_str = '';
 		$minutes = floor($diff/60);

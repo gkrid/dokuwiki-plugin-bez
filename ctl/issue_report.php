@@ -31,7 +31,7 @@ if (count($_POST) > 0) {
 
 			$to = $usro->name($coord).' <'.$usro->email($coord).'>';
 			$subject = "[$conf[title]] #".$isso->lastid()." $type";
-			$body = "Zmiana w problemie: $uri".$this->helper->issue_uri($isso->lastid());
+			$body = "Zmiana w problemie: $uri".$this->issue_uri($isso->lastid());
 			$this->helper->mail($to, $subject, $body);
 		}
 	} else {
@@ -52,13 +52,13 @@ if (count($_POST) > 0) {
 
 			$to = $usro->name($coord).' <'.$usro->email($coord).'>';
 			$subject = "[$conf[title]] #".$isso->lastid()." $type";
-			$body = "Zostałeś przypisany do problemu: $uri".$this->helper->issue_uri($isso->lastid());
+			$body = "Zostałeś przypisany do problemu: $uri".$this->issue_uri($isso->lastid());
 			$this->helper->mail($to, $subject, $body);
 		}
 	}
 	$value = $_POST;
 	if (count($errors) == 0)
-		header('Location: ?id=bez:issue_show:'.$isso->lastid());
+		header('Location: ?id='.$this->id('issue_show', $isso->lastid()));
 } elseif ($issue_id != NULL) {
 	$value = $isso->get_clean($issue_id);
 	$tasko = new Tasks();

@@ -15,4 +15,4 @@ if (count($_POST) > 0) {
 	$value['entities'] = $ento->get_string();
 }
 
-$template['uri'] = $uri . '?id=bez:entity';
+$template['uri'] = $uri . '?id='.$this->id('entity');

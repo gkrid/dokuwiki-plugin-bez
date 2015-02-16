@@ -1,6 +1,6 @@
 <div id="bds_issue_box" class="pr<?php echo $template['issue']['priority'] ?>">
 <h1>
-<?php echo $helper->html_issue_link($template['issue']['id']) ?>
+<?php echo $this->html_issue_link($template['issue']['id']) ?>
 <?php echo $template['issue']['type'] ?> (<?php echo $template['issue']['state'] ?>)
 </h1>
 
@@ -51,7 +51,7 @@
 </a>
 
 <?php if ($template['user_is_coordinator']): ?> 
-	<a href="?id=bez:issue_report:<?php echo $template['issue']['id'] ?>" class="bds_inline_button bds_edit_button">
+	<a href="?id=<?php echo $this->id('issue_report', $template['issue']['id']) ?>" class="bds_inline_button bds_edit_button">
 		<?php echo $bezlang['edit'] ?>
 	</a>
 <?php endif ?>
@@ -74,8 +74,14 @@
 			<span><?php echo $bezlang['comment_noun'] ?>: k<?php echo $comment['id'] ?></span>
 			</h2>
 			<?php if ($template['issue_opened'] && ($comment['reporter_nick'] == $template['user'] || $template['user_is_coordinator'])): ?> 
-				<a class="bez_delete_button" href="?id=bez:issue_show:<?php echo $template['issue']['id'] ?>:delete:comment:<?php echo $comment['id'] ?>"><?php echo $bezlang['delete'] ?></a>
-				<a class="bds_inline_button" href="?id=bez:issue_show:<?php echo $template['issue']['id'] ?>:edit:comment:<?php echo $comment['id'] ?>#k_"><?php echo $bezlang['change'] ?></a>
+				<a class="bez_delete_button"
+				href="?id=<?php echo $this->id('issue_show', $template['issue']['id'], 'delete', 'comment', $comment['id']) ?>">
+					<?php echo $bezlang['delete'] ?>
+				</a>
+				<a class="bds_inline_button"
+				href="?id=<?php echo $this->id('issue_show', $template['issue']['id'], 'edit', 'comment', $comment['id']) ?>#k_">
+					<?php echo $bezlang['change'] ?>
+				</a>
 			<?php endif ?>
 
 			<?php echo $helper->wiki_parse($comment['content']) ?>
@@ -112,8 +118,14 @@
 			<span><?php echo $bezlang['cause_noun'] ?>: p<?php echo $cause['id'] ?></span>
 			</h2>
 			<?php if ($template['issue_opened'] && $template['user_is_coordinator']): ?> 
-				<a class="bez_delete_button" href="?id=bez:issue_show:<?php echo $template['issue']['id'] ?>:delete:cause:<?php echo $cause['id'] ?>"><?php echo $bezlang['delete'] ?></a>
-				<a class="bds_inline_button" href="?id=bez:issue_show:<?php echo $template['issue']['id'] ?>:edit:cause:<?php echo $cause['id'] ?>#p_"><?php echo $bezlang['change'] ?></a>
+				<a class="bez_delete_button"
+				href="?id=<?php echo $this->id('issue_show', $template['issue']['id'], 'delete', 'cause', $cause['id']) ?>">
+					<?php echo $bezlang['delete'] ?>
+				</a>
+				<a class="bds_inline_button"
+				href="?id=<?php echo $this->id('issue_show', $template['issue']['id'], 'edit', 'cause', $cause['id']) ?>#p_">
+					<?php echo $bezlang['change'] ?>
+				</a>
 			<?php endif ?>
 			<div class="root_cause">
 			<span>
@@ -169,7 +181,7 @@
 			</div>
 
 			<h2>
-				<a href="<?php echo $helper->issue_uri($task['issue']).'#z'.$task['id'] ?>">#z<?php echo $task['id'] ?></a>
+				<a href="<?php echo $this->issue_uri($task['issue']).'#z'.$task['id'] ?>">#z<?php echo $task['id'] ?></a>
 				<?php echo lcfirst($task['action']) ?>
 				(<?php echo lcfirst($task['state']) ?>)
 			</h2>
@@ -198,7 +210,9 @@
 			<?php endif ?>
 
 			<?php if ($template['issue_opened'] && ($template['user_is_coordinator'] || $task['executor_nick'] == $template['user'])): ?> 
-				<a class="bds_inline_button bds_edit_button" href="?id=bez:issue_show:<?php echo $template['issue']['id'] ?>:edit:task:<?php echo $task['id'] ?>#z_"><?php echo $bezlang['edit'] ?></a>
+				<a class="bds_inline_button bds_edit_button"
+				href="?id=<?php echo $this->id('issue_show', $template['issue']['id'], 'edit', 'task', $task['id']) ?>#z_">
+					<?php echo $bezlang['edit'] ?>
 
 			<a class="bds_inline_button bds_send_button" href="
 				<?php echo $helper->mailto($task['executor_email'],

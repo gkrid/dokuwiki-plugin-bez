@@ -1,19 +1,19 @@
 <div id="bez_info">
 	<?php if ($helper->user_editor()): ?>
-		<a href="<?php echo $helper->bez_uri('issue_report') ?>" class="bez_start_button" id="bez_report_issue_button">
+		<a href="?id=<?php echo $this->id('issue_report') ?>" class="bez_start_button" id="bez_report_issue_button">
 			<?php echo $bezlang['report_issue'] ?>
 		</a>
 	<?php endif ?>
-	<a href="<?php echo $helper->bez_uri('issues:state:0:coordinator:'.$template['client']) ?>" class="bez_start_button" id="bez_info_issues">
+	<a href="?id=<?php echo $this->id('issues:state:0:coordinator:'.$template['client']) ?>" class="bez_start_button" id="bez_info_issues">
 		<?php echo $bezlang['close_issues'] ?>:
 		<strong><?php echo $template['my_issues'] ?></strong>
 	</a>
-	<a href="<?php echo $helper->bez_uri('tasks:state:0:executor:'.$template['client']) ?>" class="bez_start_button" id="bez_info_tasks">
+	<a href="?id=<?php echo $this->id('tasks:state:0:executor:'.$template['client']) ?>" class="bez_start_button" id="bez_info_tasks">
 		<?php echo $bezlang['close_tasks'] ?>:
 		<strong><?php echo $template['my_tasks'] ?></strong>
 	</a>
 	<?php if ($helper->user_admin()): ?>
-		<a href="<?php echo $helper->bez_uri('issues:state:-proposal') ?>" class="bez_start_button" id="bez_info_proposals">
+		<a href="?id=<?php echo $this->id('issues:state:-proposal') ?>" class="bez_start_button" id="bez_info_proposals">
 			<?php echo $bezlang['proposals'] ?>:
 			<strong><?php echo $template['proposals'] ?></strong>
 		</a>
@@ -33,7 +33,7 @@
 	<?php foreach ($elms as $elm): ?>
 		<dt class="<?php echo $elm['class'] ?> pr<?php echo $elm['priority'] ?>">
 			<?php if (strstr($elm['class'], 'issue')): ?>
-				<a href="<?php echo $helper->issue_uri($elm['id']) ?>">
+				<a href="<?php echo $this->issue_uri($elm['id']) ?>">
 					<span class="time"><?php echo date('H:i', $elm['date']) ?></span>
 						<span class="id">#<?php echo $elm['id'] ?></span>
 						<?php if ($elm['class'] == 'issue_created'): ?>
@@ -48,7 +48,7 @@
 						<span class="author"><?php echo $bezlang['coordinator'] ?>: <strong><?php echo $elm['coordinator'] ?></strong></span>
 				</a>
 			<?php elseif (strstr($elm['class'], 'task')): ?>
-				<a href="<?php echo $helper->issue_uri($elm['issue']) ?>#z<?php echo $elm['id'] ?>">
+				<a href="<?php echo $this->issue_uri($elm['issue']) ?>#z<?php echo $elm['id'] ?>">
 					<span class="time"><?php echo date('H:i', $elm['date']) ?></span>
 						<span class="id">#<?php echo $elm['issue'] ?> #z<?php echo $elm['id'] ?></span>
 						<?php echo $bezlang['task'] ?>

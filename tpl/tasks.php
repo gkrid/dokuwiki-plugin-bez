@@ -1,5 +1,5 @@
 <div class="bez_filter_form">
-<form action="<?php echo $template['uri'] ?>?id=bez:tasks" method="POST">
+<form action="<?php echo $template['uri'] ?>?id=<?php echo $this->id('tasks') ?>" method="POST">
 <fieldset>
 <div>
 <label><?php echo $bezlang['class'] ?>:
@@ -65,7 +65,7 @@
 </tr>
 <?php foreach ($template['tasks'] as $task): ?>
 	<tr class="pr<?php echo $task['priority'] ?>">
-		<td><?php echo $helper->html_task_link($task['issue'], $task['id']) ?></td>
+		<td><?php echo $this->html_task_link($task['issue'], $task['id']) ?></td>
 		<td><?php echo $task['action'] ?></td>
 		<td><?php echo $task['state'] ?></td>
 		<td><?php echo $task['executor'] ?></td>

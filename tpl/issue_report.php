@@ -1,5 +1,5 @@
 <div id="bez_issue_report" class="bds_block <?php echo $template['action'] ?>">
-<form action="<?php echo $template['uri'] ?>?id=bez:issue_report:<?php echo $template['issue_id'] ?>:<?php echo $template['action'] ?>" method="POST">
+<form action="<?php echo $template['uri'] ?>?id=<?php echo $this->id('issue_report', $template['issue_id'], $template['action']) ?>" method="POST">
 <div class="priorities">
 <label><input <?php if ($value['priority'] == '0') echo 'checked' ?> type="radio" name="priority" value="0"><?php echo $bezlang['priority_marginal'] ?></label>
 <label><input <?php if (!isset($value['priority']) || $value['priority'] == '1') echo 'checked' ?> type="radio" name="priority" value="1"><?php echo $bezlang['priority_important'] ?></label>
@@ -112,7 +112,7 @@
 
 <input type="submit" value="<?php echo $bezlang['save'] ?>">
 <?php if ($template['action'] == 'update'): ?>
-	 <a href="<?php echo $tepmlate['uri'] ?>?id=bez:issue_show:<?php echo $template['issue_id'] ?>" class="bez_delete_button bez_link_button">
+	 <a href="<?php echo $tepmlate['uri'] ?>?id=<?php echo $this->id('issue_show', $template['issue_id']) ?>" class="bez_delete_button bez_link_button">
 		<?php echo $bezlang['cancel'] ?>
 	</a>
 <?php endif ?>

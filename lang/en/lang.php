@@ -4,7 +4,7 @@ $lang['bez_short'] = "BEZ";
 $lang['bds_timeline'] = "History";
 $lang['bds_issues'] = "Registers";
 $lang['bds_issue_report'] = "Report a problem";
-$lang['report'] = "Reports";
+$lang['report'] = "Report";
 $lang['bez_tasks'] = 'Tasks';
 
 $lang['issues'] = "Problems";
@@ -28,7 +28,7 @@ $lang['description'] = "Description";
 $lang['date'] = "Reported";
 $lang['last_mod_date'] = "last change";
 $lang['opened_for'] = "Open since";
-$lang['last_modified'] = "last change";
+$lang['last_modified'] = "Last change";
 $lang['last_modified_by'] = "Last changed by";
 $lang['opened_tasks'] = "Open tasks";
 
@@ -141,6 +141,8 @@ $lang['issue_closed_com'] = "Problem was closed %d, futhure changes are disabled
 $lang['reopen_issue'] = "Change a status of the problem";
 $lang['add'] = "Add";
 
+$lang['class'] = 'Action';
+
 $lang['action'] = "Action";
 
 $lang['open'] = "Open";
@@ -218,7 +220,7 @@ $lang['yesterday'] = "Yesterday";
 $lang['task_for'] = "for";
 $lang['content'] = "Description";
 
-$lang['8d_report'] = "8d Report";
+$lang['8d_report'] = "8D Report";
 $lang['8d_report_for'] = "for";
 $lang['open_date'] = "Open date";
 $lang['2d'] = "1D – Team";
@@ -282,6 +284,8 @@ $lang['menu_comment_issue'] = 'Opened issues (%d)';
 $lang['do_you_want_remove'] = 'Do you really want to remove this row?';
 $lang['yes'] = 'Yes';
 $lang['no'] = 'No';
+
+$lang['all'] = 'everything';
 $lang['year'] = 'Year';
 $lang['in_year'] = 'in year';
 $lang['filter'] = 'Filter';

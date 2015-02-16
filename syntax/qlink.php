@@ -29,9 +29,16 @@ class syntax_plugin_bez_qlink extends DokuWiki_Syntax_Plugin {
 
     function render($mode, &$renderer, $nr) {
 		if ($mode == 'xhtml') {
-			$helper = $this->loadHelper('bez');
-			$renderer->doc .= $helper->html_issue_link($nr);
-
+			$id = $_GET['id'];
+			$ex = explode(':', $id);
+			
+			$lang_code = '';
+			/*english namespace*/
+			switch($ex[0]) {
+				case 'en':
+					$lang_code = $ex[0].':';
+			}
+			$renderer->doc .= '<a href="?id='.$lang_code.'bez:issue_show:'.$nr.'">#'.$nr.'</a>';
 			return true;
 		}
 		return false;

@@ -25,7 +25,7 @@ if (count($_POST) > 0) {
 		if ($v != '-all')
 			$query_uri .= ':'.urlencode($k).':'.urlencode($v);
 
-	header('Location: ?id=bez:issues'.$query_uri);
+	header('Location: ?id='.$this->id('issues').$query_uri);
 }
 
 /*rekordy parzyste to nagłówki, nieparzyste to ich wartości.*/

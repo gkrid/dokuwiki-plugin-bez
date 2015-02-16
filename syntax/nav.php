@@ -17,6 +17,7 @@ include_once DOKU_PLUGIN."bez/models/issues.php";
  */
 class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 	private $value = array();
+	private $lang_code = '';
 
     function getPType() { return 'block'; }
     function getType() { return 'substition'; }
@@ -30,6 +31,12 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 	function __construct() {
 
 		$ex = explode(':', $_GET['id']);
+		//wielojęzyczność
+		if ($ex[1] == 'bez') {
+			$this->lang_code = $ex[0].':';
+			$ex = array_slice($ex, 1);
+		}
+
 		for ($i = 0; $i < count($ex); $i += 2)
 			$this->value[urldecode($ex[$i])] = urldecode($ex[$i+1]);
 	}
@@ -128,6 +135,7 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
     function _list($item){
 
 		$ex = explode(':', $item['id']);
+
 		for ($i = 0; $i < count($ex); $i += 2)
 			$item_value[urldecode($ex[$i])] = urldecode($ex[$i+1]);
 
@@ -146,9 +154,9 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 
 
         if(($item['type'] == 'd' && $item['open']) ||  $actual_page) {
-            return '<strong>'.$this->_bezlink($item['id'], $item['title']).'</strong>';
+            return '<strong>'.$this->_bezlink($this->lang_code.$item['id'], $item['title']).'</strong>';
         }else{
-            return $this->_bezlink($item['id'], $item['title']);
+            return $this->_bezlink($this->lang_code.$item['id'], $item['title']);
         }
 
     }
