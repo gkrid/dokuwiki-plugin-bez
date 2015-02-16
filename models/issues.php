@@ -5,6 +5,7 @@ include_once DOKU_PLUGIN."bez/models/issuetypes.php";
 include_once DOKU_PLUGIN."bez/models/states.php";
 include_once DOKU_PLUGIN."bez/models/users.php";
 include_once DOKU_PLUGIN."bez/models/tasks.php";
+include_once DOKU_PLUGIN."bez/models/bezcache.php";
 
 class Issues extends Connect {
 	public $coord_special = array('-proposal', '-rejected');
@@ -133,6 +134,10 @@ class Issues extends Connect {
 			$data = array_merge($data, $from_user);
 			$data['last_mod'] = time();
 			$this->errupdate($data, 'issues', $id);
+
+			$cache = new Bezcache();
+			$cache->issue_toupdate($id);
+
 			return $data;
 		}
 		return false;
@@ -176,6 +181,12 @@ class Issues extends Connect {
 		$a['coordinator'] = $this->join_coordinator($a['coordinator']);
 
 		$a['date'] = (int)$a['date'];
+
+		$cache = new Bezcache();
+		$wiki_text = $cache->get_issue($a['id']);
+		$a['description'] = $wiki_text['description'];
+		$a['opinion'] = $wiki_text['opinion'];
+
 		return $a;
 	}
 

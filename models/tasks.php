@@ -4,6 +4,7 @@ include_once DOKU_PLUGIN."bez/models/taskactions.php";
 include_once DOKU_PLUGIN."bez/models/taskstates.php";
 include_once DOKU_PLUGIN."bez/models/states.php";
 include_once DOKU_PLUGIN."bez/models/event.php";
+include_once DOKU_PLUGIN."bez/models/bezcache.php";
 
 class Tasks extends Event {
 	public function __construct() {
@@ -133,6 +134,10 @@ class Tasks extends Event {
 			$data['close_date'] = time();
 			$this->errupdate($data, 'tasks', $id);
 			$this->issue->update_last_mod($task['issue']);
+
+			$cache = new Bezcache();
+			$cache->task_toupdate($id);
+
 			return $data;
 		} elseif ($this->can_change_state($id)) {
 			$state = $this->val_state($post['state']);
@@ -140,6 +145,7 @@ class Tasks extends Event {
 			$data = array('state' => $state, 'reason' => $reason, 'close_date' => time());
 			$this->errupdate($data, 'tasks', $id);
 			$this->issue->update_last_mod($task['issue']);
+
 			return $data;
 		}
 		return false;
@@ -193,6 +199,8 @@ class Tasks extends Event {
 		$taskso = new Taskstates();
 		$stato = new States();
 
+		$cache = new Bezcache();
+
 		$row['reporter'] = $usro->name($row['reporter']);
 		$row['executor_nick'] = $row['executor'];
 		$row['executor_email'] = $usro->email($row['executor']);
@@ -200,6 +208,10 @@ class Tasks extends Event {
 		$row['action'] = $taskao->name($row['action']);
 		$row['rejected'] = $row['state'] == $stato->rejected();
 		$row['state'] = $taskso->name($row['state']);
+
+		$wiki_text = $cache->get_task($row['id']);
+		$row['task'] = $wiki_text['task'];
+		$row['reason'] = $wiki_text['reason'];
 
 		return $row;
 	}

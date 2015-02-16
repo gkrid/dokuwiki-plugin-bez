@@ -202,11 +202,11 @@
 			</table>	
 
 			<h3><?php echo $bezlang['description'] ?></h3>
-			<?php echo $helper->wiki_parse($task['task']) ?>
+			<?php echo $task['task'] ?>
 
 			<?php if ($task['rejected']): ?>
 				<h3><?php echo $bezlang['reason'] ?></h3>
-				<?php echo $helper->wiki_parse($task['reason']) ?>
+				<?php echo $task['reason'] ?>
 			<?php endif ?>
 
 			<?php if ($template['issue_opened'] && ($template['user_is_coordinator'] || $task['executor_nick'] == $template['user'])): ?> 

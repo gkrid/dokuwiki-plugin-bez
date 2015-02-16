@@ -46,7 +46,7 @@
 </ul>
 
 <h2><?php echo $bezlang['2d'] ?></h2>
-<?php echo  $helper->wiki_parse($template['issue']['description']) ?>
+<?php echo  $template['issue']['description'] ?>
 
 <?php if (count($template['causes']) > 0): ?>
 	<h2><?php echo $bezlang['3d'] ?></h2>
@@ -74,7 +74,7 @@
 		</tr>
 		<?php foreach($tasks as $task): ?>
 			<tr>
-				<td><?php echo  $helper->wiki_parse($task['task']) ?></td>
+				<td><?php echo  $task['task'] ?></td>
 				<td><?php echo $task['state'] ?></td>
 				<td>
 					<?php if ($task['cost'] == ''): ?>
@@ -101,7 +101,7 @@
 
 <?php if (strlen(trim($template['issue']['opinion'])) > 0): ?>
 	<h2><?php echo $bezlang['7d'] ?></h2>
-	<?php echo  $helper->wiki_parse($template['issue']['opinion']) ?>
+	<?php echo  $template['issue']['opinion'] ?>
 
 <?php endif ?>
 

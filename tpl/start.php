@@ -67,16 +67,16 @@
 		</dt>
 		<dd>
 			<?php if (strstr($elm['class'], 'issue')): ?>
-				<?php echo $helper->wiki_parse($elm['description']) ?>
+				<?php echo $elm['description'] ?>
 				<?php if ($elm['class'] == 'issue_closed'): ?>
 					<h3><?php echo $bezlang['opinion'] ?></h3>
-					<?php echo $helper->wiki_parse($elm['opinion']) ?>
+					<?php echo $elm['opinion'] ?>
 				<?php endif ?>
 			<?php elseif (strstr($elm['class'], 'task')): ?>
-				<?php echo $helper->wiki_parse($elm['task']) ?>
+				<?php echo $elm['task'] ?>
 				<?php if ($elm['class'] == 'task_rejected'): ?>
 					<h3><?php echo $bezlang['reason'] ?></h3>
-					<?php echo $helper->wiki_parse($elm['reason']) ?>
+					<?php echo $elm['reason'] ?>
 				<?php endif ?>
 			<?php endif ?>
 		</dd>

@@ -95,9 +95,6 @@ $isso = new Issues();
 $template['uri'] = $uri . '?id='.$this->id('issue_show', $issue_id);
 
 $template['issue'] = $isso->get($issue_id);
-$template['issue']['description'] = $helper->wiki_parse($template['issue']['description']);
-if ($template['issue']['opinion'] != '') 
-	$template['issue']['opinion'] = $helper->wiki_parse($template['issue']['opinion']);
 $template['closed'] = !$isso->opened($issue_id);
 $template['successfully_closed'] = $stao->closed($template['issue']['state']);
 
