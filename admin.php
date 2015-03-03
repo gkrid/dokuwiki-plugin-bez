@@ -124,6 +124,7 @@ class admin_plugin_bez extends DokuWiki_Admin_Plugin {
 			
 		}
 		foreach (array_unique($entities) as $ent) {
+			$ent  = strtr($ent, 'ąćęłńóśżźĄĆĘŁŃÓŚŻŹ', 'acelnoszzACELNOSZZ'); 
 			$q = "INSERT INTO entities(entity) VALUES ('".$sqlite->escape($ent)."')";
 			$sqlite->errquery($q);
 			if (count($errors) > 0)
