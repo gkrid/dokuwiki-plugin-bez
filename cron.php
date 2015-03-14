@@ -87,17 +87,17 @@ foreach ($msg as $user => $data) {
 	$to = $udata['name'].' <'.$udata['mail'].'>';
 	$subject = "[$conf[title]] Przypomnienie";
 	$body = '';
-	if (count($data['issues']) > 0) {
-		$body = "Moje problemy:\r\n";
-		foreach ($data['issues'] as $isuse) {
-			$body .= "http://$URI/doku.php?id=bez:issue_show:".$issue['id']."\r\n";
-		}
+	$no = count($data['issues']); 
+	if ($no > 0) {
+		
+		$body .= "Masz $no problemów do roziwązania:\r\n";
+		$body .= "http://$URI/doku.php?id=bez:issues:state:0:coordinator:".$user."\r\n";
 	}
-	if (count($data['tasks']) > 0) {
-		$body .= "Moje zadania:\r\n";
-		foreach ($data['tasks'] as $task) {
-			$body .= "http://$URI/doku.php?id=bez:issue_show:".$issue['id'].'#z'.$task['id']."\r\n";
-		}
+
+	$no = count($data['tasks']); 
+	if ($no > 0) {
+		$body .= "Masz $no zadań do roziwązania:\r\n";
+		$body .= "http://$URI/doku.php?id=bez:tasks:state:0:executor:".$user."\r\n";
 	}
 	$helper->mail($to, $subject, $body, $URI);
 }

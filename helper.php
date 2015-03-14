@@ -167,14 +167,14 @@ class helper_plugin_bez extends dokuwiki_plugin
 
 		return $array;
 	}
-	public function mail($to, $subject, $body, $URI='') {
-		/*function test_mail($to, $subject, $body) {
+	public function mail($to, $subject, $body, $URI='', $debug = false) {
+		if ($debug) {
 			echo $to."\n";
 			echo $subject."\n";
 			echo $body;
 			echo "\n\n";
-			die();
-		}*/
+			return;
+		}
 		if ($URI == '')
 			$URI = $_SERVER['SERVER_NAME'];
 		$headers = 	"From: noreplay@$URI";
