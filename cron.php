@@ -91,13 +91,13 @@ foreach ($msg as $user => $data) {
 	if ($no > 0) {
 		
 		$body .= "Masz $no problemów do rozwiązania:\r\n";
-		$body .= "http://$URI/doku.php?id=bez:issues:state:0:coordinator:".$user."\r\n";
+		$body .= "https://$URI/doku.php?id=bez:issues:state:0:coordinator:".$user."\r\n";
 	}
 
 	$no = count($data['tasks']); 
 	if ($no > 0) {
 		$body .= "Masz $no zadań do roziwązania:\r\n";
-		$body .= "http://$URI/doku.php?id=bez:tasks:state:0:executor:".$user."\r\n";
+		$body .= "https://$URI/doku.php?id=bez:tasks:state:0:executor:".$user."\r\n";
 	}
 	$helper->mail($to, $subject, $body, $URI);
 }
