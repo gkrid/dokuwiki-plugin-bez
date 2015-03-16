@@ -90,7 +90,7 @@ foreach ($msg as $user => $data) {
 	$no = count($data['issues']); 
 	if ($no > 0) {
 		
-		$body .= "Masz $no problemów do roziwązania:\r\n";
+		$body .= "Masz $no problemów do rozwiązania:\r\n";
 		$body .= "http://$URI/doku.php?id=bez:issues:state:0:coordinator:".$user."\r\n";
 	}
 
