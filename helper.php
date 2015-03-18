@@ -177,7 +177,7 @@ class helper_plugin_bez extends dokuwiki_plugin
 		}
 		if ($URI == '')
 			$URI = $_SERVER['SERVER_NAME'];
-		$headers = 	"From: noreplay@$URI";
+		$headers = 	"From: noreply@$URI";
 		mail($to, $subject, $body, $headers);
 	}
 }
