@@ -177,7 +177,11 @@ class helper_plugin_bez extends dokuwiki_plugin
 		}
 		if ($URI == '')
 			$URI = $_SERVER['SERVER_NAME'];
-		$headers = 	"From: noreply@$URI";
+
+		$headers = 	"From: noreply@$URI\n";
+		$headers .= "Content-Type: text/plain; charset=UTF-8\n"; 
+		$headers .= "Content-Transfer-Encoding: 8bit\n";
+
 		mail($to, $subject, $body, $headers);
 	}
 }
