@@ -18,6 +18,7 @@ include_once DOKU_PLUGIN."bez/models/issues.php";
 class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 	private $value = array();
 	private $lang_code = '';
+	private $default_lang = 'pl';
 
     function getPType() { return 'block'; }
     function getType() { return 'substition'; }
@@ -29,12 +30,28 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
     }
 
 	function __construct() {
+		global $conf;
+
+		$id = $_GET['id'];
+
+		/*usuń : z początku id - link bezwzględny*/
+		if ($id[0] == ':')
+			$id = substr($id, 1);
 
 		$ex = explode(':', $_GET['id']);
+
 		//wielojęzyczność
 		if ($ex[1] == 'bez') {
-			$this->lang_code = $ex[0].':';
+			$this->lang_code = $ex[0];
 			$ex = array_slice($ex, 1);
+
+			$old_lang = $conf['lang'];
+			$conf['lang'] = $this->lang_code;
+			$this->setupLocale();
+			$conf['lang'] = $old_lang;
+
+		} else {
+			$this->lang_code = $conf['lang'];
 		}
 
 		for ($i = 0; $i < count($ex); $i += 2)
@@ -154,9 +171,15 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 
 
         if(($item['type'] == 'd' && $item['open']) ||  $actual_page) {
-            return '<strong>'.$this->_bezlink($this->lang_code.$item['id'], $item['title']).'</strong>';
+			$id = $item['id'];
+			if ($this->lang_code != $this->default_lang)
+				$id = $this->lang_code.':'.$id;
+            return '<strong>'.$this->_bezlink($id, $item['title']).'</strong>';
         }else{
-            return $this->_bezlink($this->lang_code.$item['id'], $item['title']);
+			$id = $item['id'];
+			if ($this->lang_code != $this->default_lang)
+				$id = $this->lang_code.':'.$id;
+            return $this->_bezlink($id, $item['title']);
         }
 
     }
