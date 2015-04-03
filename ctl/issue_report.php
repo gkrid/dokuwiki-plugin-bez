@@ -39,7 +39,7 @@ if (count($_POST) > 0) {
 
 		$stao = new States();
 		if ($_POST['coordinator'] == NULL)
-			$data['coordinator'] = $stao->proposal();
+			$data['coordinator'] = $INFO['client'];
 		$data['state'] = $stao->id('opened');
 
 		$inserted = $isso->add($_POST, $data);

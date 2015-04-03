@@ -22,9 +22,11 @@ class helper_plugin_bez extends dokuwiki_plugin
 		return false;
 	}
 	public function user_viewer() {
-		global $ID;
+		global $INFO, $auth;
 
-		if (auth_quickaclcheck($ID) >= AUTH_READ)
+		$userd = $auth->getUserData($INFO['client']); 
+
+		if (isset($userd['grps']) && in_array('user', $userd['grps']))
 			return true;
 
 		return false;
