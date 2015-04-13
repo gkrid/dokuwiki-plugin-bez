@@ -101,7 +101,7 @@ foreach ($msg as $user => $data) {
 
 	$no = count($data['tasks']); 
 	if ($no > 0) {
-		$body .= "Masz $no zadań do roziwązania:\r\n";
+		$body .= "Masz $no zadań do rozwiązania:\r\n";
 		$body .= $http."://$URI/doku.php?id=bez:tasks:state:0:executor:".$user."\r\n";
 	}
 	$helper->mail($to, $subject, $body, $URI);

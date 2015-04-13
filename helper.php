@@ -177,6 +177,7 @@ class helper_plugin_bez extends dokuwiki_plugin
 			echo "\n\n";
 			return;
 		}
+		$subject="=?UTF-8?B?".base64_encode($subject)."?="; 
 		if ($URI == '')
 			$URI = $_SERVER['SERVER_NAME'];
 
