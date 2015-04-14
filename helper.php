@@ -26,7 +26,7 @@ class helper_plugin_bez extends dokuwiki_plugin
 
 		$userd = $auth->getUserData($INFO['client']); 
 
-		if (isset($userd['grps']) && in_array('user', $userd['grps']))
+		if (isset($userd['grps']) && (in_array('user', $userd['grps']) || in_array('admin', $userd['grps'])))
 			return true;
 
 		return false;
