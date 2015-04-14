@@ -175,7 +175,7 @@
 				<?php if ($task['state'] != $bezlang['task_opened']): ?>
 					<span>
 						<strong><?php echo $task['state']?>:</strong>
-						<?php echo $helper->time2date($template['issue']['last_mod']) ?>
+						<?php echo $helper->time2date($task['close_date']) ?>
 					</span>
 				<?php endif ?>
 			</div>
