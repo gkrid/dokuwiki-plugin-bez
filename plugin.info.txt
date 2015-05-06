@@ -1,7 +1,7 @@
 base bez
 author Szymon Olewniczak
 email dokuwiki@imz.re
-date 2014-12-28
+date v4
 name bez
 desc 
 url http://www.dokuwiki.org/plugin:bez
