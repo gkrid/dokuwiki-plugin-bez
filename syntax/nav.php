@@ -96,16 +96,11 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 			$year_now = (int)date('Y');
 			$mon_now = (int)date('n');
 
-			$entity = '';
-			if (array_key_exists('entity', $this->value)) {
-				$entity = ':entity:'.urlencode($this->value['entity']);
-			}
-
 			$mon = $mon_old;
 			for ($year = $year_old; $year <= $year_now; $year++) {
 
 				$y_key = 'bez:report:year:'.$year;
-				$data[$y_key] = array('id' => $y_key.$entity, 'type' => 'd', 'level' => 3, 'title' => $year);
+				$data[$y_key] = array('id' => $y_key, 'type' => 'd', 'level' => 3, 'title' => $year);
 
 				if (isset($this->value['year']) && (int)$this->value['year'] == $year) {
 					$data['bez:report:year:'.$year]['open'] = true;
@@ -116,7 +111,7 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 						$mon_max = 12;
 					for ( ; $mon <= $mon_max; $mon++) {
 						$m_key = $y_key.':month:'.$mon;
-						$data[$m_key] = array('id' => $m_key.$entity, 'type' => 'f', 'level' => 4,
+						$data[$m_key] = array('id' => $m_key, 'type' => 'f', 'level' => 4,
 						'title' => $mon < 10 ? '0'.$mon : $mon);
 					}	
 				}
@@ -134,7 +129,7 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 		}
 
 		if ($helper->user_admin() && $data['bez:start']['open'] == true)
-			$data['bez:entity'] = array('id' => 'bez:entity', 'type' => 'f', 'level' => 2, 'title' => $this->getLang('entity_manage'));
+			$data['bez:types'] = array('id' => 'bez:tpes', 'type' => 'f', 'level' => 2, 'title' => $this->getLang('types_manage'));
 
         $R->doc .= '<div class="plugin__bez">';
         $R->doc .= html_buildlist($data,'idx',array($this,'_list'),array($this,'_li'));

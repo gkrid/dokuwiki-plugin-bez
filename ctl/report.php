@@ -1,6 +1,5 @@
 <?php
 include_once DOKU_PLUGIN."bez/models/report.php";
-include_once DOKU_PLUGIN."bez/models/entities.php";
 
 /*jeżeli nie mamy tokenu generujemy nowy i przekierowujemy*/
 $toko = new Tokens();
@@ -8,9 +7,8 @@ if (!isset($_GET['t']) || ! $toko->check(trim($_GET['t']), $ID))
 	header('Location: '.$uri.'?'.$_SERVER['QUERY_STRING'].'&t='.$toko->get($ID));
 
 $repo = new Report();
-$ento = new Entities();
 
-$value = array('entity' => '-all', 'year' => '-all', 'month' => '-all');
+$value = array('year' => '-all', 'month' => '-all');
 if (count($_POST) > 0) {
 	$filters = $repo->validate_filters($_POST);
 
@@ -27,7 +25,6 @@ if (count($_POST) > 0) {
 for ($i = 0; $i < count($params); $i += 2)
 	$value[urldecode($params[$i])] = urldecode($params[$i+1]);
 
-$template['entities'] = $ento->get_list();
 
 $template['uri'] = $uri;
 $template['hidden'] = array();

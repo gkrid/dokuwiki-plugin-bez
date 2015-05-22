@@ -1,6 +1,5 @@
 <?php
 include_once DOKU_PLUGIN."bez/models/connect.php";
-include_once DOKU_PLUGIN."bez/models/entities.php";
 include_once DOKU_PLUGIN."bez/models/issuetypes.php";
 include_once DOKU_PLUGIN."bez/models/states.php";
 include_once DOKU_PLUGIN."bez/models/users.php";
@@ -20,7 +19,6 @@ class Issues extends Connect {
 				state INTEGER NOT NULL,
 				opinion TEXT NULL,
 				type INTEGER NOT NULL,
-				entity INTEGER NOT NULL,
 				coordinator TEXT NOT NULL,
 				reporter TEXT NOT NULL,
 				date INTEGER NOT NULL,
@@ -39,12 +37,6 @@ class Issues extends Connect {
 			$errors['type'] = $bezlang['vald_type_required'];
 		} 
 		$data['type'] = (int)$post['type'];
-
-		$ento = new Entities();
-		if ( ! in_array($post['entity'], $ento->get_list())) {
-			$errors['entity'] = $bezlang['vald_entity_required'];
-		} 
-		$data['entity'] = $post['entity'];
 
 		/*Jeżeli nie jesteśmy adminem, to jeżeli chodzi o koordynatorów nie mamy nic do gadania*/
 		/*Koordynator nie jest wymagany*/
@@ -171,9 +163,6 @@ class Issues extends Connect {
 		$stao = new States();
 		$a['state'] = $stao->name($a['state'], $a['coordinator']);
 
-		$isstyo = new Issuetypes();
-		$a['type'] = $isstyo->name($a['type']);
-
 		$usro = new Users();
 		$a['reporter'] = $usro->name($a['reporter']);
 
@@ -235,15 +224,24 @@ class Issues extends Connect {
 	}
 
 	public function get($id) {
-		global $bezlang, $errors;
+		global $bezlang, $errors, $conf;
 		if	( ! ($this->helper->token_viewer() || $this->helper->user_viewer()))
 			return false;
 
-		$a = $this->get_clean($id);
-		if ($a == array())
-			return $array;
-		
-		$a = $this->join($a);
+		$id = (int) $id;
+
+		$lang = 'pl';
+		if ($conf['lang'] != 'pl')
+			$lang = 'en';
+
+		$a = $this->fetch_assoc("SELECT issues.id, priority, title, description, state, opinion,
+								issuetypes.$lang as type, entity, coordinator, reporter, date, last_mod
+								FROM issues JOIN issuetypes ON issues.type = issuetypes.id WHERE issues.id=$id");
+		if (count($a) == 0) {
+			$errors[] = $bezlang['error_issue_id_not_specifed'];
+			return array();
+		}
+		$a = $this->join($a[0]);
 
 		return $a;
 	}
@@ -335,7 +333,7 @@ class Issues extends Connect {
 	/*waliduje te pola które są brane przy filtrowaniu*/
 	public function validate_filters($filters) {
 
-		$data = array('state' => '-all', 'type' => '-all', 'entity' => '-all', 'coordinator' => '-all', 'year' => '-all');
+		$data = array('state' => '-all', 'type' => '-all', 'coordinator' => '-all', 'year' => '-all');
 
 		if (isset($filters['state'])) {
 			$stato = new States();
@@ -348,13 +346,6 @@ class Issues extends Connect {
 			if ($filters['type'] == '-all' || array_key_exists($filters['type'], $isstyo->get()))
 				$data['type'] = $filters['type'];
 		}
-
-		if (isset($filters['entity'])) {
-			$ento = new Entities();
-			if ($filters['entity'] == '-all' || in_array($filters['entity'], $ento->get_list()))
-				$data['entity'] = $filters['entity'];
-		}
-
 
 		if (isset($filters['coordinator'])) {
 			$usro = new Users();
@@ -374,6 +365,8 @@ class Issues extends Connect {
 	}
 
 	public function get_filtered($filters) {
+		global $conf;
+		
 		$vfilters = $this->validate_filters($filters);
 
 		$where = array();
@@ -421,12 +414,17 @@ class Issues extends Connect {
 		if (count($where) > 0)
 			$where_q = 'WHERE '.implode(' AND ', $where);
 
+		$lang = 'pl';
+		if ($conf['lang'] != 'pl')
+			$lang = 'en';
+
 		$a = $this->fetch_assoc("
-			SELECT issues.id, issues.priority, issues.state, issues.entity, issues.type,
+			SELECT issues.id, issues.priority, issues.state, issuetypes.$lang as type,
 				issues.title, issues.coordinator, issues.date, issues.last_mod, COUNT(tasks.id) AS tasks_opened
-			FROM issues LEFT JOIN (SELECT * FROM tasks WHERE state = 0) AS tasks ON issues.id = tasks.issue
+				FROM (issues JOIN issuetypes ON issues.type = issuetypes.id)
+				LEFT JOIN (SELECT * FROM tasks WHERE state = 0) AS tasks ON issues.id = tasks.issue
 			$where_q
-			GROUP BY issues.id, issues.state, issues.type, issues.entity, issues.title, issues.date, issues.last_mod
+			GROUP BY issues.id, issues.state, issues.type, issues.title, issues.date, issues.last_mod
 			ORDER BY issues.priority DESC, issues.last_mod DESC, issues.date DESC
 			");
 		foreach ($a as &$row)

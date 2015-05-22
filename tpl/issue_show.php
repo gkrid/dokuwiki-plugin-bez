@@ -4,7 +4,7 @@
 <?php echo $template['issue']['type'] ?> (<?php echo $template['issue']['state'] ?>)
 </h1>
 
-<h1>[<?php echo $template['issue']['entity'] ?>] <?php echo $template['issue']['title'] ?></h1>
+<h1><?php echo $template['issue']['title'] ?></h1>
 
 <div class="bez_timebox">
 <span><strong><?php echo $bezlang['open'] ?>:</strong> <?php echo $helper->time2date($template['issue']['date']) ?></span>
@@ -45,7 +45,7 @@
 
 <a class="bds_inline_button bds_send_button" href="
 	<?php echo $helper->mailto($template['issue']['coordinator_email'],
-	$bezlang['issue'].': #'.$template['issue']['id'].' ['.$template['issue']['entity'].'] '.$template['issue']['title'],
+	$bezlang['issue'].': #'.$template['issue']['id'].' '.$template['issue']['title'],
 	$template['uri']) ?>">
 	✉ <?php echo $bezlang['send_mail'] ?>
 </a>
@@ -216,7 +216,7 @@
 
 			<a class="bds_inline_button bds_send_button" href="
 				<?php echo $helper->mailto($task['executor_email'],
-				$bezlang['task'].': #'.$task['issue'].' ['.$template['issue']['entity'].'] '.$template['issue']['title'].' | #z'.$task['id'].' '.$task['action'],
+				$bezlang['task'].': #'.$task['issue'].' '.$template['issue']['title'].' | #z'.$task['id'].' '.$task['action'],
 				$template['uri'].'#z'.$task['id']) ?>">
 				✉ <?php echo $bezlang['send_mail'] ?>
 			</a>

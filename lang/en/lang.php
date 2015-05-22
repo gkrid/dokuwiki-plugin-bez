@@ -272,7 +272,7 @@ $lang['delete'] = 'Delete';
 $lang['info_no_causes_added'] = 'You have to add cause in order to add corrective and preventive actions.';
 $lang['info_no_all_tasks_closed'] = 'You have to close all tasks before closing the problem.';
 
-$lang['entity_manage'] = 'Sources of report';
+$lang['types_manage'] = 'Types of issues';
 
 $lang['sort'] = 'Sort';
 $lang['cancel'] = 'Cancel';

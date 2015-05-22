@@ -1,6 +1,5 @@
 <?php
 include_once DOKU_PLUGIN."bez/models/connect.php";
-include_once DOKU_PLUGIN."bez/models/entities.php";
 include_once DOKU_PLUGIN."bez/models/tasks.php";
 include_once DOKU_PLUGIN."bez/models/causes.php";
 
@@ -14,12 +13,6 @@ class Report extends Connect {
 	/*waliduje te pola które są brane przy filtrowaniu*/
 	public function validate_filters($filters) {
 		$data = array();
-
-		$ento = new Entities();
-		if ($filters['entity'] == '-all' || in_array($filters['entity'], $ento->get_list()))
-			$data['entity'] = $filters['entity'];
-		else
-			$data['entity'] = '-all';	
 
 		$month = (int)$filters['month'];
 		if ($filters['month'] == '-all' || ($month > 0 && $month <= 12))
@@ -39,14 +32,9 @@ class Report extends Connect {
 	public function where($data_field, $filters, $word='AND') {
 
 		$vfilters = $this->validate_filters($filters);
-		$entity = $vfilters['entity'];
 		$year = $vfilters['year'];
 		$month = $vfilters['month'];
 
-		if ($entity != '-all') {
-			$where[] = "issues.entity = '".$this->escape($entity)."'";
-		}
-		
 		if ($year != '-all') {
 			$year = (int)$year;
 			if ($month == '-all') {

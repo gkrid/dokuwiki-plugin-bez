@@ -1,5 +1,4 @@
 <?php
-include_once DOKU_PLUGIN."bez/models/entities.php";
 include_once DOKU_PLUGIN."bez/models/issuetypes.php";
 include_once DOKU_PLUGIN."bez/models/users.php";
 include_once DOKU_PLUGIN."bez/models/issues.php";
@@ -70,8 +69,6 @@ if (count($_POST) > 0) {
 
 $template['action'] = $action;
 
-$ento = new Entities();
-$template['entities'] = $ento->get_list();
 $isstyo = new Issuetypes();
 $template['issue_types'] = $isstyo->get();
 

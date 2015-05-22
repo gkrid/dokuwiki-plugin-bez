@@ -1,39 +1,6 @@
-<?php if ($helper->user_viewer()): ?>
-	<div  class="bez_filter_form">
-	<form action="<?php echo $template['uri'] ?>?id=<?php echo $this->id('report') ?>" method="POST">
-	<?php foreach ($template['hidden'] as $name => $val): ?>
-		<input type="hidden" name="<?php echo $name ?>" value="<?php echo $val ?>" />
-	<?php endforeach ?>
-	<fieldset>
-		<label><?php echo $bezlang['entity'] ?>:
-			<select name="entity">
-				<option <?php if ($value['entity'] == '-all') echo 'selected' ?>
-					value="-all">--- <?php echo $bezlang['all'] ?> ---</option>
-			<?php foreach ($template['entities'] as $entity): ?>
-				<option <?php if ($value['entity'] == $entity) echo 'selected' ?>
-					value="<?php echo $entity ?>"><?php echo $entity ?></option>
-			<?php endforeach ?>
-			</select>
-		</label>
-		<input type="submit" value="<?php echo $bezlang['filter'] ?>" />
-
-		<span>[<a href="
-			<?php echo $helper->mailto('',
-			$template['title'].($value['entity'] != '-all' ? ' ['.$value['entity'].']' : ''),
-			$template['uri']) ?>">
-			✉ <?php echo $bezlang['send_mail'] ?>
-		</a>]</span>
-	</fieldset>
-	</form>
-	</div>
-<?php endif ?>
-
 <h1 class="bez_report">
 <?php echo $template['title'] ?>
 <span><?php echo $bezlang['report_subhead'] ?></span>
-<?php if ($value['entity'] != '-all'): ?>
-<span><?php echo $bezlang['entity'] ?>: <strong><?php echo $value['entity'] ?></strong></span>
-<?php endif ?>
 </h1>
 
 <h2><?php echo $bezlang['report_issues'] ?></h2>

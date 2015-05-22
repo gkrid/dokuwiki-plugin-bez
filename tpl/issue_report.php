@@ -27,21 +27,6 @@
 </span>
 </div>
 
-
-<div class="row">
-
-<label for="entity"><?php echo $bezlang['entity'] ?>:</label>
-
-<span>
-<select name="entity" id="entity">
-<?php foreach ($template['entities'] as $entity): ?>
-	<option <?php if ($value['entity'] == $entity) echo 'selected' ?>
-	 value="<?php echo $entity ?>"><?php echo $entity ?></option>
-<?php endforeach ?>
-</select>
-</span>
-</div>
-
 <?php if ($template['user_admin']): ?>
 <div class="row">
 <label for="coordinator"><?php echo $bezlang['coordinator'] ?>:</label>

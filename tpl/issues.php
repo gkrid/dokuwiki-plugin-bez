@@ -12,16 +12,6 @@
 		<?php endforeach ?>
 		</select>
 	</label>
-	<label><?php echo $bezlang['entity'] ?>:
-		<select name="entity">
-			<option <?php if ($value['entity'] == '-all') echo 'selected' ?>
-				value="-all">--- <?php echo $bezlang['all'] ?> ---</option>
-		<?php foreach ($template['entities'] as $entity): ?>
-			<option <?php if ($value['entity'] == $entity) echo 'selected' ?>
-				value="<?php echo $entity ?>"><?php echo $entity ?></option>
-		<?php endforeach ?>
-		</select>
-	</label>
 	<label><?php echo $bezlang['coordinator'] ?>:
 		<select name="coordinator">
 			<option <?php if ($value['coordinator'] == '-all') echo 'selected' ?>
@@ -80,7 +70,7 @@
 			<td><?php echo $this->html_issue_link($issue['id']) ?></td>
 			<td><?php echo $issue['state'] ?></td>
 			<td><?php echo $issue['type'] ?></td>
-			<td>[<?php echo $issue['entity'] ?>] <?php echo $issue['title'] ?></td>
+			<td><?php echo $issue['title'] ?></td>
 			<td><?php echo $issue['coordinator'] ?></td>
 			<td><?php echo $helper->string_time_to_now($issue['date']) ?></td>
 			<td>

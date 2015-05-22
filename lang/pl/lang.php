@@ -274,7 +274,7 @@ $lang['info_no_causes_added'] = 'Musisz dodać co najmniej jedną przyczynę, ab
 $lang['info_no_all_tasks_closed'] = 'Musisz zamknąć wszystkie zadania, zanim zamkniesz problem.';
 
 
-$lang['entity_manage'] = 'Źródła zgłoszenia';
+$lang['types_manage'] = 'Typy problemów';
 
 $lang['sort'] = 'Sortuj';
 $lang['cancel'] = 'Anuluj';
