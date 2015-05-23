@@ -3,6 +3,7 @@ include_once DOKU_PLUGIN."bez/models/tasks.php";
 include_once DOKU_PLUGIN."bez/models/taskactions.php";
 include_once DOKU_PLUGIN."bez/models/taskstates.php";
 include_once DOKU_PLUGIN."bez/models/users.php";
+include_once DOKU_PLUGIN."bez/models/issues.php";
 
 if	(!$helper->user_viewer()) {
 	$errors[] = $bezlang['error_issues'];
@@ -13,6 +14,7 @@ $tasko = new Tasks();
 $taskao = new Taskactions();
 $taskso = new Taskstates();
 $usro = new Users();
+$isso = new Issues();
 
 if (count($_POST) > 0) {
 	$filters = $tasko->validate_filters($_POST);
@@ -27,13 +29,14 @@ if (count($_POST) > 0) {
 
 /*rekordy parzyste to nagłówki, nieparzyste to ich wartości.*/
 /*np. status:1:type:2:podmiot:PCA*/
-$value = array('action' => '-all', 'state' => '-all', 'executor' => '-all', 'year' => '-all');
+$value = array('issue' => '-all', 'action' => '-all', 'state' => '-all', 'executor' => '-all', 'year' => '-all');
 for ($i = 0; $i < count($params); $i += 2)
 	$value[urldecode($params[$i])] = urldecode($params[$i+1]);
 
 
 $template['uri'] = $uri; 
 
+$template['issues'] = $isso->get_ids();
 $template['actions'] = $taskao->get();
 $template['states'] = $taskso->get();
 $template['executors'] = $usro->get();

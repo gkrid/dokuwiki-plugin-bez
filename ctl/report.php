@@ -1,6 +1,11 @@
 <?php
 include_once DOKU_PLUGIN."bez/models/report.php";
 
+if	( ! $helper->user_admin()) {
+	$errors[] = $bezlang['error_issue_report'];
+	$controller->preventDefault();
+} 
+
 /*jeżeli nie mamy tokenu generujemy nowy i przekierowujemy*/
 $toko = new Tokens();
 if (!isset($_GET['t']) || ! $toko->check(trim($_GET['t']), $ID))

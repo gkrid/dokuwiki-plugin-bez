@@ -5,6 +5,7 @@ include_once DOKU_PLUGIN."bez/models/taskstates.php";
 include_once DOKU_PLUGIN."bez/models/states.php";
 include_once DOKU_PLUGIN."bez/models/event.php";
 include_once DOKU_PLUGIN."bez/models/bezcache.php";
+include_once DOKU_PLUGIN."bez/models/issues.php";
 
 class Tasks extends Event {
 	public function __construct() {
@@ -283,7 +284,13 @@ class Tasks extends Event {
 
 	public function validate_filters($filters) {
 
-		$data = array('action' => '-all', 'state' => '-all', 'executor' => '-all', 'year' => '-all');
+		$data = array('issue' => '-all', 'action' => '-all', 'state' => '-all', 'executor' => '-all', 'year' => '-all');
+
+		if (isset($filters['issue'])) {
+			$isso = new Issues();
+			if ($filters['issue'] == '-all' || in_array($filters['issue'], $isso->get_ids()))
+				$data['issue'] = $filters['issue'];
+		}
 
 		if (isset($filters['action'])) {
 			$taskao = new Taskactions();

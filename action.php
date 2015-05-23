@@ -1,7 +1,7 @@
 <?php
  
 if(!defined('DOKU_INC')) die();
- 
+
 class action_plugin_bez extends DokuWiki_Action_Plugin {
 
 	private $helper;

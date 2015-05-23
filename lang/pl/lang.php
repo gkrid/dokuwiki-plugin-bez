@@ -76,6 +76,7 @@ $lang['error_report_unknown'] = 'Wybrana raport nie istnieje.';
 $lang['error_issue_report'] = 'Nie masz uprawnień aby zgłaszać nowe problemy.';
 $lang['error_entity'] = 'Nie masz uprawnień aby dodawać nowe źródła zgłoszeń.';
 $lang['error_issues'] = 'Nie masz uprawnień aby przeglądać problemy.';
+$lang['error_no_permission'] = 'Nie masz uprawnień aby przeglądać tę stronę.';
 
 $lang['vald_type_required'] = 'Określ typ problemu.';
 $lang['vald_entity_required'] = 'Wybierz źródło zgłoszenia z listy.';
@@ -112,6 +113,10 @@ $lang['vald_days_should_be_numeric'] = 'Ilość dni musi być liczbą.';
 
 $lang['vald_entity_too_long'] = 'Pojedyńcze źródło zgłoszenia może mieć najwyżej %d znaków.';
 $lang['vald_entity_no_ascii'] = 'Zródło zgłoszenia zawiera znaki spoza ASCII.';
+
+
+$lang['vald_type_wrong_chars'] = 'Typ musi składać się z samych liter i cyfr.';
+$lang['vald_type_required'] = 'Musisz podać nazwę typu w obu językach.';
 
 $lang['priority_marginal'] = 'marginalny';
 $lang['priority_important'] = 'istotny';
@@ -296,4 +301,7 @@ $lang['close_issues'] = 'Moje problemy';
 $lang['close_tasks'] = 'Moje zadania';
 
 $lang['proposals'] = 'Propozycje';
+
+$lang['show_tasks_hidden'] = 'Pokaż zadania zamknięte i odrzucone';
+$lang['add_task'] = 'Dodaj zadanie';
 

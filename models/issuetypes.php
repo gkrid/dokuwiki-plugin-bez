@@ -3,17 +3,6 @@
 include_once "connect.php";
 
 class Issuetypes extends Connect {
-	/*public function get_old_format() {
-		global $bezlang;
-		return array(
-			$bezlang['type_noneconformity_internal'],
-			$bezlang['type_noneconformity_customer'],
-			$bezlang['type_noneconformity_supplier'],
-			$bezlang['type_threat'],
-			$bezlang['type_opportunity']
-		);
-	}*/
-
 	public function __construct() {
 		global $errors;
 		parent::__construct();
@@ -79,27 +68,15 @@ class Issuetypes extends Connect {
 	public function validate($post) {
 		global $bezlang, $errors;
 
-		$entity_max = 100;
+		$post['en'] = trim($post['en']);
+		$post['pl'] = trim($post['pl']);
 
+		$regex = '/^[[:alnum:] ]*$/ui';
+		if( ! preg_match($regex, $post['en']) || ! preg_match($regex, $post['pl'])) {
+			$errors['type'] = $bezlang['vald_type_wrong_chars'];
+		} 
 
-		$post['entities'] = trim($post['entities']);
-		$entites = explode("\n", $post['entities']);
-
-		$array = array();
-		foreach ($entites as $entity) {
-			if (strlen($entity) > $entity_max) {
-				$errors['entities'] = str_replace('%d', $entity_max, $bezlang['vald_entity_too_long']);
-				return false;
-			}
-			if ( ! mb_detect_encoding($entity, 'ASCII', true)) {
-				$errors['entities'] = str_replace('%d', $entity_max, $bezlang['vald_entity_no_ascii']);
-				return false;
-			}
-
-			array_push($array, array('entity' => trim($entity)));
-		}
-
-		return $array;
+		return $post;
 	}
 	public function get() {
 		global $conf;
@@ -115,9 +92,44 @@ class Issuetypes extends Connect {
 		return $data;
 	}
 
-	public function name($id) {
-		$a = $this->get();
-		return $a[$id];
+	public function get_clean() {
+		$result = $this->fetch_assoc("SELECT issuetypes.id, pl, en,
+							(SELECT COUNT(*) FROM issues WHERE type = issuetypes.id) as refs 
+							FROM issuetypes");
+		return $result;
+	}
+
+	public function get_one($id) {
+		$result = $this->fetch_assoc("SELECT * FROM issuetypes WHERE id=$id");
+		return $result[0];
+	}
+
+	public function add($post) {
+		global $bezlang, $errors;
+		if ( ! $this->can_modify()) 
+			return false;
+
+		$data = $this->validate($post);
+		if (strlen($data['pl']) == 0 || strlen($data['en']) == 0) {
+			$errors['type'] = $bezlang['vald_type_required'];
+			return false;
+		}
+		$this->errinsert($post, 'issuetypes');
+		return $data;
+	}
+	public function update($post, $id) {
+		global $INFO;
+		if ( ! $this->can_modify()) 
+			return false;
+
+		$data = $this->validate($post);
+		if (strlen($data['pl']) == 0 && strlen($data['en']) == 0) {
+			$this->errquery("DELETE FROM issuetypes WHERE id=$id");
+		} else {
+			$this->errupdate($data, 'issuetypes', $id);
+		}
+		return $post;
 	}
 }
+
 

@@ -231,4 +231,36 @@ jQuery(document).ready(function() {
 		});
 	}
 
+
+	/*ukrywanie zakmniętych zadań i formularza dodawania nowych zadań*/
+	var $tasks = jQuery("#bez_tasks .bds_block_content");
+	if ($tasks.length > 0) {
+		var hidden = 0;
+		$tasks.find(".task").each(function () {
+			var $this = jQuery(this);
+			if ( ! $this.hasClass("opened")) {
+				$this.hide();
+				hidden++;
+			}
+		});
+		if (hidden > 0) {
+			$button = $tasks.find(".show_tasks_hidden");
+			console.log($button);
+			$button.show();
+			$button.click(function() {
+				$tasks.find(".task").show();
+				jQuery(this).hide();
+			});
+		}
+		$form = $tasks.find("form");
+		if ( ! $form.hasClass('update')) {
+			$form.hide();
+			$add_task = $tasks.find(".add_task");
+			$add_task.show();
+			$add_task.click(function() {
+				$tasks.find("form").show();
+				jQuery(this).hide();
+			});
+		}
+	}
 });

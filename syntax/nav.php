@@ -129,7 +129,7 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 		}
 
 		if ($helper->user_admin() && $data['bez:start']['open'] == true)
-			$data['bez:types'] = array('id' => 'bez:tpes', 'type' => 'f', 'level' => 2, 'title' => $this->getLang('types_manage'));
+			$data['bez:types'] = array('id' => 'bez:types', 'type' => 'f', 'level' => 2, 'title' => $this->getLang('types_manage'));
 
         $R->doc .= '<div class="plugin__bez">';
         $R->doc .= html_buildlist($data,'idx',array($this,'_list'),array($this,'_li'));

@@ -96,6 +96,10 @@
 					</div>
 				</fieldset>
 				<input type="submit" value="<?php echo $template['comment_button'] ?>">
+				<a href="?id=<?php echo $this->id('issue_show', $template['issue']['id']) ?>"
+				 class="bez_delete_button bez_link_button">
+					<?php echo $bezlang['cancel'] ?>
+				</a>
 			</form>
 			<a name="k_"></a>
 		<?php endif; ?>
@@ -156,6 +160,10 @@
 					</div>
 				</fieldset>
 				<input type="submit" value="<?php echo $template['cause_button'] ?>">
+				<a href="?id=<?php echo $this->id('issue_show', $template['issue']['id']) ?>"
+				 class="bez_delete_button bez_link_button">
+					<?php echo $bezlang['cancel'] ?>
+				</a>
 			</form>
 			<a name="p_"></a>
 		<?php endif ?>
@@ -166,9 +174,23 @@
 <div class="bds_block" id="bez_tasks">
 	<h1><?php echo $bezlang['tasks'] ?> <span>(<?php echo count($template['tasks']) ?>)</span></h1>
 	<div class="bds_block_content">
+	<a style="display:none;" href="#" class="show_tasks_hidden"><?php echo $bezlang['show_tasks_hidden'] ?></a>
 	<?php foreach ($template['tasks'] as $task): ?>
 			<a name="z<?php echo $task['id'] ?>"></a>
-			<div id="z<?php echo $task['id'] ?>" class="task">
+			<div id="z<?php echo $task['id'] ?>" class="task
+				<?php
+					switch($task['state']) {
+						case $bezlang['task_opened']:
+							echo 'opened';
+							break;
+						case $bezlang['task_done']:
+							echo 'closed';
+							break;
+						case $bezlang['task_rejected']:
+							echo 'rejected';
+							break;
+					}
+				?>">
 
 			<div class="bez_timebox">
 				<span><strong><?php echo $bezlang['open'] ?>:</strong> <?php echo $helper->time2date($task['date']) ?></span>
@@ -224,7 +246,9 @@
 			</div>
 	<?php endforeach ?>
 	<?php if ($template['issue_opened'] && ($template['user_is_coordinator'] || strstr($template['task_action'], 'update'))): ?> 
-		<form action="<?php echo $template['uri'] ?>:<?php echo $template['task_action'] ?>#z_" method="POST">
+		<a style="display:none;" href="#" class="add_task"><?php echo $bezlang['add_task'] ?></a>
+		<form class="<?php $e = explode(':', $template['task_action']); echo $e[0] ?>"
+			action="<?php echo $template['uri'] ?>:<?php echo $template['task_action'] ?>#z_" method="POST">
 			<fieldset class="bds_form">
 			<?php if ($template['issue_opened'] && $template['user_is_coordinator']): ?> 
 				<?php if (count($template['causes']) == 0) : ?>
@@ -303,6 +327,11 @@
 				<?php endif ?>
 			</fieldset>
 			<input type="submit" value="<?php echo $template['task_button'] ?>">
+			<a href="?id=<?php echo $this->id('issue_show', $template['issue']['id']) ?>"
+			 class="bez_delete_button bez_link_button">
+				<?php echo $bezlang['cancel'] ?>
+			</a>
+
 		</form>
 	<?php endif ?>
 	<a name="z_"></a>

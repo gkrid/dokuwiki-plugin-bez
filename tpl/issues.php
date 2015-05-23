@@ -2,6 +2,17 @@
 <form action="<?php echo $template['uri'] ?>?id=<?php echo $this->id('issues') ?>" method="POST">
 <fieldset>
 <div>
+	<label><?php echo $bezlang['state'] ?>:
+		<select name="state">
+			<option <?php if ($value['state'] == '-all') echo 'selected' ?>
+				value="-all">--- <?php echo $bezlang['all'] ?> ---</option>
+		<?php foreach ($template['states'] as $key => $name): ?>
+			<option <?php if ($value['state'] == (string)$key) echo 'selected' ?>
+				value="<?php echo $key ?>"><?php echo $name ?></option>
+		<?php endforeach ?>
+		</select>
+	</label>
+
 	<label><?php echo $bezlang['just_type'] ?>:
 		<select name="type">
 			<option <?php if ($value['type'] == '-all') echo 'selected' ?>
@@ -26,15 +37,8 @@
 	</label>
 </div>
 <div>
-	<label><?php echo $bezlang['state'] ?>:
-		<select name="state">
-			<option <?php if ($value['state'] == '-all') echo 'selected' ?>
-				value="-all">--- <?php echo $bezlang['all'] ?> ---</option>
-		<?php foreach ($template['states'] as $key => $name): ?>
-			<option <?php if ($value['state'] == (string)$key) echo 'selected' ?>
-				value="<?php echo $key ?>"><?php echo $name ?></option>
-		<?php endforeach ?>
-		</select>
+	<label><?php echo $bezlang['title'] ?>:
+		<input name="title" value="<?php echo $value['title'] ?>" />
 	</label>
 
 	<label><?php echo $bezlang['year'] ?>:
@@ -63,6 +67,7 @@
 		<th><?php echo $bezlang['coordinator'] ?></th>
 		<th><?php echo $bezlang['date'] ?></th>
 		<th><?php echo $bezlang['last_mod_date'] ?></th>
+		<th><?php echo $bezlang['cost'] ?></th>
 		<th><?php echo $bezlang['opened_tasks'] ?></th>
 	</tr>
 	<?php foreach ($template['issues'] as $issue): ?>
@@ -80,12 +85,20 @@
 					<?php echo $helper->string_time_to_now($issue['last_mod']) ?>
 				<?php endif ?>
 			</td>
-			<td><?php echo $issue['tasks_opened'] ?></td>
+			<td>
+				<?php echo $issue['cost'] ?>
+			</td>
+			<td>
+		<a href="<?php echo $template['uri'] ?>?id=<?php echo $this->id('tasks', 'issue', $issue['id'], 'state', 0) ?>">
+				<?php echo $issue['tasks_opened'] ?>
+		</a>
+			</td>
 		</tr>
 	<?php endforeach ?>
 	<tr>
 		<th><?php echo $bezlang['report_total'] ?></th>
-		<td colspan="7"><?php echo count($template['issues']) ?></td>
+		<td colspan="6"><?php echo count($template['issues']) ?></td>
+		<td colspan="2"><?php echo $template['total_cost'] ?></td>
 	</tr>
 </table>
 

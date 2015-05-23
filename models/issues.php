@@ -195,6 +195,14 @@ class Issues extends Connect {
 		return $a;
 	}
 
+	public function get_ids() {
+		$a = $this->fetch_assoc("SELECT id FROM issues");
+		$data = array();
+		foreach ($a as $v)
+			$data[] = $v['id'];
+		return $data;
+	}
+
 	public function get_by_days() {
 		if (!$this->helper->user_viewer()) return false;
 
@@ -333,7 +341,12 @@ class Issues extends Connect {
 	/*waliduje te pola które są brane przy filtrowaniu*/
 	public function validate_filters($filters) {
 
-		$data = array('state' => '-all', 'type' => '-all', 'coordinator' => '-all', 'year' => '-all');
+		$data = array('title' => '', 'state' => '-all', 'type' => '-all', 'coordinator' => '-all', 'year' => '-all');
+
+		if (isset($filters['title'])) {
+			if (strlen($post['title']) <= $title_max && preg_match('/^[[:alnum:] \-,.]*$/ui', $filters['title']))
+				$data['title'] = $filters['title'];
+		}
 
 		if (isset($filters['state'])) {
 			$stato = new States();
@@ -379,6 +392,13 @@ class Issues extends Connect {
 		unset($vfilters['state']);
 		unset($vfilters['coordinator']);
 
+		$title = $vfilters['title'];
+		unset($vfilters['title']);
+		if ($title != '') {
+			$where[] = "issues.title LIKE '%$title%'";
+		}
+
+
 		foreach ($vfilters as $name => $value)
 			if ($value != '-all')
 				$where[] = "issues.$name = '".$this->escape($value)."'";
@@ -420,7 +440,8 @@ class Issues extends Connect {
 
 		$a = $this->fetch_assoc("
 			SELECT issues.id, issues.priority, issues.state, issuetypes.$lang as type,
-				issues.title, issues.coordinator, issues.date, issues.last_mod, COUNT(tasks.id) AS tasks_opened
+				issues.title, issues.coordinator, issues.date, issues.last_mod, COUNT(tasks.id) AS tasks_opened,
+				(SELECT SUM(cost) FROM tasks WHERE tasks.issue = issues.id GROUP BY tasks.issue) AS cost
 				FROM (issues JOIN issuetypes ON issues.type = issuetypes.id)
 				LEFT JOIN (SELECT * FROM tasks WHERE state = 0) AS tasks ON issues.id = tasks.issue
 			$where_q

@@ -75,6 +75,7 @@ $lang['error_report_unknown'] = "The report dosn't exist";
 $lang['error_issue_report'] = 'You cannot add new issues.';
 $lang['error_entity'] = 'You cannot add new soruces of report.';
 $lang['error_issues'] = 'You cannot view issues.';
+$lang['error_no_permission'] = 'You do not have permission to view this page.';
 
 $lang['vald_root_cause'] = "Select cause category.";
 
@@ -83,6 +84,7 @@ $lang['vald_entity_required'] = "Choose a source of report from the list";
 $lang['vald_title_required'] = "Provide a title.";
 $lang['vald_title_too_long'] = "Title is too long, max: %d  characters.";
 $lang['vald_title_wrong_chars'] = "Forbidden characters in the title. Only letters, numerals, space, dasches, poins, commas are allowed.";
+
 $lang['vald_executor_required'] = "Choose the existing user or leave a problem unspecified.";
 $lang['vald_coordinator_required'] = "Coordinator has to be wiki user.";
 
@@ -111,6 +113,10 @@ $lang['vald_days_should_be_numeric'] = "Days have to be decimal.";
 
 $lang['vald_entity_too_long'] = 'Single source of report can have not have more than %d characters.';
 $lang['vald_entity_no_ascii'] = 'Source of report contains non-ASCII charters.';
+
+
+$lang['vald_type_wrong_chars'] = 'Type has to contain only numbers and letters.';
+$lang['vald_type_required'] = 'You must provide type name in both languages.';
 
 $lang['priority_marginal'] = 'marginal';
 $lang['priority_important'] = 'important';
@@ -294,3 +300,6 @@ $lang['close_issues'] = 'My issues';
 $lang['close_tasks'] = 'My tasks';
 
 $lang['proposals'] = 'Proposals';
+
+$lang['show_tasks_hidden'] = 'Show closed and rejected tasks';
+$lang['add_task'] = 'Add new task';

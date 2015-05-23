@@ -20,7 +20,7 @@ if (count($_POST) > 0) {
 
 	$query_uri = '';
 	foreach ($filters as $k => $v)
-		if ($v != '-all')
+		if ($v != '-all' && $v != '')
 			$query_uri .= ':'.urlencode($k).':'.urlencode($v);
 
 	header('Location: ?id='.$this->id('issues').$query_uri);
@@ -40,4 +40,12 @@ $template['issue_types'] = $issto->get();
 $template['coordinators'] = $usro->get();
 $template['years'] = $isso->get_years();
 
-$template['issues'] = $isso->get_filtered($value);
+$issues = $isso->get_filtered($value);
+$template['issues'] = $issues;
+
+
+$tcost = 0;
+foreach ($issues as $issue) {
+	$tcost += (int)$issue['cost'];
+}
+$template['total_cost'] = $tcost;
