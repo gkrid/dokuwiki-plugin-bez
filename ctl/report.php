@@ -1,7 +1,7 @@
 <?php
 include_once DOKU_PLUGIN."bez/models/report.php";
 
-if	( ! $helper->user_admin()) {
+if	( ! $helper->token_viewer() && ! $helper->user_viewer()) {
 	$errors[] = $bezlang['error_issue_report'];
 	$controller->preventDefault();
 } 

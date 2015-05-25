@@ -1,7 +1,7 @@
 <?php
 include_once DOKU_PLUGIN."bez/models/issuetypes.php";
 
-if	( ! $helper->user_editor() ) {
+if	( ! $helper->user_admin() ) {
 	$errors[] = $bezlang['error_no_permission'];
 	$controller->preventDefault();
 } 
@@ -36,6 +36,8 @@ if (count($_POST) > 0) {
 		$value['en'] = $row['en'];
 	} else 
 		unset($template['edit']);
+} else if ($action == 'clean') {
+	$typo->clean_empty();
 }
 
 $template['types'] = $types;

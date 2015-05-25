@@ -302,6 +302,7 @@ $lang['close_tasks'] = 'Moje zadania';
 
 $lang['proposals'] = 'Propozycje';
 
-$lang['show_tasks_hidden'] = 'Pokaż zadania zamknięte i odrzucone';
+$lang['show_tasks_hidden'] = 'Pokaż zadania wykonane i odrzucone';
 $lang['add_task'] = 'Dodaj zadanie';
 
+$lang['save_without_changing_date'] = 'Zapisz bez zmiany daty';

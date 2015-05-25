@@ -130,6 +130,15 @@ class Issuetypes extends Connect {
 		}
 		return $post;
 	}
+	public function clean_empty() {
+		$res = $this->get_clean();
+		foreach ($res as $r) {
+			if ((int)$r['refs'] == 0) {
+				$id = $r['id'];
+				$this->errquery("DELETE FROM issuetypes WHERE id=$id");
+			}
+		}
+	}
 }
 
 

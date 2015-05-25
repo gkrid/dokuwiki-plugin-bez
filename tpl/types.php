@@ -1,6 +1,9 @@
 <div class="info">
 Aby usunąć wybrany rekord, nadpisz jego pola pustymi wartościami.
 </div>
+<a href="<?php echo $template['uri'] ?>?id=<?php echo $this->id('types', 'action', 'clean') ?>">
+	Wyczyść typy bez referencji.
+</a>
 <table>
 <tr>
 	<th>Polski</th>

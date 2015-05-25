@@ -118,13 +118,14 @@ class Issues extends Connect {
 		return false;
 	}
 
-	public function update($post, $data, $id) {
+	public function update($post, $data, $id, $update_last_mod=true) {
 		global $INFO;
 		$issue = $this->get_clean($id);
 		if ($this->helper->user_admin() || $issue['coordinator'] == $INFO['client']) {
 			$from_user = $this->validate($post, 'update', $id);
 			$data = array_merge($data, $from_user);
-			$data['last_mod'] = time();
+			if ($update_last_mod)
+				$data['last_mod'] = time();
 			$this->errupdate($data, 'issues', $id);
 
 			$cache = new Bezcache();

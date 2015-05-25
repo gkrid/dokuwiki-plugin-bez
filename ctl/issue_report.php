@@ -18,20 +18,24 @@ $isso = new Issues();
 $usro = new Users();
 
 if (count($_POST) > 0) {
-
 	if ($action == 'update') {
-		$updated = $isso->update($_POST, array(), $issue_id);
-		if (count($errors) == 0 && !in_array($updated['coordinator'], $isso->coord_special)) {
-			$coord = $updated['coordinator'];
 
-			$issto = new Issuetypes();
-			$types = $issto->get();
-			$type = $types[$updated['type']];
+		if ($helper->user_admin() && isset($_POST['without']) && $_POST['without'] == '1') {
+			$isso->update($_POST, array(), $issue_id, false);
+		} else {
+			$updated = $isso->update($_POST, array(), $issue_id);
+			if (count($errors) == 0 && !in_array($updated['coordinator'], $isso->coord_special)) {
+				$coord = $updated['coordinator'];
 
-			$to = $usro->name($coord).' <'.$usro->email($coord).'>';
-			$subject = "[$conf[title]] #".$isso->lastid()." $type";
-			$body = "Zmiana w problemie: $uri".$this->issue_uri($isso->lastid());
-			$this->helper->mail($to, $subject, $body);
+				$issto = new Issuetypes();
+				$types = $issto->get();
+				$type = $types[$updated['type']];
+
+				$to = $usro->name($coord).' <'.$usro->email($coord).'>';
+				$subject = "[$conf[title]] #".$isso->lastid()." $type";
+				$body = "Zmiana w problemie: $uri".$this->issue_uri($isso->lastid());
+				$this->helper->mail($to, $subject, $body);
+			}
 		}
 	} else {
 		$data = array('reporter' => $usro->get_nick(), 'date' => time());

@@ -65,15 +65,20 @@ class Report extends Connect {
 	}
 
 	public function report($filters) {
-		global $bezlang;
+		global $bezlang, $conf;
+
+		$lang = 'pl';
+		if ($conf['lang'] != 'pl')
+			$lang = 'en';
 
 
 		$isso = new Issues();
 		$where = $this->where('issues.last_mod', $filters);
 
-		$report['issues'] = $this->fetch_assoc("SELECT issues.type, COUNT(DISTINCT issues.id) AS number,
+		$report['issues'] = $this->fetch_assoc("SELECT issuetypes.$lang as type, COUNT(DISTINCT issues.id) AS number,
 												SUM(tasks.cost) as totalcost
-												FROM issues LEFT JOIN tasks ON issues.id = tasks.issue
+												FROM issues JOIN issuetypes ON type = issuetypes.id
+												LEFT JOIN tasks ON issues.id = tasks.issue
 												WHERE issues.state = 1 $where
 												GROUP BY type
 												ORDER BY issues.type");
