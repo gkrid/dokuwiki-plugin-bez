@@ -239,7 +239,7 @@ $lang['report_issues'] = 'Problemy';
 $lang['report_tasks'] = 'Zadania';
 $lang['report_causes'] = 'Przyczyny';
 $lang['report_priority'] = 'Czas reakcji';
-$lang['report_subhead'] = 'dotyczy zamkniętych problemów';
+$lang['report_subhead'] = 'dotyczy zamkniętych problemów i zadań';
 
 $lang['priority'] = 'Priorytet';
 $lang['average'] = 'Średnia';

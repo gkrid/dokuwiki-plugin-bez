@@ -246,7 +246,7 @@ $lang['report_issues'] = 'Issues';
 $lang['report_tasks'] = 'Tasks';
 $lang['report_causes'] = 'Causes';
 $lang['report_priority'] = 'Raction time';
-$lang['report_subhead'] = 'for closed issues';
+$lang['report_subhead'] = 'for closed issues and tasks';
 
 $lang['priority'] = 'Priority';
 $lang['average'] = 'Average';
