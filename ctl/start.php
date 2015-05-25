@@ -4,6 +4,10 @@ include_once DOKU_PLUGIN."bez/models/comments.php";
 include_once DOKU_PLUGIN."bez/models/causes.php";
 include_once DOKU_PLUGIN."bez/models/tasks.php";
 
+/*w celach importu*/
+include_once DOKU_PLUGIN."bez/models/issuetypes.php";
+new Issuetypes();
+
 $isso = new Issues();
 $tasko= new Tasks();
 
