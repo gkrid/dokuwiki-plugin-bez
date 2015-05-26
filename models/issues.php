@@ -11,7 +11,7 @@ class Issues extends Connect {
 	public function __construct() {
 		global $errors;
 		parent::__construct();
-		$q = "CREATE TABLE IF NOT EXISTS issues (
+		$createq = "CREATE TABLE IF NOT EXISTS issues (
 				id INTEGER PRIMARY KEY,
 				priority INTEGER NOT NULL DEFAULT 0,
 				title TEXT NOT NULL,
@@ -23,7 +23,68 @@ class Issues extends Connect {
 				reporter TEXT NOT NULL,
 				date INTEGER NOT NULL,
 				last_mod INTEGER)";
-	$this->errquery($q);
+	$this->errquery($createq);
+	
+	$q = "PRAGMA table_info(issues)";
+	$a = $this->fetch_assoc($q);
+	$entity = false;
+	foreach ($a as $r) 
+		if ($r['name'] == 'entity') {
+			$entity = true;
+			break;
+		}
+	if ($entity) {
+		$q = "	BEGIN TRANSACTION;
+		CREATE TEMPORARY TABLE issues_backup
+		(
+				id INTEGER PRIMARY KEY,
+				priority INTEGER NOT NULL DEFAULT 0,
+				title TEXT NOT NULL,
+				description TEXT NOT NULL,
+				state INTEGER NOT NULL,
+				opinion TEXT NULL,
+				type INTEGER NOT NULL,
+				coordinator TEXT NOT NULL,
+				reporter TEXT NOT NULL,
+				date INTEGER NOT NULL,
+				last_mod INTEGER);
+		INSERT INTO issues_backup SELECT
+				id,
+				priority,
+				title,
+				description,
+				state,
+				opinion,
+				type,
+				coordinator,
+				reporter,
+				date,
+				last_mod
+			FROM issues;
+		DROP TABLE issues;
+		$createq;
+		INSERT INTO issues SELECT 
+				id,
+				priority,
+				title,
+				description,
+				state,
+				opinion,
+				type,
+				coordinator,
+				reporter,
+				date,
+				last_mod
+			FROM issues_backup;
+		DROP TABLE issues_backup;
+		COMMIT;
+		";
+		$qa = explode(';', $q);
+		foreach ($qa as $e)  {
+			$this->db->query($e);
+		}
+	}
+
 	}
 	public function validate($post, $state='add', $issue_id=-1)
 	{
@@ -244,7 +305,7 @@ class Issues extends Connect {
 			$lang = 'en';
 
 		$a = $this->fetch_assoc("SELECT issues.id, priority, title, description, state, opinion,
-								issuetypes.$lang as type, entity, coordinator, reporter, date, last_mod
+								issuetypes.$lang as type, coordinator, reporter, date, last_mod
 								FROM issues JOIN issuetypes ON issues.type = issuetypes.id WHERE issues.id=$id");
 		if (count($a) == 0) {
 			$errors[] = $bezlang['error_issue_id_not_specifed'];
