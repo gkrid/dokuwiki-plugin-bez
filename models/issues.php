@@ -306,7 +306,7 @@ class Issues extends Connect {
 
 		$a = $this->fetch_assoc("SELECT issues.id, priority, title, description, state, opinion,
 								issuetypes.$lang as type, coordinator, reporter, date, last_mod
-								FROM issues JOIN issuetypes ON issues.type = issuetypes.id WHERE issues.id=$id");
+								FROM issues LEFT JOIN issuetypes ON issues.type = issuetypes.id WHERE issues.id=$id");
 		if (count($a) == 0) {
 			$errors[] = $bezlang['error_issue_id_not_specifed'];
 			return array();
@@ -504,7 +504,7 @@ class Issues extends Connect {
 			SELECT issues.id, issues.priority, issues.state, issuetypes.$lang as type,
 				issues.title, issues.coordinator, issues.date, issues.last_mod, COUNT(tasks.id) AS tasks_opened,
 				(SELECT SUM(cost) FROM tasks WHERE tasks.issue = issues.id GROUP BY tasks.issue) AS cost
-				FROM (issues JOIN issuetypes ON issues.type = issuetypes.id)
+				FROM (issues LEFT JOIN issuetypes ON issues.type = issuetypes.id)
 				LEFT JOIN (SELECT * FROM tasks WHERE state = 0) AS tasks ON issues.id = tasks.issue
 			$where_q
 			GROUP BY issues.id, issues.state, issues.type, issues.title, issues.date, issues.last_mod
