@@ -82,7 +82,7 @@ $lang['vald_type_required'] = 'Określ typ problemu.';
 $lang['vald_entity_required'] = 'Wybierz źródło zgłoszenia z listy.';
 $lang['vald_title_required'] = 'Podaj tytuł.';
 $lang['vald_title_too_long'] = 'Za długi tytuł, max: %d znaków.';
-$lang['vald_title_wrong_chars'] = 'Niedozwolone znaki w tytule. Dozwolone są: litery, cyfry, spacje, myślniki, kropki i przecinki.';
+$lang['vald_title_wrong_chars'] = 'Niedozwolone znaki w tytule. Dozwolone są: litery, cyfry, spacje, myślniki, podkreślniki, kropki i przecinki.';
 $lang['vald_executor_required'] = 'Wybierz istniejącego użytkownika albo pozostaw problem nieprzypisany do nikogo.';
 $lang['vald_coordinator_required'] = 'Koordynator musi być użytkownikiem wiki.';
 

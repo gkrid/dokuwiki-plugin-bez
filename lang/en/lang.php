@@ -83,7 +83,7 @@ $lang['vald_type_required'] = "Specify a type of the problem";
 $lang['vald_entity_required'] = "Choose a source of report from the list";
 $lang['vald_title_required'] = "Provide a title.";
 $lang['vald_title_too_long'] = "Title is too long, max: %d  characters.";
-$lang['vald_title_wrong_chars'] = "Forbidden characters in the title. Only letters, numerals, space, dasches, poins, commas are allowed.";
+$lang['vald_title_wrong_chars'] = "Forbidden characters in the title. Only letters, numbers, spaces, dashes, floors, points and commas are allowed.";
 
 $lang['vald_executor_required'] = "Choose the existing user or leave a problem unspecified.";
 $lang['vald_coordinator_required'] = "Coordinator has to be wiki user.";

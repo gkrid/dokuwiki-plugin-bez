@@ -126,7 +126,7 @@ class Issues extends Connect {
 			$errors['title'] = $bezlang['vald_title_required'];
 		} elseif (strlen($post['title']) > $title_max) {
 			$errors['title'] = str_replace('%d', $title_max, $bezlang['vald_title_too_long']);
-		} elseif( ! preg_match('/^[[:alnum:] \-,.]*$/ui', $post['title'])) {
+		} elseif( ! preg_match('/^[[:alnum:] \-,._]*$/ui', $post['title'])) {
 			$errors['title'] = $bezlang['vald_title_wrong_chars'];
 		} 
 		$data['title'] = $post['title'];
@@ -406,7 +406,7 @@ class Issues extends Connect {
 		$data = array('title' => '', 'state' => '-all', 'type' => '-all', 'coordinator' => '-all', 'year' => '-all');
 
 		if (isset($filters['title'])) {
-			if (strlen($post['title']) <= $title_max && preg_match('/^[[:alnum:] \-,.]*$/ui', $filters['title']))
+			if (strlen($post['title']) <= $title_max && preg_match('/^[[:alnum:] \-,._]*$/ui', $filters['title']))
 				$data['title'] = $filters['title'];
 		}
 
@@ -457,7 +457,8 @@ class Issues extends Connect {
 		$title = $vfilters['title'];
 		unset($vfilters['title']);
 		if ($title != '') {
-			$where[] = "issues.title LIKE '%$title%'";
+			//$where[] = "issues.title LIKE '%".str_replace('_', '\\_', $title)."%' ESCAPE '\\'";
+			$where[] = "issues.title GLOB '*$title*'";
 		}
 
 
