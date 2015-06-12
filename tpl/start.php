@@ -44,7 +44,7 @@
 							<?php echo $bezlang['issue_rejected'] ?>
 						<?php endif ?>
 						<?php echo $elm['type'] ?>
-						[<?php echo $elm['entity'] ?>] <?php echo $elm['title'] ?>
+						"<?php echo $elm['title'] ?>"
 						<span class="author"><?php echo $bezlang['coordinator'] ?>: <strong><?php echo $elm['coordinator'] ?></strong></span>
 				</a>
 			<?php elseif (strstr($elm['class'], 'task')): ?>

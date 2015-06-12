@@ -266,15 +266,25 @@ class Issues extends Connect {
 	}
 
 	public function get_by_days() {
+		global $bezlang, $errors, $conf;
 		if (!$this->helper->user_viewer()) return false;
 
-		$res = $this->fetch_assoc("SELECT * FROM issues ORDER BY date DESC");
+		$lang = 'pl';
+		if ($conf['lang'] != 'pl')
+			$lang = 'en';
+
+		$res = $this->fetch_assoc("SELECT issues.id, issuetypes.$lang as type, title, coordinator, date
+								FROM issues LEFT JOIN issuetypes ON issues.type = issuetypes.id
+								ORDER BY date DESC");
 		$create = $this->sort_by_days($res, 'date');
 		foreach ($create as $day => $issues)
 			foreach ($issues as $ik => $issue)
 				$create[$day][$ik]['class'] = 'issue_created';
 
-		$res2 = $this->fetch_assoc("SELECT * FROM issues WHERE state = 1 AND coordinator != '-rejected' AND coordinator != '-proposal' ORDER BY last_mod DESC");
+		$res2 = $this->fetch_assoc("SELECT issues.id, issuetypes.$lang as type, title, coordinator, last_mod
+									FROM issues LEFT JOIN issuetypes ON issues.type = issuetypes.id
+									WHERE state = 1 AND coordinator != '-rejected' AND coordinator != '-proposal'
+									ORDER BY last_mod DESC");
 		$close = $this->sort_by_days($res2, 'last_mod');
 		foreach ($close as $day => $issues)
 			foreach ($issues as $ik => $issue) {
@@ -282,7 +292,9 @@ class Issues extends Connect {
 				$close[$day][$ik]['date'] = $close[$day][$ik]['last_mod'];
 			}
 
-		$res3 = $this->fetch_assoc("SELECT * FROM issues WHERE coordinator = '-rejected 'ORDER BY last_mod DESC");
+		$res3 = $this->fetch_assoc("SELECT issues.id, issuetypes.$lang as type, title, coordinator, date, last_mod
+									FROM issues LEFT JOIN issuetypes ON issues.type = issuetypes.id
+									WHERE coordinator = '-rejected' ORDER BY last_mod DESC");
 		$rejected = $this->sort_by_days($res3, 'last_mod');
 		foreach ($rejected as $day => $issues)
 			foreach ($issues as $ik => $issue) {
