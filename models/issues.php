@@ -415,11 +415,17 @@ class Issues extends Connect {
 	/*waliduje te pola które są brane przy filtrowaniu*/
 	public function validate_filters($filters) {
 
-		$data = array('title' => '', 'state' => '-all', 'type' => '-all', 'coordinator' => '-all', 'year' => '-all');
+	$data = array('title' => '', 'state' => '-all', 'type' => '-all', 'coordinator' => '-all', 'year' => '-all',
+				'sort_open' => '');
 
 		if (isset($filters['title'])) {
 			if (strlen($post['title']) <= $title_max && preg_match('/^[[:alnum:] \-,._]*$/ui', $filters['title']))
 				$data['title'] = $filters['title'];
+		}
+
+		if (isset($filters['sort_open'])) {
+			if ($filters['sort_open'] == 'on')
+				$data['sort_open'] = 'on';
 		}
 
 		if (isset($filters['state'])) {
@@ -468,6 +474,9 @@ class Issues extends Connect {
 
 		$title = $vfilters['title'];
 		unset($vfilters['title']);
+
+		$sort_open = $vfilters['sort_open'];
+		unset($vfilters['sort_open']);
 		if ($title != '') {
 			//$where[] = "issues.title LIKE '%".str_replace('_', '\\_', $title)."%' ESCAPE '\\'";
 			$where[] = "issues.title GLOB '*$title*'";
@@ -513,15 +522,20 @@ class Issues extends Connect {
 		if ($conf['lang'] != 'pl')
 			$lang = 'en';
 
+		if (isset($sort_open) && $sort_open == 'on')
+			$order = 'ORDER BY issues.date DESC, issues.priority DESC, issues.last_mod DESC';
+		else
+			$order = 'ORDER BY issues.priority DESC, issues.last_mod DESC, issues.date DESC';
+
 		$a = $this->fetch_assoc("
 			SELECT issues.id, issues.priority, issues.state, issuetypes.$lang as type,
 				issues.title, issues.coordinator, issues.date, issues.last_mod, COUNT(tasks.id) AS tasks_opened,
 				(SELECT SUM(cost) FROM tasks WHERE tasks.issue = issues.id GROUP BY tasks.issue) AS cost
 				FROM (issues LEFT JOIN issuetypes ON issues.type = issuetypes.id)
 				LEFT JOIN (SELECT * FROM tasks WHERE state = 0) AS tasks ON issues.id = tasks.issue
-			$where_q
+				$where_q
 			GROUP BY issues.id, issues.state, issues.type, issues.title, issues.date, issues.last_mod
-			ORDER BY issues.priority DESC, issues.last_mod DESC, issues.date DESC
+			$order 
 			");
 		foreach ($a as &$row)
 			$row = $this->join($row);

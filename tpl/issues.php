@@ -51,6 +51,10 @@
 		<?php endforeach ?>
 		</select>
 	</label>
+	<label><?php echo $bezlang['sort_by_open_date'] ?>:
+			<input type="checkbox" name="sort_open"
+			<?php if (isset($value['sort_open']) && $value['sort_open'] == 'on') echo 'checked="checked"' ?>>
+	</label>
 	<input type="submit" value="<?php echo $bezlang['filter'] ?>" />
 </div>
 

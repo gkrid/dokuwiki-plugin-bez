@@ -28,7 +28,7 @@ if (count($_POST) > 0) {
 
 /*rekordy parzyste to nagłówki, nieparzyste to ich wartości.*/
 /*np. status:1:type:2:podmiot:PCA*/
-$value = array('state' => '-all', 'type' => '-all', 'coordinator' => '-all', 'year' => '-all');
+$value = array('state' => '-all', 'type' => '-all', 'coordinator' => '-all', 'year' => '-all', 'sort_open' => '');
 for ($i = 0; $i < count($params); $i += 2)
 	$value[urldecode($params[$i])] = urldecode($params[$i+1]);
 

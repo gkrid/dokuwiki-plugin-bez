@@ -306,3 +306,5 @@ $lang['show_tasks_hidden'] = 'Show closed and rejected tasks';
 $lang['add_task'] = 'Add new task';
 
 $lang['save_without_changing_date'] = 'Save without changing date';
+
+$lang['sort_by_open_date'] = 'Sort by open date';

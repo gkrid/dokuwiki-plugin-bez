@@ -307,3 +307,5 @@ $lang['show_tasks_hidden'] = 'Pokaż zadania wykonane i odrzucone';
 $lang['add_task'] = 'Dodaj zadanie';
 
 $lang['save_without_changing_date'] = 'Zapisz bez zmiany daty';
+
+$lang['sort_by_open_date'] = 'Sortuj wg daty otwarcia';
