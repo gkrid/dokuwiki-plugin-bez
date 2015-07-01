@@ -64,7 +64,7 @@ class Report extends Connect {
 		return '';
 	}
 
-	public function report($filters) {
+	public function report($filters, $issues_date='issues.last_mod', $tasks_date='tasks.close_date') {
 		global $bezlang, $conf;
 
 		$lang = 'pl';
@@ -73,24 +73,33 @@ class Report extends Connect {
 
 
 		$isso = new Issues();
-		$where = $this->where('issues.last_mod', $filters);
+		$where = $this->where($issues_date, $filters);
 
 		$report['issues'] = $this->fetch_assoc("SELECT issuetypes.$lang as type, COUNT(DISTINCT issues.id) AS number,
-												SUM(tasks.cost) as totalcost
+												SUM(tasks.cost) as totalcost,
+												AVG(issues.last_mod-issues.date) AS average
 												FROM issues JOIN issuetypes ON type = issuetypes.id
 												LEFT JOIN tasks ON issues.id = tasks.issue
 												WHERE issues.state = 1 $where
 												GROUP BY type
 												ORDER BY issues.type");
 		$report['issues'] = $isso->join_all($report['issues']);
+		foreach ($report['issues'] as &$issue) { 
+			$issue['average'] = $this->helper->days((int)$issue['average']);
+		}
 		$a = $this->fetch_assoc("SELECT COUNT(DISTINCT issues.id) AS total, SUM(cost) AS totalcost
 								FROM issues LEFT JOIN tasks ON issues.id = tasks.issue
 								WHERE issues.state = 1 $where");
 		$report['issues_total'] = $a[0]['total'];
 		$report['issues_totalcost'] = $a[0]['totalcost'];
+								
+		$a = $this->fetch_assoc("SELECT AVG(issues.last_mod-issues.date) AS average
+								FROM issues 
+								WHERE issues.state = 1 $where");
+		$report['issues_average'] = $this->helper->days((int)$a[0]['average']);
 
 
-		$where = $this->where('tasks.close_date', $filters);
+		$where = $this->where($tasks_date, $filters);
 		$tasko = new Tasks();
 		$report['tasks'] = $this->fetch_assoc("SELECT tasks.action, COUNT(*) AS number, SUM(cost) AS totalcost
 												FROM tasks JOIN issues ON tasks.issue = issues.id
@@ -106,7 +115,7 @@ class Report extends Connect {
 		$report['tasks_totalcost'] = $a[0]['totalcost'];
 
 
-		$where = $this->where('issues.last_mod', $filters);
+		$where = $this->where($issues_date, $filters);
 
 		$caso = new Causes();
 		$report['causes'] = $this->fetch_assoc("SELECT rootcause, COUNT(*) AS number
@@ -121,7 +130,7 @@ class Report extends Connect {
 		$report['causes_total'] = $a[0]['total'];
 
 
-		$where = $this->where('issues.last_mod', $filters);
+		$where = $this->where($issues_date, $filters);
 		$report['priorities'] = $this->fetch_assoc("SELECT priority, COUNT(*) AS number, AVG(last_mod-date) AS average
 													FROM issues
 													WHERE state = 1 $where
@@ -144,6 +153,65 @@ class Report extends Connect {
 								WHERE state = 1 $where");
 		$report['priorities_total'] = $a[0]['total'];
 		$report['priorities_average'] = $this->helper->days((int)$a[0]['average']);
+
+		return $report;
+	}
+	public function report_open($filters, $issues_date='issues.date', $tasks_date='tasks.date') {
+		global $bezlang, $conf;
+
+		$lang = 'pl';
+		if ($conf['lang'] != 'pl')
+			$lang = 'en';
+
+
+		$isso = new Issues();
+		$where = $this->where($issues_date, $filters, 'WHERE');
+
+		$report['issues'] = $this->fetch_assoc("SELECT issuetypes.$lang as type, COUNT(DISTINCT issues.id) AS number,
+												SUM(tasks.cost) as totalcost
+												FROM issues JOIN issuetypes ON type = issuetypes.id
+												LEFT JOIN tasks ON issues.id = tasks.issue
+												$where
+												GROUP BY type
+												ORDER BY issues.type");
+		$report['issues'] = $isso->join_all($report['issues']);
+		$a = $this->fetch_assoc("SELECT COUNT(DISTINCT issues.id) AS total, SUM(cost) AS totalcost
+								FROM issues LEFT JOIN tasks ON issues.id = tasks.issue
+								$where");
+		$report['issues_total'] = $a[0]['total'];
+		$report['issues_totalcost'] = $a[0]['totalcost'];
+								
+
+		$where = $this->where($tasks_date, $filters, 'WHERE');
+
+		$tasko = new Tasks();
+		$report['tasks'] = $this->fetch_assoc("SELECT tasks.action, COUNT(*) AS number, SUM(cost) AS totalcost
+												FROM tasks JOIN issues ON tasks.issue = issues.id
+												$where
+												GROUP BY action
+												ORDER BY action");
+		$report['tasks'] = $tasko->join_all($report['tasks']);
+		$a = $this->fetch_assoc("SELECT COUNT(*) AS total, SUM(cost) AS totalcost
+								FROM tasks JOIN issues ON tasks.issue = issues.id
+								$where");
+
+		$report['tasks_total'] = $a[0]['total'];
+		$report['tasks_totalcost'] = $a[0]['totalcost'];
+
+
+		$where = $this->where($issues_date, $filters, 'WHERE');
+
+		$caso = new Causes();
+		$report['causes'] = $this->fetch_assoc("SELECT rootcause, COUNT(*) AS number
+												FROM causes JOIN issues ON causes.issue = issues.id
+												$where
+												GROUP BY rootcause
+												ORDER BY number DESC, rootcause");
+		$report['causes'] = $caso->join_all($report['causes']);
+		$a = $this->fetch_assoc("SELECT COUNT(*) AS total
+									FROM causes JOIN issues ON causes.issue = issues.id
+									$where");
+		$report['causes_total'] = $a[0]['total'];
 
 		return $report;
 	}

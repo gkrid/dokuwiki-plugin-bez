@@ -1,6 +1,5 @@
 <h1 class="bez_report">
 <?php echo $template['title'] ?>
-<span><?php echo $bezlang['report_subhead'] ?></span>
 </h1>
 
 <h2><?php echo $bezlang['report_issues'] ?></h2>
@@ -9,6 +8,9 @@
 		<th><?php echo $bezlang['type'] ?></th>
 		<th><?php echo $bezlang['number'] ?></th>
 		<th><?php echo $bezlang['totalcost'] ?></th>
+		<?php if (!isset($this->report_open)): ?>
+		<th><?php echo $bezlang['report_priority'] ?></th>
+		<?php endif ?>
 	</tr>
 	<?php foreach ($template['report']['issues'] as $issue): ?>
 		<tr>
@@ -21,12 +23,18 @@
 					<?php echo $issue['totalcost'] ?>
 				<?php endif ?>
 			</td>
+			<?php if (!isset($this->report_open)): ?>
+			<td><?php echo $issue['average'] ?></td>
+			<?php endif ?>
 		</tr>
 	<?php endforeach ?>
 	<tr>
 		<th><?php echo $bezlang['report_total'] ?></th>
 		<td><?php echo $template['report']['issues_total'] ?></td>
 		<td><?php echo $template['report']['issues_totalcost'] ?></td>
+		<?php if (!isset($this->report_open)): ?>
+		<td><?php echo $template['report']['issues_average'] ?></td>
+		<?php endif ?>
 	</tr>
 </table>
 <h2><?php echo $bezlang['report_tasks'] ?></h2>
@@ -74,6 +82,7 @@
 	</tr>
 </table>
 
+<?php if (!isset($this->report_open)): ?>
 <h2><?php echo $bezlang['report_priority'] ?></h2>
 <table class="bez bez_sumarise">
 	<tr>
@@ -94,3 +103,4 @@
 		<td><?php echo $template['report']['priorities_average'] ?></td>
 	</tr>
 </table>
+<?php endif ?>

@@ -38,9 +38,16 @@ if (isset($value['year']))
 if (isset($value['month']))
 	$template['hidden']['month'] = $value['month'];
 
-$template['report'] = $repo->report($value);
+if (isset($this->report_open)) {
+	$template['report'] = $repo->report_open($value);
+	$subtitle = $bezlang['report_open'];
+} else {
+	$template['report'] = $repo->report($value);
+	$subtitle = $bezlang['report'];
+}
 
-$template['title'] = $bezlang['report'].($value['year'] != '-all' ? ' '.$value['year'] : '').
+
+$template['title'] = $subtitle.($value['year'] != '-all' ? ' '.$value['year'] : '').
 					($value['month'] != '-all' ? '/'.($value['month'] > 10 ? $value['month'] : '0'.$value['month']) : '');
 
 $template['uri'] = $uri.'?'.$_SERVER['QUERY_STRING'];

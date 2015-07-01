@@ -4,7 +4,8 @@ $lang['bez_short'] = 'BEZ';
 $lang['bds_timeline'] = 'Historia';
 $lang['bds_issues'] = 'Problemy';
 $lang['bds_issue_report'] = 'Zgłoś problem';
-$lang['report'] = 'Raport';
+$lang['report'] = 'Raport zamkniętych';
+$lang['report_open'] = 'Raport otwartych';
 $lang['bez_tasks'] = 'Zadania';
 
 

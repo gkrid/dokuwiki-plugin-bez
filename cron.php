@@ -90,7 +90,7 @@ foreach ($msg as $user => $data) {
 
 
 	$to = $udata['name'].' <'.$udata['mail'].'>';
-	$subject = "[$conf[title]] Termin rozwiązania problemu";
+	$subject = "[BEZ][$conf[title]] Termin rozwiązania problemu";
 	$body = '';
 	$no = count($data['issues']); 
 	if ($no > 0) {

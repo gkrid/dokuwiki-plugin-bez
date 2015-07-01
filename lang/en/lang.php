@@ -4,7 +4,8 @@ $lang['bez_short'] = "BEZ";
 $lang['bds_timeline'] = "History";
 $lang['bds_issues'] = "Registers";
 $lang['bds_issue_report'] = "Report a problem";
-$lang['report'] = "Report";
+$lang['report'] = "Report of closed";
+$lang['report_open'] = 'Raport of opened';
 $lang['bez_tasks'] = 'Tasks';
 
 $lang['issues'] = "Problems";

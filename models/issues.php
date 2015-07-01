@@ -535,6 +535,14 @@ class Issues extends Connect {
 			return time();
 	}
 
+	public function get_oldest_open_date() {
+		$a = $this->fetch_assoc("SELECT date FROM issues ORDER BY date LIMIT 1");
+		if (count($a) > 0)
+			return (int)$a[0]['date'];
+		else
+			return time();
+	}
+
 	public function cron_get_unsolved() {
 		$a = $this->fetch_assoc("SELECT id, title, coordinator FROM issues
 								WHERE state=0 AND coordinator <> '-proposal' AND coordinator <> '-rejected'");
