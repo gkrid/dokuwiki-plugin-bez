@@ -96,6 +96,10 @@
 		<a href="<?php echo $template['uri'] ?>?id=<?php echo $this->id('tasks', 'issue', $issue['id'], 'state', 0) ?>">
 				<?php echo $issue['tasks_opened'] ?>
 		</a>
+			/
+		<a href="<?php echo $template['uri'] ?>?id=<?php echo $this->id('tasks', 'issue', $issue['id']) ?>">
+				<?php echo $issue['tasks_all'] ?>
+		</a>
 			</td>
 		</tr>
 	<?php endforeach ?>

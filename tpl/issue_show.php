@@ -106,6 +106,9 @@
 	</div>
 </div>
 
+<?php if ($template['is_proposal']): ?> 
+	<div class="info"><?php echo $bezlang['issue_is_proposal'] ?></div>
+<?php else: ?>
 <!-- Causes -->
 <div class="bds_block bez_standard_block" id="bez_causes">
 	<h1><?php echo $bezlang['causes'] ?> <span>(<?php echo count($template['causes']) ?>)</span></h1>
@@ -246,6 +249,7 @@
 			</div>
 	<?php endforeach ?>
 	<?php if ($template['issue_opened'] && ($template['user_is_coordinator'] || strstr($template['task_action'], 'update'))): ?> 
+
 		<a style="display:none;" href="#" class="add_task"><?php echo $bezlang['add_task'] ?></a>
 		<form class="<?php $e = explode(':', $template['task_action']); echo $e[0] ?>"
 			action="<?php echo $template['uri'] ?>:<?php echo $template['task_action'] ?>#z_" method="POST">
@@ -336,6 +340,8 @@
 	<?php endif ?>
 	<a name="z_"></a>
 	</div>
+<?php endif ?>
+
 	<?php if ($template['closed']): ?>
 		<div class="bds_block" id="bds_closed">
 			<div class="info">

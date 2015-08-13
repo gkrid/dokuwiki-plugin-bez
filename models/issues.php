@@ -210,6 +210,13 @@ class Issues extends Connect {
 		return true;
 	}
 
+	public function is_proposal($id) {
+		$issue = $this->get_clean($id);
+		if ($issue['coordinator'] == '-proposal')
+			return true;
+		return false;
+	}
+
 	public function join_coordinator($coord) {
 		global $bezlang;
 		$usro = new Users();
@@ -223,7 +230,8 @@ class Issues extends Connect {
 
 	public function join($a) {
 		$stao = new States();
-		$a['state'] = $stao->name($a['state'], $a['coordinator']);
+		$tasko = new Tasks();
+		$a['state'] = $stao->name($a['state'], $a['coordinator'], $tasko->any_task($a['id']));
 
 		$usro = new Users();
 		$a['reporter'] = $usro->name($a['reporter']);
@@ -430,7 +438,7 @@ class Issues extends Connect {
 
 		if (isset($filters['state'])) {
 			$stato = new States();
-			if ($filters['state'] == '-all' || array_key_exists($filters['state'], $stato->get_all()))
+			if ($filters['state'] == '-all' || array_key_exists($filters['state'], $stato->get_list()))
 				$data['state'] = $filters['state'];
 		}
 
@@ -491,7 +499,11 @@ class Issues extends Connect {
 			/*-proposal or -rejected*/
 			if (strstr($state, '-')) 
 				$where[] = "issues.coordinator = '$state'";
-			else {
+			/*rejected*/
+			else if ($state == 2) {
+				$where[] = "issues.state = 1";
+				$where[] = "tasks_all == 0";
+			} else {
 				$where[] = "issues.state = $state";
 				$where[] = "issues.coordinator != '-proposal'";
 				$where[] = "issues.coordinator != '-rejected'";
@@ -530,9 +542,10 @@ class Issues extends Connect {
 		$a = $this->fetch_assoc("
 			SELECT issues.id, issues.priority, issues.state, issuetypes.$lang as type,
 				issues.title, issues.coordinator, issues.date, issues.last_mod, COUNT(tasks.id) AS tasks_opened,
+				(SELECT COUNT(tasks.id) FROM tasks WHERE issues.id = tasks.issue) AS tasks_all,
 				(SELECT SUM(cost) FROM tasks WHERE tasks.issue = issues.id GROUP BY tasks.issue) AS cost
 				FROM (issues LEFT JOIN issuetypes ON issues.type = issuetypes.id)
-				LEFT JOIN (SELECT * FROM tasks WHERE state = 0) AS tasks ON issues.id = tasks.issue
+				LEFT JOIN (SELECT id, issue FROM tasks WHERE state = 0) AS tasks ON issues.id = tasks.issue
 				$where_q
 			GROUP BY issues.id, issues.state, issues.type, issues.title, issues.date, issues.last_mod
 			$order 

@@ -1,18 +1,26 @@
 <?php
 
 class States {
-	public function get() {
+	public function get($anytask = true) {
 		global $bezlang;
-		return array(	
-						$bezlang['state_opened'],
-						$bezlang['state_closed']
-					);
+		$a = array($bezlang['state_opened']);
+		if ($anytask)
+			$a[] = $bezlang['state_closed'];
+		else
+			$a[] = $bezlang['state_rejected'];
+		return $a;
 	}
-	public function get_all() {
+	public function get_list() {
 			global $bezlang;
-			$ret = $this->get();
 			$ret['-proposal'] = $bezlang['state_proposal'];
-			$ret['-rejected'] = $bezlang['state_rejected'];
+			$ret = array_merge($ret ,$this->get());
+			$ret[] = $bezlang['state_rejected'];
+			return $ret;
+	}
+	public function get_all($anytask = true) {
+			global $bezlang;
+			$ret = $this->get($anytask);
+			$ret['-proposal'] = $bezlang['state_proposal'];
 			return $ret;
 	}
 	public function id($name) {
@@ -28,8 +36,8 @@ class States {
 		return $key == 1;
 	}
 	/*pobierz nazwę stanu, uwzględniając -proposal i -rejected*/
-	public function name($id, $coordinator) {
-		$a = $this->get_all();
+	public function name($id, $coordinator, $anytask=true) {
+		$a = $this->get_all($anytask);
 		if (strstr($coordinator, '-'))
 			return $a[$coordinator];
 		 else
@@ -40,9 +48,6 @@ class States {
 		return 0;
 	}
 	
-	public function rejected() {
-		return 2;
-	}
 	public function proposal() {
 		return '-proposal';
 	}

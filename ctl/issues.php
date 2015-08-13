@@ -35,7 +35,7 @@ for ($i = 0; $i < count($params); $i += 2)
 
 $template['uri'] = $uri; 
 
-$template['states'] = $stao->get_all();
+$template['states'] = $stao->get_list();
 $template['issue_types'] = $issto->get();
 $template['coordinators'] = $usro->get();
 $template['years'] = $isso->get_years();

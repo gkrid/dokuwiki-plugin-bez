@@ -35,10 +35,6 @@
 <option <?php if ($value['coordinator'] == '-proposal') echo 'selected' ?>
 	value="-proposal">--- <?php echo $bezlang['state_proposal'] ?> ---</option>
 
-<?php if ($template['action'] == 'update'): ?>
-	<option <?php if ($value['coordinator'] == '-rejected') echo 'selected' ?>
-		value="-rejected">--- <?php echo $bezlang['state_rejected'] ?> ---</option>
-<?php endif ?>
 <?php foreach ($template['nicks'] as $nick => $name): ?>
 	<option <?php if ($value['coordinator'] == $nick) echo 'selected' ?>
 	 value="<?php echo $nick ?>"><?php echo $name ?></option>

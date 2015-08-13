@@ -112,7 +112,9 @@ class Tasks extends Event {
 	}
 	public function add($post, $data=array())
 	{
-		if ($this->helper->user_coordinator($data['issue']) && $this->issue->opened($data['issue'])) {
+		if ($this->helper->user_coordinator($data['issue']) &&
+			$this->issue->opened($data['issue']) &&
+			!$this->issue->is_proposal($data['issue'])) {
 			$from_user = $this->validate($post);
 			$data = array_merge($data, $from_user);
 
@@ -167,6 +169,13 @@ class Tasks extends Event {
 		}
 		return false;
 	}
+	public function any_task($issue) {
+		$issue = (int)$issue;
+		$a = $this->fetch_assoc("SELECT * FROM tasks WHERE issue=$issue");
+		if (count($a) > 0)
+			return true;
+		return false;
+	}
 	public function get_by_days() {
 		if (!$this->helper->user_viewer()) return false;
 
@@ -207,7 +216,7 @@ class Tasks extends Event {
 		$row['executor_email'] = $usro->email($row['executor']);
 		$row['executor'] = $usro->name($row['executor']);
 		$row['action'] = $taskao->name($row['action']);
-		$row['rejected'] = $row['state'] == $stato->rejected();
+		//$row['rejected'] = $row['state'] == $stato->rejected();
 		$row['state'] = $taskso->name($row['state']);
 
 		$wiki_text = $cache->get_task($row['id']);

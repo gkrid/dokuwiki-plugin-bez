@@ -309,3 +309,5 @@ $lang['add_task'] = 'Dodaj zadanie';
 $lang['save_without_changing_date'] = 'Zapisz bez zmiany daty';
 
 $lang['sort_by_open_date'] = 'Sortuj wg daty otwarcia';
+
+$lang['issue_is_proposal'] = 'Nie można dodawać przyczyn ani zadań dopóki problem jest propozycją.';

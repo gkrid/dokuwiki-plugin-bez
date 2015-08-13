@@ -76,8 +76,12 @@ $template['action'] = $action;
 $isstyo = new Issuetypes();
 $template['issue_types'] = $isstyo->get();
 
-$stao = new States();
-$template['issue_states'] = $stao->get();
+if ($action == 'update') {
+	$stao = new States();
+	$anytasks = $tasko->any_task($issue_id);
+	$template['issue_states'] = $stao->get($anytasks);
+	$template['anytasks'] = $anytasks;
+}
 
 $template['user_admin'] = $helper->user_admin();
 if ($issue_id != NULL) 

@@ -96,6 +96,8 @@ $template['uri'] = $uri . '?id='.$this->id('issue_show', $issue_id);
 
 $template['issue'] = $isso->get($issue_id);
 $template['closed'] = !$isso->opened($issue_id);
+$template['is_proposal'] = $isso->is_proposal($issue_id);
+
 $template['successfully_closed'] = $stao->closed($template['issue']['state']);
 
 $template['closed_com'] = str_replace('%d', $helper->string_time_to_now($template['issue']['last_mod']), $bezlang['issue_closed_com']);
@@ -116,6 +118,7 @@ $template['taskactions'] = $taskao->get();
 
 $template['issue_opened'] = !$template['closed'];
 
+
 /*mailto ustawienia*/
 $toko = new Tokens();
 $template['8d_link'] = $uri.'?id='.$this->id('8d', $issue_id).'&t='.$toko->get($this->id('8d', $issue_id));
@@ -131,6 +134,8 @@ $template['task_button'] = $bezlang['add'];
 $template['task_action'] = 'add:task';
 
 $template['task_states'] = $taskso->get();
+
+
 
 /*Ruter*/
 $router = array(
