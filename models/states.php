@@ -35,6 +35,10 @@ class States {
 		$key = array_search($name, $states);
 		return $key == 1;
 	}
+	public function rejected($name) {
+		global $bezlang;
+		return $bezlang['state_rejected'] == $name;
+	}
 	/*pobierz nazwę stanu, uwzględniając -proposal i -rejected*/
 	public function name($id, $coordinator, $anytask=true) {
 		$a = $this->get_all($anytask);

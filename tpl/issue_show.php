@@ -35,7 +35,7 @@
 
 <?php echo $template['issue']['description'] ?>
 
-<?php if ($template['successfully_closed']): ?>
+<?php if ($template['display_opinion']): ?>
 	<h2><?php echo $bezlang['opinion'] ?></h2>
 	<?php echo $template['issue']['opinion'] ?>
 <?php endif ?>

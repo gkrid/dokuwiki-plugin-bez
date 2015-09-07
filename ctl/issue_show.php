@@ -98,7 +98,7 @@ $template['issue'] = $isso->get($issue_id);
 $template['closed'] = !$isso->opened($issue_id);
 $template['is_proposal'] = $isso->is_proposal($issue_id);
 
-$template['successfully_closed'] = $stao->closed($template['issue']['state']);
+$template['display_opinion'] = $stao->closed($template['issue']['state']) || $stao->rejected($template['issue']['state']);
 
 $template['closed_com'] = str_replace('%d', $helper->string_time_to_now($template['issue']['last_mod']), $bezlang['issue_closed_com']);
 
