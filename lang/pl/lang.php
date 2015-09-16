@@ -189,6 +189,7 @@ $lang['change_state_button'] = 'Zmień status';
 
 
 $lang['correction'] = 'Korekcyjne';
+$lang['correction_h'] = 'Korekcja';
 $lang['corrective_action'] = 'Korygujące';
 $lang['preventive_action'] = 'Zapobiegawcze';
 
@@ -311,3 +312,6 @@ $lang['save_without_changing_date'] = 'Zapisz bez zmiany daty';
 $lang['sort_by_open_date'] = 'Sortuj wg daty otwarcia';
 
 $lang['issue_is_proposal'] = 'Nie można dodawać przyczyn ani zadań dopóki problem jest propozycją.';
+
+$lang['casue_cant_remove'] = 'Nie możesz usunąć przyczyny z dodanymi zadaniami.';
+

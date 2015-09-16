@@ -195,6 +195,7 @@ $lang['change_state_button'] = "Change the status";
 
 
 $lang['correction'] = "Correction";
+$lang['correction_h'] = 'Correction';
 $lang['corrective_action'] = "Corrective action";
 $lang['preventive_action'] = "Preventive action";
 
@@ -310,3 +311,5 @@ $lang['save_without_changing_date'] = 'Save without changing date';
 $lang['sort_by_open_date'] = 'Sort by open date';
 
 $lang['issue_is_proposal'] = 'You cannot add causes and tasks until this issue is porposal.';
+
+$lang['casue_cant_remove'] = 'You cannot remove cause with related tasks.';

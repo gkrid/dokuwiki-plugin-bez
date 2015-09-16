@@ -104,7 +104,12 @@ $template['closed_com'] = str_replace('%d', $helper->string_time_to_now($templat
 
 $template['comments'] = $como->get($issue_id);
 $template['causes'] = $causo->get($issue_id);
-$template['tasks'] = $tasko->get($issue_id);
+foreach ($template['causes'] as &$cause) {
+	$cause['tasks'] = $tasko->get($issue_id, $cause['id']);
+}
+
+/*popbierz tylko korekcyjne*/
+$template['tasks'] = $tasko->get($issue_id, NULL);
 
 $rootco = new Rootcauses();
 $template['rootcauses'] = $rootco->get();
@@ -114,7 +119,7 @@ $template['user_is_coordinator'] = $helper->user_coordinator($issue_id);
 $template['user_editor'] = $helper->user_editor();
 $template['users'] = $usro->get();
 $template['user'] = $INFO['client'];
-$template['taskactions'] = $taskao->get();
+$template['taskactions'] = $taskao->get_with_cause();
 
 $template['issue_opened'] = !$template['closed'];
 

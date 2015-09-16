@@ -22,8 +22,21 @@ class Tasks extends Event {
 				reporter TEXT NOT NULL,
 				date INTEGER NOT NULL,
 				close_date INTEGER NULL,
-				issue INTEGER NOT NULL)";
+				issue INTEGER NOT NULL,
+				cause INTEGER NULL
+				)";
 		$this->errquery($q);
+
+		$schema = $this->fetch_assoc("PRAGMA table_info(tasks)");
+		$cause_exists = false;
+		foreach ($schema as $column) {
+			if ($column['name'] == 'cause') {
+				$cause_exists = true;
+				break;
+			}
+		}
+		if ($cause_exists == false) 
+			$this->errquery("ALTER TABLE tasks ADD COLUMN cause INTEGER NULL");
 	}
 	public function can_modify($task_id) {
 		$task = $this->getone($task_id);
@@ -88,6 +101,9 @@ class Tasks extends Event {
 
 		if (array_key_exists('reason', $post))
 			$data['reason'] = $this->val_reason($post['reason']);
+
+		if (isset($_POST['cause']))
+			$data['cause'] = (int)$_POST['cause'];
 
 		return $data;
 	}
@@ -226,12 +242,20 @@ class Tasks extends Event {
 		return $row;
 	}
 
-	public function get_clean($issue) {
+	public function get_clean($issue, $cause=-1) {
 		$issue = (int) $issue;
-		return $this->fetch_assoc("SELECT * FROM tasks WHERE issue=$issue");
+		$wcause = '';
+		if (is_null($cause))
+			$wcause = " AND cause is NULL";
+		else if ($cause > -1)
+			$wcause = " AND cause=$cause";
+
+
+		$q = "SELECT * FROM tasks WHERE issue=$issue $wcause";
+		return $this->fetch_assoc($q);
 	}
-	public function get($issue) {
-		$a = $this->get_clean($issue);
+	public function get($issue, $cause=-1) {
+		$a = $this->get_clean($issue, $cause);
 		foreach ($a as &$row)
 			$row = $this->join($row);
 

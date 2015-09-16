@@ -3,6 +3,7 @@ include_once DOKU_PLUGIN."bez/models/connect.php";
 include_once DOKU_PLUGIN."bez/models/users.php";
 include_once DOKU_PLUGIN."bez/models/rootcauses.php";
 include_once DOKU_PLUGIN."bez/models/event.php";
+include_once DOKU_PLUGIN."bez/models/tasks.php";
 
 class Causes extends Event {
 	public function __construct() {
@@ -58,7 +59,6 @@ class Causes extends Event {
 		}
 	}
 	public function update($post, $data, $id) {
-
 		if ($this->can_modify($id)) {
 			$from_user = $this->validate($post);
 			$data = array_merge($data, $from_user);
@@ -70,10 +70,17 @@ class Causes extends Event {
 		}
 	}
 	public function delete($cause_id) {
+		global $errors, $bezlang;
 		if ($this->can_modify($cause_id)) {
 			$data = $this->getone($cause_id);
-			$this->errdelete('causes', $cause_id);
-			$this->issue->update_last_mod($data['issue']);
+			$tasko = new Tasks();
+			$causes = $tasko->get($data['issue'], $cause_id);
+			if (count($causes) == 0) {
+				$this->errdelete('causes', $cause_id);
+				$this->issue->update_last_mod($data['issue']);
+			} else {
+				$errors['cause'] = $bezlang['casue_cant_remove'];
+			}
 		}
 	}
 

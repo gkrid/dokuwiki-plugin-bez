@@ -252,15 +252,21 @@ jQuery(document).ready(function() {
 				jQuery(this).hide();
 			});
 		}
-		$form = $tasks.find("form");
-		if ( ! $form.hasClass('update')) {
-			$form.hide();
-			$add_task = $tasks.find(".add_task");
+		//$form = $tasks.find("form");
+	}
+	jQuery("form.task_form").each(function () {
+		$this = jQuery(this);
+		if ( ! $this.hasClass('update')) {
+			$this.hide();
+			$add_task = $this.parent().find(".add_task");
 			$add_task.show();
-			$add_task.click(function() {
-				$tasks.find("form").show();
-				jQuery(this).hide();
+			$add_task.click(function(e) {
+				$add_task_btn = jQuery(this);
+				var form = $add_task_btn.parent().find("form");
+				form.show();
+				$add_task_btn.hide();
+				e.preventDefault();
 			});
 		}
-	}
+	});
 });

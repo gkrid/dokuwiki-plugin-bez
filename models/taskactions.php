@@ -9,6 +9,13 @@ class Taskactions {
 			$bezlang['preventive_action']
 		);
 	}
+	public function get_with_cause() {
+		global $bezlang;
+		return array(
+			1 => $bezlang['corrective_action'],
+			2 => $bezlang['preventive_action']
+		);
+	}
 	public function id($name) {
 		switch ($name) {
 			case 'correction': return 0;
