@@ -11,12 +11,24 @@ class Causes extends Event {
 		parent::__construct();
 		$q = "CREATE TABLE IF NOT EXISTS causes (
 				id INTEGER PRIMARY KEY,
+				potential INTEGER DEFAULT 0,
 				cause TEXT NOT NULL,
 				rootcause INTEGER NOT NULL,
 				reporter INTEGER NOT NULL,
 				date INTEGER NOT NULL,
 				issue INTEGER NOT NULL)";
 		$this->errquery($q);
+
+		$schema = $this->fetch_assoc("PRAGMA table_info(causes)");
+		$cause_exists = false;
+		foreach ($schema as $column) {
+			if ($column['name'] == 'potential') {
+				$cause_exists = true;
+				break;
+			}
+		}
+		if ($cause_exists == false) 
+			$this->errquery("ALTER TABLE causes ADD COLUMN potential INTEGER DEFAULT 0");
 	}
 	public function can_modify($cause_id) {
 		$cause = $this->getone($cause_id);
@@ -43,6 +55,11 @@ class Causes extends Event {
 		$rootco = new Rootcauses();
 		if ( ! array_key_exists((int)$post['rootcause'], $rootco->get()))
 			$errors['type'] = $bezlang['vald_root_cause'];
+
+		if ($post[potential] == '1')
+			$data[potential] = 1;
+		else
+			$data[potential] = 0;
 		 
 		$data['rootcause'] = (int)$post['rootcause'];
 
@@ -87,8 +104,14 @@ class Causes extends Event {
 	public function join($a) {
 		$usro = new Users();
 		$rootco = new Rootcauses();
+		$a['reporter_nick'] = $a['reporter'];
 		$a['reporter'] = $usro->name($a['reporter']);
 		$a['rootcause'] = $rootco->name($a['rootcause']);
+
+		$a[tasks] = array();
+		$tasko = new Tasks();
+		$a['tasks'] = $tasko->get_clean($a['issue'], $a['id']);
+
 		return $a;
 	}
 

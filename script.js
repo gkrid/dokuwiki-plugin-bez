@@ -129,7 +129,7 @@ jQuery(document).ready(function() {
 			jQuery(this).find(".toggle").css("background-image", "url(lib/plugins/bez/images/collapsed.png)");
 		};
 
-	jQuery(".bds_block")
+	/*jQuery(".bds_block")
 		.each(function() {
 			$h1 = jQuery(this).find("h1").html(
 				function(index, oldhtml) {
@@ -170,7 +170,7 @@ jQuery(document).ready(function() {
 		});
 	jQuery(".bds_block .history_anchor").click(function() {
 		show.call(jQuery("#bds_history h1")[0]);
-	});
+	});*/
 
 	//entities sort
 	jQuery("#entities_form input[type=button]").click(function() {
@@ -233,7 +233,7 @@ jQuery(document).ready(function() {
 
 
 	/*ukrywanie zakmniętych zadań i formularza dodawania nowych zadań*/
-	var $tasks = jQuery("#bez_tasks .bds_block_content");
+	/*var $tasks = jQuery("#bez_tasks .bds_block_content");
 	if ($tasks.length > 0) {
 		var hidden = 0;
 		$tasks.find(".task").each(function () {
@@ -268,5 +268,5 @@ jQuery(document).ready(function() {
 				e.preventDefault();
 			});
 		}
-	});
+	});*/
 });

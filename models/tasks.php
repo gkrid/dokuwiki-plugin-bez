@@ -16,14 +16,13 @@ class Tasks extends Event {
 				task TEXT NOT NULL,
 				state INTEGER NOT NULL,
 				executor TEXT NOT NULL,
-				action INTEGER NOT NULL,
 				cost INTEGER NULL,
 				reason TEXT NULL,
 				reporter TEXT NOT NULL,
 				date INTEGER NOT NULL,
 				close_date INTEGER NULL,
-				issue INTEGER NOT NULL,
-				cause INTEGER NULL
+				cause INTEGER NULL,
+				issue INTEGER NOT NULL
 				)";
 		$this->errquery($q);
 

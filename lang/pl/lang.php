@@ -42,6 +42,7 @@ $lang['entities_confirm'] = 'Zapisano nowe źródła zgłoszeń.';
 $lang['opinion'] = 'Ocena skuteczności';
 $lang['root_cause'] = 'Kategoria przyczyny';
 
+
 $lang['save'] = 'Zapisz';
 $lang['proposal'] = 'propozycja';
 $lang['reported_by'] = 'zgłoszona przez';
@@ -189,9 +190,19 @@ $lang['change_state_button'] = 'Zmień status';
 
 
 $lang['correction'] = 'Korekcyjne';
-$lang['correction_h'] = 'Korekcja';
 $lang['corrective_action'] = 'Korygujące';
 $lang['preventive_action'] = 'Zapobiegawcze';
+
+$lang['correction_h'] = 'Działania korekcyjne';
+$lang['corrective_action_h'] = 'Działania korygujące';
+$lang['preventive_action_h'] = 'Działania zapobiegawcze';
+
+$lang['correction_add'] = 'Dodaj korekcję';
+$lang['corrective_action_add'] = 'Dodaj działanie korygujące';
+$lang['preventive_action_add'] = 'Dodaj działanie zapobiegawcze';
+
+$lang[show_all_tasks] = 'Pokaż wszystkie działania';
+
 
 $lang['none_comment'] = 'brak(komentarz)';
 $lang['manpower'] = 'Pracownicy';
@@ -275,6 +286,7 @@ $lang['action'] = 'Akcja';
 $lang['cause_added'] = "Przyczyna dodana";
 $lang['cause_noun'] = "Przyczyna";
 $lang['change_cause_button'] = "Popraw przyczynę";
+$lang['added'] = 'Dodana';
 
 $lang['delete'] = 'Usuń';
 $lang['info_no_causes_added'] = 'Musisz dodać co najmniej jedną przyczynę, aby dodawać działania korygujące i zapobiegawcze.';
@@ -315,3 +327,13 @@ $lang['issue_is_proposal'] = 'Nie można dodawać przyczyn ani zadań dopóki pr
 
 $lang['casue_cant_remove'] = 'Nie możesz usunąć przyczyny z dodanymi zadaniami.';
 
+$lang['add_cause'] = 'Dodaj przyczynę';
+$lang['add_correction'] = 'Dodaj korekcję';
+
+$lang['cause'] = 'przyczyna';
+$lang['potential_cause'] = 'potencjalna przyczyna';
+
+$lang['cause_type'] = 'Typ przyczyny';
+
+$lang['cause_type_default'] = 'rzeczywista';
+$lang['cause_type_potential'] = 'potencjalna';

@@ -77,6 +77,8 @@ table.bez .pr2 , #bds_timeline dt.pr2 {
 	margin-top: 1.5em;
 }
 
+#bds_issue_box table th, .bds_block th {
+}
 #bds_issue_box table th, #bds_issue_box table td, .bds_block th, .bds_block td {
 	border:0;
 	background: none;
@@ -92,6 +94,8 @@ table.bez .pr2 , #bds_timeline dt.pr2 {
 .bds_block h1 {
 	font-size: 1.3em;
 	margin: 1em 0;
+	padding-bottom: 3px;
+	border-bottom: 1px solid #d7d7d7;
 }
 
 .bds_block h1 span {
@@ -174,6 +178,102 @@ table.bez .pr2 , #bds_timeline dt.pr2 {
 	right: 0.5em;
 }
 
+/*commets*/
+#bez_comments .bez_buttons {
+	/*bottom: -1.3em;*/
+	bottom: 0;
+}
+
+#bez_comments .comment {
+	position: relative;
+}
+
+/*causes*/
+#bez_causes .cause {
+	position: relative;
+	background: #ffeedc !important;
+	border-color: #ddb68d !important;
+}
+
+#bez_causes table {
+	border-color: #ddb68d !important;
+}
+
+#bez_causes table td {
+	border-color: #dd9447 !important;
+}
+
+#bez_causes h2 {
+	font-size: 1.2em;
+	font-weight: bold;
+	color: black;
+	border: 0;
+    box-shadow: none;
+}
+#bez_causes h2 a {
+	font-size: 1.3em;
+}
+
+#bez_causes h3 {
+    border-bottom: 1px dotted #8bbcbc;
+    font-size: 90%;
+}
+
+.bds_block_content > div {
+	margin-bottom: 3em;
+}
+
+#bez_causes table {
+	clear:both;
+	margin-top: 3em;
+}
+
+#bez_causes table {
+	clear:both;
+	border-top-color: #8bbcbc;
+	margin-top: 3em;
+}
+
+#bez_causes div.cause {
+	background: #e4f4f4;
+	border: 1px solid #8bbcbc;
+	border-radius: 0.4em;
+	margin-top: 0.2em;
+	padding: 0.5em 1em;
+}
+
+#bez_causes td, #bez_causes th{
+	border-bottom-color: #8bbcbc;
+}
+
+#bez_causes .bds_edit_button {
+	position:absolute;
+	bottom: 0.5em;
+	right: 6em;
+}
+#bez_causes .bds_send_button {
+	position:absolute;
+	bottom: 0.5em;
+	right: 0.5em;
+}
+
+/*end causes*/
+
+.bez_buttons {
+	position: absolute;
+	bottom: 0.4em;
+	right: 0.2em;
+}
+
+.bez_buttons a {
+	margin-right: 1em;
+	padding: 0.2em 0.5em;
+}
+
+.bez_buttons a:last-child {
+	margin-right: 0;
+}
+
 .bds_inline_button {
     background: #fff;
     border: 1px solid #DDDDDD;
@@ -183,12 +283,6 @@ table.bez .pr2 , #bds_timeline dt.pr2 {
 	cursor: pointer;
     color: #808080 !important;
     font-size: 70%;
-    height: 1.6em;
-    margin: 0 0.1em 0.1em;
-    padding: 0 0.4em 0.1em;
-	padding-top: 0.2em;
-	display:block;
-	float:right;
 }
 
 .bds_inline_button:hover {
@@ -201,12 +295,6 @@ table.bez .pr2 , #bds_timeline dt.pr2 {
 .bez_delete_button {
     color: #808080 !important;
     font-size: 70%;
-    height: 1.6em;
-    margin: 0 0.1em 0.1em;
-    padding: 0 0.4em 0.1em;
-	padding-top: 0.2em;
-	display:block;
-	float:right;
 	text-decoration:underline !important;
 }
 
@@ -214,29 +302,7 @@ table.bez .pr2 , #bds_timeline dt.pr2 {
 	text-decoration:none !important;
 }
 
-.bez_link_button {
-	float: none;
-	display: inline;
-}
 
-.bds_report_button {
-	position:absolute;
-	bottom: 0.5em;
-	right: 0.5em;
-}
-
-.bds_edit_button {
-	position:absolute;
-	bottom: 0.5em;
-	right: 13em;
-}
-
-
-.bds_send_button {
-	position:absolute;
-	bottom: 0.5em;
-	right: 7em;
-}
 .bds_last_edit {
     color: #999999;
 	font-size: 80%;
@@ -511,28 +577,62 @@ h1.bez_report span {
 	margin-right: 0.4em;
 }
 
-/*Casuses*/
-#bez_causes .cause {
-	border: 1px solid #d7d7d7;
-    border-radius: 0 0 0.4em 0.4em;
-	padding: 5px;
+/*NEW FORM */
+
+form.bez_form > fieldset {
+	display: table;
+	background: none repeat scroll 0 0 #F7F7F0;
+    border: 1px solid #D7D7D7;
+    border-radius: 0.4em;
+	text-align: left;
+	width: 98.5%;
+	margin-bottom: 1em !important;
 }
 
-#bez_causes h2 {
-	color: #000;
-	box-shadow:none;
+form.bez_cause_form > fieldset {
+	background: #ffeedc !important;
+	border-color: #ddb68d !important;
 }
 
-/*formularz dodawania zadania*/
-#bez_causes .cause fieldset {
-	width: inherit;
-	margin: 0 10px;
-	margin-bottom: 10px;
+.bez_form .row {
+	display: table-row;
 }
-#bez_causes .cause form input[type=submit] {
-	margin-left:10px;
+
+.bez_form label[for] {
+	display: table-cell;
+    padding: 0.4em;
+    text-align: right;
+    vertical-align: top;
+    width: 200px;
 }
-#bez_causes .task { 
-	margin-bottom: 3em;
-	margin-left: 3em;
+.bez_form span {
+	display: table-cell;
+    vertical-align: middle;
+    width: 80%;
+}
+
+.bez_form input {
+	padding: 0.25em 0.5em;
+}
+
+.bez_form a {
+	margin-left: 1em;
+}
+
+.bez_form textarea {
+	width: 100% !important;
+	height: 10em;
+	display: block;
+}
+
+
+.bez_form input[id=title] {
+	width: 30em;
+}
+
+.bez_form input[id=cost] {
+	width: 7em;
+}
+input.days {
+	width: 3em;
 }

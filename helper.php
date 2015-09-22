@@ -21,6 +21,22 @@ class helper_plugin_bez extends dokuwiki_plugin
 
 		return false;
 	}
+	public function id() {
+		global $ID;
+		$page_id = explode(':', $ID);
+		if ($page_id[0] != 'bez')
+			$lang_code = $page_id[0];
+		
+		$args = func_get_args();
+		array_unshift($args, 'bez');
+		if ($lang_code != '')
+			array_unshift($args, $lang_code);
+		return implode(':', $args);
+	}
+	public function link_8d($issue_id) {
+		$toko = new Tokens();
+		return DOKU_URL . 'doku.php?id='.$this->id('8d', $issue_id).'&t='.$toko->get($this->id('8d', $issue_id));
+	}
 	public function user_viewer() {
 		global $INFO, $auth;
 

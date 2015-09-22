@@ -231,6 +231,8 @@ class Issues extends Connect {
 	public function join($a) {
 		$stao = new States();
 		$tasko = new Tasks();
+
+		$a['raw_state'] = $a['state'];
 		$a['state'] = $stao->name($a['state'], $a['coordinator'], $tasko->any_task($a['id']));
 
 		$usro = new Users();

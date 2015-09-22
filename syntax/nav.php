@@ -2,7 +2,6 @@
 /**
  * Plugin Now: Inserts a timestamp.
  * 
- * @license    GPL 3 (http://www.gnu.org/licenses/gpl.html)
  */
 
 // must be run within DokuWiki
@@ -11,6 +10,8 @@ if(!defined('DOKU_INC')) die();
 if(!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
 require_once DOKU_PLUGIN.'syntax.php';
 include_once DOKU_PLUGIN."bez/models/issues.php";
+include_once DOKU_PLUGIN."bez/models/causes.php";
+include_once DOKU_PLUGIN."bez/models/tasks.php";
 /**
  * All DokuWiki plugins to extend the parser/rendering mechanism
  * need to inherit from this class
@@ -78,7 +79,65 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 		if ($helper->user_editor())
 			$data['bez:issue_report'] = array('id' => 'bez:issue_report', 'type' => 'f', 'level' => 2, 'title' => $this->getLang('bds_issue_report'));
 
-		$data['bez:issues'] = array('id' => 'bez:issues:year:'.date('Y'), 'type' => 'f', 'level' => 2, 'title' => $this->getLang('bds_issues'));
+		$data['bez:issues'] = array('id' => 'bez:issues:year:'.date('Y'), 'type' => 'd', 'level' => 2, 'title' => $this->getLang('bds_issues'));
+
+		$task_pages = array('issue_tasks', 'task_form', 'issue_task');
+		$cause_pages = array('issue_causes', 'issue_cause', 'cause_form');
+		$issue_pages = array_merge(array('issue'), $task_pages, $cause_pages);
+
+		if (in_array($this->value['bez'], $issue_pages)) {
+			$data['bez:issues']['open'] = true;
+			$id = (int)$this->value[id];
+
+			$tasko = new Tasks();
+			$causo = new Causes();
+
+			$pid = "bez:issue:id:$id";
+			$data[$pid] = array('id' => $pid, 'type' => 'd', 'level' => 3,
+												'title' => "#$id", 'open' => true);
+
+			$pid = "bez:issue_tasks:id:$id";
+			$data[$pid] = array('id' => $pid, 'type' => 'd', 'level' => 4,
+								'title' => $this->getLang('tasks'));
+			if (in_array($this->value['bez'], $task_pages)) {
+				$data[$pid][open] = true;
+				$rpid = "bez:task_form:id:$id";
+				$data[$rpid] = array('id' => $rpid, 'type' => 'f', 'level' => 5,
+										'title' => $this->getLang('add_correction'));
+				$res = $tasko->get_filtered(array('issue' => $id));
+				foreach ($res as $r) {
+					$rpid = "bez:issue_task:id:$id:tid:$r[id]";
+					$data[$rpid] = array('id' => $rpid, 'type' => 'f', 'level' => 5,
+										'title' => '#z'.$r[id]);
+				}
+			}
+
+			$pid = "bez:issue_causes:id:$id";
+			$data[$pid] = array('id' => $pid, 'type' => 'd', 'level' => 4,
+								'title' => $this->getLang('causes'));
+			if (in_array($this->value['bez'], $cause_pages)) {
+				$data[$pid][open] = true;
+				$rpid = "bez:cause_form:id:$id";
+				$data[$rpid] = array('id' => $rpid, 'type' => 'f', 'level' => 5,
+										'title' => $this->getLang('add_cause'));
+				/*$res = $causo->get($id);
+				foreach ($res as $r) {
+					$rpid = "bez:issue_cause:id:$id:cid:$r[id]";
+					$data[$rpid] = array('id' => $rpid, 'type' => 'f', 'level' => 5,
+										'title' => '#p'.$r[id]);
+/*
+					if ((int)$this->value['cid'] == $r[id]) {
+						$data[$rpid][open] = true;
+
+						$pres = $tasko->get($id, $r['id']);
+						foreach ($pres as $pr) {
+						}
+					}
+				}*/
+				
+			}
+
+		}
 		$data['bez:tasks'] = array('id' => 'bez:tasks:year:'.date('Y'), 'type' => 'f', 'level' => 2, 'title' => $this->getLang('bez_tasks'));
 
 		$data['bez:report_open'] = array('id' => 'bez:report_open', 'type' => 'd', 'level' => 2, 'title' => $this->getLang('report_open'));
@@ -180,7 +239,7 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 			$item_value[urldecode($ex[$i])] = urldecode($ex[$i+1]);
 
 		//pola brane pod uwagę przy określaniu aktualnej strony
-		$fields = array('bez');
+		$fields = array('bez', 'year', 'tid');
 		if ($item_value['bez'] == 'report' || $item_value['bez'] == 'report_open') {
 			$fields[] = 'month';
 			$fields[] = 'year';

@@ -172,6 +172,7 @@ $lang['comment_changed'] = "Comment has been changed";
 $lang['cause_added'] = "Cause added";
 $lang['cause_noun'] = "Cause";
 $lang['change_cause_button'] = "Correct the cause";
+$lang['added'] = 'Added';
 
 
 $lang['replay_by_task'] = "Add task in replay";
@@ -198,6 +199,12 @@ $lang['correction'] = "Correction";
 $lang['correction_h'] = 'Correction';
 $lang['corrective_action'] = "Corrective action";
 $lang['preventive_action'] = "Preventive action";
+
+$lang['correction_add'] = 'Add correction';
+$lang['corrective_action_add'] = 'Add corrective action';
+$lang['preventive_action_add'] = 'Add preventive action';
+
+$lang[show_all_tasks] = 'Show all tasks';
 
 $lang['none_comment'] = "none(comment)";
 $lang['manpower'] = "Manpower";
@@ -313,3 +320,14 @@ $lang['sort_by_open_date'] = 'Sort by open date';
 $lang['issue_is_proposal'] = 'You cannot add causes and tasks until this issue is porposal.';
 
 $lang['casue_cant_remove'] = 'You cannot remove cause with related tasks.';
+
+$lang['add_cause'] = 'Add cause';
+$lang['add_correction'] = 'Add correction';
+
+$lang['cause'] = 'cause';
+$lang['pontential_cause'] = 'potential cause';
+
+$lang['cause_type'] = 'Cause type';
+
+$lang['type_default'] = 'normal';
+$lang['type_potential'] = 'potential';
