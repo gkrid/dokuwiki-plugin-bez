@@ -4,7 +4,7 @@
 		<span><strong><?php echo $bezlang['added'] ?>:</strong> <?php echo $helper->time2date($cause['date']) ?></span>
 	</div>
 	<h2>
-		<a href="<?php echo $this->issue_uri($task['issue']) ?>">#p<?php echo $cause['id'] ?></a>
+		<a href="?id=<?php echo $this->id('issue_causes', 'id', $cause['issue']) ?>">#p<?php echo $cause['id'] ?></a>
 		<?php if ($cause[potential] == 0): ?>
 			<?php echo $bezlang['cause'] ?>
 		<?php else: ?>
@@ -22,18 +22,20 @@
 			<?php else: ?>
 				<?php echo $bezlang['preventive_action_h'] ?>:
 			<?php endif ?>
-		</strong>
+		</strong>&nbsp;
 		<?php if (count($cause[tasks]) == 0): ?>
 			&nbsp;---
 		<?php else: ?>
 			<?php foreach ($cause[tasks] as $task): ?>
+				<?php if (isset($nparams[tid]) && $nparams[tid] == $task[id]) echo '<strong>' ?>
 				<a href="?id=<?php echo $this->id('issue_task', 'id', $template[issue][id], 'tid', $task[id]) ?>">
 					#z<?php echo $task[id] ?>
-				</a>
+				</a>&nbsp;
+				<?php if (isset($nparams[tid]) && $nparams[tid] == $task[id]) echo '</strong>' ?>
 			<?php endforeach ?>
 		<?php endif ?> 
 		&nbsp;&nbsp;&nbsp;
-		<a href="?id=<?php echo $this->id('task_form', 'id', $template[issue][id], 'cause', $cause[id] ?>">
+		<a href="?id=<?php echo $this->id('task_form', 'id', $template[issue][id], 'cause', $cause[id]) ?>">
 			dodaj
 		</a>
 		</td>

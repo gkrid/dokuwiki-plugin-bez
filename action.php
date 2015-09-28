@@ -97,6 +97,10 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 			$helper->lang_code = $this->lang_code;
 
 			$params = $this->params;
+			$nparams = array();
+			for ($i = 0; $i < count($params); $i += 2)
+				$nparams[$params[$i]] = $params[$i+1];
+
 			$uri = DOKU_URL . 'doku.php';
 			$controller = $this;
 			try {
@@ -138,6 +142,12 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 			$bezlang = $this->lang;
 			$helper = $this->helper;
 			$helper->lang_code = $this->lang_code;
+
+			$params = $this->params;
+			$nparams = array();
+			for ($i = 0; $i < count($params); $i += 2)
+				$nparams[$params[$i]] = $params[$i+1];
+
 			include_once $tpl;
 		}
 	}

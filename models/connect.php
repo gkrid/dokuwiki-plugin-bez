@@ -1,33 +1,69 @@
 <?php
 class Connect {
-	protected $helper=NULL;
-	static protected $db=NULL, $lastid;
+	protected $helper = NULL;
+	static protected $lastid;
+	protected $noclose = NULL;
+
+	public function open() {
+		$db = new SQLite3(DOKU_INC . 'data/bez.sqlite');
+		$db->busyTimeout(1000);
+		return $db;
+	}
 
 	public function __construct()
 	{
 		global $errors;
-		if ($this->db == NULL) {
-			$this->db = new SQLite3(DOKU_INC . 'data/bez.sqlite');
-			if (!$this->db) 
-				$errors[] = "Failed to open SQLite DB file($file): ". $this->db->lastErrorMsg();
-		}
+		if (count($errors) > 0)
+			die($errors['db']);
 
 		//jeżeli możemy, wczytujemy helpera
 		if (function_exists('plugin_load'))
 			$this->helper = plugin_load('helper', 'bez');
 	}
+
 	public function escape($s) {
-		return $this->db->escapeString($s);
+		$db = $this->open();
+		$e = $db->escapeString($s);
+		$db->close();
+		return $e;
 	}
 
 	public function errquery($query)
 	{
 		global $errors;
 
-		$r = $this->db->query($query);
+		$db = $this->open();
+		$r = $db->query($query);
 		if (!$r) 
-			$errors['sqlite'] = "SQLite error(".$this->db->lastErrorCode()."): ". $this->db->lastErrorMsg()."\nQuery: $query";
+			$errors['sqlite'] = "SQLite error(".$db->lastErrorCode()."): ". $db->lastErrorMsg()."\nQuery: $query";
+		$db->close();
+		unset($db);
 		return $r;
+	}
+
+	public function noclose_query($query)
+	{
+		global $errors;
+
+		$this->noclose = $this->open();
+		$r = $this->noclose->query($query);
+		if (!$r) 
+			$errors['sqlite'] = "SQLite error(".$this->noclose->lastErrorCode()."): ". $this->noclose->lastErrorMsg()."\nQuery: $query";
+		return $r;
+	}
+
+	public function ins_query($query)
+	{
+		global $errors;
+
+		$db = $this->open();
+		$r = $db->query($query);
+		if (!$r) 
+			$errors['sqlite'] = "SQLite error(".$db->lastErrorCode()."): ". $db->lastErrorMsg()."\nQuery: $query";
+		$last = $db->lastInsertRowId();
+		$db->close();
+		unset($db);
+		return $last;
 	}
 
 	public function lastid()
@@ -59,9 +95,8 @@ class Connect {
 			$values .= '),';
 		}
 		$values = substr($values, 0, -1);
-		$this->errquery("INSERT INTO $table ($fields) VALUES $values");
-		
-		$this->lastid = $this->db->lastInsertRowId();
+		$db = 
+		$this->lastid = $this->ins_query("INSERT INTO $table ($fields) VALUES $values");
 	}
 
 	protected function errinsert($data, $table)
@@ -75,10 +110,9 @@ class Connect {
 		foreach ($data as $v)
 			$values .= "'".$this->escape($v)."',";
 		$values = substr($values, 0, -1);
-		$this->errquery("INSERT INTO $table ($fields) VALUES ($values)");
-		
-		$this->lastid = $this->db->lastInsertRowId();
+		$this->lastid = $this->ins_query("INSERT INTO $table ($fields) VALUES ($values)");
 	}
+
 	protected function errupdate($data, $table, $id)
 	{
 		global $errors;
@@ -126,7 +160,7 @@ class Connect {
 	{
 		global $errors;
 
-		$r = $this->errquery($q);
+		$r = $this->noclose_query($q);
 		if (isset($errors['sqlite']))
 			return array();
 
@@ -134,6 +168,9 @@ class Connect {
 		while ($w = $r->fetchArray(SQLITE3_ASSOC)) {
 			$ar[] = $w;
 		}
+
+		$this->noclose->close();
+		unset($this->noclose);
 		return $ar;
 	}
 }

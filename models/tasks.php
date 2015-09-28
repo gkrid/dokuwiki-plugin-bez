@@ -6,6 +6,7 @@ include_once DOKU_PLUGIN."bez/models/states.php";
 include_once DOKU_PLUGIN."bez/models/event.php";
 include_once DOKU_PLUGIN."bez/models/bezcache.php";
 include_once DOKU_PLUGIN."bez/models/issues.php";
+include_once DOKU_PLUGIN."bez/models/rootcauses.php";
 
 class Tasks extends Event {
 	public function __construct() {
@@ -102,7 +103,10 @@ class Tasks extends Event {
 			$data['reason'] = $this->val_reason($post['reason']);
 
 		if (isset($_POST['cause']))
-			$data['cause'] = (int)$_POST['cause'];
+			if ($_POST['cauese'] == '')
+				$data['cause'] = NULL;
+			else
+				$data['cause'] = (int)$_POST['cause'];
 
 		return $data;
 	}
@@ -170,7 +174,10 @@ class Tasks extends Event {
 	}
 	public function getone($id) {
 		$id = (int) $id;
-		$a = $this->fetch_assoc("SELECT * FROM tasks WHERE id=$id");
+		$a = $this->fetch_assoc("SELECT
+		tasks.id,task,executor,state,cost,reason,tasks.reporter,tasks.date,
+		close_date,tasks.issue,tasks.cause, causes.potential
+		FROM tasks LEFT JOIN causes ON tasks.cause = causes.id WHERE tasks.id=$id");
 
 		return $a[0];
 	}
@@ -219,6 +226,7 @@ class Tasks extends Event {
 		return $this->helper->days_array_merge($create, $close, $rejected);
 	}
 	public function join($row) {
+		global $bezlang;
 		$usro = new Users();
 		$taskao = new Taskactions();
 		$taskso = new Taskstates();
@@ -230,13 +238,27 @@ class Tasks extends Event {
 		$row['executor_nick'] = $row['executor'];
 		$row['executor_email'] = $usro->email($row['executor']);
 		$row['executor'] = $usro->name($row['executor']);
-		$row['action'] = $taskao->name($row['action']);
+
+		//$row['action'] = $taskao->name($row['action']);
+		if ($row[cause] == NULL)
+			$row[action] = $bezlang['correction'];
+		else if ($row[potential] == 0)
+			$row[action] = $bezlang['corrective_action'];
+		else
+			$row[action] = $bezlang['preventive_action'];
+
 		//$row['rejected'] = $row['state'] == $stato->rejected();
 		$row['state'] = $taskso->name($row['state']);
 
 		$wiki_text = $cache->get_task($row['id']);
 		$row['task'] = $wiki_text['task'];
 		$row['reason'] = $wiki_text['reason'];
+
+		if (isset($row[cause_text])) {
+			$rootco = new Rootcauses();
+			$row[cause_text] = $this->helper->wiki_parse($row[cause_text]);
+			$row['rootcause'] = $rootco->name($row['rootcause']);
+		}
 
 		return $row;
 	}
@@ -245,12 +267,15 @@ class Tasks extends Event {
 		$issue = (int) $issue;
 		$wcause = '';
 		if (is_null($cause))
-			$wcause = " AND cause is NULL";
+			$wcause = " AND tasks.cause is NULL";
 		else if ($cause > -1)
-			$wcause = " AND cause=$cause";
+			$wcause = " AND tasks.cause=$cause";
 
 
-		$q = "SELECT * FROM tasks WHERE issue=$issue $wcause";
+		$q = "SELECT
+				tasks.id,task,executor,state,cost,reason,tasks.reporter,tasks.date,
+				close_date,tasks.issue,tasks.cause, causes.potential, causes.cause as cause_text, causes.rootcause, causes.id as cause_id
+				FROM tasks LEFT JOIN causes ON tasks.cause = causes.id WHERE tasks.issue=$issue $wcause";
 		return $this->fetch_assoc($q);
 	}
 	public function get($issue, $cause=-1) {

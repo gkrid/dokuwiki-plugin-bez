@@ -50,6 +50,16 @@
 
 <?php echo $task['task'] ?>
 
+<?php if (isset($task['cause_text'])): ?>
+	<h3>
+		<a href="?id=<?php echo $this->id('issue_task', 'id', $template['issue']['id'], 'tid', $task['id']) ?>">
+			#p<?php echo $task['cause_id'] ?>
+		</a>
+		<?php echo lcfirst($task[rootcause]) ?>
+	</h3>
+	<?php echo $task['cause_text'] ?>
+<?php endif ?>
+
 <?php if ($task['rejected']): ?>
 	<h3><?php echo $bezlang['reason'] ?></h3>
 	<?php echo $task['reason'] ?>

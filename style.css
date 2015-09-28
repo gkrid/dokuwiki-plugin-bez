@@ -180,8 +180,7 @@ table.bez .pr2 , #bds_timeline dt.pr2 {
 
 /*commets*/
 #bez_comments .bez_buttons {
-	/*bottom: -1.3em;*/
-	bottom: 0;
+	bottom: -1.3em;
 }
 
 #bez_comments .comment {
@@ -592,6 +591,11 @@ form.bez_form > fieldset {
 form.bez_cause_form > fieldset {
 	background: #ffeedc !important;
 	border-color: #ddb68d !important;
+}
+
+form.bez_task_form > fieldset {
+	background: #e4f4f4 !important;
+	border-color: #8bbcbc !important;
 }
 
 .bez_form .row {
