@@ -37,6 +37,10 @@ class helper_plugin_bez extends dokuwiki_plugin
 		$toko = new Tokens();
 		return DOKU_URL . 'doku.php?id='.$this->id('8d', $issue_id).'&t='.$toko->get($this->id('8d', $issue_id));
 	}
+	public function link_rr($issue_id) {
+		$toko = new Tokens();
+		return DOKU_URL . 'doku.php?id='.$this->id('rr', 'id', $issue_id).'&t='.$toko->get($this->id('rr', 'id', $issue_id));
+	}
 	public function user_viewer() {
 		global $INFO, $auth;
 

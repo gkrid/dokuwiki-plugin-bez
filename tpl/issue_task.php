@@ -12,3 +12,5 @@
 	<?php $task = $template['task']; ?>
 	<?php include "task.php" ?>
 </div>
+
+<?php include "removal_confirm.php" ?>

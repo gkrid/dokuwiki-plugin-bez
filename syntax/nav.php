@@ -83,11 +83,14 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 
 		$task_pages = array('issue_tasks', 'task_form', 'issue_task');
 		$cause_pages = array('issue_causes', 'issue_cause', 'cause_form');
-		$issue_pages = array_merge(array('issue'), $task_pages, $cause_pages);
+		$issue_pages = array_merge(array('issue', 'rr', '8d'), $task_pages, $cause_pages);
 
 		if (in_array($this->value['bez'], $issue_pages)) {
 			$data['bez:issues']['open'] = true;
 			$id = (int)$this->value[id];
+
+			$isso = new Issues();
+			$issue_opened = $isso->opened($id);
 
 			$tasko = new Tasks();
 			$causo = new Causes();
@@ -101,9 +104,12 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 								'title' => $this->getLang('tasks'));
 			if (in_array($this->value['bez'], $task_pages)) {
 				$data[$pid][open] = true;
-				$rpid = "bez:task_form:id:$id";
-				$data[$rpid] = array('id' => $rpid, 'type' => 'f', 'level' => 5,
-										'title' => $this->getLang('add_correction'));
+
+				if ($issue_opened) {
+					$rpid = "bez:task_form:id:$id";
+					$data[$rpid] = array('id' => $rpid, 'type' => 'f', 'level' => 5,
+											'title' => $this->getLang('add_correction'));
+				}
 				$res = $tasko->get_filtered(array('issue' => $id));
 				foreach ($res as $r) {
 					$rpid = "bez:issue_task:id:$id:tid:$r[id]";
@@ -117,9 +123,11 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 								'title' => $this->getLang('causes'));
 			if (in_array($this->value['bez'], $cause_pages)) {
 				$data[$pid][open] = true;
-				$rpid = "bez:cause_form:id:$id";
-				$data[$rpid] = array('id' => $rpid, 'type' => 'f', 'level' => 5,
-										'title' => $this->getLang('add_cause'));
+				if ($issue_opened) {
+					$rpid = "bez:cause_form:id:$id";
+					$data[$rpid] = array('id' => $rpid, 'type' => 'f', 'level' => 5,
+											'title' => $this->getLang('add_cause'));
+				}
 				/*$res = $causo->get($id);
 				foreach ($res as $r) {
 					$rpid = "bez:issue_cause:id:$id:cid:$r[id]";

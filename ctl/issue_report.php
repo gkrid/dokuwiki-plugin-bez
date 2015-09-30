@@ -16,6 +16,7 @@ if	(!$helper->user_editor() ||
 
 $isso = new Issues();
 $usro = new Users();
+$tasko = new Tasks();
 
 if (count($_POST) > 0) {
 	if ($action == 'update') {
@@ -61,10 +62,9 @@ if (count($_POST) > 0) {
 	}
 	$value = $_POST;
 	if (count($errors) == 0)
-		header('Location: ?id='.$this->id('issue_show', $isso->lastid()));
+		header('Location: ?id='.$this->id('issue', 'id', $isso->lastid()));
 } elseif ($issue_id != NULL) {
 	$value = $isso->get_clean($issue_id);
-	$tasko = new Tasks();
 	$template['any_task_open'] = $tasko->any_open($issue_id);
 	$action = 'update';
 } else {

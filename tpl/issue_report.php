@@ -98,7 +98,7 @@
 
 <input type="submit" value="<?php echo $bezlang['save'] ?>">
 <?php if ($template['action'] == 'update'): ?>
-	 <a href="<?php echo $tepmlate['uri'] ?>?id=<?php echo $this->id('issue_show', $template['issue_id']) ?>" class="bez_delete_button bez_link_button">
+	 <a href="#" onclick="window.history.back()" class="bez_delete_button bez_link_button">
 		<?php echo $bezlang['cancel'] ?>
 	</a>
 <?php endif ?>

@@ -379,7 +379,7 @@ class Issues extends Connect {
 		$issue_id = (int)$issue_id;
 
 		$team = array();
-		$a = $this->fetch_assoc('SELECT coordinator, reporter FROM issues WHERE id='.$issue_id);
+		$a = $this->fetch_assoc('SELECT coordinator FROM issues WHERE id='.$issue_id);
 		if (count($a) == 0) {
 			$errors[] = $bezlang['error_issue_id_not_specifed'];
 			return array();
@@ -387,26 +387,26 @@ class Issues extends Connect {
 		if (!in_array($a[0]['coordinator'], $this->coord_special))
 			$team[] = $a[0]['coordinator'];
 
-		$team[] = $a[0]['reporter'];
+		//$team[] = $a[0]['reporter'];
 
 		/*komentarze*/
 		$a = $this->fetch_assoc('SELECT reporter FROM comments WHERE issue='.$issue_id);
 		if (count($a) > 0)
 			foreach ($a as $comment)
-				$team[] = $comment['reporter'];
+			$team[] = $comment['reporter'];
 
 
 		/*przyczyny źródłowe*/
-		$a = $this->fetch_assoc('SELECT reporter FROM causes WHERE issue='.$issue_id);
+		/*$a = $this->fetch_assoc('SELECT reporter FROM causes WHERE issue='.$issue_id);
 		if (count($a) > 0)
 			foreach ($a as $causes)
-				$team[] = $causes['reporter'];
+			$team[] = $causes['reporter'];*/
 
 		/*zadania*/
-		$a = $this->fetch_assoc('SELECT executor, reporter FROM tasks WHERE issue='.$issue_id);
+		$a = $this->fetch_assoc('SELECT executor FROM tasks WHERE issue='.$issue_id);
 		if (count($a) > 0) 
 			foreach ($a as $task) {
-				$team[] = $task['reporter'];
+				//$team[] = $task['reporter'];
 				$team[] = $task['executor'];
 			}
 

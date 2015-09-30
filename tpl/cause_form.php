@@ -1,7 +1,7 @@
 <?php include "issue_box.php" ?>
 <br>
 <?php if ($template['issue'][raw_state] == 0 && $helper->user_coordinator($template[issue][id])): ?> 
-	<form action="?id=<?php echo $template['cause_action'] ?>#p_" method="POST" class="bez_form bez_cause_form">
+	<form action="?id=<?php echo $template['cause_action'] ?>" method="POST" class="bez_form bez_cause_form">
 		<fieldset>
 			<div class="row">
 				<label for="potential"><?php echo $bezlang['cause_type'] ?>:</label>

@@ -331,3 +331,12 @@ $lang['cause_type'] = 'Cause type';
 
 $lang['type_default'] = 'normal';
 $lang['type_potential'] = 'potential';
+
+$lang[evaluation] = 'Ocena';
+
+$lang[rr_report] = 'RR Report';
+
+$lang[rr_team] = 'Risk evaluation team';
+$lang[rr_desc] = 'Risk description';
+$lang[rr_eval] = 'Risk evaluacion';
+$lang[rr_suceval] = 'Effectiveness evalutation';

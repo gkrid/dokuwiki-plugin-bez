@@ -34,26 +34,28 @@
 				<?php if (isset($nparams[tid]) && $nparams[tid] == $task[id]) echo '</strong>' ?>
 			<?php endforeach ?>
 		<?php endif ?> 
-		&nbsp;&nbsp;&nbsp;
-		<a href="?id=<?php echo $this->id('task_form', 'id', $template[issue][id], 'cause', $cause[id]) ?>">
-			dodaj
-		</a>
+		<?php if ($template['issue'][raw_state] == 0 && $helper->user_coordinator($template[issue][id])): ?> 
+			&nbsp;&nbsp;&nbsp;
+			<a href="?id=<?php echo $this->id('task_form', 'id', $template[issue][id], 'cause', $cause[id]) ?>">
+				dodaj
+			</a>
+		<?php endif ?>
 		</td>
 	</tr>
 	</table>	
 	<?php echo $helper->wiki_parse($cause['cause']) ?>
-	<?php if ($template['issue'][raw_state] == 0 &&
-				($cause['reporter_nick'] == $INFO['client'] ||
-				$helper->user_coordinator($template[issue][id]))): ?> 
+	<?php if ($template['issue'][raw_state] == 0 && $helper->user_coordinator($template[issue][id])): ?> 
 	<div class="bez_buttons">
 	<a class="bds_inline_button"
 	href="?id=<?php echo $this->id('cause_form', 'id', $template['issue']['id'], 'action', 'edit', 'id', $cause['id']) ?>#p_">
 		✎	<?php echo $bezlang['edit'] ?>
 		</a>
-		<a class="bez_delete_button"
-		href="?id=<?php echo $this->id('issue_causes', 'id', $template['issue']['id'], 'delete', $cause['id']) ?>">
-			<?php echo $bezlang['delete'] ?>
-		</a>
+		<?php if (count($cause[tasks]) == 0): ?>
+			<a class="bez_delete_button"
+			href="?id=<?php echo $this->id('issue_causes', 'id', $template['issue']['id'], 'delete', $cause['id']) ?>">
+				<?php echo $bezlang['delete'] ?>
+			</a>
+		<?php endif ?>
 	</div>
 	<?php endif ?>
 </div>

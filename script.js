@@ -104,19 +104,35 @@ jQuery(document).ready(function() {
 	}
 
 	//show/hide reason
-	$reason_row = jQuery("#bez_tasks textarea[name=reason]").parents("div[class=row]");
+	$reason_row = jQuery(".bez_task_form textarea[name=reason]").parents("div[class=row]");
 	
 	if ($reason_row.length > 0) {
-		$select = jQuery("#bez_tasks select[name=state]");
+		$select = jQuery(".bez_task_form select[name=state]");
+		$action = jQuery(".bez_task_form input[name=action]");
 
-		if ($select.val() == "0" || $select.val() == "1")
+		if ($select.val() == "0" || ($select.val() == "1" && $action.val() != "2"))
 			$reason_row.hide();
+		
+		var $label = jQuery(".bez_task_form label[for=reason]");
+		var text = $label.text();
+		console.log(text);
+		var res = text.match(/[a-z ]+/gi);
 
+		if ($select.val() == "1")
+			$label.text(res[1]+":");
+		else
+			$label.text(res[0]+":");
+		
 		$select.change(function() {
-			if (jQuery(this).val() == "0" || jQuery(this).val() == "1")
+			if (jQuery(this).val() == "0" || (jQuery(this).val() == "1" && $action.val() != "2"))
 				$reason_row.hide();
 			else
 				$reason_row.show();
+
+			if (jQuery(this).val() == "1" && $action.val() == "2")
+				$label.text(res[1]+":");
+			else
+				$label.text(res[0]+":");
 		});
 	}
 
@@ -254,7 +270,7 @@ jQuery(document).ready(function() {
 		}
 		//$form = $tasks.find("form");
 	}
-	jQuery("form.task_form").each(function () {
+	jQuery(".bez_task_form").each(function () {
 		$this = jQuery(this);
 		if ( ! $this.hasClass('update')) {
 			$this.hide();

@@ -337,3 +337,12 @@ $lang['cause_type'] = 'Typ przyczyny';
 
 $lang['cause_type_default'] = 'rzeczywista';
 $lang['cause_type_potential'] = 'potencjalna';
+
+$lang[evaluation] = 'Ocena';
+
+$lang[rr_report] = 'Raport RR';
+
+$lang[rr_team] = 'Zespół oceny ryzyka';
+$lang[rr_desc] = 'Opis ryzyka';
+$lang[rr_eval] = 'Ocena ryzyka';
+$lang[rr_suceval] = 'Ocena skuteczności';

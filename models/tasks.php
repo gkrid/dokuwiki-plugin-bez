@@ -99,7 +99,8 @@ class Tasks extends Event {
 		if (array_key_exists('state', $post)) 
 			$data['state'] = $this->val_state($post['state']);
 
-		if (array_key_exists('reason', $post))
+		if (array_key_exists('reason', $post) &&
+							($data[state] == 2 || ($data[state] == 1 && $post[action] == 2)))
 			$data['reason'] = $this->val_reason($post['reason']);
 
 		if (isset($_POST['cause']))
@@ -111,6 +112,8 @@ class Tasks extends Event {
 		return $data;
 	}
 	public function val_state($state) {
+		global $errors, $bezlang;
+
 		$taskso = new Taskstates();
 		if ( ! array_key_exists((int)$state, $taskso->get())) {
 			$errors['state'] = $bezlang['vald_state_required'];
@@ -119,6 +122,8 @@ class Tasks extends Event {
 		return (int) $state;
 	}
 	public function val_reason($reason) {
+		global $errors, $bezlang;
+
 		$reason_max = 65000;
 
 		$reason = trim($reason);
@@ -150,23 +155,28 @@ class Tasks extends Event {
 	public function update($post, $data, $id) {
 		$task = $this->getone($id);
 
+		$cache = new Bezcache();
 		if ($this->can_modify($id)) {
 			$from_user = $this->validate($post);
 			$data = array_merge($data, $from_user);
-			$data['close_date'] = time();
+			if ($task[state] != $data[state])
+				$data[close_date] = time();
 			$this->errupdate($data, 'tasks', $id);
-			$this->issue->update_last_mod($task['issue']);
-
-			$cache = new Bezcache();
 			$cache->task_toupdate($id);
+			//$this->issue->update_last_mod($task['issue']);
+
 
 			return $data;
 		} elseif ($this->can_change_state($id)) {
 			$state = $this->val_state($post['state']);
 			$reason = $this->val_reason($post['reason']);
-			$data = array('state' => $state, 'reason' => $reason, 'close_date' => time());
+			$data = array('state' => $state, 'reason' => $reason);
+			if ($task[state] != $data[state])
+				$data[close_date] = time();
+
 			$this->errupdate($data, 'tasks', $id);
-			$this->issue->update_last_mod($task['issue']);
+			$cache->task_toupdate($id);
+			//$this->issue->update_last_mod($task['issue']);
 
 			return $data;
 		}
@@ -183,10 +193,9 @@ class Tasks extends Event {
 	}
 	public function any_open($issue) {
 		$issue = (int)$issue;
-		$a = $this->fetch_assoc("SELECT * FROM tasks WHERE issue=$issue");
-		$stato = new States();
+		$a = $this->fetch_assoc("SELECT state FROM tasks WHERE issue=$issue");
 		foreach ($a as $task) {
-			if ($task['state'] == $stato->open())
+			if ($task['state'] == 0)
 				return true;
 		}
 		return false;
@@ -248,6 +257,7 @@ class Tasks extends Event {
 			$row[action] = $bezlang['preventive_action'];
 
 		//$row['rejected'] = $row['state'] == $stato->rejected();
+		$row['raw_state'] = $row['state'];
 		$row['state'] = $taskso->name($row['state']);
 
 		$wiki_text = $cache->get_task($row['id']);
@@ -277,6 +287,29 @@ class Tasks extends Event {
 				close_date,tasks.issue,tasks.cause, causes.potential, causes.cause as cause_text, causes.rootcause, causes.id as cause_id
 				FROM tasks LEFT JOIN causes ON tasks.cause = causes.id WHERE tasks.issue=$issue $wcause";
 		return $this->fetch_assoc($q);
+	}
+
+	public function get_preventive($issue) {
+		$issue = (int) $issue;
+		$q = "SELECT tasks.id, rootcause, causes.cause, tasks.task, tasks.executor, tasks.close_date, tasks.reason
+				FROM tasks LEFT JOIN causes ON tasks.cause = causes.id
+				WHERE tasks.issue=$issue AND causes.potential = 1";
+		$rows = $this->fetch_assoc($q);
+
+		$rootco = new Rootcauses();
+		$cache = new Bezcache();
+
+		foreach ($rows as &$row) {
+			$row[cause] = $this->helper->wiki_parse($row[cause]);
+			$row['rootcause'] = $rootco->name($row['rootcause']);
+
+			$wiki_text = $cache->get_task($row['id']);
+			$row['task'] = $wiki_text['task'];
+			$row['reason'] = $wiki_text['reason'];
+		}
+
+		return $rows;
+
 	}
 	public function get($issue, $cause=-1) {
 		$a = $this->get_clean($issue, $cause);

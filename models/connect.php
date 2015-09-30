@@ -6,16 +6,12 @@ class Connect {
 
 	public function open() {
 		$db = new SQLite3(DOKU_INC . 'data/bez.sqlite');
-		$db->busyTimeout(1000);
+		$db->busyTimeout(1500);
 		return $db;
 	}
 
 	public function __construct()
 	{
-		global $errors;
-		if (count($errors) > 0)
-			die($errors['db']);
-
 		//jeżeli możemy, wczytujemy helpera
 		if (function_exists('plugin_load'))
 			$this->helper = plugin_load('helper', 'bez');

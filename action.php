@@ -57,14 +57,14 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 	}
 
 	public function issue_uri($id) {
-		return '?id='.$this->id('issue_show', $id);
+		return '?id='.$this->id('issue', 'id', $id);
 	}
 
 	public function html_issue_link($id) {
 		return '<a href="'.$this->issue_uri($id).'">#'.$id.'</a>';
 	}
 	public function html_task_link($issue, $task) {
-		return '<a href="'.$this->issue_uri($issue).'#z'.$task.'">#'.$issue.' #z'.$task.'</a>';
+		return '<a href="?id='.$this->id('issue_task', 'id', $issue, 'tid', $task).'">#'.$issue.' #z'.$task.'</a>';
 	}
 
 
@@ -114,7 +114,7 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 
 	public function tpl_act_render($event, $param)
 	{
-		global $template, $bezlang, $value, $errors;
+		global $template, $bezlang, $value, $errors, $INFO;
 		if ($this->action == '')
 			return false;
 

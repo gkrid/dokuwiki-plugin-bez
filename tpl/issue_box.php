@@ -8,16 +8,10 @@
 
 <div class="bez_timebox">
 <span><strong><?php echo $bezlang['open'] ?>:</strong> <?php echo $helper->time2date($template['issue']['date']) ?></span>
-<?php if ($template['issue']['last_mod'] != NULL): ?>
+<?php if ($template['issue']['raw_state'] == 1): ?>
 	<span>
-	<strong>
-	<?php if ($template['closed']): ?>
-		<?php echo $bezlang['closed'] ?>:
-	<?php else: ?>
-		<?php echo $bezlang['last_modified'] ?>:
-	<?php endif ?> 
-	</strong>
-	<?php echo $helper->time2date($template['issue']['last_mod']) ?>
+		<strong><?php echo $bezlang['closed'] ?>: </strong>
+		<?php echo $helper->time2date($template['issue']['last_mod']) ?>
 	</span>
 <?php endif ?>
 </div>
@@ -53,6 +47,10 @@
 
 	<a href="<?php echo $helper->link_8d($template[issue][id]) ?>" class="bds_inline_button bds_report_button">
 		⎙ <?php echo $bezlang['8d_report'] ?>
+	</a>
+
+	<a href="<?php echo $helper->link_rr($template[issue][id]) ?>" class="bds_inline_button bds_report_button">
+		⎚ <?php echo $bezlang['rr_report'] ?>
 	</a>
 </div>
 
