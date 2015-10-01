@@ -101,11 +101,16 @@ class Report extends Connect {
 
 		$where = $this->where($tasks_date, $filters);
 		$tasko = new Tasks();
-		$report['tasks'] = $this->fetch_assoc("SELECT tasks.action, COUNT(*) AS number, SUM(cost) AS totalcost
+		$report['tasks'] = $this->fetch_assoc("SELECT 
+									(CASE	WHEN tasks.cause IS NULL THEN 0
+											WHEN causes.potential = 0 THEN 1
+											ELSE 2 END) AS naction,
+											tasks.action, COUNT(*) AS number, SUM(cost) AS totalcost
 												FROM tasks JOIN issues ON tasks.issue = issues.id
+												LEFT JOIN causes ON tasks.cause = causes.id
 												WHERE tasks.state = 1 $where
-												GROUP BY action
-												ORDER BY action");
+												GROUP BY naction
+												ORDER BY naction");
 		$report['tasks'] = $tasko->join_all($report['tasks']);
 		$a = $this->fetch_assoc("SELECT COUNT(*) AS total, SUM(cost) AS totalcost
 								FROM tasks JOIN issues ON tasks.issue = issues.id
@@ -185,11 +190,21 @@ class Report extends Connect {
 		$where = $this->where($tasks_date, $filters, 'WHERE');
 
 		$tasko = new Tasks();
-		$report['tasks'] = $this->fetch_assoc("SELECT tasks.action, COUNT(*) AS number, SUM(cost) AS totalcost
+		/*
+		 *
+						(CASE WHEN tasks.cause = NULL THEN 0 ELSE
+						CASE WHEN causes.potential = 0 THEN 1 ELSE 2) as action
+		 */
+		$report['tasks'] = $this->fetch_assoc("SELECT
+									(CASE	WHEN tasks.cause IS NULL THEN 0
+											WHEN causes.potential = 0 THEN 1
+											ELSE 2 END) AS naction,
+												COUNT(*) AS number, SUM(cost) AS totalcost
 												FROM tasks JOIN issues ON tasks.issue = issues.id
+												LEFT JOIN causes ON tasks.cause = causes.id
 												$where
-												GROUP BY action
-												ORDER BY action");
+												GROUP BY naction
+												ORDER BY naction");
 		$report['tasks'] = $tasko->join_all($report['tasks']);
 		$a = $this->fetch_assoc("SELECT COUNT(*) AS total, SUM(cost) AS totalcost
 								FROM tasks JOIN issues ON tasks.issue = issues.id

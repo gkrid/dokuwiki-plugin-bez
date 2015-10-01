@@ -1,6 +1,7 @@
 <?php
 include_once DOKU_PLUGIN."bez/models/issues.php";
 include_once DOKU_PLUGIN."bez/models/causes.php";
+include_once DOKU_PLUGIN."bez/models/tasks.php";
 include_once DOKU_PLUGIN."bez/models/tokens.php";
 
 /*jeżeli nie mamy tokenu generujemy nowy i przekierowujemy*/
@@ -12,11 +13,12 @@ $issue_id = $nparams[id];
 
 $isso = new Issues();
 $tasko = new Tasks();
+$causo = new Causes();
 
 $template['issue'] = $isso->get($issue_id);
 $template['team'] = $isso->get_team($issue_id);
 
+$template['causes'] = $causo->get($issue_id);
 $template['tasks'] = $tasko->get_preventive($issue_id);
-var_dump($template[tasks]);
 
 $template['uri'] = $uri.'?'.$_SERVER['QUERY_STRING'];

@@ -33,7 +33,7 @@
 <?php endif ?>
 <div class="bez_buttons">
 	<?php if ($helper->user_coordinator($template['issue']['id'])): ?> 
-		<a href="?id=<?php echo $this->id('issue_report', $template['issue']['id']) ?>" class="bds_inline_button">
+		<a href="?id=<?php echo $this->id('issue_report', 'id', $template['issue']['id']) ?>" class="bds_inline_button">
 		 	✎ <?php echo $bezlang['edit'] ?>
 		</a>
 	<?php endif ?>

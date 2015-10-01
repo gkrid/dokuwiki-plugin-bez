@@ -11,16 +11,10 @@
 <table>
 <tr>
 	<td>
-		<?php echo  ucfirst($template['issue']['type']) ?>
 		 <strong>#<?php echo  $template['issue']['id'] ?></strong>
+		<?php echo  ucfirst($template['issue']['type']) ?>
 	</td>
-	<td>
-		<strong><?php echo $bezlang['entity'] ?>:</strong>
-		<?php echo  $template['issue']['entity'] ?>
-	</td>
-	</tr>
 
-	<tr>
 	<td>
 		<strong><?php echo $bezlang['open_date'] ?>:</strong>
 		<?php echo  $helper->time2date($template['issue']['date']) ?>
@@ -29,10 +23,10 @@
 		<strong><?php echo $bezlang['reporter'] ?>:</strong>
 		<?php echo  $template['issue']['reporter'] ?>
 	</td>
-	</tr>
+</tr>
 
 	<tr>
-	<td colspan="2">
+	<td colspan="3">
 		<strong><?php echo $bezlang['title'] ?>:</strong>
 		<?php echo  $template['issue']['title'] ?>
 	</td>

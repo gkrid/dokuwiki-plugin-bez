@@ -1,5 +1,5 @@
 <div id="bez_issue_report" class="bds_block <?php echo $template['action'] ?>">
-<form action="<?php echo $template['uri'] ?>?id=<?php echo $this->id('issue_report', $template['issue_id'], $template['action']) ?>" method="POST">
+<form action="<?php echo $template['uri'] ?>?id=<?php echo $this->id('issue_report', 'id', $template['issue_id'], 'action', $template['action']) ?>" method="POST">
 <div class="priorities">
 <label><input <?php if ($value['priority'] == '0') echo 'checked' ?> type="radio" name="priority" value="0"><?php echo $bezlang['priority_marginal'] ?></label>
 <label><input <?php if (!isset($value['priority']) || $value['priority'] == '1') echo 'checked' ?> type="radio" name="priority" value="1"><?php echo $bezlang['priority_important'] ?></label>

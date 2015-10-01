@@ -640,3 +640,16 @@ form.bez_task_form > fieldset {
 input.days {
 	width: 3em;
 }
+
+.rr h3 {
+	font-size:inherit;
+	font-weight: normal;
+}
+
+.rr table {
+	table-layout:fixed;
+}
+
+.rr th {
+	width: 33%;
+}

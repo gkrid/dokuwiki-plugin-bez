@@ -38,7 +38,7 @@ class syntax_plugin_bez_qlink extends DokuWiki_Syntax_Plugin {
 				case 'en':
 					$lang_code = $ex[0].':';
 			}
-			$renderer->doc .= '<a href="?id='.$lang_code.'bez:issue_show:'.$nr.'">#'.$nr.'</a>';
+			$renderer->doc .= '<a href="?id='.$lang_code.'bez:issue:id:'.$nr.'">#'.$nr.'</a>';
 			return true;
 		}
 		return false;

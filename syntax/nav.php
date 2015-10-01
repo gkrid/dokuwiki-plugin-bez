@@ -85,7 +85,7 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 		$cause_pages = array('issue_causes', 'issue_cause', 'cause_form');
 		$issue_pages = array_merge(array('issue', 'rr', '8d'), $task_pages, $cause_pages);
 
-		if (in_array($this->value['bez'], $issue_pages)) {
+		if (in_array($this->value['bez'], $issue_pages) || ($this->value[bez] == 'issue_report' && isset($this->value[id]))) {
 			$data['bez:issues']['open'] = true;
 			$id = (int)$this->value[id];
 

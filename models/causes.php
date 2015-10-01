@@ -27,8 +27,9 @@ class Causes extends Event {
 				break;
 			}
 		}
-		if ($cause_exists == false) 
+		if ($cause_exists == false) {
 			$this->errquery("ALTER TABLE causes ADD COLUMN potential INTEGER DEFAULT 0");
+		}
 	}
 	public function can_modify($cause_id) {
 		$cause = $this->getone($cause_id);

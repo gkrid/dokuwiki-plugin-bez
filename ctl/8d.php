@@ -8,7 +8,7 @@ $toko = new Tokens();
 if (!isset($_GET['t']) || ! $toko->check(trim($_GET['t']), $ID))
 	header('Location: '.$uri.'?'.$_SERVER['QUERY_STRING'].'&t='.$toko->get($ID));
 
-$issue_id = $params[0];
+$issue_id = $nparams[id];
 
 $isso = new Issues();
 $causo = new Causes();

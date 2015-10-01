@@ -6,6 +6,8 @@ include_once DOKU_PLUGIN."bez/models/users.php";
 
 $tasko = new Tasks();
 $causo = new Causes();
+$usro = new Users();
+
 $issue_id = (int)$params[1];
 
 /*casue*/
@@ -26,9 +28,18 @@ if (isset($nparams[tid])) {
 	if ($action == 'edit') 
 		$value = $tasko->getone($tid);
 	else if ($action == 'update') {
-		$tasko->update($_POST, array(), $tid);
-		if (count($errors) == 0)
+		$data = $tasko->update($_POST, array(), $tid);
+		if (count($errors) == 0) {
+
+			$title = 'Zmiana w zadaniu';
+			$exec = $data['executor'];
+			$subject = "[$conf[title]] $title: #$issue_id #z$tid";
+			$to = $usro->name($exec).' <'.$usro->email($exec).'>';
+			$body = "$uri?id=".$this->id('issue_task', 'id', $issue_id, 'tid', $tid);
+			$this->helper->mail($to, $subject, $body);
+
 			header("Location: ?id=bez:issue_task:id:$issue_id:tid:$tid");
+		}
 		$value = $_POST;
 	}
 	$template['task_button'] = $bezlang['change_task_button'];
@@ -41,6 +52,14 @@ if (isset($nparams[tid])) {
 		$data = $tasko->add($_POST, $data);
 		if (count($errors) == 0) {
 			$tid = $tasko->lastid();
+
+			$title = 'Dodano zadanie';
+			$exec = $data['executor'];
+			$subject = "[$conf[title]] $title: #$issue_id #z$tid";
+			$to = $usro->name($exec).' <'.$usro->email($exec).'>';
+			$body = "$uri?id=".$this->id('issue_task', 'id', $issue_id, 'tid', $tid);
+			$this->helper->mail($to, $subject, $body);
+
 			header("Location: ?id=bez:issue_task:id:$issue_id:tid:$tid");
 		} 
 		$value = $_POST;
@@ -52,7 +71,6 @@ if (isset($nparams[tid])) {
 $isso = new Issues();
 $template['issue'] = $isso->get($issue_id);
 
-$usro = new Users();
 $template['users'] = $usro->get();
 
 $taskso = new Taskstates();

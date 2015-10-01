@@ -5,8 +5,8 @@ include_once DOKU_PLUGIN."bez/models/issues.php";
 include_once DOKU_PLUGIN."bez/models/states.php";
 include_once DOKU_PLUGIN."bez/models/tasks.php";
 
-$issue_id = $params[0];
-$action = $params[1];
+$issue_id = $nparams[id];
+$action = $nparams[action];
 
 if	(!$helper->user_editor() ||
 	($issue_id != NULL && !$helper->user_coordinator($issue_id))) {
@@ -70,6 +70,7 @@ if (count($_POST) > 0) {
 } else {
 	$action = 'add';
 }
+
 
 $template['action'] = $action;
 

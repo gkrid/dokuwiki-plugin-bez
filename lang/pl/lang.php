@@ -346,3 +346,4 @@ $lang[rr_team] = 'Zespół oceny ryzyka';
 $lang[rr_desc] = 'Opis ryzyka';
 $lang[rr_eval] = 'Ocena ryzyka';
 $lang[rr_suceval] = 'Ocena skuteczności';
+

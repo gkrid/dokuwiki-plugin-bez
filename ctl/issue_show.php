@@ -1,4 +1,5 @@
 <?php
+
 include_once DOKU_PLUGIN."bez/models/issues.php";
 include_once DOKU_PLUGIN."bez/models/states.php";
 include_once DOKU_PLUGIN."bez/models/comments.php";
@@ -22,6 +23,8 @@ $issue_id = $params[0];
 $action = $params[1];
 $table = $params[2];
 $id = $params[3];
+
+header("Location: ?id=bez:issue:id:$issue_id");
 
 $objects = array(
 	'comment'	=> $como,

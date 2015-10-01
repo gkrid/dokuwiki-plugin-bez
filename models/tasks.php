@@ -27,6 +27,20 @@ class Tasks extends Event {
 				)";
 		$this->errquery($q);
 
+		/*potential cause*/
+		$schema = $this->fetch_assoc("PRAGMA table_info(causes)");
+		$cause_exists = false;
+		foreach ($schema as $column) {
+			if ($column['name'] == 'potential') {
+				$cause_exists = true;
+				break;
+			}
+		}
+		if ($cause_exists == false) {
+			$this->errquery("ALTER TABLE causes ADD COLUMN potential INTEGER DEFAULT 0");
+		}
+
+		/*cause in task*/
 		$schema = $this->fetch_assoc("PRAGMA table_info(tasks)");
 		$cause_exists = false;
 		foreach ($schema as $column) {
@@ -35,8 +49,32 @@ class Tasks extends Event {
 				break;
 			}
 		}
-		if ($cause_exists == false) 
+
+		if ($cause_exists == false) {
 			$this->errquery("ALTER TABLE tasks ADD COLUMN cause INTEGER NULL");
+			$causes = $this->fetch_assoc("SELECT * FROM causes");
+			$cs = array();
+			foreach ($causes as $c) {
+				$cs[$c[issue]] = $c[id];
+			}
+
+			$tasks = $this->fetch_assoc("SELECT * FROM tasks");
+			foreach ($tasks as $t) {
+				if ($t[action] == 1)  {
+					$cid = $cs[$t[issue]];
+					if (isset($cid)) {
+						$this->errquery("UPDATE tasks SET cause=".$cid." WHERE id=$t[id]");
+					}
+				} elseif ($t[action] == 2) {
+					$cid = $cs[$t[issue]];
+					if (isset($cid)) {
+						$this->errquery("UPDATE causes SET potential=1 WHERE id=$cid");
+						$this->errquery("UPDATE tasks SET cause=".$cid." WHERE id=$t[id]");
+					}
+				}
+			}
+
+		}
 	}
 	public function can_modify($task_id) {
 		$task = $this->getone($task_id);
@@ -249,12 +287,21 @@ class Tasks extends Event {
 		$row['executor'] = $usro->name($row['executor']);
 
 		//$row['action'] = $taskao->name($row['action']);
-		if ($row[cause] == NULL)
-			$row[action] = $bezlang['correction'];
-		else if ($row[potential] == 0)
-			$row[action] = $bezlang['corrective_action'];
-		else
-			$row[action] = $bezlang['preventive_action'];
+
+		if (isset($row[naction]))
+			switch($row[naction]) {
+				case 0: $row[action] = $bezlang['correction']; break;
+				case 1: $row[action] = $bezlang['corrective_action']; break;
+				case 2: $row[action] = $bezlang['preventive_action']; break;
+			}
+		else {
+			if ($row[cause] == NULL)
+				$row[action] = $bezlang['correction'];
+			else if ($row[potential] == 0)
+				$row[action] = $bezlang['corrective_action'];
+			else
+				$row[action] = $bezlang['preventive_action'];
+		}
 
 		//$row['rejected'] = $row['state'] == $stato->rejected();
 		$row['raw_state'] = $row['state'];
@@ -291,7 +338,7 @@ class Tasks extends Event {
 
 	public function get_preventive($issue) {
 		$issue = (int) $issue;
-		$q = "SELECT tasks.id, rootcause, causes.cause, tasks.task, tasks.executor, tasks.close_date, tasks.reason
+		$q = "SELECT tasks.id, causes.id as cid, tasks.task, tasks.executor, tasks.state, tasks.close_date, tasks.reason
 				FROM tasks LEFT JOIN causes ON tasks.cause = causes.id
 				WHERE tasks.issue=$issue AND causes.potential = 1";
 		$rows = $this->fetch_assoc($q);
@@ -299,16 +346,26 @@ class Tasks extends Event {
 		$rootco = new Rootcauses();
 		$cache = new Bezcache();
 
+		$bycause = array();
 		foreach ($rows as &$row) {
-			$row[cause] = $this->helper->wiki_parse($row[cause]);
-			$row['rootcause'] = $rootco->name($row['rootcause']);
+			/*$row[cause] = $this->helper->wiki_parse($row[cause]);
+			$row['rootcause'] = $rootco->name($row['rootcause']);*/
+
+			$usro = new Users();
+			$row['executor'] = $usro->name($row['executor']);
+			$taskso = new Taskstates();
+			$row['state'] = $taskso->name($row['state']);
 
 			$wiki_text = $cache->get_task($row['id']);
 			$row['task'] = $wiki_text['task'];
 			$row['reason'] = $wiki_text['reason'];
+
+			if (!isset($bycause[$row[cid]]))
+				$bycause[$row[cid]] = array();
+			$bycause[$row[cid]][] = $row;
 		}
 
-		return $rows;
+		return $bycause;
 
 	}
 	public function get($issue, $cause=-1) {
@@ -420,9 +477,18 @@ class Tasks extends Event {
 
 		$where = array();
 
+		if (isset($vfilters[action])) {
+			$vfilters[naction] = $vfilters[action];
+			unset($vfilters[action]);
+		}
+
 		foreach ($vfilters as $name => $value)
-			if ($value != '-all')
-				$where[] = "tasks.$name = '".$this->escape($value)."'";
+			if ($value != '-all') {
+				if ($name == 'naction')
+					$where[] = "$name = '".$this->escape($value)."'";
+				else
+					$where[] = "tasks.$name = '".$this->escape($value)."'";
+			}
 
 		if ($year != '-all') {
 			$state = $vfilters['state'];
@@ -440,8 +506,15 @@ class Tasks extends Event {
 		if (count($where) > 0)
 			$where_q = 'WHERE '.implode(' AND ', $where);
 
-		$a = $this->fetch_assoc("SELECT tasks.id,tasks.state, tasks.action, tasks.executor, tasks.cost, tasks.date, tasks.close_date, tasks.issue, tasks.close_date, issues.priority
-		FROM tasks JOIN issues ON tasks.issue = issues.id $where_q ORDER BY priority DESC, tasks.date DESC");
+
+		$a = $this->fetch_assoc("SELECT tasks.id,tasks.state,
+									(CASE	WHEN tasks.cause IS NULL THEN '0'
+											WHEN causes.potential = 0 THEN '1'
+											ELSE '2' END) AS naction,
+		tasks.executor, tasks.cost, tasks.date, tasks.close_date, tasks.issue, tasks.close_date, issues.priority
+		FROM tasks JOIN issues ON tasks.issue = issues.id 
+		LEFT JOIN causes ON tasks.cause = causes.id
+		$where_q ORDER BY priority DESC, tasks.date DESC");
 		foreach ($a as &$row)
 			$row = $this->join($row);
 		return $a;

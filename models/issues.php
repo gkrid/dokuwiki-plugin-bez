@@ -185,7 +185,7 @@ class Issues extends Connect {
 		if ($this->helper->user_admin() || $issue['coordinator'] == $INFO['client']) {
 			$from_user = $this->validate($post, 'update', $id);
 			$data = array_merge($data, $from_user);
-			if ($update_last_mod)
+			if ($update_last_mod && $issue[state] != $data[state])
 				$data['last_mod'] = time();
 			$this->errupdate($data, 'issues', $id);
 
