@@ -342,7 +342,7 @@ class Tasks extends Event {
 		$issue = (int) $issue;
 		$q = "SELECT tasks.id, causes.id as cid, tasks.task, tasks.executor, tasks.state, tasks.close_date, tasks.reason
 				FROM tasks LEFT JOIN causes ON tasks.cause = causes.id
-				WHERE tasks.issue=$issue AND causes.potential = 1";
+				WHERE tasks.issue=$issue AND causes.potential = 1 AND tasks.state != 2";
 		$rows = $this->fetch_assoc($q);
 
 		$rootco = new Rootcauses();
