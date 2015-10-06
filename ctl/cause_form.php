@@ -18,7 +18,7 @@ if (isset($params[3])) {
 	else if ($action == 'update') {
 		$causo->update($_POST, array(), $cause_id);
 		if (count($errors) == 0)
-			header("Location: ?id=bez:issue_causes:id:$issue_id");
+			header("Location: ?id=bez:issue_cause:id:$issue_id:cid:$cause_id");
 	}
 	$template['cause_button'] = $bezlang['change_cause_button'];
 	$template['cause_action'] = $this->id('cause_form', 'id', $issue_id, 'action', 'update', 'cid', $cause_id);
@@ -27,8 +27,9 @@ if (isset($params[3])) {
 	if (count($_POST) > 0) {
 		$data = array('reporter' => $INFO['client'], 'date' => time(), 'issue' => $issue_id);
 		$data = $causo->add($_POST, $data);
+		$cause_id = $causo->lastid();
 		if (count($errors) == 0)
-			header("Location: ?id=bez:issue_causes:id:$issue_id");
+			header("Location: ?id=bez:issue_cause:id:$issue_id:cid:$cause_id");
 		else
 			$value = $_POST;
 	} else {

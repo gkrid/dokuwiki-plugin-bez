@@ -19,14 +19,10 @@
 		<strong><?php echo $bezlang['open_date'] ?>:</strong>
 		<?php echo  $helper->time2date($template['issue']['date']) ?>
 	</td>
-	<td>
-		<strong><?php echo $bezlang['reporter'] ?>:</strong>
-		<?php echo  $template['issue']['reporter'] ?>
-	</td>
 </tr>
 
 	<tr>
-	<td colspan="3">
+	<td colspan="2">
 		<strong><?php echo $bezlang['title'] ?>:</strong>
 		<?php echo  $template['issue']['title'] ?>
 	</td>

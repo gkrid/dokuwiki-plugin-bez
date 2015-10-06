@@ -128,6 +128,13 @@ class Causes extends Event {
 		$a = $this->fetch_assoc("SELECT * FROM causes WHERE issue=$issue");
 		return $this->join_all($a);
 	}
+	
+	public function get_potential($issue) {
+		$issue = (int) $issue;
+
+		$a = $this->fetch_assoc("SELECT * FROM causes WHERE issue=$issue AND potential = 1");
+		return $this->join_all($a);
+	}
 
 	public function get_by_rootcause($issue) {
 		$a = $this->get($issue);

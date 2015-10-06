@@ -50,16 +50,6 @@
 
 <?php echo $task['task'] ?>
 
-<?php if (isset($task['cause_text'])): ?>
-	<h3>
-		<a href="?id=<?php echo $this->id('issue_task', 'id', $template['issue']['id'], 'tid', $task['id']) ?>">
-			#p<?php echo $task['cause_id'] ?>
-		</a>
-		<?php echo lcfirst($task[rootcause]) ?>
-	</h3>
-	<?php echo $task['cause_text'] ?>
-<?php endif ?>
-
 <?php if ($task['raw_state'] == 2): ?>
 	<h3><?php echo $bezlang['reason'] ?></h3>
 	<?php echo $task['reason'] ?>
@@ -78,7 +68,7 @@
 	<?php if ($template['issue'][raw_state] == 0 &&
 	($task['executor_nick'] == $INFO['client'] || $helper->user_coordinator($template[issue][id]))): ?> 
 		<a class="bds_inline_button"
-			href="?id=<?php echo $this->id('task_form', 'id', $template['issue']['id'], 'cause', $cause[id], 'tid', $task['id']) ?>">
+			href="?id=<?php echo $this->id('task_form', 'id', $template['issue']['id'], 'cid', $cause[id], 'tid', $task['id']) ?>">
 		 	✎ <?php echo $bezlang['edit'] ?>
 	</a>
 	<?php endif ?>

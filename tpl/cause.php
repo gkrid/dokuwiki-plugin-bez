@@ -28,7 +28,9 @@
 		<?php else: ?>
 			<?php foreach ($cause[tasks] as $task): ?>
 				<?php if (isset($nparams[tid]) && $nparams[tid] == $task[id]) echo '<strong>' ?>
-				<a href="?id=<?php echo $this->id('issue_task', 'id', $template[issue][id], 'tid', $task[id]) ?>">
+				<a href="?id=<?php echo $this->id('issue_cause_task', 'id', $template[issue][id],
+											'cid', $cause[id], 
+				 'tid', $task[id]) ?>">
 					#z<?php echo $task[id] ?>
 				</a>&nbsp;
 				<?php if (isset($nparams[tid]) && $nparams[tid] == $task[id]) echo '</strong>' ?>
@@ -36,7 +38,7 @@
 		<?php endif ?> 
 		<?php if ($template['issue'][raw_state] == 0 && $helper->user_coordinator($template[issue][id])): ?> 
 			&nbsp;&nbsp;&nbsp;
-			<a href="?id=<?php echo $this->id('task_form', 'id', $template[issue][id], 'cause', $cause[id]) ?>">
+			<a href="?id=<?php echo $this->id('task_form', 'id', $template[issue][id], 'cid', $cause[id]) ?>">
 				dodaj
 			</a>
 		<?php endif ?>
@@ -47,7 +49,7 @@
 	<?php if ($template['issue'][raw_state] == 0 && $helper->user_coordinator($template[issue][id])): ?> 
 	<div class="bez_buttons">
 	<a class="bds_inline_button"
-	href="?id=<?php echo $this->id('cause_form', 'id', $template['issue']['id'], 'action', 'edit', 'id', $cause['id']) ?>#p_">
+	href="?id=<?php echo $this->id('cause_form', 'id', $template['issue']['id'], 'action', 'edit', 'cid', $cause['id']) ?>#p_">
 		✎	<?php echo $bezlang['edit'] ?>
 		</a>
 		<?php if (count($cause[tasks]) == 0): ?>

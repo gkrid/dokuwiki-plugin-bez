@@ -82,7 +82,7 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 		$data['bez:issues'] = array('id' => 'bez:issues:year:'.date('Y'), 'type' => 'd', 'level' => 2, 'title' => $this->getLang('bds_issues'));
 
 		$task_pages = array('issue_tasks', 'task_form', 'issue_task');
-		$cause_pages = array('issue_causes', 'issue_cause', 'cause_form');
+		$cause_pages = array('issue_causes', 'issue_cause', 'cause_form', 'issue_cause_task');
 		$issue_pages = array_merge(array('issue', 'rr', '8d'), $task_pages, $cause_pages);
 
 		if (in_array($this->value['bez'], $issue_pages) || ($this->value[bez] == 'issue_report' && isset($this->value[id]))) {
@@ -101,8 +101,8 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 
 			$pid = "bez:issue_tasks:id:$id";
 			$data[$pid] = array('id' => $pid, 'type' => 'd', 'level' => 4,
-								'title' => $this->getLang('tasks'));
-			if (in_array($this->value['bez'], $task_pages)) {
+								'title' => $this->getLang('correction_nav'));
+			if (in_array($this->value['bez'], $task_pages) && $this->value[cid] == '') {
 				$data[$pid][open] = true;
 
 				if ($issue_opened) {
@@ -110,7 +110,7 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 					$data[$rpid] = array('id' => $rpid, 'type' => 'f', 'level' => 5,
 											'title' => $this->getLang('add_correction'));
 				}
-				$res = $tasko->get_filtered(array('issue' => $id));
+				$res = $tasko->get_filtered(array('issue' => $id, 'action' => '0'));
 				foreach ($res as $r) {
 					$rpid = "bez:issue_task:id:$id:tid:$r[id]";
 					$data[$rpid] = array('id' => $rpid, 'type' => 'f', 'level' => 5,
@@ -121,27 +121,31 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 			$pid = "bez:issue_causes:id:$id";
 			$data[$pid] = array('id' => $pid, 'type' => 'd', 'level' => 4,
 								'title' => $this->getLang('causes'));
-			if (in_array($this->value['bez'], $cause_pages)) {
+			if (in_array($this->value['bez'], $cause_pages) || $this->value[cid] != '') {
 				$data[$pid][open] = true;
 				if ($issue_opened) {
 					$rpid = "bez:cause_form:id:$id";
 					$data[$rpid] = array('id' => $rpid, 'type' => 'f', 'level' => 5,
 											'title' => $this->getLang('add_cause'));
 				}
-				/*$res = $causo->get($id);
+				$res = $causo->get($id);
 				foreach ($res as $r) {
 					$rpid = "bez:issue_cause:id:$id:cid:$r[id]";
-					$data[$rpid] = array('id' => $rpid, 'type' => 'f', 'level' => 5,
+					$data[$rpid] = array('id' => $rpid, 'type' => 'd', 'level' => 5,
 										'title' => '#p'.$r[id]);
-/*
+
 					if ((int)$this->value['cid'] == $r[id]) {
 						$data[$rpid][open] = true;
 
 						$pres = $tasko->get($id, $r['id']);
 						foreach ($pres as $pr) {
+							$rptid = "bez:issue_cause_task:id:$id:cid:$r[id]:tid:$pr[id]";
+							$data[$rptid] = array('id' => $rptid, 'type' => 'f', 'level' => 6,
+										'title' => '#z'.$pr[id]);
+
 						}
 					}
-				}*/
+				}
 				
 			}
 
@@ -247,11 +251,13 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 			$item_value[urldecode($ex[$i])] = urldecode($ex[$i+1]);
 
 		//pola brane pod uwagę przy określaniu aktualnej strony
-		$fields = array('bez', 'year', 'tid');
+		$fields = array('bez', 'year', 'tid', 'cid');
 		if ($item_value['bez'] == 'report' || $item_value['bez'] == 'report_open') {
 			$fields[] = 'month';
 			$fields[] = 'year';
 		}
+		if ($this->value[bez] == 'task_form' && isset($this->value[cid]))
+			unset($fields[0]);
 
 		$actual_page = true;
 		foreach ($fields as $field)

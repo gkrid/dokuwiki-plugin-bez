@@ -20,9 +20,10 @@
 		<strong><?php echo $bezlang['open_date'] ?>:</strong>
 		<?php echo  $helper->time2date($template['issue']['date']) ?>
 	</td>
+	
 	<td>
-		<strong><?php echo $bezlang['reporter'] ?>:</strong>
-		<?php echo  $template['issue']['reporter'] ?>
+		<strong><?php echo $bezlang['close_date'] ?>: </strong>
+		<?php echo $helper->time2date($template['issue']['last_mod']) ?>
 	</td>
 </tr>
 
@@ -45,7 +46,6 @@
 </ul>
 
 <h2>3.  <?php echo $bezlang['rr_eval'] ?></h2>
-
 <table>
 	<tr>
 		<th><?php echo ucfirst($bezlang[cause]) ?></th>
@@ -57,7 +57,7 @@
 		<?php $ctask = count($template[tasks][$r[id]]) ?>
 		<td rowspan="<?php echo $ctask ?>">
 			<h3><strong>#p<?php echo $r[id] ?></strong> <?php echo $r[rootcause] ?></h3>
-			<?php echo $r[cause] ?>
+			<?php echo $helper->wiki_parse($r[cause]) ?>
 		</td>
 		<?php if ($ctask > 0): ?>
 			<?php $task = $template[tasks][$r[id]][0]; ?>
@@ -80,7 +80,6 @@
 	<h2>4.  <?php echo $bezlang['rr_suceval'] ?></h2>
 		<?php echo $template[issue][opinion] ?>
 
-<h3><strong><?php echo $bezlang['closed'] ?>: </strong> <?php echo $helper->time2date($template['issue']['last_mod']) ?></h3>
 
 <?php endif ?>
 

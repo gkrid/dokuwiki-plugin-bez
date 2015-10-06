@@ -8,8 +8,9 @@
 		<div class="bds_block" id="bez_causes">
 			<?php include "cause.php" ?>
 		</div>
+		<br>
 	<?php endif ?>
-	<br>
+
 	<form class="bez_form bez_task_form" action="?id=<?php echo $template['task_action'] ?>" method="POST">
 			<fieldset class="bds_form">
 				<?php if (isset($nparams[tid])): ?>

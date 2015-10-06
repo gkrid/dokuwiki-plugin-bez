@@ -56,10 +56,11 @@ class Connect {
 		$r = $db->query($query);
 		if (!$r) 
 			$errors['sqlite'] = "SQLite error(".$db->lastErrorCode()."): ". $db->lastErrorMsg()."\nQuery: $query";
-		$last = $db->lastInsertRowId();
+		$lastid = $db->lastInsertRowId();
+		
 		$db->close();
 		unset($db);
-		return $last;
+		return $lastid;
 	}
 
 	public function lastid()
@@ -100,13 +101,14 @@ class Connect {
 		global $errors;
 		if (count($errors) > 0)
 			return;
-
+		
 		$fields = implode(',', array_keys($data));
 		$values = '';
 		foreach ($data as $v)
 			$values .= "'".$this->escape($v)."',";
 		$values = substr($values, 0, -1);
 		$this->lastid = $this->ins_query("INSERT INTO $table ($fields) VALUES ($values)");
+		
 	}
 
 	protected function errupdate($data, $table, $id)

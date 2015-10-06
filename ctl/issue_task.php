@@ -6,8 +6,8 @@ include_once DOKU_PLUGIN."bez/models/causes.php";
 $tasko = new Tasks();
 $causo = new Causes();
 
-$issue_id = (int)$params[1];
-$task_id = (int)$params[3];
+$issue_id = (int)$nparams[id];
+$task_id = (int)$nparams[tid];
 
 $isso = new Issues();
 $template['issue'] = $isso->get($issue_id);

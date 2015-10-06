@@ -174,6 +174,7 @@ class Tasks extends Event {
 	}
 	public function add($post, $data=array())
 	{
+		global $errors;
 		if ($this->helper->user_coordinator($data['issue']) &&
 			$this->issue->opened($data['issue']) &&
 			!$this->issue->is_proposal($data['issue'])) {
@@ -188,7 +189,8 @@ class Tasks extends Event {
 			$this->issue->update_last_mod($data['issue']);
 			return $data;
 		}
-		return false;
+		$errors[] = 'Nie udało się dodać rekordu.';
+		return array();
 	}
 	public function update($post, $data, $id) {
 		$task = $this->getone($id);
@@ -324,7 +326,7 @@ class Tasks extends Event {
 		$issue = (int) $issue;
 		$wcause = '';
 		if (is_null($cause))
-			$wcause = " AND tasks.cause is NULL";
+			$wcause = " AND (tasks.cause = '' OR tasks.cause is NULL)";
 		else if ($cause > -1)
 			$wcause = " AND tasks.cause=$cause";
 
@@ -431,7 +433,7 @@ class Tasks extends Event {
 
 	public function validate_filters($filters) {
 
-		$data = array('issue' => '-all', 'action' => '-all', 'state' => '-all', 'executor' => '-all', 'year' => '-all');
+		$data = array('issue' => '-all', 'naction' => '-all', 'state' => '-all', 'executor' => '-all', 'year' => '-all');
 
 		if (isset($filters['issue'])) {
 			$isso = new Issues();
@@ -508,7 +510,7 @@ class Tasks extends Event {
 
 
 		$a = $this->fetch_assoc("SELECT tasks.id,tasks.state,
-									(CASE	WHEN tasks.cause IS NULL THEN '0'
+									(CASE	WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
 											WHEN causes.potential = 0 THEN '1'
 											ELSE '2' END) AS naction,
 		tasks.executor, tasks.cost, tasks.date, tasks.close_date, tasks.issue, tasks.close_date, issues.priority

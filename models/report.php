@@ -102,7 +102,7 @@ class Report extends Connect {
 		$where = $this->where($tasks_date, $filters);
 		$tasko = new Tasks();
 		$report['tasks'] = $this->fetch_assoc("SELECT 
-									(CASE	WHEN tasks.cause IS NULL THEN 0
+									(CASE	WHEN tasks.cause IS NULL OR tasks.cause = '' THEN 0
 											WHEN causes.potential = 0 THEN 1
 											ELSE 2 END) AS naction,
 											tasks.action, COUNT(*) AS number, SUM(cost) AS totalcost
@@ -192,11 +192,11 @@ class Report extends Connect {
 		$tasko = new Tasks();
 		/*
 		 *
-						(CASE WHEN tasks.cause = NULL THEN 0 ELSE
+						(CASE WHEN tasks.cause = NULL OR  tasks.cause = '' THEN 0 ELSE
 						CASE WHEN causes.potential = 0 THEN 1 ELSE 2) as action
 		 */
 		$report['tasks'] = $this->fetch_assoc("SELECT
-									(CASE	WHEN tasks.cause IS NULL THEN 0
+									(CASE	WHEN tasks.cause IS NULL OR tasks.cause='' THEN 0
 											WHEN causes.potential = 0 THEN 1
 											ELSE 2 END) AS naction,
 												COUNT(*) AS number, SUM(cost) AS totalcost

@@ -340,3 +340,5 @@ $lang[rr_team] = 'Risk evaluation team';
 $lang[rr_desc] = 'Risk description';
 $lang[rr_eval] = 'Risk evaluacion';
 $lang[rr_suceval] = 'Effectiveness evalutation';
+
+$lang[correction_nav] = 'Corrections';

@@ -18,7 +18,7 @@ $causo = new Causes();
 $template['issue'] = $isso->get($issue_id);
 $template['team'] = $isso->get_team($issue_id);
 
-$template['causes'] = $causo->get($issue_id);
+$template['causes'] = $causo->get_potential($issue_id);
 $template['tasks'] = $tasko->get_preventive($issue_id);
 
 $template['uri'] = $uri.'?'.$_SERVER['QUERY_STRING'];

@@ -12,8 +12,8 @@ $issue_id = (int)$params[1];
 
 /*casue*/
 $cause_id = '';
-if (isset($nparams[cause]) && $nparams[cause] != '') {
-	$cause_id = (int)$nparams[cause];
+if (isset($nparams[cid]) && $nparams[cid] != '') {
+	$cause_id = (int)$nparams[cid];
 	$template['cause'] = $causo->join($causo->getone($cause_id));
 }
 
@@ -37,14 +37,17 @@ if (isset($nparams[tid])) {
 			$to = $usro->name($exec).' <'.$usro->email($exec).'>';
 			$body = "$uri?id=".$this->id('issue_task', 'id', $issue_id, 'tid', $tid);
 			$this->helper->mail($to, $subject, $body);
-
-			header("Location: ?id=bez:issue_task:id:$issue_id:tid:$tid");
+			
+			if ($cause_id == '')
+				header("Location: ?id=bez:issue_task:id:$issue_id:tid:$tid");
+			else
+				header("Location: ?id=bez:issue_cause_task:id:$issue_id:cid:$cause_id:tid:$tid");
 		}
 		$value = $_POST;
 	}
 	$template['task_button'] = $bezlang['change_task_button'];
 	$template['task_action'] = $this->id('task_form', 'id', $issue_id,
-										 'cause', $cause_id, 'tid', $tid, 'action', 'update');
+										 'cid', $cause_id, 'tid', $tid, 'action', 'update');
 /*dodawania*/
 } else {
 	if (count($_POST) > 0) {
@@ -52,20 +55,23 @@ if (isset($nparams[tid])) {
 		$data = $tasko->add($_POST, $data);
 		if (count($errors) == 0) {
 			$tid = $tasko->lastid();
-
+			
 			$title = 'Dodano zadanie';
 			$exec = $data['executor'];
 			$subject = "[$conf[title]] $title: #$issue_id #z$tid";
 			$to = $usro->name($exec).' <'.$usro->email($exec).'>';
 			$body = "$uri?id=".$this->id('issue_task', 'id', $issue_id, 'tid', $tid);
 			$this->helper->mail($to, $subject, $body);
-
-			header("Location: ?id=bez:issue_task:id:$issue_id:tid:$tid");
+			
+			if ($cause_id == '')
+				header("Location: ?id=bez:issue_task:id:$issue_id:tid:$tid");
+			else
+				header("Location: ?id=bez:issue_cause_task:id:$issue_id:cid:$cause_id:tid:$tid");
 		} 
 		$value = $_POST;
 	} 
 	$template['task_button'] = $bezlang['add'];
-	$template['task_action'] = $this->id('task_form', 'id', $issue_id, 'cause', $cause_id, 'action', 'add');
+	$template['task_action'] = $this->id('task_form', 'id', $issue_id, 'cid', $cause_id, 'action', 'add');
 }
 
 $isso = new Issues();
