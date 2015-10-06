@@ -55,7 +55,7 @@
 	<?php foreach($template[causes] as $r): ?>
 	<tr>
 		<?php $ctask = count($template[tasks][$r[id]]) ?>
-		<td rowspan="<?php echo $ctask ?>">
+		<td rowspan="<?php echo $ctask > 0 ? $ctask : 1 ?>">
 			<h3><strong>#p<?php echo $r[id] ?></strong> <?php echo $r[rootcause] ?></h3>
 			<?php echo $helper->wiki_parse($r[cause]) ?>
 		</td>
