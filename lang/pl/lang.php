@@ -349,3 +349,4 @@ $lang[rr_eval] = 'Ocena ryzyka';
 $lang[rr_suceval] = 'Ocena skuteczności';
 
 $lang[correction_nav] = 'Korekcje';
+$lang[reaction] = 'Reakcja';

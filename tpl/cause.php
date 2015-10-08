@@ -4,7 +4,7 @@
 		<span><strong><?php echo $bezlang['added'] ?>:</strong> <?php echo $helper->time2date($cause['date']) ?></span>
 	</div>
 	<h2>
-		<a href="?id=<?php echo $this->id('issue_causes', 'id', $cause['issue']) ?>">#p<?php echo $cause['id'] ?></a>
+		<a href="?id=<?php echo $this->id('issue_cause', 'id', $cause['issue'], 'cid', $cause['id']) ?>">#p<?php echo $cause['id'] ?></a>
 		<?php if ($cause[potential] == 0): ?>
 			<?php echo $bezlang['cause'] ?>
 		<?php else: ?>

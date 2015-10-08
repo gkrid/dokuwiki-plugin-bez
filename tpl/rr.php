@@ -12,19 +12,25 @@
 <table>
 <tr>
 	<td>
-		 <strong>#<?php echo  $template['issue']['id'] ?></strong>
+		 <strong>
+		 	<a href="<?php echo $this->issue_uri($template[issue][id]) ?>">
+				#<?php echo  $template['issue']['id'] ?>
+			</a>
+		</strong>
 		<?php echo  ucfirst($template['issue']['type']) ?>
 	</td>
 
-	<td>
-		<strong><?php echo $bezlang['open_date'] ?>:</strong>
-		<?php echo  $helper->time2date($template['issue']['date']) ?>
-	</td>
-	
-	<td>
-		<strong><?php echo $bezlang['close_date'] ?>: </strong>
-		<?php echo $helper->time2date($template['issue']['last_mod']) ?>
-	</td>
+	<?php if ($template['issue'][raw_state] == 0): ?>	
+		<td>
+			<strong><?php echo $bezlang['open_date'] ?>:</strong>
+			<?php echo  $helper->time2date($template['issue']['date']) ?>
+		</td>
+	<?php else: ?>
+		<td>
+			<strong><?php echo $bezlang['close_date'] ?>: </strong>
+			<?php echo $helper->time2date($template['issue']['last_mod']) ?>
+		</td>
+	<?php endif ?>
 </tr>
 
 	<tr>
@@ -49,14 +55,21 @@
 <table>
 	<tr>
 		<th><?php echo ucfirst($bezlang[cause]) ?></th>
-		<th><?php echo $bezlang[tasks] ?></th>
+		<th><?php echo $bezlang[reaction] ?></th>
 		<th><?php echo $bezlang[evaluation] ?></th>
 	</tr>
 	<?php foreach($template[causes] as $r): ?>
 	<tr>
 		<?php $ctask = count($template[tasks][$r[id]]) ?>
 		<td rowspan="<?php echo $ctask > 0 ? $ctask : 1 ?>">
-			<h3><strong>#p<?php echo $r[id] ?></strong> <?php echo $r[rootcause] ?></h3>
+			<h3>
+				<strong>
+				<a href="?id=<?php echo $this->id('issue_cause', 'id', $template[issue][id], 'cid', $r[id] ) ?>">
+						#p<?php echo $r[id] ?>
+				</a>
+				</strong>
+				<?php echo $r[rootcause] ?>
+			</h3>
 			<?php echo $helper->wiki_parse($r[cause]) ?>
 		</td>
 		<?php if ($ctask > 0): ?>
