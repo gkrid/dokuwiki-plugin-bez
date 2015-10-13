@@ -11,7 +11,11 @@
 <table>
 <tr>
 	<td>
-		 <strong>#<?php echo  $template['issue']['id'] ?></strong>
+		 <strong>
+		 	<a href="<?php echo $this->issue_uri($template[issue][id]) ?>">
+				#<?php echo  $template['issue']['id'] ?>
+			</a>
+		</strong>
 		<?php echo  ucfirst($template['issue']['type']) ?>
 	</td>
 
@@ -40,15 +44,24 @@
 
 <?php if (count($template['causes']) > 0): ?>
 	<h2><?php echo $bezlang['3d'] ?></h2>
-
+	<table>
 	<?php foreach ($template['causes'] as $rootcause => $cause): ?>
-		<h3><?php echo $rootcause ?></h3>
-		<ul>
-			<?php foreach($cause as $value): ?>
-				<li><?php echo  $helper->wiki_parse($value['cause']) ?></li>
-			<?php endforeach ?>
-		</ul>
+
+		<tr><th colspan=2><?php echo $rootcause ?></th></tr>
+		<?php foreach($cause as $value): ?>
+			<tr>
+			<td>
+				<a href="?id=<?php echo $this->id('issue_cause', 'id', $template[issue][id], 'cid', $value[id] ) ?>">
+						#p<?php echo $value[id] ?>
+				</a>
+			</td>
+			<td>
+			<?php echo  $helper->wiki_parse($value['cause']) ?>
+			</td>
+			</tr>
+		<?php endforeach ?>
 	<?php endforeach ?>
+	</table>
 <?php endif ?>
 
 <?php if (count($template['tasks']) > 0): ?>
@@ -56,6 +69,7 @@
 		<h2><?php echo $bezlang[$nd] ?></h2>
 		<table>
 		<tr>
+			<th><?php echo $bezlang['id'] ?></th>
 			<th><?php echo $bezlang['task'] ?></th>
 			<th><?php echo $bezlang['state'] ?></th>
 			<th><?php echo $bezlang['cost'] ?></th>
@@ -64,6 +78,11 @@
 		</tr>
 		<?php foreach($tasks as $task): ?>
 			<tr>
+				<td>	
+					<a href="?id=<?php echo $this->id('issue_task', 'id', $task[issue], 'tid', $task[id]) ?>">
+						#z<?php echo $task[id] ?>
+					</a>
+				</td>
 				<td><?php echo  $task['task'] ?></td>
 				<td><?php echo $task['state'] ?></td>
 				<td>

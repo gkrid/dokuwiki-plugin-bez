@@ -5,12 +5,11 @@
 				#z<?php echo $task[id] ?>
 			</a>
 		</strong>
+		<?php echo $task[executor] ?>
 	</h3>
 	<?php echo $task[task] ?>
 </td>
 <td>
-<strong><?php echo $bezlang[executor] ?>:</strong> <?php echo $task[executor] ?><br>
-	
 	<?php if ($task[close_date] == NULL): ?>
 	<strong><?php echo $bezlang[open] ?>:</strong> <?php echo $helper->time2date($task['date']) ?>
 	<?php else: ?>

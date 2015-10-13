@@ -48,7 +48,7 @@
 						<span class="author"><?php echo $bezlang['coordinator'] ?>: <strong><?php echo $elm['coordinator'] ?></strong></span>
 				</a>
 			<?php elseif (strstr($elm['class'], 'task')): ?>
-				<a href="<?php echo $this->issue_uri($elm['issue']) ?>#z<?php echo $elm['id'] ?>">
+				<a href="?id=<?php echo $this->id('issue_task', 'id', $elm[issue], 'tid', $elm[id]) ?>">
 					<span class="time"><?php echo date('H:i', $elm['date']) ?></span>
 						<span class="id">#<?php echo $elm['issue'] ?> #z<?php echo $elm['id'] ?></span>
 						<?php echo $bezlang['task'] ?>
