@@ -72,7 +72,7 @@
 		<th><?php echo $bezlang['date'] ?></th>
 		<th><?php echo $bezlang['last_mod_date'] ?></th>
 		<th><?php echo $bezlang['cost'] ?></th>
-		<th><?php echo $bezlang['opened_tasks'] ?></th>
+		<th><?php echo $bezlang['closed_tasks'] ?></th>
 	</tr>
 	<?php foreach ($template['issues'] as $issue): ?>
 		<tr class="pr<?php echo $issue['priority'] ?>">
@@ -94,7 +94,7 @@
 			</td>
 			<td>
 		<a href="<?php echo $template['uri'] ?>?id=<?php echo $this->id('tasks', 'issue', $issue['id'], 'state', 0) ?>">
-				<?php echo $issue['tasks_opened'] ?>
+				<?php echo $issue['tasks_closed'] ?>
 		</a>
 			/
 		<a href="<?php echo $template['uri'] ?>?id=<?php echo $this->id('tasks', 'issue', $issue['id']) ?>">

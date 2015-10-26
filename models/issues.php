@@ -543,14 +543,13 @@ class Issues extends Connect {
 
 		$a = $this->fetch_assoc("
 			SELECT issues.id, issues.priority, issues.state, issuetypes.$lang as type,
-				issues.title, issues.coordinator, issues.date, issues.last_mod, COUNT(tasks.id) AS tasks_opened,
+				issues.title, issues.coordinator, issues.date, issues.last_mod,
+				(SELECT COUNT(tasks.id) FROM tasks WHERE tasks.state != 0 AND issues.id = tasks.issue) AS tasks_closed,
 				(SELECT COUNT(tasks.id) FROM tasks WHERE issues.id = tasks.issue) AS tasks_all,
 				(SELECT SUM(cost) FROM tasks WHERE tasks.issue = issues.id GROUP BY tasks.issue) AS cost
 				FROM (issues LEFT JOIN issuetypes ON issues.type = issuetypes.id)
-				LEFT JOIN (SELECT id, issue FROM tasks WHERE state = 0) AS tasks ON issues.id = tasks.issue
 				$where_q
-			GROUP BY issues.id, issues.state, issues.type, issues.title, issues.date, issues.last_mod
-			$order 
+				$order
 			");
 		foreach ($a as &$row)
 			$row = $this->join($row);

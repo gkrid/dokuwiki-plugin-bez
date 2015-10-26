@@ -342,3 +342,4 @@ $lang[rr_eval] = 'Risk evaluacion';
 $lang[rr_suceval] = 'Effectiveness evalutation';
 
 $lang[correction_nav] = 'Corrections';
+$lang[closed_tasks] = 'Closed tasks';

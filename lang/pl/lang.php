@@ -350,3 +350,5 @@ $lang[rr_suceval] = 'Ocena skuteczności';
 
 $lang[correction_nav] = 'Korekcje';
 $lang[reaction] = 'Reakcja';
+
+$lang[closed_tasks] = 'Zadania zamknięte';
