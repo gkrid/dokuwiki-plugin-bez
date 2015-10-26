@@ -227,8 +227,12 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 			array_splice($data, 1);
 		}
 
-		if ($helper->user_admin() && $data['bez:start']['open'] == true)
-			$data['bez:types'] = array('id' => 'bez:types', 'type' => 'f', 'level' => 2, 'title' => $this->getLang('types_manage'));
+		if ($helper->user_admin() && $data['bez:start']['open'] == true) {
+			$data['bez:types'] = array('id' => 'bez:types', 'type' => 'f', 'level' => 2, 'title' =>
+				$this->getLang('types_manage'));
+			$data['bez:root_causes'] = array('id' => 'bez:root_causes', 'type' => 'f', 'level' => 2, 'title' =>
+				$this->getLang('root_causes'));
+		}
 
         $R->doc .= '<div class="plugin__bez">';
         $R->doc .= html_buildlist($data,'idx',array($this,'_list'),array($this,'_li'));

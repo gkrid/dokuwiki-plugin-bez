@@ -215,6 +215,7 @@ $lang['managment'] = "Management";
 $lang['measurement'] = "Measurement";
 $lang['money'] = "Money";
 $lang['environment'] = "Environment";
+$lang['communication'] = "Communication";
 
 $lang['task_opened'] = "Open";
 $lang ['task_done'] = "Done";
@@ -343,3 +344,4 @@ $lang[rr_suceval] = 'Effectiveness evalutation';
 
 $lang[correction_nav] = 'Corrections';
 $lang[closed_tasks] = 'Closed tasks';
+$lang[root_causes] = 'Root causes';

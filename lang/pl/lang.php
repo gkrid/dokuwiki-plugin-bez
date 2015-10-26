@@ -213,6 +213,7 @@ $lang['managment'] = 'Zarządzanie';
 $lang['measurement'] = 'Pomiar';
 $lang['money'] = 'Pieniądze';
 $lang['environment'] = 'Środowisko';
+$lang['communication'] = "Komunikacja";
 
 $lang['task_opened'] = 'Otwarte';
 $lang ['task_done'] = 'Wykonane';
@@ -352,3 +353,4 @@ $lang[correction_nav] = 'Korekcje';
 $lang[reaction] = 'Reakcja';
 
 $lang[closed_tasks] = 'Zadania zamknięte';
+$lang[root_causes] = 'Przyczyny źródłowe';
