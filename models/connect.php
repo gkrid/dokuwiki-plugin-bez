@@ -27,7 +27,6 @@ class Connect {
 	public function errquery($query)
 	{
 		global $errors;
-
 		$db = $this->open();
 		$r = $db->query($query);
 		if (!$r) 

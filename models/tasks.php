@@ -52,28 +52,46 @@ class Tasks extends Event {
 
 		if ($cause_exists == false) {
 			$this->errquery("ALTER TABLE tasks ADD COLUMN cause INTEGER NULL");
-			$causes = $this->fetch_assoc("SELECT * FROM causes");
-			$cs = array();
-			foreach ($causes as $c) {
-				$cs[$c[issue]] = $c[id];
-			}
-
-			$tasks = $this->fetch_assoc("SELECT * FROM tasks");
-			foreach ($tasks as $t) {
-				if ($t[action] == 1)  {
-					$cid = $cs[$t[issue]];
-					if (isset($cid)) {
-						$this->errquery("UPDATE tasks SET cause=".$cid." WHERE id=$t[id]");
+			
+			$issues = $this->fetch_assoc("SELECT * FROM issues");
+			foreach($issues as $issue) {
+				$id = $issue[id];
+				$tasks = $this->fetch_assoc("SELECT * FROM tasks WHERE issue=$id");
+				$koryg = array();
+				$zapo = array();
+				foreach($tasks as $task) {
+					if($task[action] == 1)
+						$koryg[] = $task[id];
+					else if($task[action] == 2)
+						$zapo[] = $task[id];
+				}
+				$causes = $this->fetch_assoc("SELECT * FROM causes WHERE issue=$id");
+				
+				if(count($causes) > 1) {
+					if(count($koryg) > 0) {
+						$lastid = $this->ins_query("INSERT INTO 
+								causes(potential, cause, rootcause, reporter, date, issue) VALUES
+								(0, 'Zadania nie przypisane do przyczyn.', 9, '',  ".time().", $id)");
+								
+						foreach($koryg as $tid)
+							$this->errquery("UPDATE tasks SET cause=$lastid WHERE id=$tid");
 					}
-				} elseif ($t[action] == 2) {
-					$cid = $cs[$t[issue]];
-					if (isset($cid)) {
-						$this->errquery("UPDATE causes SET potential=1 WHERE id=$cid");
-						$this->errquery("UPDATE tasks SET cause=".$cid." WHERE id=$t[id]");
+					if(count($zapo) > 0) {
+						$lastid = $this->ins_query("INSERT INTO 
+								causes (potential, cause, rootcause, reporter, date, issue) VALUES
+								(1, 'Zadania nie przypisane do potencjalnej przyczyn.', 9, '',  ".time().", $id)");
+						foreach($zapo as $tid)
+							$this->errquery("UPDATE tasks SET cause=$lastid WHERE id=$tid");
 					}
+				} else {
+					$cid = $causes[0][id];
+					if(count($koryg) == 0 && count($zapo) > 0)
+						foreach(array_merge($koryg, $zapo) as $tid)
+						$this->errquery("UPDATE tasks SET cause=$cid, potential=1 WHERE id=$tid");
+					else foreach(array_merge($koryg, $zapo) as $tid)
+						$this->errquery("UPDATE tasks SET cause=$cid WHERE id=$tid");
 				}
 			}
-
 		}
 	}
 	public function can_modify($task_id) {
