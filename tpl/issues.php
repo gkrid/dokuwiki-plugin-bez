@@ -35,11 +35,23 @@
 		<?php endforeach ?>
 		</select>
 	</label>
+		
+	<label><?php echo $bezlang['root_cause'] ?>:
+		<select name="rootcause">
+			<option <?php if ($value['type'] == '-all') echo 'selected' ?>
+				value="-all">--- <?php echo $bezlang['all'] ?> ---</option>
+		<?php foreach ($template['rootcauses'] as $key => $name): ?>
+			<option <?php if ($value['rootcause'] == $key) echo 'selected' ?>
+				value="<?php echo $key ?>"><?php echo $name ?></option>
+		<?php endforeach ?>
+		</select>
+	</label>
 </div>
 <div>
 	<label><?php echo $bezlang['title'] ?>:
 		<input name="title" value="<?php echo $value['title'] ?>" />
 	</label>
+
 
 	<label><?php echo $bezlang['year'] ?>:
 		<select name="year">

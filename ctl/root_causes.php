@@ -38,6 +38,7 @@ if (count($_POST) > 0) {
 		unset($template['edit']);
 } else if ($action == 'clean') {
 	$rootco->clean_empty();
+	header('Location: ?id=bez:root_causes');
 }
 
 $template['rootcauses'] = $rootcauses;

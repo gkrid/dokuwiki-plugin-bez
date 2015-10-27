@@ -4,6 +4,7 @@ include_once DOKU_PLUGIN."bez/models/issues.php";
 include_once DOKU_PLUGIN."bez/models/states.php";
 include_once DOKU_PLUGIN."bez/models/issuetypes.php";
 include_once DOKU_PLUGIN."bez/models/users.php";
+include_once DOKU_PLUGIN."bez/models/rootcauses.php";
 
 if	(!$helper->user_viewer()) {
 	$errors[] = $bezlang['error_issues'];
@@ -14,6 +15,7 @@ $isso = new Issues();
 $stao = new States();
 $issto = new Issuetypes();
 $usro = new Users();
+$rootco = new Rootcauses();
 
 if (count($_POST) > 0) {
 	$filters = $isso->validate_filters($_POST);
@@ -28,7 +30,8 @@ if (count($_POST) > 0) {
 
 /*rekordy parzyste to nagłówki, nieparzyste to ich wartości.*/
 /*np. status:1:type:2:podmiot:PCA*/
-$value = array('state' => '-all', 'type' => '-all', 'coordinator' => '-all', 'year' => '-all', 'sort_open' => '');
+$value = array('state' => '-all', 'type' => '-all', 'coordinator' => '-all', 'year' => '-all', 'sort_open' => '',
+			'rootcause' => '-all');
 for ($i = 0; $i < count($params); $i += 2)
 	$value[urldecode($params[$i])] = urldecode($params[$i+1]);
 
@@ -39,6 +42,7 @@ $template['states'] = $stao->get_list();
 $template['issue_types'] = $issto->get();
 $template['coordinators'] = $usro->get();
 $template['years'] = $isso->get_years();
+$template['rootcauses'] = $rootco->get();
 
 $issues = $isso->get_filtered($value);
 $template['issues'] = $issues;

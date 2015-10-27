@@ -353,4 +353,4 @@ $lang[correction_nav] = 'Korekcje';
 $lang[reaction] = 'Reakcja';
 
 $lang[closed_tasks] = 'Zadania zamknięte';
-$lang[root_causes] = 'Przyczyny źródłowe';
+$lang[root_causes] = 'Karegorie przyczyn';

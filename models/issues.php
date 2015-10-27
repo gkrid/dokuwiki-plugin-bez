@@ -5,6 +5,7 @@ include_once DOKU_PLUGIN."bez/models/states.php";
 include_once DOKU_PLUGIN."bez/models/users.php";
 include_once DOKU_PLUGIN."bez/models/tasks.php";
 include_once DOKU_PLUGIN."bez/models/bezcache.php";
+include_once DOKU_PLUGIN."bez/models/rootcauses.php";
 
 class Issues extends Connect {
 	public $coord_special = array('-proposal', '-rejected');
@@ -463,6 +464,12 @@ class Issues extends Connect {
 			if ($filters['year'] == '-all' || in_array($filters['year'], $years))
 				$data['year'] = $filters['year'];
 		}
+		
+		if (isset($filters['rootcause'])) {
+			$rootco = new Rootcauses();
+			if ($filters['rootcause'] == '-all' || array_key_exists($filters['rootcause'], $rootco->get()))
+				$data['rootcause'] = (int)$filters['rootcause'];
+		}
 
 		return $data;
 	}
@@ -477,11 +484,14 @@ class Issues extends Connect {
 		$year = $vfilters['year'];
 		$state = $vfilters['state'];
 		$coordinator = $vfilters['coordinator'];
+		$rootcause = $vfilters['rootcause'];
+
 
 		unset($vfilters['year']);
 		unset($vfilters['state']);
 		unset($vfilters['coordinator']);
-
+		unset($vfilters['rootcause']);
+		
 		$title = $vfilters['title'];
 		unset($vfilters['title']);
 
@@ -527,6 +537,13 @@ class Issues extends Connect {
 			else 
 				$where[] = "issues.coordinator = '$coordinator'";
 		}
+		$rootcause_join = '(issues LEFT JOIN issuetypes ON issues.type = issuetypes.id)';
+		$rootcause_group = '';
+		if($rootcause != '-all') {
+			$rootcause_join = 'causes JOIN issues ON causes.issue = issues.id LEFT JOIN issuetypes ON issues.type = issuetypes.id';
+			$rootcause_group = 'GROUP BY issues.id';
+			$where[] = 'causes.rootcause = '.$this->escape($rootcause);
+		}
 
 		$where_q = '';
 		if (count($where) > 0)
@@ -544,11 +561,13 @@ class Issues extends Connect {
 		$a = $this->fetch_assoc("
 			SELECT issues.id, issues.priority, issues.state, issuetypes.$lang as type,
 				issues.title, issues.coordinator, issues.date, issues.last_mod,
-				(SELECT COUNT(tasks.id) FROM tasks WHERE tasks.state != 0 AND issues.id = tasks.issue) AS tasks_closed,
+				(SELECT COUNT(tasks.id) FROM tasks WHERE tasks.state != 0 AND issues.id = tasks.issue)
+				AS tasks_closed,
 				(SELECT COUNT(tasks.id) FROM tasks WHERE issues.id = tasks.issue) AS tasks_all,
 				(SELECT SUM(cost) FROM tasks WHERE tasks.issue = issues.id GROUP BY tasks.issue) AS cost
-				FROM (issues LEFT JOIN issuetypes ON issues.type = issuetypes.id)
+				FROM $rootcause_join
 				$where_q
+				$rootcause_group
 				$order
 			");
 		foreach ($a as &$row)

@@ -38,6 +38,7 @@ if (count($_POST) > 0) {
 		unset($template['edit']);
 } else if ($action == 'clean') {
 	$typo->clean_empty();
+	header('Location: ?id=bez:types');
 }
 
 $template['types'] = $types;

@@ -344,4 +344,4 @@ $lang[rr_suceval] = 'Effectiveness evalutation';
 
 $lang[correction_nav] = 'Corrections';
 $lang[closed_tasks] = 'Closed tasks';
-$lang[root_causes] = 'Root causes';
+$lang[root_causes] = 'Cause categories';

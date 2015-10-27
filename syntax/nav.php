@@ -255,7 +255,7 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 			$item_value[urldecode($ex[$i])] = urldecode($ex[$i+1]);
 
 		//pola brane pod uwagę przy określaniu aktualnej strony
-		$fields = array('bez', 'year', 'tid', 'cid');
+		$fields = array('bez', 'tid', 'cid');
 		if ($item_value['bez'] == 'report' || $item_value['bez'] == 'report_open') {
 			$fields[] = 'month';
 			$fields[] = 'year';
