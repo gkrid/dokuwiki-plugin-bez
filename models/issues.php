@@ -427,7 +427,7 @@ class Issues extends Connect {
 	public function validate_filters($filters) {
 
 	$data = array('title' => '', 'state' => '-all', 'type' => '-all', 'coordinator' => '-all', 'year' => '-all',
-				'sort_open' => '');
+				'sort_open' => '', 'rootcause' => '-all');
 
 		if (isset($filters['title'])) {
 			if (strlen($post['title']) <= $title_max && preg_match('/^[[:alnum:] \-,._]*$/ui', $filters['title']))
