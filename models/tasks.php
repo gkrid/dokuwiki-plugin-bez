@@ -50,9 +50,8 @@ class Tasks extends Event {
 			}
 		}
 
-		if ($cause_exists == false) {
+		if ($cause_exists == false) {		
 			$this->errquery("ALTER TABLE tasks ADD COLUMN cause INTEGER NULL");
-			
 			$issues = $this->fetch_assoc("SELECT * FROM issues");
 			foreach($issues as $issue) {
 				$id = $issue[id];
@@ -67,11 +66,11 @@ class Tasks extends Event {
 				}
 				$causes = $this->fetch_assoc("SELECT * FROM causes WHERE issue=$id");
 				
-				if(count($causes) > 1) {
+				if(count($causes) > 1 || count($causes) == 0) {
 					if(count($koryg) > 0) {
 						$lastid = $this->ins_query("INSERT INTO 
 								causes(potential, cause, rootcause, reporter, date, issue) VALUES
-								(0, 'Zadania nie przypisane do przyczyn.', 9, '',  ".time().", $id)");
+								(0, 'Zadania nie przypisane do przyczyn.', 8, '',  ".time().", $id)");
 								
 						foreach($koryg as $tid)
 							$this->errquery("UPDATE tasks SET cause=$lastid WHERE id=$tid");
@@ -79,16 +78,19 @@ class Tasks extends Event {
 					if(count($zapo) > 0) {
 						$lastid = $this->ins_query("INSERT INTO 
 								causes (potential, cause, rootcause, reporter, date, issue) VALUES
-								(1, 'Zadania nie przypisane do potencjalnej przyczyn.', 9, '',  ".time().", $id)");
+								(1, 'Zadania nie przypisane do potencjalnej przyczyn.', 8, '',  ".time().", $id)");
 						foreach($zapo as $tid)
 							$this->errquery("UPDATE tasks SET cause=$lastid WHERE id=$tid");
 					}
 				} else {
 					$cid = $causes[0][id];
-					if(count($koryg) == 0 && count($zapo) > 0)
-						foreach(array_merge($koryg, $zapo) as $tid)
-						$this->errquery("UPDATE tasks SET cause=$cid, potential=1 WHERE id=$tid");
-					else foreach(array_merge($koryg, $zapo) as $tid)
+					if(count($koryg) == 0 && count($zapo) > 0) {
+						$this->errquery("UPDATE causes SET potential=1 WHERE cause=$cid");
+						foreach(array_merge($koryg, $zapo) as $tid){
+							$this->errquery("UPDATE tasks SET cause=$cid WHERE id=$tid");
+							
+						}
+					} else foreach(array_merge($koryg, $zapo) as $tid)
 						$this->errquery("UPDATE tasks SET cause=$cid WHERE id=$tid");
 				}
 			}
