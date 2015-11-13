@@ -41,7 +41,7 @@
 	<a class="bds_inline_button" href="
 		<?php echo $helper->mailto($template['issue']['coordinator_email'],
 		$bezlang['issue'].': #'.$template['issue']['id'].' '.$template['issue']['title'],
-		$template['uri']) ?>">
+		DOKU_URL . 'doku.php?id='.$this->id('issue', 'id', $template['issue']['id'])) ?>">
 		✉ <?php echo $bezlang['send_mail'] ?>
 	</a>
 

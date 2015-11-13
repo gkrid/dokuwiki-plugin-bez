@@ -62,7 +62,7 @@
 	<a class="bds_inline_button" href="
 		<?php echo $helper->mailto($task['executor_email'],
 		$bezlang['task'].': #'.$task['issue'].' '.$template['issue']['title'].' | #z'.$task['id'].' '.$task['action'],
-		$template['uri'].'#z'.$task['id']) ?>">
+		DOKU_URL . 'doku.php?id='.$this->id('issue_task', 'id', $template['issue']['id'], 'tid', $task['id'])) ?>">
 		✉ <?php echo $bezlang['send_mail'] ?>
 	</a>
 	<?php if ($template['issue'][raw_state] == 0 &&
