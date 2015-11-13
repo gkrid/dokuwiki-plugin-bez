@@ -102,22 +102,27 @@ class Report extends Connect {
 		$where = $this->where($tasks_date, $filters);
 		$tasko = new Tasks();
 		$report['tasks'] = $this->fetch_assoc("SELECT 
-									(CASE	WHEN tasks.cause IS NULL OR tasks.cause = '' THEN 0
-											WHEN causes.potential = 0 THEN 1
-											ELSE 2 END) AS naction,
-											tasks.action, COUNT(*) AS number, SUM(cost) AS totalcost
-												FROM tasks JOIN issues ON tasks.issue = issues.id
-												LEFT JOIN causes ON tasks.cause = causes.id
-												WHERE tasks.state = 1 $where
-												GROUP BY naction
-												ORDER BY naction");
+							(CASE	WHEN tasks.cause IS NULL OR tasks.cause = '' THEN 0
+									WHEN causes.potential = 0 THEN 1
+									ELSE 2 END) AS naction,
+									tasks.action, COUNT(*) AS number, SUM(cost) AS totalcost,
+									AVG(tasks.close_date - tasks.date) AS average
+										FROM tasks JOIN issues ON tasks.issue = issues.id
+										LEFT JOIN causes ON tasks.cause = causes.id
+										WHERE tasks.state = 1 $where
+										GROUP BY naction
+										ORDER BY naction");
 		$report['tasks'] = $tasko->join_all($report['tasks']);
-		$a = $this->fetch_assoc("SELECT COUNT(*) AS total, SUM(cost) AS totalcost
+		foreach ($report['tasks'] as &$task) { 
+			$task['average'] = $this->helper->days((int)$task['average']);
+		}
+		$a = $this->fetch_assoc("SELECT COUNT(*) AS total, SUM(cost) AS totalcost, AVG(tasks.close_date - tasks.date) AS average
 								FROM tasks JOIN issues ON tasks.issue = issues.id
 								WHERE tasks.state = 1 $where");
 
 		$report['tasks_total'] = $a[0]['total'];
 		$report['tasks_totalcost'] = $a[0]['totalcost'];
+		$report['tasks_average'] = $this->helper->days((int)$a[0]['average']);
 
 
 		$where = $this->where($issues_date, $filters);

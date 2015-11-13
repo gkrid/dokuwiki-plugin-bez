@@ -43,6 +43,9 @@
 		<th><?php echo $bezlang['class'] ?></th>
 		<th><?php echo $bezlang['number'] ?></th>
 		<th><?php echo $bezlang['totalcost'] ?></th>
+		<?php if (!isset($this->report_open)): ?>
+			<th><?php echo $bezlang['report_priority'] ?></th>
+		<?php endif ?>
 	</tr>
 	<?php foreach ($template['report']['tasks'] as $task): ?>
 		<tr>
@@ -55,12 +58,18 @@
 					<?php echo $task['totalcost'] ?>
 				<?php endif ?>
 			</td>
+			<?php if (!isset($this->report_open)): ?>
+				<td><?php echo $task['average'] ?></td>
+			<?php endif ?>
 		</tr>
 	<?php endforeach ?>
 	<tr>
 		<th><?php echo $bezlang['report_total'] ?></th>
 		<td><?php echo $template['report']['tasks_total'] ?></td>
 		<td><?php echo $template['report']['tasks_totalcost'] ?></td>
+		<?php if (!isset($this->report_open)): ?>
+			<td><?php echo $template['report']['tasks_average'] ?></td>
+		<?php endif ?>
 	</tr>
 </table>
 
