@@ -427,11 +427,19 @@ class Tasks extends Event {
 	}
 
 	public function get_by_8d($issue) {
-		$a = $this->fetch_assoc("SELECT * FROM tasks WHERE issue=$issue AND state != 2");
+		$issue = (int)$issue;
+		$a = $this->fetch_assoc("SELECT tasks.id,tasks.state,
+									(CASE	WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
+											WHEN causes.potential = 0 THEN '1'
+											ELSE '2' END) AS naction,
+		tasks.executor, tasks.cost, tasks.date, tasks.close_date, tasks.issue, tasks.close_date, issues.priority
+		FROM tasks JOIN issues ON tasks.issue = issues.id 
+		LEFT JOIN causes ON tasks.cause = causes.id
+		WHERE tasks.state != 2 AND tasks.issue = $issue ORDER BY priority DESC, tasks.date DESC");
 		$b = array();
 		$taskao = new Taskactions();
 		foreach ($a as $row) {
-			$k = $taskao->map_8d($row['action']);
+			$k = $taskao->map_8d($row['naction']);
 			if ( !isset($b[$k]) )
 				$b[$k] = array();
 			$b[$k][] = $this->join($row);
