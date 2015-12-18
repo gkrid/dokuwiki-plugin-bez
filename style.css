@@ -516,6 +516,7 @@ input.days {
 
 #bez_info {
 	text-align: center;
+	margin-top: 15px;
 }
 
 #bez_info a {
@@ -524,6 +525,16 @@ input.days {
 
 #bez_info a:first-child {
 	margin-left: 0;	
+}
+
+#bez_version {
+	position: relative;
+}
+#bez_version div {
+	position:absolute;
+	font-size: 90%;
+	top: -18px;
+	left: -18px;
 }
 
 #bez_8d_send_button {

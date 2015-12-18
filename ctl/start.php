@@ -30,3 +30,8 @@ $no = count($isso->get_filtered( array('state' => '-proposal') ));
 $template['proposals'] = $no;
 
 $template['client'] = $INFO['client'];
+
+/*pobieranie wersji beza na podstawie pliku plugin.info.txt*/
+$info = $this->getInfo();
+$template[version] = $info[date];
+

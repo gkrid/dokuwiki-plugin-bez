@@ -1,3 +1,8 @@
+<div id="bez_version">
+	<div>
+		<?php echo $bezlang['bez'] ?>, <?php echo $bezlang['version'] ?>: <?php echo $template[version] ?>
+	</div>
+</div>
 <div id="bez_info">
 	<?php if ($helper->user_editor()): ?>
 		<a href="?id=<?php echo $this->id('issue_report') ?>" class="bez_start_button" id="bez_report_issue_button">

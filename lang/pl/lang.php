@@ -354,3 +354,5 @@ $lang[reaction] = 'Reakcja';
 
 $lang[closed_tasks] = 'Zadania zamknięte';
 $lang[root_causes] = 'Karegorie przyczyn';
+
+$lang[version] = 'wersja';
