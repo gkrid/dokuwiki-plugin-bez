@@ -16,14 +16,21 @@ $taskso = new Taskstates();
 $usro = new Users();
 $isso = new Issues();
 
-if (count($_POST) > 0) {
-	$filters = $tasko->validate_filters($_POST);
+if (count($_POST) > 0)
+	$raw_filters = $_POST;
+elseif (count($params) == 0 && isset($_COOKIE[bez_tasks_filters]))
+	$raw_filters = $_COOKIE[bez_tasks_filters];
 
+if (isset($raw_filters)) {
+	$filters = $tasko->validate_filters($raw_filters);
 	$query_uri = '';
 	foreach ($filters as $k => $v)
 		if ($v != '-all')
 			$query_uri .= ':'.urlencode($k).':'.urlencode($v);
-
+		
+	if ($query_uri == "")
+		$query_uri = ":year:-all";
+		
 	header('Location: ?id='.$this->id('tasks').$query_uri);
 }
 
@@ -32,7 +39,10 @@ if (count($_POST) > 0) {
 $value = array('issue' => '-all', 'action' => '-all', 'state' => '-all', 'executor' => '-all', 'year' => '-all');
 for ($i = 0; $i < count($params); $i += 2)
 	$value[urldecode($params[$i])] = urldecode($params[$i+1]);
-
+	
+//save filters
+foreach ($value as $k => $v)
+	setcookie("bez_tasks_filters[$k]", $v);
 
 $template['uri'] = $uri; 
 

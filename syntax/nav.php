@@ -79,7 +79,7 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 		if ($helper->user_editor())
 			$data['bez:issue_report'] = array('id' => 'bez:issue_report', 'type' => 'f', 'level' => 2, 'title' => $this->getLang('bds_issue_report'));
 
-		$data['bez:issues'] = array('id' => 'bez:issues:year:'.date('Y'), 'type' => 'd', 'level' => 2, 'title' => $this->getLang('bds_issues'));
+		$data['bez:issues'] = array('id' => 'bez:issues', 'type' => 'd', 'level' => 2, 'title' => $this->getLang('bds_issues'));
 
 		$task_pages = array('issue_tasks', 'task_form', 'issue_task');
 		$cause_pages = array('issue_causes', 'issue_cause', 'cause_form', 'issue_cause_task');
@@ -150,7 +150,7 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 			}
 
 		}
-		$data['bez:tasks'] = array('id' => 'bez:tasks:year:'.date('Y'), 'type' => 'f', 'level' => 2, 'title' => $this->getLang('bez_tasks'));
+		$data['bez:tasks'] = array('id' => 'bez:tasks', 'type' => 'f', 'level' => 2, 'title' => $this->getLang('bez_tasks'));
 
 		$data['bez:report_open'] = array('id' => 'bez:report_open', 'type' => 'd', 'level' => 2, 'title' => $this->getLang('report_open'));
 

@@ -46,6 +46,12 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 			$this->action = $ex[2];
 			$this->params = array_slice($ex, 3);
 		}
+		
+		//set default filters
+		if(!isset($_COOKIE[bez_tasks_filters]))
+			setcookie("bez_tasks_filters[year]", date("Y"));
+		if(!isset($_COOKIE[bez_issues_filters]))
+			setcookie("bez_issues_filters[year]", date("Y"));
 	}
 
 	public function id() {
