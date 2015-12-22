@@ -26,66 +26,6 @@ class Issues extends Connect {
 				last_mod INTEGER)";
 	$this->errquery($createq);
 	
-	$q = "PRAGMA table_info(issues)";
-	$a = $this->fetch_assoc($q);
-	$entity = false;
-	foreach ($a as $r) 
-		if ($r['name'] == 'entity') {
-			$entity = true;
-			break;
-		}
-	if ($entity) {
-		$q = "	BEGIN TRANSACTION;
-		CREATE TEMPORARY TABLE issues_backup
-		(
-				id INTEGER PRIMARY KEY,
-				priority INTEGER NOT NULL DEFAULT 0,
-				title TEXT NOT NULL,
-				description TEXT NOT NULL,
-				state INTEGER NOT NULL,
-				opinion TEXT NULL,
-				type INTEGER NOT NULL,
-				coordinator TEXT NOT NULL,
-				reporter TEXT NOT NULL,
-				date INTEGER NOT NULL,
-				last_mod INTEGER);
-		INSERT INTO issues_backup SELECT
-				id,
-				priority,
-				title,
-				description,
-				state,
-				opinion,
-				type,
-				coordinator,
-				reporter,
-				date,
-				last_mod
-			FROM issues;
-		DROP TABLE issues;
-		$createq;
-		INSERT INTO issues SELECT 
-				id,
-				priority,
-				title,
-				description,
-				state,
-				opinion,
-				type,
-				coordinator,
-				reporter,
-				date,
-				last_mod
-			FROM issues_backup;
-		DROP TABLE issues_backup;
-		COMMIT;
-		";
-		$qa = explode(';', $q);
-		foreach ($qa as $e)  {
-			$this->db->query($e);
-		}
-	}
-
 	}
 	public function validate($post, $state='add', $issue_id=-1)
 	{
@@ -276,7 +216,7 @@ class Issues extends Connect {
 		return $data;
 	}
 
-	public function get_by_days() {
+	public function get_by_days($days=7) {
 		global $bezlang, $errors, $conf;
 		if (!$this->helper->user_viewer()) return false;
 

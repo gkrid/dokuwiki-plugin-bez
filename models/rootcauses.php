@@ -7,45 +7,11 @@ class Rootcauses extends Connect {
 		global $errors;
 		parent::__construct();
 
-		$exists = true;
-		$q = "SELECT name FROM sqlite_master WHERE type='table' AND name='rootcauses'";
-		$r = $this->fetch_assoc($q);
-		if (count($r) == 0)
-			$exists = false;
-
 		$q = "CREATE TABLE IF NOT EXISTS rootcauses (
 				id INTEGER PRIMARY KEY,
 				pl VARCHAR(100) NOT NULL,
 				en VARCHAR(100) NOT NULL)";
 		$this->errquery($q);
-
-		/*!!*/
-		if ( ! $exists) {
-			include DOKU_PLUGIN."bez/lang/en/lang.php";
-			$en = $lang;
-			include DOKU_PLUGIN."bez/lang/pl/lang.php";
-			$pl = $lang;
-
-			$types = array(	'manpower',
-							'method',
-							'machine',
-							'material',
-							'managment',
-							'measurement',
-							'money',
-							'environment',
-							'communication'
-						);
-			for ($i=0;$i<count($types);$i++){
-				$data = array(
-					'en' => $en[$types[$i]],
-					'pl' => $pl[$types[$i]]
-				);
-				$this->errinsert($data, 'rootcauses');
-			}
-
-			$this->errquery("UPDATE causes SET rootcause=rootcause+1");
-		}
 	}
 	public function can_modify() {
 		if ($this->helper->user_admin()) 

@@ -5,7 +5,7 @@
  */
 $errors = array();
 include_once DOKU_PLUGIN."bez/models/connect.php";
-class admin_plugin_bez extends DokuWiki_Admin_Plugin {
+class admin_plugin_bez_importmongo extends DokuWiki_Admin_Plugin {
 
 	private $exp = false;
  
@@ -153,7 +153,7 @@ class admin_plugin_bez extends DokuWiki_Admin_Plugin {
 	  ptln('<form action="'.wl($ID).'" method="post">');
 	  // output hidden values to ensure dokuwiki will return back to this plugin
 	  ptln('  <input type="hidden" name="do"   value="admin" />');
-	  ptln('  <input type="hidden" name="page" value="'.$this->getPluginName().'" />');
+	  ptln('  <input type="hidden" name="page" value="bez_importmongo" />');
 	  formSecurityToken();
  
 	  ptln('  <input type="submit" name="run"  value="Importuj" />');

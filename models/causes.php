@@ -18,18 +18,6 @@ class Causes extends Event {
 				date INTEGER NOT NULL,
 				issue INTEGER NOT NULL)";
 		$this->errquery($q);
-
-		$schema = $this->fetch_assoc("PRAGMA table_info(causes)");
-		$cause_exists = false;
-		foreach ($schema as $column) {
-			if ($column['name'] == 'potential') {
-				$cause_exists = true;
-				break;
-			}
-		}
-		if ($cause_exists == false) {
-			$this->errquery("ALTER TABLE causes ADD COLUMN potential INTEGER DEFAULT 0");
-		}
 	}
 	public function can_modify($cause_id) {
 		$cause = $this->getone($cause_id);
@@ -146,6 +134,8 @@ class Causes extends Event {
 			$b[$k][] = $row;
 		}
 		return $b;
+	}
+	public function get_by_days($days=7) {
 	}
 }
 

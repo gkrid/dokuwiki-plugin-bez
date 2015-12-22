@@ -93,5 +93,7 @@ class Comments extends Event {
 
 		return $a;
 	}
+	public function get_by_days($days=7) {
+	}
 }
 

@@ -26,75 +26,6 @@ class Tasks extends Event {
 				issue INTEGER NOT NULL
 				)";
 		$this->errquery($q);
-
-		/*potential cause*/
-		$schema = $this->fetch_assoc("PRAGMA table_info(causes)");
-		$cause_exists = false;
-		foreach ($schema as $column) {
-			if ($column['name'] == 'potential') {
-				$cause_exists = true;
-				break;
-			}
-		}
-		if ($cause_exists == false) {
-			$this->errquery("ALTER TABLE causes ADD COLUMN potential INTEGER DEFAULT 0");
-		}
-
-		/*cause in task*/
-		$schema = $this->fetch_assoc("PRAGMA table_info(tasks)");
-		$cause_exists = false;
-		foreach ($schema as $column) {
-			if ($column['name'] == 'cause') {
-				$cause_exists = true;
-				break;
-			}
-		}
-
-		if ($cause_exists == false) {		
-			$this->errquery("ALTER TABLE tasks ADD COLUMN cause INTEGER NULL");
-			$issues = $this->fetch_assoc("SELECT * FROM issues");
-			foreach($issues as $issue) {
-				$id = $issue[id];
-				$tasks = $this->fetch_assoc("SELECT * FROM tasks WHERE issue=$id");
-				$koryg = array();
-				$zapo = array();
-				foreach($tasks as $task) {
-					if($task[action] == 1)
-						$koryg[] = $task[id];
-					else if($task[action] == 2)
-						$zapo[] = $task[id];
-				}
-				$causes = $this->fetch_assoc("SELECT * FROM causes WHERE issue=$id");
-				
-				if(count($causes) > 1 || count($causes) == 0) {
-					if(count($koryg) > 0) {
-						$lastid = $this->ins_query("INSERT INTO 
-								causes(potential, cause, rootcause, reporter, date, issue) VALUES
-								(0, 'Zadania nie przypisane do przyczyn.', 8, '',  ".time().", $id)");
-								
-						foreach($koryg as $tid)
-							$this->errquery("UPDATE tasks SET cause=$lastid WHERE id=$tid");
-					}
-					if(count($zapo) > 0) {
-						$lastid = $this->ins_query("INSERT INTO 
-								causes (potential, cause, rootcause, reporter, date, issue) VALUES
-								(1, 'Zadania nie przypisane do potencjalnej przyczyn.', 8, '',  ".time().", $id)");
-						foreach($zapo as $tid)
-							$this->errquery("UPDATE tasks SET cause=$lastid WHERE id=$tid");
-					}
-				} else {
-					$cid = $causes[0][id];
-					if(count($koryg) == 0 && count($zapo) > 0) {
-						$this->errquery("UPDATE causes SET potential=1 WHERE cause=$cid");
-						foreach(array_merge($koryg, $zapo) as $tid){
-							$this->errquery("UPDATE tasks SET cause=$cid WHERE id=$tid");
-							
-						}
-					} else foreach(array_merge($koryg, $zapo) as $tid)
-						$this->errquery("UPDATE tasks SET cause=$cid WHERE id=$tid");
-				}
-			}
-		}
 	}
 	public function can_modify($task_id) {
 		$task = $this->getone($task_id);
@@ -267,7 +198,7 @@ class Tasks extends Event {
 			return true;
 		return false;
 	}
-	public function get_by_days() {
+	public function get_by_days($days=7) {
 		if (!$this->helper->user_viewer()) return false;
 
 		$res = $this->fetch_assoc("SELECT tasks.id, 

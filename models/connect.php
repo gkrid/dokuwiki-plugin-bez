@@ -1,7 +1,7 @@
 <?php
 class Connect {
 	protected $helper = NULL;
-	static protected $lastid;
+	static public $lastid;
 	protected $noclose = NULL;
 
 	public function open() {
@@ -73,7 +73,7 @@ class Connect {
 		return $a;
 	}
 
-	protected function mul_errinsert($data, $table)
+	public function mul_errinsert($data, $table)
 	{
 		global $errors;
 		if (count($errors) > 0)
@@ -95,7 +95,7 @@ class Connect {
 		$this->lastid = $this->ins_query("INSERT INTO $table ($fields) VALUES $values");
 	}
 
-	protected function errinsert($data, $table)
+	public function errinsert($data, $table)
 	{
 		global $errors;
 		if (count($errors) > 0)
@@ -110,7 +110,7 @@ class Connect {
 		
 	}
 
-	protected function errupdate($data, $table, $id)
+	public function errupdate($data, $table, $id)
 	{
 		global $errors;
 		if (count($errors) > 0)
@@ -124,7 +124,7 @@ class Connect {
 
 		$this->lastid = $id;
 	}
-	protected function errdelete($table, $id)
+	public function errdelete($table, $id)
 	{
 		global $errors;
 		if (count($errors) > 0)
@@ -134,7 +134,7 @@ class Connect {
 		/*nie zawsze trafimy, ale często i to nam wystarczy :)*/
 		$this->lastid = $id-1;
 	}
-	protected function sort_by_days($res, $field) {
+	public function sort_by_days($res, $field) {
 		$days = 0;
 		$last_day = -1;
 		$rt = array();
@@ -153,7 +153,7 @@ class Connect {
 		}
 		return $rt;
 	}
-	protected function fetch_assoc($q)
+	public function fetch_assoc($q)
 	{
 		global $errors;
 
