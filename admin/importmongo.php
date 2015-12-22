@@ -10,7 +10,7 @@ class admin_plugin_bez_importmongo extends DokuWiki_Admin_Plugin {
 	private $exp = false;
  
 	function getMenuText() {
-		return 'Zaimportuj bazę starego BEZa do nowego.';
+		return 'Zaimportuj bazę starego BEZa do nowego';
 	}
  
 	/**

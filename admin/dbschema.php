@@ -11,7 +11,7 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 	private $connect;
  
 	function getMenuText() {
-		return 'Zaktualizuj schemat bazy BEZ.';
+		return 'Zaktualizuj schemat bazy BEZ';
 	}
 	
 	function __construct() {
@@ -286,12 +286,6 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 	  }
 	}
 	
-	function create_backup() {
-	}
-	
-	function restore_backup($name) {
-	}
- 
 	/**
 	 * output appropriate html
 	 */
