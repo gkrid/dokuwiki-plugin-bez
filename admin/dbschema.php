@@ -42,6 +42,7 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 	}
 	
 	function do_causetask() {
+			global $errors;
 			$this->connect->errquery("ALTER TABLE tasks ADD COLUMN cause INTEGER NULL");
 			$issues = $this->connect->fetch_assoc("SELECT * FROM issues");
 			foreach($issues as $issue) {
@@ -76,7 +77,7 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 				} else {
 					$cid = $causes[0][id];
 					if(count($koryg) == 0 && count($zapo) > 0) {
-						$this->connect->errquery("UPDATE causes SET potential=1 WHERE cause=$cid");
+						$this->connect->errquery("UPDATE causes SET potential=1 WHERE id=$cid");
 						foreach(array_merge($koryg, $zapo) as $tid){
 							$this->connect->errquery("UPDATE tasks SET cause=$cid WHERE id=$tid");
 							
