@@ -68,6 +68,26 @@
 						<?php echo $elm['title'] ?>
 						<span class="author"><?php echo $bezlang['executor'] ?>: <strong><?php echo $elm['executor'] ?></strong></span>
 				</a>
+			<?php elseif (strstr($elm['class'], 'comment')): ?>
+				<a href="?id=<?php echo $this->id('issue', 'id', $elm[issue]) ?>" style="background-image:none;">
+					<span class="time"><?php echo date('H:i', $elm['date']) ?></span>
+					<span class="id">#<?php echo $elm['issue'] ?> #k<?php echo $elm['id'] ?></span>
+					<?php echo $bezlang['comment_added'] ?>
+					<?php echo $bezlang['by'] ?>
+					<span class="author"><strong><?php echo $elm['reporter'] ?></strong></span>
+				</a>
+			<?php elseif (strstr($elm['class'], 'cause')): ?>
+				<a href="?id=<?php echo $this->id('issue_cause', 'id', $elm[issue], 'cid', $elm[id]) ?>">
+					<span class="time"><?php echo date('H:i', $elm['date']) ?></span>
+						<span class="id">#<?php echo $elm['issue'] ?> #p<?php echo $elm['id'] ?></span>
+						<?php if ($elm['potential'] == 0): ?>
+							<?php echo $bezlang['cause_added'] ?>:
+						<?php else: ?>
+							<?php echo ucfirst($bezlang['cause_type_potential']) ?>
+							<?php echo lcfirst($bezlang['cause_added']) ?>:
+						<?php endif ?>
+						<strong><?php echo $elm['rootcause'] ?></strong>
+				</a>
 			<?php endif ?>
 		</dt>
 		<dd>
@@ -83,6 +103,10 @@
 					<h3><?php echo $bezlang['reason'] ?></h3>
 					<?php echo $elm['reason'] ?>
 				<?php endif ?>
+			<?php elseif (strstr($elm['class'], 'comment')): ?>
+				<?php echo $elm['content'] ?>
+			<?php elseif (strstr($elm['class'], 'cause')): ?>
+				<?php echo $elm['cause'] ?>
 			<?php endif ?>
 		</dd>
 	<?php endforeach ?>

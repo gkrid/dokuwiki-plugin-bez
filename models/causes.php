@@ -4,6 +4,7 @@ include_once DOKU_PLUGIN."bez/models/users.php";
 include_once DOKU_PLUGIN."bez/models/rootcauses.php";
 include_once DOKU_PLUGIN."bez/models/event.php";
 include_once DOKU_PLUGIN."bez/models/tasks.php";
+include_once DOKU_PLUGIN."bez/models/bezcache.php";
 
 class Causes extends Event {
 	public function __construct() {
@@ -70,7 +71,10 @@ class Causes extends Event {
 			$data = array_merge($data, $from_user);
 
 			$this->errupdate($data, 'causes', $id);
-
+			
+			$cache = new Bezcache();
+			$cache->cause_toupdate($id);
+			
 			$cause = $this->getone($id);
 			$this->issue->update_last_mod($cause['issue']);
 		}
@@ -136,6 +140,22 @@ class Causes extends Event {
 		return $b;
 	}
 	public function get_by_days($days=7) {
+		if (!$this->helper->user_viewer()) return false;
+		
+		$border_date = time() - $days*24*60*60;
+		$res = $this->fetch_assoc("SELECT * FROM causes WHERE date > $border_date");
+		
+		$cache = new Bezcache();
+		$rootco = new Rootcauses();
+		
+		$create = $this->sort_by_days($res, 'date', false);
+		foreach ($create as $day => $causes)
+			foreach ($causes as $k => $cause) {
+				$create[$day][$k]['class'] = 'cause';
+				$create[$day][$k]['cause'] = $cache->get_cause($create[$day][$k]['id']);
+				$create[$day][$k]['rootcause'] = $rootco->name($create[$day][$k]['rootcause']);
+			}
+		return $create;
 	}
 }
 

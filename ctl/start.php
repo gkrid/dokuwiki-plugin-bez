@@ -13,12 +13,13 @@ $tasko= new Tasks();
 $causo = new Causes();
 $commo = new Comments();
 
-$issues = $isso->get_by_days(7);
-$tasks = $tasko->get_by_days(7);
-$causes = $causo->get_by_days(7);
-$comments = $commo->get_by_days(7);
+//pobierz rekordy z ostatniego miesiąca
+$issues = $isso->get_by_days(31);
+$tasks = $tasko->get_by_days(31);
+$causes = $causo->get_by_days(31);
+$comments = $commo->get_by_days(31);
 
-$timeline = $helper->days_array_merge($issues, $tasks);
+$timeline = $helper->days_array_merge($issues, $tasks, $comments, $causes);
 
 $template['timeline'] = $timeline;
 

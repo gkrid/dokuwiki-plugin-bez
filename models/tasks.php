@@ -200,13 +200,16 @@ class Tasks extends Event {
 	}
 	public function get_by_days($days=7) {
 		if (!$this->helper->user_viewer()) return false;
-
+		
+		$border_date = time() - $days*24*60*60;
+		
 		$res = $this->fetch_assoc("SELECT tasks.id, 
 								(CASE	WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
 										WHEN causes.potential = 0 THEN '1'
 										ELSE '2' END) AS naction,
 			tasks.issue, tasks.task, tasks.date, tasks.executor, tasks.reason, issues.priority
 			FROM tasks JOIN issues ON tasks.issue = issues.id LEFT JOIN causes ON tasks.cause = causes.id
+			WHERE tasks.date > $border_date
 			ORDER BY tasks.date DESC");
 
 		$create = $this->sort_by_days($res, 'date');
@@ -220,7 +223,8 @@ class Tasks extends Event {
 										ELSE '2' END) AS naction,
 				tasks.issue, tasks.task, tasks.close_date, tasks.executor, tasks.reason, issues.priority
 				FROM tasks JOIN issues ON tasks.issue = issues.id LEFT JOIN causes ON tasks.cause = causes.id
-				WHERE tasks.state = 1 ORDER BY tasks.close_date DESC");
+				WHERE tasks.close_date > $border_date 
+				AND   tasks.state = 1 ORDER BY tasks.close_date DESC");
 		$close = $this->sort_by_days($res2, 'close_date');
 		foreach ($close as $day => $issues)
 			foreach ($issues as $ik => $issue) {
@@ -234,7 +238,8 @@ class Tasks extends Event {
 										ELSE '2' END) AS naction,
 				tasks.issue, tasks.task, tasks.close_date, tasks.executor, tasks.reason, issues.priority
 				FROM tasks JOIN issues ON tasks.issue = issues.id LEFT JOIN causes ON tasks.cause = causes.id
-				WHERE tasks.state = 2 ORDER BY tasks.close_date DESC");
+				WHERE tasks.close_date > $border_date 
+				AND   tasks.state = 2 ORDER BY tasks.close_date DESC");
 		$rejected = $this->sort_by_days($res3, 'close_date');
 		foreach ($rejected as $day => $issues)
 			foreach ($issues as $ik => $issue) {

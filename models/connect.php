@@ -134,13 +134,14 @@ class Connect {
 		/*nie zawsze trafimy, ale często i to nam wystarczy :)*/
 		$this->lastid = $id-1;
 	}
-	public function sort_by_days($res, $field) {
+	public function sort_by_days($res, $field, $join = true) {
 		$days = 0;
 		$last_day = -1;
 		$rt = array();
 		$today24 = mktime(24, 0, 0);
 		foreach ($res as $obj) {
-			$obj = $this->join($obj);
+			if ($join)
+				$obj = $this->join($obj);
 			$day = ceil(($today24 - (int)$obj[$field])/(24*60*60)) - 1;
 			if ($last_day != $day) {
 				$rt[$day] = array();

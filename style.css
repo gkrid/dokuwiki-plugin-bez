@@ -444,6 +444,10 @@ input.days {
 	background: url('images/rejectedtask.png') no-repeat 1px 4px;
 }
 
+#bds_timeline .cause > a {
+	background: url('images/newcause.png') no-repeat 1px 4px;
+}
+
 #bds_timeline h3 {
 	font-size: 1em;
 	border-bottom: 1px dotted #ddd;

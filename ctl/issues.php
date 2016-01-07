@@ -29,6 +29,9 @@ if (isset($raw_filters)) {
 	foreach ($filters as $k => $v)
 		if ($v != '-all' && $v != '')
 			$query_uri .= ':'.urlencode($k).':'.urlencode($v);
+			
+	if ($query_uri == '')
+		$query_uri = ':year:-all';
 
 	header('Location: ?id='.$this->id('issues').$query_uri);
 }

@@ -2,6 +2,8 @@
 include_once DOKU_PLUGIN."bez/models/connect.php";
 include_once DOKU_PLUGIN."bez/models/tasks.php";
 include_once DOKU_PLUGIN."bez/models/issues.php";
+include_once DOKU_PLUGIN."bez/models/comments.php";
+include_once DOKU_PLUGIN."bez/models/causes.php";
 
 class Bezcache extends Connect {
 	public function __construct() {
@@ -17,6 +19,17 @@ class Bezcache extends Connect {
 				id INTEGER PRIMARY KEY,
 				description TEXT NOT NULL,
 				opinion TEXT NULL,
+				toupdate INTEGER DEFAULT 0)";
+		$this->errquery($q);
+		$q = "CREATE TABLE IF NOT EXISTS comments_cache (
+				id INTEGER PRIMARY KEY,
+				content TEXT NOT NULL,
+				toupdate INTEGER DEFAULT 0)";
+		$this->errquery($q);
+		
+		$q = "CREATE TABLE IF NOT EXISTS causes_cache (
+				id INTEGER PRIMARY KEY,
+				cause TEXT NOT NULL,
 				toupdate INTEGER DEFAULT 0)";
 		$this->errquery($q);
 	}
@@ -39,7 +52,46 @@ class Bezcache extends Connect {
 	public function task_toupdate($id) {
 		$id = (int)$id;
 		$this->errquery("UPDATE tasks_cache SET toupdate=1 WHERE id=$id");
+	}
+	
+	public function get_comment($id) {
+		$id = (int)$id;
+		$a = $this->fetch_assoc("SELECT * FROM comments_cache WHERE id=$id");
+		if (count($a) == 0 || $a[0]['toupdate'] == 1) {
+			$commo = new Comments();
+			$c = $commo->getone($id);
+			$content = $this->helper->wiki_parse($c['content']);
+			$this->errquery("REPLACE INTO comments_cache(id, content,toupdate)
+							VALUES ($id, '".$this->escape($content)."', 0)");
+			return $content;
+		} 
+		return $a[0][content];
+	}
+
+	public function comment_toupdate($id) {
+		$id = (int)$id;
+		$this->errquery("UPDATE comments_cache SET toupdate=1 WHERE id=$id");
+	}
+	
+	public function get_cause($id) {
+		$id = (int)$id;
+		$a = $this->fetch_assoc("SELECT * FROM causes_cache WHERE id=$id");
+		if (count($a) == 0 || $a[0]['toupdate'] == 1) {
+			$causo = new Causes();
+			$c = $causo->getone($id);
+			$cause = $this->helper->wiki_parse($c['cause']);
+			$this->errquery("REPLACE INTO causes_cache(id, cause ,toupdate)
+							VALUES ($id, '".$this->escape($cause)."', 0)");
+			return $cause;
+		} 
+		return $a[0][cause];
+	}
+
+	public function cause_toupdate($id) {
+		$id = (int)$id;
+		$this->errquery("UPDATE causes_cache SET toupdate=1 WHERE id=$id");
 	}	
+
 
 	public function get_issue($id) {
 		$id = (int)$id;

@@ -3,6 +3,7 @@ include_once DOKU_PLUGIN."bez/models/connect.php";
 include_once DOKU_PLUGIN."bez/models/users.php";
 include_once DOKU_PLUGIN."bez/models/issues.php";
 include_once DOKU_PLUGIN."bez/models/event.php";
+include_once DOKU_PLUGIN."bez/models/bezcache.php";
 
 class Comments extends Event {
 	public function __construct() {
@@ -59,7 +60,10 @@ class Comments extends Event {
 			$from_user = $this->validate($post);
 			$data = array_merge($data, $from_user);
 			$this->errupdate($data, 'comments', $id);
-
+			
+			$cache = new Bezcache();
+			$cache->comment_toupdate($id);
+			
 			$comment = $this->getone($id);
 			$this->issue->update_last_mod($comment['issue']);
 		}
@@ -93,7 +97,26 @@ class Comments extends Event {
 
 		return $a;
 	}
+	function join($a) {
+		$usro = new Users();
+		$a['reporter'] = $usro->name($a['reporter']);
+		
+		$cache = new Bezcache();
+		$a[content] = $cache->get_comment($a['id']);
+		
+		return $a;
+	}
 	public function get_by_days($days=7) {
+		if (!$this->helper->user_viewer()) return false;
+		
+		$border_date = time() - $days*24*60*60;
+		$res = $this->fetch_assoc("SELECT * FROM comments WHERE date > $border_date");
+
+		$create = $this->sort_by_days($res, 'date');
+		foreach ($create as $day => $comments)
+			foreach ($comments as $k => $comment)
+				$create[$day][$k]['class'] = 'comment';
+		return $create;
 	}
 }
 
