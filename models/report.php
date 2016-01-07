@@ -105,7 +105,7 @@ class Report extends Connect {
 							(CASE	WHEN tasks.cause IS NULL OR tasks.cause = '' THEN 0
 									WHEN causes.potential = 0 THEN 1
 									ELSE 2 END) AS naction,
-									tasks.action, COUNT(*) AS number, SUM(cost) AS totalcost,
+									COUNT(*) AS number, SUM(cost) AS totalcost,
 									AVG(tasks.close_date - tasks.date) AS average
 										FROM tasks JOIN issues ON tasks.issue = issues.id
 										LEFT JOIN causes ON tasks.cause = causes.id
