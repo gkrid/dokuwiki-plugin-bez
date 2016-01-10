@@ -26,7 +26,7 @@ class admin_plugin_bez_backup extends DokuWiki_Admin_Plugin {
 	}
 	
 	function restore_backup($name) {
-		crate_backup('before_restore');
+		$this->crate_backup('before_restore');
 		copy($this->backup_dir . $name, DOKU_INC . 'data/bez.sqlite');
 	}
 	
@@ -34,6 +34,7 @@ class admin_plugin_bez_backup extends DokuWiki_Admin_Plugin {
 	 * handle user request
 	 */
 	function handle() {
+	  return true;
 	  if (count($_POST) == 0) return;   // first time - nothing to do
 	  if (!checkSecurityToken()) return;
 	  //importuj
@@ -46,6 +47,7 @@ class admin_plugin_bez_backup extends DokuWiki_Admin_Plugin {
 	 */
 	function html() {
 		global $errors;
+		ptln('<h1>Work in progress. It does not work yet.</h1>');
 	  ptln('<h1>'.$this->getMenuText().'</h1>');
 	 	ptln('<form action="'.wl($ID).'" method="post">');
 	  // output hidden values to ensure dokuwiki will return back to this plugin
