@@ -3,6 +3,10 @@
  * All DokuWiki plugins to extend the admin function
  * need to inherit from this class
  */
+ 
+ // must be run within DokuWiki
+if(!defined('DOKU_INC')) die();
+ if(!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
 
 class admin_plugin_bez_backup extends DokuWiki_Admin_Plugin {
 

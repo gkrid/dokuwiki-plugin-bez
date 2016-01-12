@@ -3,6 +3,11 @@
  * All DokuWiki plugins to extend the admin function
  * need to inherit from this class
  */
+ 
+// must be run within DokuWiki
+if(!defined('DOKU_INC')) die();
+if(!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
+ 
 $errors = array();
 include_once DOKU_PLUGIN."bez/models/connect.php";
 class admin_plugin_bez_importmongo extends DokuWiki_Admin_Plugin {
