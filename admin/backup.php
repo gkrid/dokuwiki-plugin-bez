@@ -15,7 +15,10 @@ class admin_plugin_bez_backup extends DokuWiki_Admin_Plugin {
 		return 'Zarządzaj kopiami zapasowymi BEZ';
 	}
 	
-	private $backup_dir = DOKU_INC . 'data/bez-backups/';
+	private $backup_dir;
+	function __construct() {
+		$this->backup_dir = DOKU_INC . 'data/bez-backups/';
+	}
 	function get_backup_list() {
 		if (!file_exists($this->backup_dir))
     			mkdir($this->backup_dir, 0777, true);
