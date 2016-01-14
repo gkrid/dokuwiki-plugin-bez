@@ -1,2 +1,2 @@
 <?php
-$conf['notify'] = ''; 
+

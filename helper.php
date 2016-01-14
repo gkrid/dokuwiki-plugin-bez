@@ -189,7 +189,7 @@ class helper_plugin_bez extends dokuwiki_plugin
 
 		return $array;
 	}
-	public function mail($to, $subject, $body, $URI='', $debug = false) {
+	public function mail($to, $subject, $body, $URI='', $contentType = "text/plain", $debug = false) {
 		if ($debug) {
 			echo $to."\n";
 			echo $subject."\n";
@@ -201,9 +201,11 @@ class helper_plugin_bez extends dokuwiki_plugin
 		if ($URI == '')
 			$URI = $_SERVER['SERVER_NAME'];
 
-		$headers = 	"From: noreply@$URI\n";
-		$headers .= "Content-Type: text/plain; charset=UTF-8\n"; 
-		$headers .= "Content-Transfer-Encoding: 8bit\n";
+		$headers =  "From: noreply@$URI\r\n";
+		$headers .= "Content-Type: $contentType; charset=UTF-8\r\n";
+		if ($contentType != "text/plain")
+			$headers .= "MIME-Version: 1.0\r\n";
+		$headers .= "Content-Transfer-Encoding: 8bit\r\n";
 
 		mail($to, $subject, $body, $headers);
 	}

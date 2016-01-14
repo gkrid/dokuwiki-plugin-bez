@@ -506,8 +506,20 @@ class Tasks extends Event {
 	}
 
 	public function cron_get_unsolved() {
-		$a = $this->fetch_assoc("SELECT id, issue, executor FROM tasks 
-								WHERE state=0");
+		global $bezlang;
+		$a = $this->fetch_assoc("SELECT tasks.id, tasks.issue, tasks.executor, tasks.date, issues.priority,
+									(CASE	WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
+											WHEN causes.potential = 0 THEN '1'
+											ELSE '2' END) AS naction
+								FROM tasks JOIN issues ON tasks.issue = issues.id 
+								LEFT JOIN causes ON tasks.cause = causes.id
+								WHERE tasks.state=0");
+		foreach ($a as &$row)						
+			switch($row['naction']) {
+				case 0: $row['action'] = $bezlang['correction']; break;
+				case 1: $row['action'] = $bezlang['corrective_action']; break;
+				case 2: $row['action'] = $bezlang['preventive_action']; break;
+			}
 		return $a;
 	}
 }

@@ -536,8 +536,13 @@ class Issues extends Connect {
 	}
 
 	public function cron_get_unsolved() {
-		$a = $this->fetch_assoc("SELECT id, title, coordinator FROM issues
-								WHERE state=0 AND coordinator <> '-proposal' AND coordinator <> '-rejected'");
+		$a = $this->fetch_assoc("SELECT issues.id, issuetypes.pl as type, date, last_mod, title, coordinator, priority,
+						(SELECT COUNT(tasks.id) FROM tasks WHERE tasks.state != 0 AND issues.id = tasks.issue) AS tasks_closed,
+						(SELECT COUNT(tasks.id) FROM tasks WHERE issues.id = tasks.issue) AS tasks_all
+						FROM issues JOIN issuetypes ON issues.type = issuetypes.id
+						WHERE state=0 AND coordinator <> '-proposal' AND coordinator <> '-rejected'
+						ORDER BY issues.priority DESC, issues.last_mod DESC, issues.date DESC");
+		
 		return $a;
 	}
 }

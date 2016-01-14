@@ -5,9 +5,10 @@ define('DOKU_INC', $inc.'/');
 define('DOKU_PLUGIN', $inc.'/lib/plugins/');
 define('DOKU_CONF', $inc.'/conf/');
 
-if (count($argv) < 2)
+/*if (count($argv) < 2)
 	die("podaj URI wiki dla którego odpalasz tego crona\n");
-$URI = $argv[1];
+$URI = $argv[1];*/
+$URI = 'localhost/ghi/dokuwiki';
 
 if (isset($argv[2]) && $argv[2] == 'http')
 	$http = 'http';
@@ -87,53 +88,24 @@ foreach ($tasks as $task) {
 $auth = new auth_plugin_authplain();
 foreach ($msg as $user => $data) {
 	$udata = $auth->getUserData($user);
-
+	
+	$his_issues = $data['issues'];
+	$his_tasks = $data['tasks'];
+	
+	if (count($his_issues) + count($his_tasks) == 0)
+		continue;
 
 	$to = $udata['name'].' <'.$udata['mail'].'>';
-	$subject = "[BEZ][$conf[title]] Termin rozwiązania problemu";
-	$body = '';
-	$no = count($data['issues']); 
-	if ($no > 0) {
-		
-		$body .= "Masz $no problemów do rozwiązania:\r\n";
-		$body .= $http."://$URI/doku.php?id=bez:issues:state:0:coordinator:".$user."\r\n";
-	}
+	$title = trim($conf['title']);
+	if ($title == '')
+		$title = $URI;
+	$subject = "[BEZ][$title] Termin rozwiązania problemu";
+	ob_start();
 
-	$no = count($data['tasks']); 
-	if ($no > 0) {
-		$body .= "Masz $no zadań do rozwiązania:\r\n";
-		$body .= $http."://$URI/doku.php?id=bez:tasks:state:0:executor:".$user."\r\n";
-	}
-	$helper->mail($to, $subject, $body, $URI);
+	include "cron-message-tpl.php";
+	$body = ob_get_clean();
+
+	$helper->mail($to, $subject, $body, $URI, "text/html");
 
 }
 
-/*Opiekunowie*/
-
-if (count($tasks) > 0 || count($issues) > 0) {
-	$subject = "[BEZ][$conf[title]] Powiadomienie dla opiekuna";
-	$body = '';
-
-	$no = count($issues);
-	if ($no > 0) {
-		$body .= "Na wykonanie czeka ".$no." problemów do rozwiązania.\n";
-		$body .= $http.'://'.$URI . "/doku.php?id=bez:issues:state:0\n";
-	}
-
-	$no = count($tasks);
-	if ($no > 0) {
-		$body .= "Na wykonanie czeka ".$no." zadań.\n";
-		$body .= $http.'://'.$URI . "/doku.php?id=bez:tasks:state:0\n";
-	}
-
-
-	$maint = $conf['plugin']['bez']['notify'];
-	$ms = preg_split('/\s+/', $maint);
-	foreach ($ms as $user) {
-		/*wyślij powiadomienie*/
-		$udata = $auth->getUserData($user);
-		$to = $udata['name'].' <'.$udata['mail'].'>';
-		if ($to != '')
-			$helper->mail($to, $subject, $body, $URI, true);
-	}
-}

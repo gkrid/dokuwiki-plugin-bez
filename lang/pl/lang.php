@@ -201,7 +201,7 @@ $lang['correction_add'] = 'Dodaj korekcję';
 $lang['corrective_action_add'] = 'Dodaj działanie korygujące';
 $lang['preventive_action_add'] = 'Dodaj działanie zapobiegawcze';
 
-$lang[show_all_tasks] = 'Pokaż wszystkie działania';
+$lang['show_all_tasks'] = 'Pokaż wszystkie działania';
 
 
 $lang['none_comment'] = 'brak(komentarz)';
@@ -340,19 +340,19 @@ $lang['cause_type'] = 'Typ przyczyny';
 $lang['cause_type_default'] = 'rzeczywista';
 $lang['cause_type_potential'] = 'potencjalna';
 
-$lang[evaluation] = 'Ocena';
+$lang['evaluation'] = 'Ocena';
 
-$lang[rr_report] = 'Raport RR';
+$lang['rr_report'] = 'Raport RR';
 
-$lang[rr_team] = 'Zespół oceny ryzyka';
-$lang[rr_desc] = 'Opis ryzyka';
-$lang[rr_eval] = 'Ocena ryzyka';
-$lang[rr_suceval] = 'Ocena skuteczności';
+$lang['rr_team'] = 'Zespół oceny ryzyka';
+$lang['rr_desc'] = 'Opis ryzyka';
+$lang['rr_eval'] = 'Ocena ryzyka';
+$lang['rr_suceval'] = 'Ocena skuteczności';
 
-$lang[correction_nav] = 'Korekcje';
-$lang[reaction] = 'Reakcja';
+$lang['correction_nav'] = 'Korekcje';
+$lang['reaction'] = 'Reakcja';
 
-$lang[closed_tasks] = 'Zadania zamknięte';
-$lang[root_causes] = 'Karegorie przyczyn';
+$lang['closed_tasks'] = 'Zadania zamknięte';
+$lang['root_causes'] = 'Karegorie przyczyn';
 
-$lang[version] = 'wersja';
+$lang['version'] = 'wersja';
