@@ -5,10 +5,9 @@ define('DOKU_INC', $inc.'/');
 define('DOKU_PLUGIN', $inc.'/lib/plugins/');
 define('DOKU_CONF', $inc.'/conf/');
 
-/*if (count($argv) < 2)
+if (count($argv) < 2)
 	die("podaj URI wiki dla którego odpalasz tego crona\n");
-$URI = $argv[1];*/
-$URI = 'localhost/ghi/dokuwiki';
+$URI = $argv[1];
 
 if (isset($argv[2]) && $argv[2] == 'http')
 	$http = 'http';
