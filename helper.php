@@ -81,7 +81,7 @@ class helper_plugin_bez extends dokuwiki_plugin
 		global $INFO, $auth;
 
 		$userd = $auth->getUserData($INFO['client']); 
-		if ($userd && in_array('admin', $userd['grps']))
+		if ($userd && (in_array('admin', $userd['grps']) || in_array('bez_admin', $userd['grps'])))
 				return true;
 
 		return false;
