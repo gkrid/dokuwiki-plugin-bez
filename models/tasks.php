@@ -64,15 +64,6 @@ class Tasks extends Event {
 		}
 		$data['executor'] = $post['executor'];
 
-		$taskao = new Taskactions();
-		if (array_key_exists('action', $post)) {
-			if ( ! array_key_exists((int)$post['action'], $taskao->get())) {
-				$errors['action'] = $bezlang['vald_action_required'];
-			} 
-			$data['action'] = (int) $post['action'];
-		} else
-			$data['action'] = $taskao->id('correction');
-
 		//cost is not required
 		if ($post['cost'] != '') {
 			$cost = trim($post['cost']);
