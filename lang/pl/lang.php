@@ -356,3 +356,6 @@ $lang['closed_tasks'] = 'Zadania zamknięte';
 $lang['root_causes'] = 'Karegorie przyczyn';
 
 $lang['version'] = 'wersja';
+
+$lang['issues_juxtaposition'] = 'Zestawienie problemów';
+$lang['tasks_juxtaposition'] = 'Zestawienie zadań';

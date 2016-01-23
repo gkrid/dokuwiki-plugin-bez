@@ -333,17 +333,20 @@ $lang['cause_type'] = 'Cause type';
 $lang['type_default'] = 'normal';
 $lang['type_potential'] = 'potential';
 
-$lang[evaluation] = 'Ocena';
+$lang['evaluation'] = 'Ocena';
 
-$lang[rr_report] = 'RR Report';
+$lang['rr_report'] = 'RR Report';
 
-$lang[rr_team] = 'Risk evaluation team';
-$lang[rr_desc] = 'Risk description';
-$lang[rr_eval] = 'Risk evaluacion';
-$lang[rr_suceval] = 'Effectiveness evalutation';
+$lang['rr_team'] = 'Risk evaluation team';
+$lang['rr_desc'] = 'Risk description';
+$lang['rr_eval'] = 'Risk evaluacion';
+$lang['rr_suceval'] = 'Effectiveness evalutation';
 
-$lang[correction_nav] = 'Corrections';
-$lang[closed_tasks] = 'Closed tasks';
-$lang[root_causes] = 'Cause categories';
+$lang['correction_nav'] = 'Corrections';
+$lang['closed_tasks'] = 'Closed tasks';
+$lang['root_causes'] = 'Cause categories';
 
-$lang[version] = 'version';
+$lang['version'] = 'version';
+
+$lang['issues_juxtaposition'] = 'Juxtaposition of issues';
+$lang['tasks_juxtaposition'] = 'Juxtaposition of tasks';

@@ -63,7 +63,13 @@
 			<input type="checkbox" name="sort_open"
 			<?php if (isset($value['sort_open']) && $value['sort_open'] == 'on') echo 'checked="checked"' ?>>
 	</label>
-	<input type="submit" value="<?php echo $bezlang['filter'] ?>" />
+	<label><input type="submit" value="<?php echo $bezlang['filter'] ?>" /></label>
+	<label>[<a class="" href="
+		<?php echo $helper->mailto('',
+		'[BEZ] '.$bezlang['issues_juxtaposition'],
+		DOKU_URL . 'doku.php?id='.$_GET['id']) ?>">
+		✉ <?php echo $bezlang['send_mail'] ?>
+	</a>]</label>
 </form>
 </div>
 
