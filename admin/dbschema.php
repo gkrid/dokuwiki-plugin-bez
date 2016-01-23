@@ -15,7 +15,7 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 	private $exp = false;
 	private $connect;
  
-	function getMenuText() {
+	function getMenuText($language) {
 		return 'Zaktualizuj schemat bazy BEZ';
 	}
 	

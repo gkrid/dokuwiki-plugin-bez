@@ -11,7 +11,7 @@ if(!defined('DOKU_INC')) die();
 class admin_plugin_bez_backup extends DokuWiki_Admin_Plugin {
 
  
-	function getMenuText() {
+	function getMenuText($language) {
 		return 'Zarządzaj kopiami zapasowymi BEZ';
 	}
 	
