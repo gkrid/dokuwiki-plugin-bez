@@ -59,12 +59,12 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 			$this->value[urldecode($ex[$i])] = urldecode($ex[$i+1]);
 	}
 
-    function handle($match, $state, $pos, &$handler)
+    function handle($match, $state, $pos, Doku_Handler $handler)
     {
 		return true;
     }
 
-    function render($mode, &$R, $pass) {
+    function render($mode, Doku_Renderer $R, $pass) {
 		global $INFO;
 
 		$helper = $this->loadHelper('bez');

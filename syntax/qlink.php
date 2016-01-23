@@ -22,12 +22,12 @@ class syntax_plugin_bez_qlink extends DokuWiki_Syntax_Plugin {
 	}
 
 
-    function handle($match, $state, $pos, &$handler) {
+    function handle($match, $state, $pos, Doku_Handler $handler) {
 		$nr = substr($match, 1, strlen($match));
 		return $nr;
     }
 
-    function render($mode, &$renderer, $nr) {
+    function render($mode, Doku_Renderer $renderer, $nr) {
 		if ($mode == 'xhtml') {
 			$id = $_GET['id'];
 			$ex = explode(':', $id);
