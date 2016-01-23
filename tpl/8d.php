@@ -52,7 +52,7 @@
 			<tr>
 			<td>
 				<a href="?id=<?php echo $this->id('issue_cause', 'id', $template[issue][id], 'cid', $value[id] ) ?>">
-						#p<?php echo $value[id] ?>
+						#p<?php echo $value['id'] ?>
 				</a>
 			</td>
 			<td>

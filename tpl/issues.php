@@ -1,7 +1,5 @@
 <div class="bez_filter_form">
 <form action="<?php echo $template['uri'] ?>?id=<?php echo $this->id('issues') ?>" method="POST">
-<fieldset>
-<div>
 	<label><?php echo $bezlang['state'] ?>:
 		<select name="state">
 			<option <?php if ($value['state'] == '-all') echo 'selected' ?>
@@ -46,8 +44,6 @@
 		<?php endforeach ?>
 		</select>
 	</label>
-</div>
-<div>
 	<label><?php echo $bezlang['title'] ?>:
 		<input name="title" value="<?php echo $value['title'] ?>" />
 	</label>
@@ -68,9 +64,6 @@
 			<?php if (isset($value['sort_open']) && $value['sort_open'] == 'on') echo 'checked="checked"' ?>>
 	</label>
 	<input type="submit" value="<?php echo $bezlang['filter'] ?>" />
-</div>
-
-</fieldset>
 </form>
 </div>
 
