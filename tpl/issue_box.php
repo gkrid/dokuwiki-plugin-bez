@@ -1,5 +1,5 @@
 <?php if ($template['opentasks']): ?>
-	<div class="info" style=""></div>
+	<div class="info"><?php echo $bezlang['issue_unclosed_tasks'] ?></div>
 <?php endif ?>
 <div id="bds_issue_box" class="pr<?php echo $template['issue']['priority'] ?>">
 <h1>
