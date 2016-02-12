@@ -365,4 +365,4 @@ $lang['version'] = 'wersja';
 $lang['issues_juxtaposition'] = 'Zestawienie problemów';
 $lang['tasks_juxtaposition'] = 'Zestawienie zadań';
 
-$lang['issue_unclosed_tasks'] = 'Nie można zamknąć problemu dopóki zawiera nierozwiązane zadania.';
+$lang['issue_unclosed_tasks'] = 'Nie można zamknąć problemu, dopóki zawiera on nierozwiązane zadania.';
