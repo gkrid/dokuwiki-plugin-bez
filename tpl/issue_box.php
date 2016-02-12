@@ -1,3 +1,6 @@
+<?php if ($template['opentasks']): ?>
+	<div class="info" style=""></div>
+<?php endif ?>
 <div id="bds_issue_box" class="pr<?php echo $template['issue']['priority'] ?>">
 <h1>
 <?php echo $this->html_issue_link($template['issue']['id']) ?>
@@ -28,10 +31,34 @@
 <?php echo $template['issue']['description'] ?>
 
 <?php if ($template['issue']['raw_state'] == 1 || $template['issue']['raw_state'] == 2): ?>
-	<h2><?php echo $bezlang['opinion'] ?></h2>
+<h2>
+	<?php if ($template['anytasks']): ?>
+		<?php echo $bezlang['opinion'] ?>
+	<?php else: ?>
+		<?php echo $bezlang['reason'] ?>
+	<?php endif ?>
+</h2>
 	<?php echo $template['issue']['opinion'] ?>
 <?php endif ?>
+
+<?php if (!$template['close']): ?>
 <div class="bez_buttons">
+	<?php if ($helper->user_coordinator($template['issue']['id'])): ?>
+		<?php if ($template['issue']['raw_state'] == 1): ?>
+			<a href="?id=<?php echo $this->id('issue', 'id', $template['issue']['id'], 'action', 'reopen') ?>" class="bds_inline_button">
+			 	↺ <?php echo $bezlang['issue_reopen'] ?>
+			</a>
+		<?php elseif ($template['anytasks'] && !$template['opentasks']): ?>
+			<a href="?id=<?php echo $this->id('issue_close', 'id', $template['issue']['id']) ?>" class="bds_inline_button">
+			 	↬ <?php echo $bezlang['close_issue'] ?>
+			</a>
+		<?php elseif (!$template['anytasks']): ?>
+			<a href="?id=<?php echo $this->id('issue_close', 'id', $template['issue']['id']) ?>" class="bds_inline_button">
+			 	↛ <?php echo $bezlang['reject_issue'] ?>
+			</a>
+		<?php endif ?>
+	<?php endif ?> 	
+	
 	<?php if ($helper->user_coordinator($template['issue']['id'])): ?> 
 		<a href="?id=<?php echo $this->id('issue_report', 'id', $template['issue']['id']) ?>" class="bds_inline_button">
 		 	✎ <?php echo $bezlang['edit'] ?>
@@ -53,5 +80,24 @@
 		⎚ <?php echo $bezlang['rr_report'] ?>
 	</a>
 </div>
-
+<?php else: ?>
+<h2>
+	<?php if ($template['anytasks']): ?>
+		<?php echo $bezlang['opinion'] ?>
+	<?php else: ?>
+		<?php echo $bezlang['reason'] ?>
+	<?php endif ?>
+</h2>
+<form action="<?php echo $template['uri'] ?>?id=<?php echo $this->id('issue_close', 'id', $template['issue_id'], 'action', 'close') ?>" method="POST" class="bez_form">
+	<textarea name="opinion" id="opinion" class="edit"><?php echo $value['opinion'] ?></textarea>
+	<?php if ($template['anytasks']): ?>
+		<input type="submit" value="<?php echo $bezlang['close_issue'] ?>">
+	<?php else: ?>
+		<input type="submit" value="<?php echo $bezlang['reject_issue'] ?>">
+	<?php endif ?>
+	 <a href="#" onclick="window.history.back()" class="bez_delete_button bez_link_button bez_cancel_button">
+		<?php echo $bezlang['cancel'] ?>
+	</a>
+</form>
+<?php endif ?>
 </div>

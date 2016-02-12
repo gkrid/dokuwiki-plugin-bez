@@ -1,7 +1,10 @@
 <?php
 include_once DOKU_PLUGIN."bez/models/issues.php";
 include_once DOKU_PLUGIN."bez/models/comments.php";
+include_once DOKU_PLUGIN."bez/models/tasks.php";
 
+
+$isso = new Issues();
 $como = new Comments();
 $issue_id = (int)$params[1];
 
@@ -33,6 +36,8 @@ if (isset($params[3])) {
 		$template['comment_id'] = $kid;
 
 		$redirect = true;
+	} else if ($action == 'reopen') {
+		$isso->reopen($issue_id);
 	}
 	if ($redirect && count($errors) == 0)
 		header("Location: ?id=bez:issue:id:$issue_id");
@@ -46,6 +51,10 @@ if (!isset($template[comment_action])) {
 	$template['comment_action'] = 'comment_add';
 }
 
-$isso = new Issues();
+$tasko = new Tasks();
+$template['anytasks'] = $tasko->any_task($issue_id);
+$template['opentasks'] = $tasko->any_open($issue_id);
+
 $template['issue'] = $isso->get($issue_id);
 $template['comments'] = $como->get($issue_id);
+

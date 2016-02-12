@@ -8,3 +8,6 @@ $issue_id = (int)$params[1];
 $isso = new Issues();
 $template['issue'] = $isso->get($issue_id);
 $template['tasks'] = $tasko->get($issue_id, NULL);
+
+$template['anytasks'] = $tasko->any_task($issue_id);
+$template['opentasks'] = $tasko->any_open($issue_id);

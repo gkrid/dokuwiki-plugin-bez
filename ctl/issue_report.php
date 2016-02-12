@@ -20,30 +20,25 @@ $tasko = new Tasks();
 
 if (count($_POST) > 0) {
 	if ($action == 'update') {
+		$updated = $isso->update($_POST, array(), $issue_id);
+		if (count($errors) == 0 && !in_array($updated['coordinator'], $isso->coord_special)) {
+			$coord = $updated['coordinator'];
 
-		if ($helper->user_admin() && isset($_POST['without']) && $_POST['without'] == '1') {
-			$isso->update($_POST, array(), $issue_id, false);
-		} else {
-			$updated = $isso->update($_POST, array(), $issue_id);
-			if (count($errors) == 0 && !in_array($updated['coordinator'], $isso->coord_special)) {
-				$coord = $updated['coordinator'];
+			$issto = new Issuetypes();
+			$types = $issto->get();
+			$type = $types[$updated['type']];
 
-				$issto = new Issuetypes();
-				$types = $issto->get();
-				$type = $types[$updated['type']];
-
-				$to = $usro->name($coord).' <'.$usro->email($coord).'>';
-				$subject = "[$conf[title]] #".$isso->lastid()." $type";
-				$body = "Zmiana w problemie: $uri".$this->issue_uri($isso->lastid());
-				$this->helper->mail($to, $subject, $body);
-			}
+			$to = $usro->name($coord).' <'.$usro->email($coord).'>';
+			$subject = "[$conf[title]] #".$isso->lastid()." $type";
+			$body = "Zmiana w problemie: $uri".$this->issue_uri($isso->lastid());
+			$this->helper->mail($to, $subject, $body);
 		}
 	} else {
 		$data = array('reporter' => $usro->get_nick(), 'date' => time());
 
 		$stao = new States();
 		if ($_POST['coordinator'] == NULL)
-			$data['coordinator'] = $INFO['client'];
+			$data['coordinator'] = '-proposal';
 		$data['state'] = $stao->id('opened');
 
 		$inserted = $isso->add($_POST, $data);
@@ -77,12 +72,6 @@ $template['action'] = $action;
 $isstyo = new Issuetypes();
 $template['issue_types'] = $isstyo->get();
 
-if ($action == 'update') {
-	$stao = new States();
-	$anytasks = $tasko->any_task($issue_id);
-	$template['issue_states'] = $stao->get($anytasks);
-	$template['anytasks'] = $anytasks;
-}
 
 $template['user_admin'] = $helper->user_admin();
 if ($issue_id != NULL) 
@@ -92,4 +81,7 @@ $template['nicks'] = $usro->get();
 $template['uri'] = $uri;
 $template['issue_id'] = $issue_id;
 
+$state = $isso->get_state($issue_id);
 
+$template['state'] = $state['state'];
+$template['raw_state'] = $state['raw_state'];

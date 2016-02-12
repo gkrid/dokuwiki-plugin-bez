@@ -104,15 +104,15 @@ class helper_plugin_bez extends dokuwiki_plugin
 			if ($hours > 0) {
 				$days = floor($hours/24);
 				if ($days > 0) {
-					$time_str = $days.' '.$this->getLang('days');
+					$time_str = $days.'&nbsp;'.$this->getLang('days');
 				} else {
-					$time_str = $hours.' '.$this->getLang('hours');
+					$time_str = $hours.'&nbsp;'.$this->getLang('hours');
 				}
 			} else {
-				$time_str = $minutes.' '.$this->getLang('minutes');
+				$time_str = $minutes.'&nbsp;'.$this->getLang('minutes');
 			}
 		} else {
-			$time_str = $diff.' '.$this->getLang('seconds');
+			$time_str = $diff.'&nbsp;'.$this->getLang('seconds');
 		}
 		return $time_str;
 	}
@@ -122,7 +122,7 @@ class helper_plugin_bez extends dokuwiki_plugin
 		if ($diff < 5) {
 			return $this->getLang('just_now');
 		}
-		return self::days($diff).' '.$this->getLang('ago');
+		return self::days($diff).'&nbsp;'.$this->getLang('ago');
 	}
 	public function time2date($time) {
 		return date('Y-m-d', $time);
@@ -208,5 +208,12 @@ class helper_plugin_bez extends dokuwiki_plugin
 		$headers .= "Content-Transfer-Encoding: 8bit\r\n";
 
 		mail($to, $subject, $body, $headers);
+	}
+	public function get_wiki_title() {
+		global $conf;
+		$title = trim($conf['title']);
+		if ($title == '')
+			$title = $_SERVER['HTTP_HOST'];
+		return $title;
 	}
 }

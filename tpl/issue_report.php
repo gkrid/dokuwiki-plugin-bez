@@ -71,36 +71,23 @@
 	<div class="row">
 	<label for="state"><?php echo $bezlang['state'] ?>:</label>
 	<span>
-	<?php if ($template['any_task_open']): ?>
-		<strong><?php echo $bezlang['state_opened'] ?></strong>
-	<?php else: ?>
-		<?php foreach ($template['issue_states'] as $key => $state): ?>
-			<label><input name="state" type="radio" <?php if ($value['state'] == $key) echo 'checked' ?>
-			 value="<?php echo $key ?>" /><?php echo $state ?></label>
-		<?php endforeach ?>
+		<strong><?php echo $template['state'] ?></strong>
+	</span>
+	</div>
+	<?php if ($template['raw_state'] == 1) : ?>
+		<div class="row">
+			<label for="opinion"><?php echo $bezlang['opinion'] ?>:</label>
+			<span>
+				<textarea name="opinion" id="opinion" class="edit"><?php echo $value['opinion'] ?></textarea>
+			</span>
+		</div>
 	<?php endif ?>
-	</span>
-	</div>
-
-	<div class="row">
-	<label for="opinion"><?php echo $bezlang['opinion'] ?>:</label>
-	<span>
-	<textarea name="opinion" id="opinion" class="edit"><?php echo $value['opinion'] ?></textarea>
-	</span>
-	</div>
 <?php endif ?>
 </fieldset>
 
-<?php if ($template['action'] == 'update' && $template['user_admin']): ?>
-	<label><?php echo $bezlang['save_without_changing_date'] ?>: <input type="checkbox" name="without" value="1"></label>
-	<br />
-<?php endif ?>
-
 <input type="submit" value="<?php echo $bezlang['save'] ?>">
-<?php if ($template['action'] == 'update'): ?>
-	 <a href="#" onclick="window.history.back()" class="bez_delete_button bez_link_button">
-		<?php echo $bezlang['cancel'] ?>
-	</a>
-<?php endif ?>
+ <a href="#" onclick="window.history.back()" class="bez_delete_button bez_link_button bez_cancel_button">
+	<?php echo $bezlang['cancel'] ?>
+</a>
 </form>
 </div>

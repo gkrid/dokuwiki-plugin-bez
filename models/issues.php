@@ -27,7 +27,7 @@ class Issues extends Connect {
 	$this->errquery($createq);
 	
 	}
-	public function validate($post, $state='add', $issue_id=-1)
+	public function validate($post)
 	{
 		global $bezlang, $errors;
 
@@ -80,32 +80,23 @@ class Issues extends Connect {
 		} 
 		$data['description'] = $post['description'];
 
-		/*zmienamy status tylko w przypadku edycji*/
-		/*oraz gdy istnieje koordynator*/
-		/*oraz gdy nie ma żadnych otwartych zadań*/
-		$tasko = new Tasks();
-		if ($state == 'update' && array_key_exists('state', $post) && in_array($data['coordinator'], $usro->nicks())) {
-			$post['state'] = (int)$post['state'];
-			$stato = new States();
-			if (!array_key_exists($post['state'], $stato->get()))
-				$errors['state'] = $bezlang['vald_state_required'];
-			elseif ($post['state'] != $stato->open() && $tasko->any_open($issue_id))
-				$errors['state'] = $bezlang['vald_state_tasks_not_closed'];
-
-			$data['state'] = $post['state'];
-		}
-
+		return $data;
+	}
+	
+	public function validate_close($post)
+	{
+		global $bezlang, $errors;
 		/*Przyczyna zamknięcia*/
-		if (array_key_exists('opinion', $post) && $data['state'] == 1) {
-			$opinion_max = 65000;
-			if (strlen($post['opinion']) == 0) {
-				$errors['opinion'] = $bezlang['vald_opinion_required'];
-			} else if (strlen($post['opinion']) > $opinion_max) {
-				$errors['opinion'] = str_replace('%d', $opinion_max, $bezlang['vald_opinion_too_long']);
-			} 
-			$data['opinion'] = $post['opinion'];
-		}
-
+		$data = array();
+		
+		$opinion_max = 65000;
+		if (strlen($post['opinion']) == 0) {
+			$errors['opinion'] = $bezlang['vald_opinion_required'];
+		} else if (strlen($post['opinion']) > $opinion_max) {
+			$errors['opinion'] = str_replace('%d', $opinion_max, $bezlang['vald_opinion_too_long']);
+		} 
+		$data['opinion'] = $post['opinion'];
+		
 		return $data;
 	}
 
@@ -120,14 +111,15 @@ class Issues extends Connect {
 		return false;
 	}
 
-	public function update($post, $data, $id, $update_last_mod=true) {
+	public function update($post, $data, $id) {
 		global $INFO;
 		$issue = $this->get_clean($id);
 		if ($this->helper->user_admin() || $issue['coordinator'] == $INFO['client']) {
-			$from_user = $this->validate($post, 'update', $id);
-			$data = array_merge($data, $from_user);
-			if ($update_last_mod && $issue[state] != $data[state])
-				$data['last_mod'] = time();
+			$from_user = $this->validate($post);
+			$from_user2 = array();
+			if ($issue['state'] == 1)
+				$from_user2 = $this->validate_close($post);
+			$data = array_merge($data, $from_user, $from_user2);
 			$this->errupdate($data, 'issues', $id);
 
 			$cache = new Bezcache();
@@ -137,10 +129,36 @@ class Issues extends Connect {
 		}
 		return false;
 	}
+	
+	public function close($post, $id) {
+		global $INFO;
+		$issue = $this->get_clean($id);
+		if ($this->helper->user_admin() || $issue['coordinator'] == $INFO['client']) {
+			$from_user = $this->validate_close($post, $id);
+			$data = array_merge($from_user, array('state' => '1', 'last_mod' => time()));
+			$this->errupdate($data, 'issues', $id);
+
+			$cache = new Bezcache();
+			$cache->issue_toupdate($id);
+
+			return $data;
+		}
+		return false;
+	}
+	public function reopen($id) {
+		global $INFO;
+		$issue = $this->get_clean($id);
+		if ($this->helper->user_admin() || $issue['coordinator'] == $INFO['client']) {
+			$this->errupdate(array('state' => '0'), 'issues', $id);
+			return true;
+		}
+		return false;
+	}
 
 	public function update_last_mod($id) {
-		if ($this->helper->user_editor())
-			$this->errupdate(array('last_mod' => time()), 'issues', $id);
+		//W obecnej wersji BEZ last_mod oznacza datę zamknięcia, więc uniemożliwiamy jej zmianę poza zamknięciem.
+		/*if ($this->helper->user_editor())
+			$this->errupdate(array('last_mod' => time()), 'issues', $id);*/
 	}
 
 	public function opened($id) {
@@ -187,9 +205,23 @@ class Issues extends Connect {
 		$cache = new Bezcache();
 		$wiki_text = $cache->get_issue($a['id']);
 		$a['description'] = $wiki_text['description'];
+		$a['raw_opinion'] = $a['opinion'];
 		$a['opinion'] = $wiki_text['opinion'];
 
 		return $a;
+	}
+	
+	public function get_state($id) {
+		if ($id == '')
+			return false;
+		$stao = new States();
+		$tasko = new Tasks();
+		$result = $this->fetch_assoc("SELECT state, coordinator FROM issues WHERE id=$id");
+		$a = $result[0];
+		$res = array();
+		$res['state'] = $stao->name($a['state'], $a['coordinator'], $tasko->any_task($a['id']));
+		$res['raw_state'] = $a['state'];
+		return $res;
 	}
 
 	public function get_clean($id) {

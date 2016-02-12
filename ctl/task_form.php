@@ -76,6 +76,8 @@ if (isset($nparams[tid])) {
 
 $isso = new Issues();
 $template['issue'] = $isso->get($issue_id);
+$template['anytasks'] = $tasko->any_task($issue_id);
+$template['opentasks'] = $tasko->any_open($issue_id);
 
 $template['users'] = $usro->get();
 

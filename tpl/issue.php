@@ -50,7 +50,7 @@
 				</fieldset>
 				<input type="submit" value="<?php echo $template['comment_button'] ?>">
 				<a href="?id=<?php echo $this->id('issue_show', $template['issue']['id']) ?>"
-				 class="bez_delete_button bez_link_button">
+				 class="bez_delete_button bez_link_button bez_cancel_button">
 					<?php echo $bezlang['cancel'] ?>
 				</a>
 			</form>

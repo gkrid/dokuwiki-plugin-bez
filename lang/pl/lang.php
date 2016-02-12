@@ -137,6 +137,9 @@ $lang['state_opened'] = 'otwarta';
 $lang['state_rejected'] = 'odrzucona';
 $lang['state_closed'] = 'zamknięta';
 
+$lang['reject_issue'] = 'Odrzuć problem';
+$lang['close_issue'] = 'Zamknij problem';
+
 
 $lang['just_now'] = 'przed chwilą';
 $lang['seconds'] = 'sek.';
@@ -227,6 +230,8 @@ $lang['issue_created'] = 'Zgłoszono';
 $lang['issue_closed'] = 'Zamknięto';
 $lang['issue_reopened'] = 'Ponownie otwarto problem';
 $lang['issue_rejected'] = 'Odrzucono';
+
+$lang['issue_reopen'] = 'Otwórz ponownie';
 
 $lang['today'] = 'Dzisiaj';
 $lang['yesterday'] = 'Wczoraj';
@@ -359,3 +364,5 @@ $lang['version'] = 'wersja';
 
 $lang['issues_juxtaposition'] = 'Zestawienie problemów';
 $lang['tasks_juxtaposition'] = 'Zestawienie zadań';
+
+$lang['issue_unclosed_tasks'] = 'Nie można zamknąć problemu dopóki zawiera nierozwiązane zadania.';

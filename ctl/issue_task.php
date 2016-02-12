@@ -22,3 +22,6 @@ if ($task['cause'] != '') {
 	$cause_id = (int)$task['cause'];
 	$template['cause'] = $causo->join($causo->getone($cause_id));
 }
+
+$template['anytasks'] = $tasko->any_task($issue_id);
+$template['opentasks'] = $tasko->any_open($issue_id);

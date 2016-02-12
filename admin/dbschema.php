@@ -15,12 +15,52 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 	private $exp = false;
 	private $connect;
  
-	function getMenuText($language) {
+	function getMenuText($lang) {
 		return 'Zaktualizuj schemat bazy BEZ';
 	}
 	
 	function __construct() {
 		$this->connect = new Connect();
+	}
+	
+	function check_remove_action_from_tasks() {
+		/*potential cause*/
+		$schema = $this->connect->fetch_assoc("PRAGMA table_info(tasks)");
+		foreach ($schema as $column)
+			if ($column['name'] == 'action')
+				return false;
+		
+		return true;
+	}
+	
+	function do_remove_action_from_tasks() {
+		$q = "
+		BEGIN TRANSACTION;
+		ALTER TABLE tasks RENAME to tasks_backup;
+		CREATE TABLE IF NOT EXISTS tasks (
+				id INTEGER PRIMARY KEY,
+				task TEXT NOT NULL,
+				state INTEGER NOT NULL,
+				executor TEXT NOT NULL,
+				cost INTEGER NULL,
+				reason TEXT NULL,
+				reporter TEXT NOT NULL,
+				date INTEGER NOT NULL,
+				close_date INTEGER NULL,
+				cause INTEGER NULL,
+				issue INTEGER NOT NULL
+				);
+		INSERT INTO tasks SELECT id, task, state, executor, cost, reason, reporter, date, close_date, cause, issue FROM tasks_backup;
+		COMMIT;
+		";
+		
+		$qa = explode(';', $q);
+		$con = new Connect();
+		$db = $con->open();
+		foreach ($qa as $e)  {
+			$db->query($e);
+		}
+		$db->close();
 	}
 	
 	function check_potentials() {
@@ -267,11 +307,12 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 	
 	private $actions = array(
 				
-				array('1. Słownik kategorii przyczyn', check_rootcause, do_rootcause),
-				array('2. Słownik typów problemów', check_types, do_types),
-				array('3. Usunięcie podmiotu w problemach', check_rementity, do_rementity),
-				array('4. Kolumna "potential" w zadaniach', check_potentials, do_potentials),
-				array('5. Zadania przypisane do przczyn', check_causetask, do_causetask),
+				array('1. Słownik kategorii przyczyn', 'check_rootcause', 'do_rootcause'),
+				array('2. Słownik typów problemów', 'check_types', 'do_types'),
+				array('3. Usunięcie podmiotu w problemach', 'check_rementity', 'do_rementity'),
+				array('4. Kolumna "potential" w zadaniach', 'check_potentials', 'do_potentials'),
+				array('5. Zadania przypisane do przczyn', 'check_causetask', 'do_causetask'),
+				array('6. Usunięcie kolumny "action" z tabeli zadań', 'check_remove_action_from_tasks', 'do_remove_action_from_tasks'),
 				);
 	/**
 	 * handle user request
@@ -295,8 +336,8 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 	 * output appropriate html
 	 */
 	function html() {
-		global $errors;
-	  ptln('<h1>'.$this->getMenuText().'</h1>');
+		global $errors, $conf;
+	  ptln('<h1>'.$this->getMenuText($conf['lang']).'</h1>');
 	  if ($this->exp == true) {
 	  		if (is_array($errors))
 				foreach ($errors as $error) {
@@ -315,7 +356,7 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 	  $i = 0;
 	  foreach ($this->actions as $action) {
 	  	$name = $action[0];
-	  	$is_applaied = $this->$action[1]();
+	  	$is_applaied = call_user_func(array($this, $action[1]));
 		if ($is_applaied) ptln('<tr style="background-color: #0f0">');
 		else ptln('<tr style="background-color: #f00">');
 		

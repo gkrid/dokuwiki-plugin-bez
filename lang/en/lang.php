@@ -136,6 +136,8 @@ $lang['state_opened'] = "open";
 $lang['state_rejected'] = "rejected";
 $lang['state_closed'] = "closed";
 
+$lang['reject_issue'] = 'Reject';
+$lang['close_issue'] = 'Close';
 
 $lang['just_now'] = "minute before";
 $lang['seconds'] = "seconds";
@@ -229,6 +231,8 @@ $lang['issue_created'] = "Reported";
 
 $lang['issue_closed'] = "Problem has been closed";
 $lang['issue_reopened'] = "Problem has been reopened";
+
+$lang['issue_reopen'] = 'Reopen issue';
 
 $lang['today'] = "Today";
 $lang['yesterday'] = "Yesterday";
@@ -350,3 +354,5 @@ $lang['version'] = 'version';
 
 $lang['issues_juxtaposition'] = 'Juxtaposition of issues';
 $lang['tasks_juxtaposition'] = 'Juxtaposition of tasks';
+
+$lang['issue_unclosed_tasks'] = 'You cannot close issues until some tasks are not closed.';

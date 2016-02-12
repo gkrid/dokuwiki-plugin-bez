@@ -2,6 +2,7 @@
 include_once DOKU_PLUGIN."bez/models/issues.php";
 include_once DOKU_PLUGIN."bez/models/causes.php";
 include_once DOKU_PLUGIN."bez/models/rootcauses.php";
+include_once DOKU_PLUGIN."bez/models/tasks.php";
 
 $causo = new Causes();
 $issue_id = (int)$params[1];
@@ -42,4 +43,6 @@ if (isset($params[3])) {
 $rootco = new Rootcauses();
 $template['rootcauses'] = $rootco->get();
 
-
+$tasko = new Tasks();
+$template['anytasks'] = $tasko->any_task($issue_id);
+$template['opentasks'] = $tasko->any_open($issue_id);

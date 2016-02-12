@@ -41,10 +41,13 @@ class States {
 	}
 	/*pobierz nazwę stanu, uwzględniając -proposal i -rejected*/
 	public function name($id, $coordinator, $anytask=true) {
+		global $bezlang;
 		$a = $this->get_all($anytask);
-		if (strstr($coordinator, '-'))
+		if ($id == 1 && !$anytask)
+			return $bezlang['state_rejected'];
+		else if (strstr($coordinator, '-') === 0)
 			return $a[$coordinator];
-		 else
+		else
 			return $a[$id];
 	}
 

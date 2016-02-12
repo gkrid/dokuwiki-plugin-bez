@@ -301,6 +301,9 @@ table.bez .pr2 , #bds_timeline dt.pr2 {
 	text-decoration:none !important;
 }
 
+.bez_cancel_button {
+	margin-left: 2em;
+}
 
 .bds_last_edit {
     color: #999999;

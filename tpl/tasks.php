@@ -87,12 +87,14 @@
 				<?php echo $task['cost'] ?>
 			<?php endif ?>
 		</td>
-		<td><?php echo $helper->string_time_to_now($task['date']) ?></td>
+		<td>
+			<?php echo $helper->time2date($task['date']) ?> (<?php echo $helper->string_time_to_now($task['date']) ?>)
+		</td>
 		<td>
 				<?php if ($task['state'] == $bezlang['task_opened']): ?>
-					<em><?php echo $bezlang['ns'] ?></em>
+					<em>---</em>
 				<?php else: ?>
-					<?php echo $helper->string_time_to_now($task['close_date']) ?>
+					<?php echo $helper->time2date($task['close_date']) ?>
 				<?php endif ?>
 			</td>
 		</tr>

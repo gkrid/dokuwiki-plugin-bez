@@ -81,7 +81,7 @@
 		<th><?php echo $bezlang['title'] ?></th>
 		<th><?php echo $bezlang['coordinator'] ?></th>
 		<th><?php echo $bezlang['date'] ?></th>
-		<th><?php echo $bezlang['last_mod_date'] ?></th>
+		<th><?php echo $bezlang['closed'] ?></th>
 		<th><?php echo $bezlang['cost'] ?></th>
 		<th><?php echo $bezlang['closed_tasks'] ?></th>
 	</tr>
@@ -92,12 +92,12 @@
 			<td><?php echo $issue['type'] ?></td>
 			<td><?php echo $issue['title'] ?></td>
 			<td><?php echo $issue['coordinator'] ?></td>
-			<td><?php echo $helper->string_time_to_now($issue['date']) ?></td>
+			<td><?php echo $helper->time2date($issue['date']) ?> (<?php echo $helper->string_time_to_now($issue['date']) ?>)</td>
 			<td>
-				<?php if ($issue['last_mod'] == ''): ?>
-					<em><?php echo $bezlang['ns'] ?></em>
+				<?php if ($issue['raw_state'] != 1): ?>
+					<em>---</em>
 				<?php else: ?>
-					<?php echo $helper->string_time_to_now($issue['last_mod']) ?>
+					<?php echo $helper->time2date($issue['last_mod']) ?>
 				<?php endif ?>
 			</td>
 			<td>

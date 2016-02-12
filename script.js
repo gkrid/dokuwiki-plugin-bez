@@ -60,14 +60,14 @@ jQuery(document).ready(function() {
 	});
 
 	//show/hide opinion
-	var $form = jQuery("#bez_issue_report.update"); 
+	/*var $form = jQuery("#bez_issue_report.update"); 
 	if ($form.length > 0) {
 		var $coordinator = $form.find("select[name=coordinator]");
 		var $opinion_row = $form.find("textarea[name=opinion]").parents("div[class=row]");
 		var $status_row = $form.find("label[for=state]").parents("div[class=row]");
 		var $state = $form.find("input[name=state]");
 
-		/*state.length == 0 -> nie możemy zmieniać statusu*/
+		//state.length == 0 -> nie możemy zmieniać statusu
 		if ($state.length == 0)
 			$opinion_row.hide();
 
@@ -101,7 +101,7 @@ jQuery(document).ready(function() {
 			else
 				$opinion_row.show();
 		});
-	}
+	}*/
 
 	//show/hide reason
 	$reason_row = jQuery(".bez_task_form textarea[name=reason]").parents("div[class=row]");
