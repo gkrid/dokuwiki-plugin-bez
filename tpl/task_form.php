@@ -78,7 +78,12 @@
 				<?php endif ?>
 			</fieldset>
 			<input type="submit" value="<?php echo $template['task_button'] ?>">
-			<a href="?id=<?php echo $this->id('issue_task', 'id', $template['issue']['id'], 'tid', $nparams[tid]) ?>"
+			<a href="?id=<?php
+				if (isset($nparams[tid]))
+					echo $this->id('issue_task', 'id', $template['issue']['id'], 'tid', $nparams[tid]);
+				else
+					echo $this->id('issue_tasks', 'id', $template['issue']['id']);
+				?>"
 			 class="bez_delete_button bez_link_button">
 				<?php echo $bezlang['cancel'] ?>
 			</a>

@@ -7,4 +7,9 @@
 			<?php include "task.php" ?>
 		<?php endforeach ?>
 	</div>
+	<?php if ($helper->user_coordinator($template['issue']['id'])): ?>
+		<a href="?id=<?php echo $this->id('task_form', 'id', $template['issue']['id']) ?>">
+			<?php echo $bezlang['correction_add'] ?>
+		</a>
+	<?php endif ?>
 </div>

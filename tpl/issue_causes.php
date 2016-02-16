@@ -7,6 +7,11 @@
 			<?php include "cause.php" ?>
 		<?php endforeach ?>
 	</div>
+	<?php if ($helper->user_coordinator($template['issue']['id'])): ?>
+		<a href="?id=<?php echo $this->id('cause_form', 'id', $template['issue']['id']) ?>">
+			<?php echo $bezlang['add_cause'] ?>
+		</a>
+	<? endif ?>
 </div>
 
 <?php include "removal_confirm.php" ?>
