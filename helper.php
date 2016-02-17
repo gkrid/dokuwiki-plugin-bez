@@ -41,6 +41,13 @@ class helper_plugin_bez extends dokuwiki_plugin
 		$toko = new Tokens();
 		return DOKU_URL . 'doku.php?id='.$this->id('rr', 'id', $issue_id).'&t='.$toko->get($this->id('rr', 'id', $issue_id));
 	}
+	public function nparams_to_id($action, $nparams=array()) {
+		$r = "bez:$action:";
+		foreach ($nparams as $k => $v) {
+			$r .= "$k:$v:";
+		}
+		return substr($r, 0, -1);
+	}
 	public function user_viewer() {
 		global $INFO, $auth;
 

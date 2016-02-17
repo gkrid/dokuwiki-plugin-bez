@@ -76,11 +76,13 @@ class Tasks extends Event {
 		}
 		
 		/*zmienamy status tylko w przypadku edycji*/
-		if (array_key_exists('state', $post)) 
-			$data['state'] = $this->val_state($post['state']);
+		/*if (array_key_exists('state', $post)) 
+			$data['state'] = $this->val_state($post['state']);*/
 
-		if (array_key_exists('reason', $post) &&
-							($data[state] == 2 || ($data[state] == 1 && $post[action] == 2)))
+		/*if (array_key_exists('reason', $post) &&
+							($data[state] == 2 || ($data[state] == 1 && $post[action] == 2)))*/
+							
+		if (array_key_exists('reason', $post))
 			$data['reason'] = $this->val_reason($post['reason']);
 
 		if (isset($_POST['cause']))
@@ -141,28 +143,30 @@ class Tasks extends Event {
 		if ($this->can_modify($id)) {
 			$from_user = $this->validate($post);
 			$data = array_merge($data, $from_user);
-			if ($task[state] != $data[state])
-				$data[close_date] = time();
 			$this->errupdate($data, 'tasks', $id);
 			$cache->task_toupdate($id);
 			//$this->issue->update_last_mod($task['issue']);
 
 
 			return $data;
-		} elseif ($this->can_change_state($id)) {
-			$state = $this->val_state($post['state']);
-			$reason = $this->val_reason($post['reason']);
+		}
+		return false;
+	}
+	public function update_state($state, $reason, $id) {
+		$cache = new Bezcache();
+		if ($this->can_modify($id) || $this->can_change_state($id)) {
+			$state = $this->val_state($state);
+			$reason = $this->val_reason($reason);
 			$data = array('state' => $state, 'reason' => $reason);
-			if ($task[state] != $data[state])
-				$data[close_date] = time();
-
+			
+			$data['close_date'] = time();
+			
 			$this->errupdate($data, 'tasks', $id);
 			$cache->task_toupdate($id);
 			//$this->issue->update_last_mod($task['issue']);
 
 			return $data;
 		}
-		return false;
 	}
 	public function getone($id) {
 		$id = (int) $id;

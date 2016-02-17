@@ -59,22 +59,25 @@
 					<label for="cost"><?php echo $bezlang['cost'] ?>:</label>
 					<span><input name="cost" id="cost" value="<?php echo $value['cost'] ?>" <?php echo $disabled ?>></span>
 				</div>
-				<?php if (isset($nparams[tid])): ?>
+				<?php if (isset($nparams['tid'])): ?>
 					<div class="row">
 					<label for="task_state"><?php echo $bezlang['task_state'] ?>:</label>
 					<span>
-					<select name="state" id="task_state">
-					<?php foreach ($template['task_states'] as $code => $name): ?>
-						<option <?php if ($value['state'] == $code) echo 'selected' ?>
-						 value="<?php echo $code?>"><?php echo $name ?></option>
-					<?php endforeach ?>
-					</select>
+						<strong><?php echo $template['state'] ?></strong>
 					</span>
 					</div>
+					<?php if ($template['raw_state'] != 0): ?>
 					<div class="row">
-						<label for="reason"><?php echo $bezlang['reason'] ?>/<?php echo $bezlang[evaluation] ?>:</label>
+						<label for="reason">
+							<?php if ($template['raw_state'] == 1): ?>
+								<?php echo $bezlang['evaluation'] ?>
+							<?php else: ?>
+								<?php echo $bezlang['reason'] ?>
+							<?php endif ?>
+						</label>
 						<span><textarea name="reason" id="reason"><?php echo $value['reason'] ?></textarea></span>
 					</div>
+					<?php endif ?>
 				<?php endif ?>
 			</fieldset>
 			<input type="submit" value="<?php echo $template['task_button'] ?>">

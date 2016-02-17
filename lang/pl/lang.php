@@ -222,6 +222,9 @@ $lang['task_opened'] = 'Otwarte';
 $lang ['task_done'] = 'Wykonane';
 $lang ['task_rejected'] = 'Odrzucone';
 
+$lang ['task_do'] = 'Wykonaj';
+$lang ['task_reject'] = 'Odrzuć';
+
 $lang['reason_reopen'] = 'Przyczyna ponownego otwarcia'; 
 $lang['reason_done']  = 'Przyczyna zakończenia';
 $lang['reason_reject'] = 'Przyczyna odrzucenia';

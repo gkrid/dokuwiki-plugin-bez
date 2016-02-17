@@ -223,6 +223,9 @@ $lang['task_opened'] = "Open";
 $lang ['task_done'] = "Done";
 $lang ['task_rejected'] = "Rejected";
 
+$lang ['task_do'] = 'Wykonaj';
+$lang ['task_reject'] = 'Odrzuć';
+
 $lang['reason_reopen'] = "Reason for reopening ";
 $lang['reason_done']  = "Reason for closing";
 $lang['reason_reject'] = "Reason for rejecting";

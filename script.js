@@ -104,7 +104,7 @@ jQuery(document).ready(function() {
 	}*/
 
 	//show/hide reason
-	$reason_row = jQuery(".bez_task_form textarea[name=reason]").parents("div[class=row]");
+	/*$reason_row = jQuery(".bez_task_form textarea[name=reason]").parents("div[class=row]");
 	
 	if ($reason_row.length > 0) {
 		$select = jQuery(".bez_task_form select[name=state]");

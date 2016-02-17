@@ -107,7 +107,8 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 
 				if ($issue_opened) {
 					$rpid = "bez:task_form:id:$id";
-					$data[$rpid] = array('id' => $rpid, 'type' => 'f', 'level' => 5,
+					if ($helper->user_admin())
+						$data[$rpid] = array('id' => $rpid, 'type' => 'f', 'level' => 5,
 											'title' => $this->getLang('add_correction'));
 				}
 				$res = $tasko->get_filtered(array('issue' => $id, 'action' => '0'));
@@ -125,7 +126,8 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 				$data[$pid][open] = true;
 				if ($issue_opened) {
 					$rpid = "bez:cause_form:id:$id";
-					$data[$rpid] = array('id' => $rpid, 'type' => 'f', 'level' => 5,
+					if ($helper->user_admin())
+						$data[$rpid] = array('id' => $rpid, 'type' => 'f', 'level' => 5,
 											'title' => $this->getLang('add_cause'));
 				}
 				$res = $causo->get($id);

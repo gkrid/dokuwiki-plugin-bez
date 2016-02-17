@@ -21,12 +21,19 @@ if (isset($nparams[cid]) && $nparams[cid] != '') {
 if (isset($nparams[tid])) {
 	$action = $nparams[action];
 	$tid = (int)$nparams[tid];
-
+	$task = $tasko->getone($tid);
+	var_dump($task);
+	$taskso = new Taskstates();
+	$task_states = $taskso->get();
+	
+	$template['raw_state'] = $task['state'];
+	$template['state']  = $task_states[$task['state']];
+	
 	if (!$action)
 		$action = 'edit';
 
 	if ($action == 'edit') 
-		$value = $tasko->getone($tid);
+		$value = $task;
 	else if ($action == 'update') {
 		$data = $tasko->update($_POST, array(), $tid);
 		if (count($errors) == 0) {
@@ -79,8 +86,8 @@ $template['issue'] = $isso->get($issue_id);
 $template['anytasks'] = $tasko->any_task($issue_id);
 $template['opentasks'] = $tasko->any_open($issue_id);
 
+
 $template['users'] = $usro->get();
 
-$taskso = new Taskstates();
-$template['task_states'] = $taskso->get();
+
 
