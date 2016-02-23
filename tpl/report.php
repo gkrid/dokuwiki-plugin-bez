@@ -18,7 +18,7 @@
 			<td><?php echo $issue['number'] ?></td>
 			<td>
 				<?php if ($issue['totalcost'] == ''): ?>
-					<em><?php echo $bezlang['ns'] ?></em>
+					<em>---</em>
 				<?php else: ?>
 					<?php echo $issue['totalcost'] ?>
 				<?php endif ?>
@@ -53,7 +53,7 @@
 			<td><?php echo $task['number'] ?></td>
 			<td>
 				<?php if ($task['totalcost'] == ''): ?>
-					<em><?php echo $bezlang['ns'] ?></em>
+					<em>---</em>
 				<?php else: ?>
 					<?php echo $task['totalcost'] ?>
 				<?php endif ?>

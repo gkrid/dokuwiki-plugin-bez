@@ -1,6 +1,12 @@
 <?php if ($template['opentasks']): ?>
 	<div class="info"><?php echo $bezlang['issue_unclosed_tasks'] ?></div>
 <?php endif ?>
+<?php if ($template['issue']['raw_coordinator'] == '-proposal'): ?>
+	<div class="info"><?php echo $bezlang['issue_is_proposal'] ?></div>
+<?php endif ?>
+<?php if (!$template['anytasks']): ?>
+	<div class="info"><?php echo $bezlang['issue_no_tasks'] ?></div>
+<?php endif ?>
 <div id="bds_issue_box" class="pr<?php echo $template['issue']['priority'] ?>">
 <h1>
 <?php echo $this->html_issue_link($template['issue']['id']) ?>

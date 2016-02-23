@@ -80,14 +80,21 @@
 			<tr>
 				<td>	
 					<a href="?id=<?php echo $this->id('issue_task', 'id', $task[issue], 'tid', $task[id]) ?>">
-						#z<?php echo $task[id] ?>
+						#z<?php echo $task['id'] ?>
 					</a>
 				</td>
-				<td><?php echo  $task['task'] ?></td>
+				<td>
+					<?php echo  $task['task'] ?>
+					
+					<?php if ($task['reason'] != ''): ?>
+						<h3 class="bez_8d"><?php echo $bezlang['evaluation'] ?></h3>
+						<?php echo  $task['reason'] ?>
+					<?php endif ?>
+				</td>
 				<td><?php echo $task['state'] ?></td>
 				<td>
 					<?php if ($task['cost'] == ''): ?>
-						<em><?php echo $bezlang['ns'] ?></em>
+						<em>---</em>
 					<?php else: ?>
 						<?php echo $task['cost'] ?>
 					<?php endif ?>
@@ -95,7 +102,7 @@
 				<td><?php echo $helper->time2date($task['date']) ?></td>
 				<td>
 					<?php if ($task['state'] == $bezlang['task_opened']): ?>
-						<em><?php echo $bezlang['ns'] ?></em>
+						<em>---</em>
 					<?php else: ?>
 						<?php echo $helper->time2date($task['close_date']) ?>
 					<?php endif ?>

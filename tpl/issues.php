@@ -101,7 +101,11 @@
 				<?php endif ?>
 			</td>
 			<td>
-				<?php echo $issue['cost'] ?>
+				<?php if ($issue['cost'] == ''): ?>
+					<em>---</em>
+				<?php else: ?>
+					<?php echo $issue['cost'] ?>
+				<?php endif ?>
 			</td>
 			<td>
 		<a href="<?php echo $template['uri'] ?>?id=<?php echo $this->id('tasks', 'issue', $issue['id'], 'state', 0) ?>">

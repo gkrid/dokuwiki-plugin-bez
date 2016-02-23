@@ -206,7 +206,7 @@ $lang['correction_add'] = 'Add correction';
 $lang['corrective_action_add'] = 'Add corrective action';
 $lang['preventive_action_add'] = 'Add preventive action';
 
-$lang[show_all_tasks] = 'Show all tasks';
+$lang['show_all_tasks'] = 'Show all tasks';
 
 $lang['none_comment'] = "none(comment)";
 $lang['manpower'] = "Manpower";
@@ -223,8 +223,8 @@ $lang['task_opened'] = "Open";
 $lang ['task_done'] = "Done";
 $lang ['task_rejected'] = "Rejected";
 
-$lang ['task_do'] = 'Wykonaj';
-$lang ['task_reject'] = 'Odrzuć';
+$lang ['task_do'] = 'Done';
+$lang ['task_reject'] = 'Reject';
 
 $lang['reason_reopen'] = "Reason for reopening ";
 $lang['reason_done']  = "Reason for closing";
@@ -359,3 +359,5 @@ $lang['issues_juxtaposition'] = 'Juxtaposition of issues';
 $lang['tasks_juxtaposition'] = 'Juxtaposition of tasks';
 
 $lang['issue_unclosed_tasks'] = 'You cannot close issues until some tasks are not closed.';
+$lang['issue_is_proposal'] = 'You cannot add causes and tasks until issue is proposal.';
+$lang['issue_no_tasks'] = 'You cannot close the issue until it has no tasks.';

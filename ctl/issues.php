@@ -19,8 +19,8 @@ $rootco = new Rootcauses();
 
 if (count($_POST) > 0)
 	$raw_filters = $_POST;
-elseif (count($params) == 0 && isset($_COOKIE[bez_issues_filters]))
-	$raw_filters = $_COOKIE[bez_issues_filters];
+elseif (count($params) == 0 && isset($_COOKIE['bez_issues_filters']))
+	$raw_filters = $_COOKIE['bez_issues_filters'];
 
 if (isset($raw_filters)) {
 	$filters = $isso->validate_filters($raw_filters);
@@ -39,7 +39,7 @@ if (isset($raw_filters)) {
 /*rekordy parzyste to nagłówki, nieparzyste to ich wartości.*/
 /*np. status:1:type:2:podmiot:PCA*/
 $value = array('state' => '-all', 'type' => '-all', 'coordinator' => '-all', 'year' => '-all', 'sort_open' => '',
-			'rootcause' => '-all');
+			'rootcause' => '-all', 'title' => '');
 for ($i = 0; $i < count($params); $i += 2)
 	$value[urldecode($params[$i])] = urldecode($params[$i+1]);
 	

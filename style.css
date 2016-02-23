@@ -549,6 +549,11 @@ input.days {
 	font-weight: normal;
 }
 
+h3.bez_8d {
+	font-size: inherit;
+	border-bottom: 1px solid #ccc;
+}
+
 .bez_sumarise {
 	border: 0;
 }

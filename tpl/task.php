@@ -51,6 +51,7 @@
 <?php echo $task['task'] ?>
 
 <?php if (isset($nparams['state'])): ?>
+	<a name="form"></a>
 	<?php if ($nparams['state'] == 2): ?>
 		<h3><?php echo $bezlang['reason'] ?></h3>
 	<?php else: ?>
@@ -87,12 +88,17 @@
 					if (isset($nparams['cid']))
 						echo $helper->id('issue_cause_task', 'id', $template['issue']['id'], 'cid', $cause['id'], 'tid', $task['id'], 'state', '1');
 					else
-						echo $helper->id('issue_task', 'id', $template['issue']['id'], 'tid', $task['id'], 'state', '2');
-				?>">
+						echo $helper->id('issue_task', 'id', $template['issue']['id'], 'tid', $task['id'], 'state', '1');
+				?>#form">
 			 	↬ <?php echo $bezlang['task_do'] ?>
 			</a>
 			<a class="bds_inline_button"
-				href="?id=<?php echo $_GET['id'] ?>:state:2">
+				href="?id=<?php
+					if (isset($nparams['cid']))
+						echo $helper->id('issue_cause_task', 'id', $template['issue']['id'], 'cid', $cause['id'], 'tid', $task['id'], 'state', '2');
+					else
+						echo $helper->id('issue_task', 'id', $template['issue']['id'], 'tid', $task['id'], 'state', '2');
+				?>#form">
 			 	↛ <?php echo $bezlang['task_reject'] ?>
 			</a>
 		<?php endif ?>

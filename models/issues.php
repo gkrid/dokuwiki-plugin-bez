@@ -197,6 +197,7 @@ class Issues extends Connect {
 		$usro = new Users();
 		$a['reporter'] = $usro->name($a['reporter']);
 
+		$a['raw_coordinator'] = $a['coordinator'];
 		$a['coordinator_email'] = $usro->email($a['coordinator']);
 		$a['coordinator'] = $this->join_coordinator($a['coordinator']);
 

@@ -222,7 +222,7 @@ $lang['task_opened'] = 'Otwarte';
 $lang ['task_done'] = 'Wykonane';
 $lang ['task_rejected'] = 'Odrzucone';
 
-$lang ['task_do'] = 'Wykonaj';
+$lang ['task_do'] = 'Wykonano';
 $lang ['task_reject'] = 'Odrzuć';
 
 $lang['reason_reopen'] = 'Przyczyna ponownego otwarcia'; 
@@ -369,3 +369,5 @@ $lang['issues_juxtaposition'] = 'Zestawienie problemów';
 $lang['tasks_juxtaposition'] = 'Zestawienie zadań';
 
 $lang['issue_unclosed_tasks'] = 'Nie można zamknąć problemu, dopóki zawiera on nierozwiązane zadania.';
+$lang['issue_is_proposal'] = 'Nie można dodawać przyczny ani zadań, dopóki problem jest propozycją.';
+$lang['issue_no_tasks'] = 'Nie można zamknąć problemu, dopóki nie posiada żadnego przypisanego zadania.';

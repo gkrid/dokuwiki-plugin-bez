@@ -82,7 +82,7 @@
 		<td><?php echo $task['executor'] ?></td>
 		<td>
 			<?php if ($task['cost'] == ''): ?>
-				<em><?php echo $bezlang['ns'] ?></em>
+				<em>---</em>
 			<?php else: ?>
 				<?php echo $task['cost'] ?>
 			<?php endif ?>
