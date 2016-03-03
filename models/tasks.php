@@ -30,7 +30,7 @@ class Tasks extends Event {
 	public function can_modify($task_id) {
 		$task = $this->getone($task_id);
 
-		if ($task && $this->issue->opened($task['issue']))
+		if ($task)
 			if ($this->helper->user_coordinator($task['issue']) || $this->helper->user_admin()) 
 				return true;
 

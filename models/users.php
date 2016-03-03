@@ -63,6 +63,7 @@ class Users {
 		$a = array();
 		foreach ($wikiusers as $nick => $data)
 			$a[$nick] = $data['name'];
+		asort($a);
 		return $a;
 	}
 

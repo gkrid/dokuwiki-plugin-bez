@@ -11,3 +11,11 @@ h1.bez_report span {
 	font-size: 50%;
 	font-weight: normal;
 }
+
+.bds_inline_button {
+	display: none;
+}
+
+form {
+	display: none;
+}

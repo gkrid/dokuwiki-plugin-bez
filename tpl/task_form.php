@@ -1,10 +1,9 @@
-<?php if ($template['issue'][raw_state] == 0 &&
-		 ($helper->user_coordinator($template[issue][id]) || isset($nparams[tid]))): ?>
-	<?php $issue = $template[issue] ?>
+<?php if ($helper->user_coordinator($template['issue']['id']) && isset($nparams['tid'])): ?>
+	<?php $issue = $template['issue'] ?>
 	<?php include "issue_box.php" ?>
 	<br>
-	<?php if (isset($template[cause])): ?>
-		<?php $cause = $template[cause] ?>
+	<?php if (isset($template['cause'])): ?>
+		<?php $cause = $template['cause'] ?>
 		<div class="bds_block" id="bez_causes">
 			<?php include "cause.php" ?>
 		</div>
@@ -13,13 +12,13 @@
 
 	<form class="bez_form bez_task_form" action="?id=<?php echo $template['task_action'] ?>" method="POST">
 			<fieldset class="bds_form">
-				<?php if (isset($nparams[tid])): ?>
+				<?php if (isset($nparams['tid'])): ?>
 					<div class="row">
 					<label for="id"><?php echo $bezlang['id'] ?>:</label>
-					<span><strong>#z<?php echo $nparams[tid] ?></strong></span>
+					<span><strong>#z<?php echo $nparams['tid'] ?></strong></span>
 					</div>
 				<?php endif ?>
-				<?php if (!$helper->user_coordinator($template[issue][id])) $disabled = 'disabled' ?> 
+				<?php if (!$helper->user_coordinator($template['issue']['id'])) $disabled = 'disabled' ?> 
 				<div class="row">
 				<label for="executor"><?php echo $bezlang['executor'] ?>:</label>
 				<span>
@@ -36,10 +35,10 @@
 				<span>
 					
 					<strong>
-						<?php if (!isset($template[cause])): ?>
+						<?php if (!isset($template['cause'])): ?>
 							<?php echo $bezlang['correction'] ?>
 							<input type="hidden" name="action" value="0" />
-						<?php elseif ($template[cause][potential] == 0): ?>
+						<?php elseif ($template['cause']['potential'] == 0): ?>
 							<?php echo $bezlang['corrective_action'] ?>
 							<input type="hidden" name="action" value="1" />
 						<?php else: ?>

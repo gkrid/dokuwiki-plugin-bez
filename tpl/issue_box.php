@@ -4,7 +4,7 @@
 <?php if ($template['issue']['raw_coordinator'] == '-proposal'): ?>
 	<div class="info"><?php echo $bezlang['issue_is_proposal'] ?></div>
 <?php endif ?>
-<?php if (!$template['anytasks']): ?>
+<?php if (!$template['anytasks'] && $template['issue']['raw_state'] == 0): ?>
 	<div class="info"><?php echo $bezlang['issue_no_tasks'] ?></div>
 <?php endif ?>
 <div id="bds_issue_box" class="pr<?php echo $template['issue']['priority'] ?>">

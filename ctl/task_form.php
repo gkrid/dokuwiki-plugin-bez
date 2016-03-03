@@ -12,20 +12,19 @@ $issue_id = (int)$params[1];
 
 /*casue*/
 $cause_id = '';
-if (isset($nparams[cid]) && $nparams[cid] != '') {
-	$cause_id = (int)$nparams[cid];
+if (isset($nparams['cid']) && $nparams['cid'] != '') {
+	$cause_id = (int)$nparams['cid'];
 	$template['cause'] = $causo->join($causo->getone($cause_id));
 }
 
 /*edycja*/
-if (isset($nparams[tid])) {
-	$action = $nparams[action];
-	$tid = (int)$nparams[tid];
+if (isset($nparams['tid'])) {
+	$action = $nparams['action'];
+	$tid = (int)$nparams['tid'];
 	$task = $tasko->getone($tid);
-	var_dump($task);
 	$taskso = new Taskstates();
 	$task_states = $taskso->get();
-	
+
 	$template['raw_state'] = $task['state'];
 	$template['state']  = $task_states[$task['state']];
 	
@@ -53,8 +52,7 @@ if (isset($nparams[tid])) {
 		$value = $_POST;
 	}
 	$template['task_button'] = $bezlang['change_task_button'];
-	$template['task_action'] = $this->id('task_form', 'id', $issue_id,
-										 'cid', $cause_id, 'tid', $tid, 'action', 'update');
+	$template['task_action'] = $this->id('task_form', 'id', $issue_id, 'cid', $cause_id, 'tid', $tid, 'action', 'update');
 /*dodawania*/
 } else {
 	if (count($_POST) > 0) {
@@ -88,6 +86,4 @@ $template['opentasks'] = $tasko->any_open($issue_id);
 
 
 $template['users'] = $usro->get();
-
-
 
