@@ -1,4 +1,4 @@
-<?php if ($helper->user_coordinator($template['issue']['id']) && isset($nparams['tid'])): ?>
+<?php if ($helper->user_coordinator($template['issue']['id'])): ?>
 	<?php $issue = $template['issue'] ?>
 	<?php include "issue_box.php" ?>
 	<br>
