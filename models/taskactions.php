@@ -26,7 +26,7 @@ class Taskactions {
 	}
 	public function map_8d($name) {
 		switch ($name) {
-			case 0: return '4d';
+			case 0: return '3d';
 			case 1: return '5d';
 			case 2: return '6d';
 			default: return '';

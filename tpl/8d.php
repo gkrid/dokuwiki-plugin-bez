@@ -42,8 +42,56 @@
 <h2><?php echo $bezlang['2d'] ?></h2>
 <?php echo  $template['issue']['description'] ?>
 
-<?php if (count($template['causes']) > 0): ?>
+<?php if (count($template['tasks']['3d'] ) > 0): ?>
 	<h2><?php echo $bezlang['3d'] ?></h2>
+	<?php $tasks = $template['tasks']['3d'] ?>
+		<table>
+		<tr>
+			<th><?php echo $bezlang['id'] ?></th>
+			<th><?php echo $bezlang['task'] ?></th>
+			<th><?php echo $bezlang['state'] ?></th>
+			<th><?php echo $bezlang['cost'] ?></th>
+			<th><?php echo $bezlang['date'] ?></th>
+			<th><?php echo $bezlang['closed'] ?></th>
+		</tr>
+		<?php foreach($tasks as $task): ?>
+			<tr>
+				<td>	
+					<a href="?id=<?php echo $this->id('issue_task', 'id', $task[issue], 'tid', $task[id]) ?>">
+						#z<?php echo $task['id'] ?>
+					</a>
+				</td>
+				<td>
+					<?php echo  $task['task'] ?>
+					
+					<?php if ($task['reason'] != ''): ?>
+						<h3 class="bez_8d"><?php echo $bezlang['evaluation'] ?></h3>
+						<?php echo  $task['reason'] ?>
+					<?php endif ?>
+				</td>
+				<td><?php echo $task['state'] ?></td>
+				<td>
+					<?php if ($task['cost'] == ''): ?>
+						<em>---</em>
+					<?php else: ?>
+						<?php echo $task['cost'] ?>
+					<?php endif ?>
+				</td>
+				<td><?php echo $helper->time2date($task['date']) ?></td>
+				<td>
+					<?php if ($task['state'] == $bezlang['task_opened']): ?>
+						<em>---</em>
+					<?php else: ?>
+						<?php echo $helper->time2date($task['close_date']) ?>
+					<?php endif ?>
+				</td>
+			</tr>
+		<?php endforeach ?>
+		</table>
+<?php endif ?>
+
+<?php if (count($template['causes']) > 0): ?>	
+	<h2><?php echo $bezlang['4d'] ?></h2>	
 	<table>
 	<?php foreach ($template['causes'] as $rootcause => $cause): ?>
 
@@ -63,6 +111,8 @@
 	<?php endforeach ?>
 	</table>
 <?php endif ?>
+
+<?php unset($template['tasks']['3d']) ?>
 
 <?php if (count($template['tasks']) > 0): ?>
 	<?php foreach($template['tasks'] as $nd => $tasks): ?>
