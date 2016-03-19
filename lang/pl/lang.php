@@ -371,3 +371,4 @@ $lang['tasks_juxtaposition'] = 'Zestawienie zadań';
 $lang['issue_unclosed_tasks'] = 'Nie można zamknąć problemu, dopóki zawiera on nierozwiązane zadania.';
 $lang['issue_is_proposal'] = 'Nie można dodawać przyczny ani zadań, dopóki problem jest propozycją.';
 $lang['issue_no_tasks'] = 'Nie można zamknąć problemu, dopóki nie posiada żadnego przypisanego zadania.';
+$lang['cause_without_task'] = 'Nie możesz zamknąć problemu jeżeli posiada on przycznyn bez przypisanych zadań.';

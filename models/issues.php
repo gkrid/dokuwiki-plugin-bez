@@ -133,7 +133,13 @@ class Issues extends Connect {
 	public function close($post, $id) {
 		global $INFO;
 		$issue = $this->get_clean($id);
-		if ($this->helper->user_admin() || $issue['coordinator'] == $INFO['client']) {
+		$tasko = new Tasks();
+		
+		if ($this->helper->user_admin() || $issue['coordinator'] == $INFO['client']
+			&& $this->any_task($id)
+			&& !$this->any_open($id)
+			&& !$this->cause_without_task($id)
+			) {
 			$from_user = $this->validate_close($post, $id);
 			$data = array_merge($from_user, array('state' => '1', 'last_mod' => time()));
 			$this->errupdate($data, 'issues', $id);
@@ -577,5 +583,15 @@ class Issues extends Connect {
 						ORDER BY issues.priority DESC, issues.last_mod DESC, issues.date DESC");
 		
 		return $a;
+	}
+	
+	public function cause_without_task($issue_id) {
+		$causes = $this->fetch_assoc("SELECT id FROM causes WHERE issue=$issue_id");
+		foreach ($causes as $cause) {
+			$tasks = $this->fetch_assoc("SELECT id FROM tasks WHERE cause=$cause[id]");
+			if (count($tasks) == 0)
+				return true;
+		}
+		return false;
 	}
 }

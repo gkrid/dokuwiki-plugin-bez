@@ -83,7 +83,7 @@ $isso = new Issues();
 $template['issue'] = $isso->get($issue_id);
 $template['anytasks'] = $tasko->any_task($issue_id);
 $template['opentasks'] = $tasko->any_open($issue_id);
-
+$template['cause_without_task'] = $isso->cause_without_task($issue_id);
 
 $template['users'] = $usro->get();
 

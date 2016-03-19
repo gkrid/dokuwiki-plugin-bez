@@ -4,6 +4,10 @@
 <?php if ($template['issue']['raw_coordinator'] == '-proposal'): ?>
 	<div class="info"><?php echo $bezlang['issue_is_proposal'] ?></div>
 <?php endif ?>
+<?php if ($template['cause_without_task']): ?>
+	<div class="info"><?php echo $bezlang['cause_without_task'] ?></div>
+<?php endif ?>
+
 <?php if (!$template['anytasks'] && $template['issue']['raw_state'] == 0): ?>
 	<div class="info"><?php echo $bezlang['issue_no_tasks'] ?></div>
 <?php endif ?>
@@ -54,7 +58,7 @@
 			<a href="?id=<?php echo $this->id('issue', 'id', $template['issue']['id'], 'action', 'reopen') ?>" class="bds_inline_button">
 			 	↺ <?php echo $bezlang['issue_reopen'] ?>
 			</a>
-		<?php elseif ($template['anytasks'] && !$template['opentasks']): ?>
+		<?php elseif ($template['anytasks'] && !$template['opentasks'] && !$template['cause_without_task']): ?>
 			<a href="?id=<?php echo $this->id('issue_close', 'id', $template['issue']['id']) ?>" class="bds_inline_button">
 			 	↬ <?php echo $bezlang['close_issue'] ?>
 			</a>

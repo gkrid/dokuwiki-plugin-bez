@@ -46,3 +46,4 @@ if (isset($nparams['action'])) {
 
 $template['anytasks'] = $tasko->any_task($issue_id);
 $template['opentasks'] = $tasko->any_open($issue_id);
+$template['cause_without_task'] = $isso->cause_without_task($issue_id);

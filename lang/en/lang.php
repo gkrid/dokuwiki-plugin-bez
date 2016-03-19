@@ -361,3 +361,4 @@ $lang['tasks_juxtaposition'] = 'Juxtaposition of tasks';
 $lang['issue_unclosed_tasks'] = 'You cannot close issues until some tasks are not closed.';
 $lang['issue_is_proposal'] = 'You cannot add causes and tasks until issue is proposal.';
 $lang['issue_no_tasks'] = 'You cannot close the issue until it has no tasks.';
+$lang['cause_without_task'] = 'You cannot close the issue if you have some causes without tasks.';
