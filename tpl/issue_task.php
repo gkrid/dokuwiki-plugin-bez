@@ -13,4 +13,4 @@
 	<?php include "task.php" ?>
 </div>
 
-<?php include "removal_confirm.php" ?>
+<?php include "removal_confirm.php";

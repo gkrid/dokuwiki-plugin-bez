@@ -75,8 +75,7 @@
 
 <table class="bez bez_sumarise">
 	<tr>
-		<th><?php echo $bezlang['id'] ?></th>
-		<th><?php echo $bezlang['state'] ?></th>
+		<th><?php echo $bezlang['id'] ?>/<?php echo $bezlang['state'] ?></th>
 		<th><?php echo $bezlang['type'] ?></th>
 		<th><?php echo $bezlang['title'] ?></th>
 		<th><?php echo $bezlang['coordinator'] ?></th>
@@ -87,8 +86,7 @@
 	</tr>
 	<?php foreach ($template['issues'] as $issue): ?>
 		<tr class="pr<?php echo $issue['priority'] ?>">
-			<td><?php echo $this->html_issue_link($issue['id']) ?></td>
-			<td><?php echo $issue['state'] ?></td>
+			<td><?php echo $this->html_issue_link($issue['id']) ?><br><?php echo $issue['state'] ?></td>
 			<td><?php echo $issue['type'] ?></td>
 			<td><?php echo $issue['title'] ?></td>
 			<td><?php echo $issue['coordinator'] ?></td>
@@ -97,7 +95,9 @@
 				<?php if ($issue['raw_state'] != 1): ?>
 					<em>---</em>
 				<?php else: ?>
-					<?php echo $helper->time2date($issue['last_mod']) ?>
+					<?php echo $helper->time2date($issue['last_mod']) ?><br />
+					<?php $s = $bezlang['report_priority'].': '.$helper->days((int)$issue['last_mod'] - (int)$issue['date']) ?>
+					<?php echo str_replace(' ', '&nbsp;', $s) ?>
 				<?php endif ?>
 			</td>
 			<td>

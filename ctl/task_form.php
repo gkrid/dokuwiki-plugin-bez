@@ -27,14 +27,20 @@ if (isset($nparams['tid'])) {
 
 	$template['raw_state'] = $task['state'];
 	$template['state']  = $task_states[$task['state']];
+	$template['causes'] = $causo->get($issue_id);
+	
 	
 	if (!$action)
 		$action = 'edit';
 
-	if ($action == 'edit') 
+	if ($action == 'edit') {
 		$value = $task;
-	else if ($action == 'update') {
-		$data = $tasko->update($_POST, array(), $tid);
+		$value['cause_id'] = $task['cause'];
+	} else if ($action == 'update') {
+		$cause_id = $_POST['cause_id'];
+		if ($cause_id != '')
+			$cause_id = (int)$cause_id;
+		$data = $tasko->update($_POST, array('cause' => $cause_id), $tid);
 		if (count($errors) == 0) {
 
 			$title = 'Zmiana w zadaniu';
@@ -44,6 +50,7 @@ if (isset($nparams['tid'])) {
 			$body = "$uri?id=".$this->id('issue_task', 'id', $issue_id, 'tid', $tid);
 			$this->helper->mail($to, $subject, $body);
 			
+			$cause_id = $_POST['cause_id'];
 			if ($cause_id == '')
 				header("Location: ?id=bez:issue_task:id:$issue_id:tid:$tid");
 			else

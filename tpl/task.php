@@ -21,6 +21,10 @@
 			<strong><?php echo $task['state']?>:</strong>
 			<?php echo $helper->time2date($task['close_date']) ?>
 		</span>
+			<span>
+		<strong><?php echo $bezlang['report_priority'] ?>: </strong>
+		<?php echo $helper->days((int)$task['close_date'] - (int)$task['date']) ?>
+	</span>
 	<?php endif ?>
 </div>
 

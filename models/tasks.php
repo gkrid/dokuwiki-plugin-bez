@@ -172,7 +172,7 @@ class Tasks extends Event {
 		$id = (int) $id;
 		$a = $this->fetch_assoc("SELECT
 		tasks.id,task,executor,state,cost,reason,tasks.reporter,tasks.date,
-		close_date,tasks.issue,tasks.cause, causes.potential
+		close_date,tasks.issue,tasks.cause, causes.potential, tasks.cause
 		FROM tasks LEFT JOIN causes ON tasks.cause = causes.id WHERE tasks.id=$id");
 
 		return $a[0];

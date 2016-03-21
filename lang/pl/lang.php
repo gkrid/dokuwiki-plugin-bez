@@ -4,7 +4,7 @@ $lang['bez_short'] = 'BEZ';
 $lang['bds_timeline'] = 'Historia';
 $lang['bds_issues'] = 'Problemy';
 $lang['bds_issue_report'] = 'Zgłoś problem';
-$lang['report'] = 'Raport zamkniętych';
+$lang['report'] = 'Raport';
 $lang['report_open'] = 'Raport otwartych';
 $lang['bez_tasks'] = 'Zadania';
 
@@ -371,4 +371,14 @@ $lang['tasks_juxtaposition'] = 'Zestawienie zadań';
 $lang['issue_unclosed_tasks'] = 'Nie można zamknąć problemu, dopóki zawiera on nierozwiązane zadania.';
 $lang['issue_is_proposal'] = 'Nie można dodawać przyczny ani zadań, dopóki problem jest propozycją.';
 $lang['issue_no_tasks'] = 'Nie można zamknąć problemu, dopóki nie posiada żadnego przypisanego zadania.';
-$lang['cause_without_task'] = 'Nie możesz zamknąć problemu jeżeli posiada on przycznyn bez przypisanych zadań.';
+$lang['cause_without_task'] = 'Nie możesz zamknąć problemu jeżeli posiada on przycznyn bez przypisanych działań.';
+
+
+
+$lang['number_of_open'] = 'Ilość otwartych';
+$lang['number_of_close'] = 'W tym zamkniętych';
+$lang['diffirence'] = 'Różnica';
+
+$lang['cost_of_open'] = 'Koszt otwartych';
+
+$lang['average_of_close'] = "Średni czas zamknięcia";

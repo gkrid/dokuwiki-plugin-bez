@@ -26,6 +26,10 @@
 		<strong><?php echo $bezlang['closed'] ?>: </strong>
 		<?php echo $helper->time2date($template['issue']['last_mod']) ?>
 	</span>
+	<span>
+		<strong><?php echo $bezlang['report_priority'] ?>: </strong>
+		<?php echo $helper->days((int)$template['issue']['last_mod'] - (int)$template['issue']['date']) ?>
+	</span>
 <?php endif ?>
 </div>
 

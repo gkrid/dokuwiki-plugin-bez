@@ -1,7 +1,7 @@
 <?php
 include_once DOKU_PLUGIN."bez/models/report.php";
 
-if	( ! $helper->token_viewer() && ! $helper->user_viewer()) {
+if(!$helper->token_viewer() && ! $helper->user_viewer()) {
 	$errors[] = $bezlang['error_issue_report'];
 	$controller->preventDefault();
 } 
@@ -38,16 +38,12 @@ if (isset($value['year']))
 if (isset($value['month']))
 	$template['hidden']['month'] = $value['month'];
 
-if (isset($this->report_open)) {
-	$template['report'] = $repo->report_open($value);
-	$subtitle = $bezlang['report_open'];
-} else {
-	$template['report'] = $repo->report($value);
-	$subtitle = $bezlang['report'];
-}
+
+$template['report'] = $repo->report($value);
+$subtitle = $bezlang['report'];
 
 
 $template['title'] = $subtitle.($value['year'] != '-all' ? ' '.$value['year'] : '').
-					($value['month'] != '-all' ? '/'.($value['month'] > 10 ? $value['month'] : '0'.$value['month']) : '');
+					($value['month'] != '-all' ? '/'.($value['month'] >= 10 ? $value['month'] : '0'.$value['month']) : '');
 
 $template['uri'] = $uri.'?'.$_SERVER['QUERY_STRING'];

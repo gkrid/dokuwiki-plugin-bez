@@ -17,6 +17,23 @@
 					<label for="id"><?php echo $bezlang['id'] ?>:</label>
 					<span><strong>#z<?php echo $nparams['tid'] ?></strong></span>
 					</div>
+					
+					<?php if ($helper->user_coordinator($template['issue']['id'])): ?>
+					<div class="row">
+						<label for="cause_id"><?php echo ucfirst($bezlang['cause']) ?>:</label>
+						<span>
+							<select name="cause_id" id="cause_id">
+								<option <?php if ($value['cause_id'] == '') echo 'selected' ?>
+									value="">--- <?php echo $bezlang['correction'] ?> ---</option>
+
+								<?php foreach ($template['causes'] as $cause): ?>
+									<option <?php if ($value['cause_id'] == $cause['id']) echo 'selected' ?>
+									 value="<?php echo $cause['id'] ?>">#p<?php echo $cause['id'] ?></option>
+								<?php endforeach ?>
+							</select>
+						</span>
+					</div>
+					<?php endif ?>
 				<?php endif ?>
 				<?php if (!$helper->user_coordinator($template['issue']['id'])) $disabled = 'disabled' ?> 
 				<div class="row">
@@ -33,7 +50,6 @@
 				<div class="row">
 				<label for="action"><?php echo $bezlang['action'] ?>:</label>
 				<span>
-					
 					<strong>
 						<?php if (!isset($template['cause'])): ?>
 							<?php echo $bezlang['correction'] ?>
