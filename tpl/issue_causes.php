@@ -7,4 +7,10 @@
 			<?php include "cause.php" ?>
 		<?php endforeach ?>
 	</div>
+	<?php if ($template['issue']['raw_state'] == 0 && ($helper->user_coordinator($template['issue']['id']) || isset($nparams['tid']))): ?>
+		<a href="?id=<?php echo $this->id('cause_form', 'id', $template['issue']['id']) ?>">
+			<?php echo $bezlang['add_cause'] ?>
+		</a>
+	<? endif ?>
+</div>
 
