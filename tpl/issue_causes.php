@@ -12,7 +12,7 @@
 		<a href="?id=<?php echo $this->id('cause_form', 'id', $template['issue']['id']) ?>">
 			<?php echo $bezlang['add_cause'] ?>
 		</a>
-	<? endif ?>
+	<?php endif ?>
 </div>
 
 <?php include "removal_confirm.php" ?>
