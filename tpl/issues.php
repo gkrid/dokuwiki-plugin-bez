@@ -86,7 +86,10 @@
 	</tr>
 	<?php foreach ($template['issues'] as $issue): ?>
 		<tr class="pr<?php echo $issue['priority'] ?>">
-			<td><?php echo $this->html_issue_link($issue['id']) ?><br><?php echo $issue['state'] ?></td>
+			<td>
+				<?php echo $this->html_issue_link($issue['id']) ?><br>
+				<?php echo $issue['state'] ?>
+			</td>
 			<td><?php echo $issue['type'] ?></td>
 			<td><?php echo $issue['title'] ?></td>
 			<td><?php echo $issue['coordinator'] ?></td>

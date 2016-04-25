@@ -4,6 +4,7 @@ $lang['bez_short'] = "BEZ";
 $lang['bds_timeline'] = "History";
 $lang['bds_issues'] = "Registers";
 $lang['bds_issue_report'] = "Report a problem";
+$lang['bds_task_report'] = "Add a task";
 $lang['report'] = "Report";
 $lang['report_open'] = 'Raport of opened';
 $lang['bez_tasks'] = 'Tasks';
@@ -133,6 +134,7 @@ $lang['type_threat'] = 'threat';
 
 $lang['state_proposal'] = "proposal";
 $lang['state_opened'] = "open";
+$lang['state_done'] = "done";
 $lang['state_rejected'] = "rejected";
 $lang['state_closed'] = "closed";
 

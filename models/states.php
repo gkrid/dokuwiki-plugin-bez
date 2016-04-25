@@ -4,6 +4,7 @@ class States {
 	public function get($anytask = true) {
 		global $bezlang;
 		$a = array($bezlang['state_opened']);
+		$a['-done'] = $bezlang['state_done'];
 		if ($anytask)
 			$a[] = $bezlang['state_closed'];
 		else
@@ -40,15 +41,22 @@ class States {
 		return $bezlang['state_rejected'] == $name;
 	}
 	/*pobierz nazwę stanu, uwzględniając -proposal i -rejected*/
-	public function name($id, $coordinator, $anytask=true) {
+	public function name($issue, $anytask=true) {
 		global $bezlang;
+		$id = (int)$issue['state'];
+		$coordinator = $issue['coordinator'];
+		if ($issue['state'] == 0 && $issue['tasks_all'] > 0 && $issue['tasks_all'] == $issue['tasks_closed']) {
+			return $bezlang['state_done'];
+		}
 		$a = $this->get_all($anytask);
+		
 		if ($id == 1 && !$anytask)
 			return $bezlang['state_rejected'];
 		else if (strstr($coordinator, '-') === 0)
 			return $a[$coordinator];
-		else
+		else {
 			return $a[$id];
+		}
 	}
 
 	public function open() {

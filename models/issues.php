@@ -198,7 +198,7 @@ class Issues extends Connect {
 		$tasko = new Tasks();
 
 		$a['raw_state'] = $a['state'];
-		$a['state'] = $stao->name($a['state'], $a['coordinator'], $tasko->any_task($a['id']));
+		$a['state'] = $stao->name($a, $tasko->any_task($a['id']));
 
 		$usro = new Users();
 		$a['reporter'] = $usro->name($a['reporter']);
@@ -492,8 +492,12 @@ class Issues extends Connect {
 				$where[] = "issues.$name = '".$this->escape($value)."'";
 
 		if ($state != '-all') {
+			if ($state == '-done') {
+				$where[] = 'tasks_all > 0';
+				$where[] = 'tasks_all = tasks_closed';
+				$where[] = 'issues.state = 0';
 			/*-proposal or -rejected*/
-			if (strstr($state, '-')) 
+			} else if (strstr($state, '-')) 
 				$where[] = "issues.coordinator = '$state'";
 			/*rejected*/
 			else if ($state == 2) {
