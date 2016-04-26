@@ -23,6 +23,10 @@ class Tasks extends Event {
 				date INTEGER NOT NULL,
 				close_date INTEGER NULL,
 				cause INTEGER NULL,
+				plan_date TEXT NULL,
+				all_day_event INTEGET DEFAULT 0,
+				start_time TEXT NULL,
+				finish_time TEXT NULL,
 				issue INTEGER NOT NULL
 				)";
 		$this->errquery($q);
@@ -116,6 +120,40 @@ class Tasks extends Event {
 
 		return $reason;
 	}
+	
+	public function validate_plan($post) {
+		global $errors, $bezlang;
+		$data = array();
+		if ($post['plan_date'] != '' && strtotime($post['plan_date']) === false) {
+			$errors['plan_date'] = $bezlang['vald_valid_date_required'];
+		} else
+			$data['plan_date'] = date('Y-m-d', strtotime($post['plan_date']));
+			
+		if (!isset($post['all_day_event'])) {
+			$data['all_day_event'] = '0';
+			if (!preg_match('/^[0-9]{1,2}:[0-9][0-9]$/', $post['start_time']) ||
+				strtotime($post['start_time']) === false) {
+				$errors['start_time'] = $bezlang['vald_valid_start_hour_required'];
+			} else {
+				$data['start_time'] = $post['start_time'];
+				$start_time = strtotime($post['start_time']);
+			}
+			
+			if (!preg_match('/^[0-9]{1,2}:[0-9][0-9]$/', $post['finish_time']) ||
+				strtotime($post['finish_time']) === false) {
+				$errors['finish_time'] = $bezlang['vald_valid_finish_hour_required'];
+			} else if (strtotime($post['finish_time']) - $start_time < 0) {
+				$errors['finish_time'] = $bezlang['vald_valid_finish_hour_required'];
+			} else {
+				$data['finish_time'] = $post['finish_time'];
+			}
+			
+		} else {
+			$data['all_day_event'] = '1';
+		}
+		return $data;
+	}
+	
 	public function add($post, $data=array())
 	{
 		global $errors;
@@ -168,11 +206,20 @@ class Tasks extends Event {
 			return $data;
 		}
 	}
+	
+	public function save_plan($post, $id) {
+		if ($this->can_modify($id)) {
+			$data = $this->validate_plan($post);
+			$this->errupdate($data, 'tasks', $id);
+		}
+	}
+	
 	public function getone($id) {
 		$id = (int) $id;
 		$a = $this->fetch_assoc("SELECT
 		tasks.id,task,executor,state,cost,reason,tasks.reporter,tasks.date,
-		close_date,tasks.issue,tasks.cause, causes.potential, tasks.cause
+		close_date,tasks.issue,tasks.cause, causes.potential, tasks.cause,
+		tasks.plan_date, tasks.all_day_event, tasks.start_time, tasks.finish_time
 		FROM tasks LEFT JOIN causes ON tasks.cause = causes.id WHERE tasks.id=$id");
 
 		return $a[0];

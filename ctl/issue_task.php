@@ -25,8 +25,16 @@ if ($task['cause'] != '') {
 	$template['cause'] = $causo->join($causo->getone($cause_id));
 }
 
+if (isset($nparams['plan'])) {
+	$value = $template['task'];
+}
+
 if (isset($nparams['action'])) {
-	$data = $tasko->update_state($nparams['state'], $_POST['reason'], $task_id);
+	if ($nparams['action'] == 'update') {
+		$data = $tasko->update_state($nparams['state'], $_POST['reason'], $task_id);
+	} else if ($nparams['action'] == 'save_plan') {
+		$data = $tasko->save_plan($_POST, $task_id);
+	}
 	if (count($errors) == 0) {
 		$title = 'Zmiana w zadaniu';
 		$exec = $data['executor'];

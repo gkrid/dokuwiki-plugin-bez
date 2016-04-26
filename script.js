@@ -246,6 +246,142 @@ jQuery(document).ready(function() {
 			change_color();
 		});
 	}
+	
+	jQuery("input[name=plan_date]").datepicker({
+		dateFormat: "yy-mm-dd"
+		});
+	if (jQuery("input[name=all_day_event]").is(":checked")) {
+		jQuery("input[name=start_time]").prop( "disabled", true );
+		jQuery("input[name=finish_time]").prop( "disabled", true );
+	}
+	jQuery("input[name=all_day_event]").on('change', function() {
+		if (jQuery(this).is(":checked")) {
+			jQuery("input[name=start_time]").prop( "disabled", true );
+			jQuery("input[name=finish_time]").prop( "disabled", true );
+		} else {
+			jQuery("input[name=start_time]").prop( "disabled", false );
+			jQuery("input[name=finish_time]").prop( "disabled", false );
+		}
+	});
+	//timepicker
+	
+	var hours = ["00:30", "1:00", "1:30", "2:00", "2:30", "3:00", "3:30", "4:00",
+			"4:30", "5:00", "5:30", "6:00", "6:30", "7:00", "7:30", "8:00", "8:30", "9:00", "9:30", "10:00", "10:30", "11:00", "11:30",
+			"12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30",
+			"16:00", "16:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30",
+			"20:00", "20:30", "21:00", "21:30", "22:00", "22:30", "23:00", "23:30",
+			"24:00" ];
+	
+	//ukrywanie niepotrzebnych godzin zależnie od godziny rozpoczęcia
+	var hide_unneeded_hours = function ($this) {
+		hour = $this.val();
+		var index = hours.indexOf(hour);
+		
+		//finish time lis
+		var $finish_time_li = jQuery("#bez_timepicker_finish_time li");
+		$finish_time_li.show();
+		$finish_time_li.eq(index).prevAll().hide();
+		
+		if (jQuery("input[name=finish_time]").val() == '')
+			jQuery("input[name=finish_time]").val(hour);
+	}
+	jQuery("input[name=start_time]").blur(function () {
+		hide_unneeded_hours(jQuery(this));
+	});
+
+	
+	var autoFill = function (hour) {
+		if (hour.indexOf(":") === -1)
+			hour += ":00";
+		else if (hour.match(/^[0-9]{1,2}:$/g))
+			hour += "00";
+		else if (hour.match(/^[0-9]{1,2}:(0|3)$/g))
+			hour += "0";
+		else if (hour.match(/^[0-9]{1,2}:(1|2)$/g))
+			hour = hour.slice(0,-1)+"00";
+		else if (hour.match(/^[0-9]{1,2}:[4-9]$/g))
+			hour = hour.slice(0,-1)+"30";
+		else if (hour.match(/^[0-9]{1,2}:(0|3)[1-9]$/g))
+			hour = hour.slice(0,-1)+"0";
+		return hour;
+	}
+	var listScrool = function($list, hour) {
+		hour = autoFill(hour);
+		var index = hours.indexOf(hour);
+		if (index == -1) index = 0;
+		$li = $list.find("li:first");
+		//hidden lis
+		var $hid_lis = $list.find("li:hidden");
+		$list.scrollTop((index - $hid_lis.length - 1) * $li.outerHeight());
+		$list.find("li").removeClass("selected");
+		$list.find("li").eq(index).addClass("selected");
+		
+	}
+
+	jQuery(".bez_timepicker").each(function() {
+		var $this = jQuery(this);
+
+		var id = "bez_timepicker_"+$this.attr("name");
+		$wrapper = jQuery(document.createElement('div'))
+		.css({	'position': 'absolute',
+			}).addClass('bez_timepicker_wrapper')
+		.hide().attr("id", id).appendTo("body");
+		
+		var offset = $this.offset();
+		offset.top += $this.outerHeight() + 1;
+		$wrapper.offset(offset);
+		
+		$ul = jQuery(document.createElement("ul")).appendTo($wrapper);
+
+		
+		for (h in hours) {
+			hour = hours[h];
+			$li = jQuery(document.createElement("li"));
+			$li.text(hour);
+			$li.on('mousedown', function(event) {
+				var id = jQuery(this).parents("div").attr("id");
+				var name = id.replace("bez_timepicker_", '');
+				jQuery("input[name="+name+"]").val(jQuery(this).text());
+				
+				jQuery(this).siblings().removeClass("selected");
+				jQuery(this).addClass("selected");
+			});
+			$ul.append($li);
+		}
+		
+
+		/*if ($this.val() != "")
+			listScrool($ul, $this.val());*/
+
+		$this.focus(function() {
+			var $this = jQuery(this);
+			var id = "bez_timepicker_"+$this.attr("name");
+			$wrapper = jQuery("#"+id);
+			$wrapper.show();
+			listScrool($wrapper, $this.val());
+			
+		});
+		$this.blur(function() {
+			var $this = jQuery(this);
+			var id = "bez_timepicker_"+$this.attr("name");
+			$wrapper = jQuery("#"+id);
+			$wrapper.hide();
+		});
+		$this.change(function() {
+			var $this = jQuery(this);
+			var id = "bez_timepicker_"+$this.attr("name");
+			$wrapper = jQuery("#"+id);
+			$this.val($wrapper.find("li.selected").text());
+			$wrapper.hide();
+		});
+		$this.on('keyup', function() {
+			var $this = jQuery(this);
+			var id = "bez_timepicker_"+$this.attr("name");
+			$wrapper = jQuery("#"+id);
+			listScrool($wrapper, $this.val());
+		});
+	});
+	hide_unneeded_hours(jQuery("input[name=start_time]"));
 
 
 	/*ukrywanie zakmniętych zadań i formularza dodawania nowych zadań*/

@@ -251,6 +251,27 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 			$this->connect->errquery("UPDATE causes SET rootcause=rootcause+1");
 	}
 	
+	function check_add_plan_date_to_tasks() {
+		$q = "PRAGMA table_info(tasks)";
+		$a = $this->connect->fetch_assoc($q);
+		$entity = false;
+		foreach ($a as $r) 
+			if ($r['name'] == 'all_day_event')
+				return true;
+		return false;
+	}
+	
+	function do_add_plan_date_to_tasks() {
+		$q = "ALTER TABLE tasks ADD COLUMN all_day_event INTEGER DEFAULT 0";
+		$this->connect->errquery($q);
+		$q = "ALTER TABLE tasks ADD COLUMN plan_date TEXT NULL";
+		$this->connect->errquery($q);
+		$q = "ALTER TABLE tasks ADD COLUMN start_time TEXT NULL";
+		$this->connect->errquery($q);
+		$q = "ALTER TABLE tasks ADD COLUMN finish_time TEXT NULL";
+		$this->connect->errquery($q);
+	}
+	
 	
 	function check_types() {
 		$q = "SELECT name FROM sqlite_master WHERE type='table' AND name='issuetypes'";
@@ -313,6 +334,7 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 				array('4. Kolumna "potential" w zadaniach', 'check_potentials', 'do_potentials'),
 				array('5. Zadania przypisane do przczyn', 'check_causetask', 'do_causetask'),
 				array('6. Usunięcie kolumny "action" z tabeli zadań', 'check_remove_action_from_tasks', 'do_remove_action_from_tasks'),
+				array('7. Dodanie planowanej daty do zadań w BEZie', 'check_add_plan_date_to_tasks', 'do_add_plan_date_to_tasks'),
 				);
 	/**
 	 * handle user request

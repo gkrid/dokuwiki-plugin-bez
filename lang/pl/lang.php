@@ -222,6 +222,7 @@ $lang['communication'] = "Komunikacja";
 
 $lang['task_opened'] = 'Otwarte';
 $lang ['task_done'] = 'Wykonane';
+$lang ['task_plan'] = "Zaplanuj";
 $lang ['task_rejected'] = 'Odrzucone';
 
 $lang ['task_do'] = 'Wykonano';
@@ -383,4 +384,14 @@ $lang['diffirence'] = 'Różnica';
 
 $lang['cost_of_open'] = 'Koszt otwartych';
 
-$lang['average_of_close'] = "Średni czas zamknięcia";
+$lang['average_of_close'] = 'Średni czas zamknięcia';
+
+$lang['plan_date'] = 'Planowana data wykonania';
+$lang['all_day_event'] = 'Zdarzenie całodniowe';
+$lang['start_time'] = 'Godzina rozpoczęcia';
+$lang['finish_time'] = 'Godzina zakończenia';
+
+
+$lang['vald_valid_date_required'] = 'Podaj prawidłową datę.';
+$lang['vald_valid_start_hour_required'] = 'Podaj prawidłową godzinę ropoczęcia.';
+$lang['vald_valid_finish_hour_required'] = 'Podaj prawidłową godzinę zakończenia. Musi być póżniejsza niż godzina rozpoczęcia.';

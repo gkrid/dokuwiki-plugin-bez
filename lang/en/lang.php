@@ -223,6 +223,7 @@ $lang['communication'] = "Communication";
 
 $lang['task_opened'] = "Open";
 $lang ['task_done'] = "Done";
+$lang ['task_plan'] = "Plan";
 $lang ['task_rejected'] = "Rejected";
 
 $lang ['task_do'] = 'Done';
@@ -364,3 +365,21 @@ $lang['issue_unclosed_tasks'] = 'You cannot close issues until some tasks are no
 $lang['issue_is_proposal'] = 'You cannot add causes and tasks until issue is proposal.';
 $lang['issue_no_tasks'] = 'You cannot close the issue until it has no tasks.';
 $lang['cause_without_task'] = 'You cannot close the issue if you have some causes without tasks.';
+
+$lang['number_of_open'] = 'Number of open';
+$lang['number_of_close'] = 'Number of closed';
+$lang['diffirence'] = 'Diffirence';
+
+$lang['cost_of_open'] = 'Cost of open';
+
+$lang['average_of_close'] = 'Avarage close time';
+
+$lang['plan_date'] = 'Plan date';
+$lang['all_day_event'] = 'All day event';
+$lang['start_time'] = 'Start time';
+$lang['finish_time'] = 'Finish time';
+
+$lang['vald_valid_date_required'] = 'Valid date required.';
+$lang['vald_valid_start_hour_required'] = 'Valid start time required.';
+$lang['vald_valid_finish_hour_required'] = 'Valid finish time required.';
+

@@ -667,3 +667,45 @@ input.days {
 .rr th {
 	width: 33%;
 }
+
+.bez_timepicker_wrapper {
+	overflow-y: auto;
+	height: 150px;
+	width: 6.5em;
+	background: #fff;
+	border: 1px solid #ddd;
+	-webkit-box-shadow:0 5px 10px rgba(0,0,0,0.2);
+	-moz-box-shadow:0 5px 10px rgba(0,0,0,0.2);
+	box-shadow:0 5px 10px rgba(0,0,0,0.2);
+	outline: none;
+	z-index: 10001;
+	margin: 0;
+}
+
+.bez_timepicker_wrapper ul {
+	margin: 0;
+	padding: 0;
+}
+
+.bez_timepicker_wrapper li {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	padding: 3px 0 3px 5px;
+	cursor: pointer;
+	white-space: nowrap;
+	color: #000;
+	list-style: none;
+}
+
+.bez_timepicker_wrapper li:hover {
+	background: #1980EC;
+}
+
+.bez_timepicker_wrapper li.selected {
+	background: #1980EC;
+}
+
+
+
+
