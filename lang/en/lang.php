@@ -152,7 +152,7 @@ $lang['issue_closed_com'] = "Problem was closed %d, futhure changes are disabled
 $lang['reopen_issue'] = "Change a status of the problem";
 $lang['add'] = "Add";
 
-$lang['class'] = 'Action';
+$lang['class'] = 'Task type';
 
 $lang['action'] = "Action";
 
@@ -383,3 +383,42 @@ $lang['vald_valid_date_required'] = 'Valid date required.';
 $lang['vald_valid_start_hour_required'] = 'Valid start time required.';
 $lang['vald_valid_finish_hour_required'] = 'Valid finish time required.';
 
+$lang['download_in_icalendar'] = 'iCalendar';
+
+$lang['task_types'] = 'Task types';
+$lang['task_type'] = 'Typ zadań';
+
+$lang['programme'] = 'Programme';
+
+$lang['tasks_no_type'] = '--- without type ---';
+
+$lang ['plan'] = "Plan";
+
+$lang ['task_plan'] = "Plan";
+$lang ['task_realization'] = "Realization";
+
+$lang ['month'] = "Month";
+
+$lang ['report_date'] = "Report date";
+$lang ['close_date'] = "Close date";
+
+$lang['jan'] = 'January';
+$lang['feb'] = 'February';
+$lang['mar'] = 'March';
+$lang['apr'] = 'April';
+$lang['may'] = 'May';
+$lang['june'] = 'June';
+$lang['july'] = 'July';
+$lang['aug'] = 'August';
+$lang['sept'] = 'September';
+$lang['oct'] = 'October';
+$lang['nov'] = 'November';
+$lang['dec'] = 'December';
+
+$lang['hours_no'] = 'Number of hours';
+
+$lang['show_desc'] = 'Show descriptions';
+$lang['show_desc_and_eval'] = 'Show descrpitions and evaluations';
+
+$lang['hide_desc'] = 'Hide descripitons';
+$lang['hide_desc_and_eval'] = 'Hide descripitons and evaluations';

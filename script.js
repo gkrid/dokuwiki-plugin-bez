@@ -382,7 +382,37 @@ jQuery(document).ready(function() {
 		});
 	});
 	hide_unneeded_hours(jQuery("input[name=start_time]"));
-
+	
+	
+	//task plan field
+	jQuery("input[name=task_plan]").change(function() {
+		$this = jQuery(this);
+		console.log($this);
+		if ($this.is(":checked"))
+			jQuery(".task_plan_field").show();
+		else
+			jQuery(".task_plan_field").hide();
+	});
+	if (jQuery("input[name=task_plan]").is(":checked"))
+		jQuery(".task_plan_field").show();
+	else
+		jQuery(".task_plan_field").hide();
+	
+	
+	//bez_show_desc
+	jQuery(".bez_desc_row").hide();
+	jQuery("#bez_show_desc").on('click', function(e) {
+		if (jQuery(this).find(".show").is(":visible")) {
+			jQuery(".bez_desc_row").show();
+			jQuery(this).find(".hide").show();
+			jQuery(this).find(".show").hide();
+		} else {
+			jQuery(".bez_desc_row").hide();
+			jQuery(this).find(".hide").hide();
+			jQuery(this).find(".show").show();
+		}
+		e.preventDefault();
+	});
 
 	/*ukrywanie zakmniętych zadań i formularza dodawania nowych zadań*/
 	/*var $tasks = jQuery("#bez_tasks .bds_block_content");

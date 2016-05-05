@@ -2,6 +2,7 @@
 include_once DOKU_PLUGIN."bez/models/users.php";
 include_once DOKU_PLUGIN."bez/models/taskactions.php";
 include_once DOKU_PLUGIN."bez/models/taskstates.php";
+include_once DOKU_PLUGIN."bez/models/tasktypes.php";
 include_once DOKU_PLUGIN."bez/models/states.php";
 include_once DOKU_PLUGIN."bez/models/event.php";
 include_once DOKU_PLUGIN."bez/models/bezcache.php";
@@ -16,6 +17,7 @@ class Tasks extends Event {
 				id INTEGER PRIMARY KEY,
 				task TEXT NOT NULL,
 				state INTEGER NOT NULL,
+				tasktype INTEGER NULL,
 				executor TEXT NOT NULL,
 				cost INTEGER NULL,
 				reason TEXT NULL,
@@ -27,7 +29,7 @@ class Tasks extends Event {
 				all_day_event INTEGET DEFAULT 0,
 				start_time TEXT NULL,
 				finish_time TEXT NULL,
-				issue INTEGER NOT NULL
+				issue INTEGER NULL
 				)";
 		$this->errquery($q);
 	}
@@ -77,6 +79,19 @@ class Tasks extends Event {
 				$errors['cost'] = str_replace('%d', $cost_max, $bezlang['vald_cost_too_big']);
 			}
 			$data['cost'] = (int) $post['cost'];
+		} else {
+			$data['cost'] = '';
+		}
+		
+		//tasktype is not required
+		if ($post['tasktype'] != '') {
+			$tasktype = $post['tasktype'];
+			if (!ctype_digit($tasktype)) {
+				$errors['tasktype'] = $bezlang['vald_cost_wrong_format'];
+			}
+			$data['tasktype'] = (int) $post['tasktype'];
+		} else {
+			$data['tasktype'] = '';
 		}
 		
 		/*zmienamy status tylko w przypadku edycji*/
@@ -124,12 +139,14 @@ class Tasks extends Event {
 	public function validate_plan($post) {
 		global $errors, $bezlang;
 		$data = array();
-		if ($post['plan_date'] != '' && strtotime($post['plan_date']) === false) {
+		if ($post['plan_date'] == '')
+			$data['plan_date'] = '';
+		else if ($post['plan_date'] != '' && strtotime($post['plan_date']) === false) {
 			$errors['plan_date'] = $bezlang['vald_valid_date_required'];
 		} else
 			$data['plan_date'] = date('Y-m-d', strtotime($post['plan_date']));
 			
-		if (!isset($post['all_day_event'])) {
+		if (!isset($post['all_day_event']) && $data['plan_date'] != '') {
 			$data['all_day_event'] = '0';
 			if (!preg_match('/^[0-9]{1,2}:[0-9][0-9]$/', $post['start_time']) ||
 				strtotime($post['start_time']) === false) {
@@ -157,16 +174,21 @@ class Tasks extends Event {
 	public function add($post, $data=array())
 	{
 		global $errors;
-		if ($this->helper->user_coordinator($data['issue']) &&
+		if ( 
+			(!isset($data['issue']) && $this->helper->user_admin())
+				||
+			($this->helper->user_coordinator($data['issue']) &&
 			$this->issue->opened($data['issue']) &&
-			!$this->issue->is_proposal($data['issue'])) {
+			!$this->issue->is_proposal($data['issue']))
+			) {
+				
 			$from_user = $this->validate($post);
-			$data = array_merge($data, $from_user);
+			$plan = $this->validate_plan($post);
+			$data = array_merge($data, $from_user, $plan);
 
 			/*przy dodawaniu domyślnym statusem jest odwarty*/
 			$taskso = new Taskstates();
 			$data['state'] = $taskso->id('opened');
-
 			$this->errinsert($data, 'tasks');
 			$this->issue->update_last_mod($data['issue']);
 			return $data;
@@ -180,7 +202,8 @@ class Tasks extends Event {
 		$cache = new Bezcache();
 		if ($this->can_modify($id)) {
 			$from_user = $this->validate($post);
-			$data = array_merge($data, $from_user);
+			$plan = $this->validate_plan($post);
+			$data = array_merge($data, $from_user, $plan);
 			$this->errupdate($data, 'tasks', $id);
 			$cache->task_toupdate($id);
 			//$this->issue->update_last_mod($task['issue']);
@@ -219,7 +242,8 @@ class Tasks extends Event {
 		$a = $this->fetch_assoc("SELECT
 		tasks.id,task,executor,state,cost,reason,tasks.reporter,tasks.date,
 		close_date,tasks.issue,tasks.cause, causes.potential, tasks.cause,
-		tasks.plan_date, tasks.all_day_event, tasks.start_time, tasks.finish_time
+		tasks.plan_date, tasks.all_day_event, tasks.start_time, tasks.finish_time,
+		tasks.tasktype
 		FROM tasks LEFT JOIN causes ON tasks.cause = causes.id WHERE tasks.id=$id");
 
 		return $a[0];
@@ -246,11 +270,12 @@ class Tasks extends Event {
 		$border_date = time() - $days*24*60*60;
 		
 		$res = $this->fetch_assoc("SELECT tasks.id, 
-								(CASE	WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
+								(CASE	WHEN tasks.issue IS NULL THEN '3'
+										WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
 										WHEN causes.potential = 0 THEN '1'
 										ELSE '2' END) AS naction,
 			tasks.issue, tasks.task, tasks.date, tasks.executor, tasks.reason, issues.priority
-			FROM tasks JOIN issues ON tasks.issue = issues.id LEFT JOIN causes ON tasks.cause = causes.id
+			FROM tasks LEFT JOIN issues ON tasks.issue = issues.id LEFT JOIN causes ON tasks.cause = causes.id
 			WHERE tasks.date > $border_date
 			ORDER BY tasks.date DESC");
 
@@ -260,11 +285,12 @@ class Tasks extends Event {
 				$create[$day][$ik]['class'] = 'task_opened';
 
 		$res2 = $this->fetch_assoc("SELECT tasks.id, 
-								(CASE	WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
+								(CASE	WHEN tasks.issue IS NULL THEN '3'
+										WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
 										WHEN causes.potential = 0 THEN '1'
-										ELSE '2' END) AS naction,
+										ELSE '2' END)  AS naction,
 				tasks.issue, tasks.task, tasks.close_date, tasks.executor, tasks.reason, issues.priority
-				FROM tasks JOIN issues ON tasks.issue = issues.id LEFT JOIN causes ON tasks.cause = causes.id
+				FROM tasks LEFT JOIN issues ON tasks.issue = issues.id LEFT JOIN causes ON tasks.cause = causes.id
 				WHERE tasks.close_date > $border_date 
 				AND   tasks.state = 1 ORDER BY tasks.close_date DESC");
 		$close = $this->sort_by_days($res2, 'close_date');
@@ -275,11 +301,12 @@ class Tasks extends Event {
 			}
 
 		$res3 = $this->fetch_assoc("SELECT tasks.id, 
-								(CASE	WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
+								(CASE	WHEN tasks.issue IS NULL THEN '3'
+										WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
 										WHEN causes.potential = 0 THEN '1'
 										ELSE '2' END) AS naction,
 				tasks.issue, tasks.task, tasks.close_date, tasks.executor, tasks.reason, issues.priority
-				FROM tasks JOIN issues ON tasks.issue = issues.id LEFT JOIN causes ON tasks.cause = causes.id
+				FROM tasks LEFT JOIN issues ON tasks.issue = issues.id LEFT JOIN causes ON tasks.cause = causes.id
 				WHERE tasks.close_date > $border_date 
 				AND   tasks.state = 2 ORDER BY tasks.close_date DESC");
 		$rejected = $this->sort_by_days($res3, 'close_date');
@@ -297,13 +324,16 @@ class Tasks extends Event {
 		$taskao = new Taskactions();
 		$taskso = new Taskstates();
 		$stato = new States();
-
+		$taskto = new Tasktypes();
 		$cache = new Bezcache();
+		
+		$tasktypes = $taskto->get();
 
 		$row['reporter'] = $usro->name($row['reporter']);
 		$row['executor_nick'] = $row['executor'];
 		$row['executor_email'] = $usro->email($row['executor']);
 		$row['executor'] = $usro->name($row['executor']);
+		$row['tasktype'] = $tasktypes[$row['tasktype']];
 
 		//$row['action'] = $taskao->name($row['action']);
 
@@ -312,11 +342,14 @@ class Tasks extends Event {
 				case 0: $row[action] = $bezlang['correction']; break;
 				case 1: $row[action] = $bezlang['corrective_action']; break;
 				case 2: $row[action] = $bezlang['preventive_action']; break;
+				case 3: $row[action] = $bezlang['programme']; break;
 			}
 		else {
-			if ($row[cause] == NULL)
+			if ($row['issue'] == NULL)
+				$row[action] = $bezlang['programme'];
+			elseif ($row[cause] == NULL)
 				$row[action] = $bezlang['correction'];
-			else if ($row[potential] == 0)
+			elseif ($row[potential] == 0)
 				$row[action] = $bezlang['corrective_action'];
 			else
 				$row[action] = $bezlang['preventive_action'];
@@ -329,7 +362,7 @@ class Tasks extends Event {
 		$wiki_text = $cache->get_task($row['id']);
 		$row['task'] = $wiki_text['task'];
 		$row['reason'] = $wiki_text['reason'];
-
+		
 		if (isset($row[cause_text])) {
 			$rootco = new Rootcauses();
 			$row[cause_text] = $this->helper->wiki_parse($row[cause_text]);
@@ -407,11 +440,12 @@ class Tasks extends Event {
 	public function get_by_8d($issue) {
 		$issue = (int)$issue;
 		$a = $this->fetch_assoc("SELECT tasks.id,tasks.state,
-									(CASE	WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
+									(CASE	WHEN tasks.issue IS NULL THEN '3'
+											WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
 											WHEN causes.potential = 0 THEN '1'
 											ELSE '2' END) AS naction,
 		tasks.executor, tasks.cost, tasks.date, tasks.close_date, tasks.issue, tasks.close_date, issues.priority
-		FROM tasks JOIN issues ON tasks.issue = issues.id 
+		FROM tasks LEFT JOIN issues ON tasks.issue = issues.id 
 		LEFT JOIN causes ON tasks.cause = causes.id
 		WHERE tasks.state != 2 AND tasks.issue = $issue ORDER BY priority DESC, tasks.date DESC");
 		$b = array();
@@ -458,7 +492,7 @@ class Tasks extends Event {
 
 	public function validate_filters($filters) {
 
-		$data = array('issue' => '-all', 'naction' => '-all', 'state' => '-all', 'executor' => '-all', 'year' => '-all');
+		$data = array('issue' => '-all', 'naction' => '-all', 'taskstate' => '-all', 'executor' => '-all', 'year' => '-all');
 
 		if (isset($filters['issue'])) {
 			$isso = new Issues();
@@ -471,11 +505,12 @@ class Tasks extends Event {
 			if ($filters['action'] == '-all' || in_array($filters['action'], array_keys($taskao->get())))
 				$data['action'] = $filters['action'];
 		}
-
-		if (isset($filters['state'])) {
+	
+		//!!! taskstate changing to state
+		if (isset($filters['taskstate'])) {
 			$taskso = new Taskstates();
-			if ($filters['state'] == '-all' || array_key_exists($filters['state'], array_keys($taskso->get())))
-				$data['state'] = $filters['state'];
+			if ($filters['taskstate'] == '-all' || array_key_exists($filters['taskstate'], array_keys($taskso->get())))
+				$data['taskstate'] = $filters['taskstate'];
 		}
 
 
@@ -491,6 +526,13 @@ class Tasks extends Event {
 			$years = $this->get_years();
 			if ($filters['year'] == '-all' || in_array($filters['year'], $years))
 				$data['year'] = $filters['year'];
+		}
+		
+		if (isset($filters['tasktype'])) {
+			if ($filters['tasktype'] == '-all' ||
+				$filters['tasktype'] == '-none' ||
+				ctype_digit($filters['tasktype']))
+					$data['tasktype'] = $filters['tasktype'];
 		}
 
 		return $data;
@@ -509,16 +551,21 @@ class Tasks extends Event {
 			unset($vfilters[action]);
 		}
 
-		foreach ($vfilters as $name => $value)
+		foreach ($vfilters as $name => $value) {
+			if ($name == 'tasktype' && $value == '-none')
+				$value = '';
 			if ($value != '-all') {
 				if ($name == 'naction')
 					$where[] = "$name = '".$this->escape($value)."'";
+				elseif ($name == 'taskstate')
+					$where[] = "tasks.state = '".$this->escape($value)."'";
 				else
 					$where[] = "tasks.$name = '".$this->escape($value)."'";
 			}
+		}
 
 		if ($year != '-all') {
-			$state = $vfilters['state'];
+			$state = $vfilters['taskstate'];
 			if ($state == '-all' || $state == '0')
 				$date_field = 'tasks.date';
 			else
@@ -535,11 +582,14 @@ class Tasks extends Event {
 
 
 		$a = $this->fetch_assoc("SELECT tasks.id,tasks.state,
-									(CASE	WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
+									(CASE	WHEN tasks.issue IS NULL THEN '3'
+											WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
 											WHEN causes.potential = 0 THEN '1'
-											ELSE '2' END) AS naction,
-		tasks.executor, tasks.cost, tasks.date, tasks.close_date, tasks.issue, tasks.close_date, issues.priority
-		FROM tasks JOIN issues ON tasks.issue = issues.id 
+											ELSE '2' END)AS naction,
+		tasks.executor, tasks.cost, tasks.date, tasks.close_date, tasks.issue, tasks.close_date,
+		issues.priority, tasks.tasktype, tasks.task, tasks.reason, tasks.plan_date, tasks.all_day_event,
+		tasks.start_time, tasks.finish_time
+		FROM tasks LEFT JOIN issues ON tasks.issue = issues.id 
 		LEFT JOIN causes ON tasks.cause = causes.id
 		$where_q ORDER BY priority DESC, tasks.date DESC");
 		foreach ($a as &$row)
@@ -550,10 +600,11 @@ class Tasks extends Event {
 	public function cron_get_unsolved() {
 		global $bezlang;
 		$a = $this->fetch_assoc("SELECT tasks.id, tasks.issue, tasks.executor, tasks.date, issues.priority,
-									(CASE	WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
+									(CASE	WHEN tasks.issue IS NULL THEN '3'
+											WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
 											WHEN causes.potential = 0 THEN '1'
 											ELSE '2' END) AS naction
-								FROM tasks JOIN issues ON tasks.issue = issues.id 
+								FROM tasks LEFT JOIN issues ON tasks.issue = issues.id 
 								LEFT JOIN causes ON tasks.cause = causes.id
 								WHERE tasks.state=0");
 		foreach ($a as &$row)						
@@ -561,8 +612,20 @@ class Tasks extends Event {
 				case 0: $row['action'] = $bezlang['correction']; break;
 				case 1: $row['action'] = $bezlang['corrective_action']; break;
 				case 2: $row['action'] = $bezlang['preventive_action']; break;
+				case 3: $row['action'] = $bezlang['programme']; break;
 			}
 		return $a;
+	}
+	
+	public function get_type($tid) {
+		$tid = (int)$tid;
+		$a = $this->fetch_assoc("SELECT tasktype FROM tasks WHERE id=$tid");
+		return $a[0]['tasktype'];
+	}
+	public function get_state($tid) {
+		$tid = (int)$tid;
+		$a = $this->fetch_assoc("SELECT state FROM tasks WHERE id=$tid");
+		return $a[0]['state'];
 	}
 }
 

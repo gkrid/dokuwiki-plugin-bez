@@ -6,7 +6,8 @@ class Taskactions {
 		return array(
 			$bezlang['correction'],
 			$bezlang['corrective_action'],
-			$bezlang['preventive_action']
+			$bezlang['preventive_action'],
+			$bezlang['programme']
 		);
 	}
 	public function get_with_cause() {

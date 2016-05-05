@@ -4,7 +4,7 @@ $lang['bez_short'] = 'BEZ';
 $lang['bds_timeline'] = 'Historia';
 $lang['bds_issues'] = 'Problemy';
 $lang['bds_issue_report'] = 'Zgłoś problem';
-$lang['bds_task_report'] = 'Dodaj zadanie';
+$lang['bds_task_report'] = 'Dodaj program';
 $lang['report'] = 'Raport';
 $lang['report_open'] = 'Raport otwartych';
 $lang['bez_tasks'] = 'Zadania';
@@ -154,7 +154,7 @@ $lang['issue_closed_com'] = 'Problem został zamknięty %d, dalsze zmiany nie s�
 $lang['reopen_issue'] = 'Zmień status problemu';
 $lang['add'] = 'Dodaj';
 
-$lang['class'] = 'Działanie';
+$lang['class'] = 'Typ działania';
 
 $lang['open'] = 'Otwarte';
 $lang['closed'] = 'Zamknięte';
@@ -395,3 +395,47 @@ $lang['finish_time'] = 'Godzina zakończenia';
 $lang['vald_valid_date_required'] = 'Podaj prawidłową datę.';
 $lang['vald_valid_start_hour_required'] = 'Podaj prawidłową godzinę ropoczęcia.';
 $lang['vald_valid_finish_hour_required'] = 'Podaj prawidłową godzinę zakończenia. Musi być póżniejsza niż godzina rozpoczęcia.';
+
+$lang['download_in_icalendar'] = 'iCalendar';
+
+$lang['task_types'] = 'Typy zadań';
+$lang['task_type'] = 'Typ zadania';
+
+$lang['programme'] = 'Program';
+
+$lang['tasks_no_type'] = '--- nieprzypisane ---';
+
+$lang ['plan'] = 'Plan';
+
+$lang ['task_plan'] = "Zaplanuj";
+$lang ['task_realization'] = "Wykonanie";
+
+$lang ['task_plan_nav'] = "Plan";
+
+$lang ['month'] = "Miesiąc";
+
+$lang ['report_date'] = "Planowana data wykonania";
+$lang ['close_date'] = "Data wykonania";
+$lang ['reject_date'] = "Data odrzucenia";
+
+$lang['jan'] = 'styczeń';
+$lang['feb'] = 'luty';
+$lang['mar'] = 'marzec';
+$lang['apr'] = 'kwiecień';
+$lang['may'] = 'maj';
+$lang['june'] = 'czerwiec';
+$lang['july'] = 'lipiec';
+$lang['aug'] = 'sierpień';
+$lang['sept'] = 'wrzesień';
+$lang['oct'] = 'październik';
+$lang['nov'] = 'listopad';
+$lang['dec'] = 'grudzień';
+
+$lang['hours_no'] = 'Ilość godzin';
+
+$lang['show_desc'] = 'Pokaż opisy';
+$lang['show_desc_and_eval'] = 'Pokaż opisy i oceny';
+
+$lang['hide_desc'] = 'Ukryj opisy';
+$lang['hide_desc_and_eval'] = 'Ukryj opisy i oceny';
+

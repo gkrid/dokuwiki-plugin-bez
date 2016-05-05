@@ -9,8 +9,8 @@ $tasko = new Tasks();
 $causo = new Causes();
 $usro = new Users();
 
-$issue_id = (int)$nparams[id];
-$task_id = (int)$nparams[tid];
+$issue_id = (int)$nparams['id'];
+$task_id = (int)$nparams['tid'];
 
 $isso = new Issues();
 $template['issue'] = $isso->get($issue_id);

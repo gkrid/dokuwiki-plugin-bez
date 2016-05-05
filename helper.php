@@ -74,6 +74,9 @@ class helper_plugin_bez extends dokuwiki_plugin
 
 		if (self::user_admin())
 			return true;
+		
+		if (is_null($issue_id))
+			return false;
 
 		if (self::user_editor()) {
 			$issuo = new Issues();

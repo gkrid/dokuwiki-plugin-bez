@@ -2,6 +2,7 @@
 include_once DOKU_PLUGIN."bez/models/tasks.php";
 include_once DOKU_PLUGIN."bez/models/taskactions.php";
 include_once DOKU_PLUGIN."bez/models/taskstates.php";
+include_once DOKU_PLUGIN."bez/models/tasktypes.php";
 include_once DOKU_PLUGIN."bez/models/users.php";
 include_once DOKU_PLUGIN."bez/models/issues.php";
 
@@ -13,6 +14,7 @@ if	(!$helper->user_viewer()) {
 $tasko = new Tasks();
 $taskao = new Taskactions();
 $taskso = new Taskstates();
+$tasktypeso = new Tasktypes();
 $usro = new Users();
 $isso = new Issues();
 
@@ -36,7 +38,9 @@ if (isset($raw_filters)) {
 
 /*rekordy parzyste to nagłówki, nieparzyste to ich wartości.*/
 /*np. status:1:type:2:podmiot:PCA*/
-$value = array('issue' => '-all', 'action' => '-all', 'state' => '-all', 'executor' => '-all', 'year' => '-all');
+$value = array('issue' => '-all', 'action' => '-all', 'taskstate' => '-all',
+				'executor' => '-all', 'year' => '-all', 'tasktype' => '-all',
+				'month' => '-all', 'task' => '', 'reason' => '');
 for ($i = 0; $i < count($params); $i += 2)
 	$value[urldecode($params[$i])] = urldecode($params[$i+1]);
 	
@@ -47,20 +51,46 @@ foreach ($value as $k => $v)
 $template['uri'] = $uri; 
 
 $template['issues'] = $isso->get_ids();
+
 $template['actions'] = $taskao->get();
+
 $template['states'] = $taskso->get();
 $template['executors'] = $usro->get();
 $template['years'] = $tasko->get_years();
 
 $tasks = $tasko->get_filtered($value);
-$template['tasks'] = $tasks;
+
 
 $template['tasks_stats']['total'] = count($tasks);
 
 $tcost = 0;
-foreach ($tasks as $task) {
+$thours = 0;
+foreach ($tasks as &$task) {
 	$tcost += (int)$task['cost'];
+	if ($task['start_time'] != '') {
+		$start_time = strtotime($task['start_time']);
+		$finish_time = strtotime($task['finish_time']);
+		$secs = $finish_time - $start_time;
+		$hours = $secs / 3600;
+		$hours_s = sprintf("%.1f", $hours);
+		$task['hours'] = $hours_s;
+		$thours += $hours;
+	} else
+		$task['hours'] = '';
 }
+$template['tasks'] = $tasks;
+
 $template['tasks_stats']['totalcost'] = $tcost;
+$template['tasks_stats']['totalhours'] = sprintf("%.1f", $thours);
+
+$tasktypes = $tasktypeso->get();
+$template['tasktypes'] = $tasktypes;
 
 
+if ($nparams['taskstate'] == '0')
+	$template['view'] = 'plan';
+else
+	$template['view'] = 'realization';
+
+$template['months'] = array('jan', 'feb', 'mar', 'apr', 'may', 'june', 'july', 'aug',
+							'sept', 'oct', 'nov', 'dec');

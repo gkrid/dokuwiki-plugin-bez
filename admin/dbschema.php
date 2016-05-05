@@ -272,6 +272,21 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 		$this->connect->errquery($q);
 	}
 	
+	function check_add_type_to_tasks() {
+		$q = "PRAGMA table_info(tasks)";
+		$a = $this->connect->fetch_assoc($q);
+		$entity = false;
+		foreach ($a as $r) 
+			if ($r['name'] == 'tasktype')
+				return true;
+		return false;
+	}
+	
+	function do_add_type_to_tasks() {
+		$q = "ALTER TABLE tasks ADD COLUMN tasktype INTEGER NULL";
+		$this->connect->errquery($q);
+	}
+	
 	
 	function check_types() {
 		$q = "SELECT name FROM sqlite_master WHERE type='table' AND name='issuetypes'";
@@ -326,6 +341,51 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 			}
 	}
 	
+	
+	function check_task_issue_null() {
+		$q = "PRAGMA table_info(tasks)";
+		$a = $this->connect->fetch_assoc($q);
+		$entity = false;
+		foreach ($a as $r) 
+			if ($r['name'] == 'issue' && $r['notnull'] == 1) {
+				return false;
+			}
+		return true;
+	}
+	
+	function do_task_issue_null() {
+		$q = "	BEGIN TRANSACTION;
+				PRAGMA writable_schema = 1;
+				UPDATE SQLITE_MASTER SET SQL = 'CREATE TABLE tasks (
+				id INTEGER PRIMARY KEY,
+				task TEXT NOT NULL,
+				state INTEGER NOT NULL,
+				tasktype INTEGER NULL,
+				executor TEXT NOT NULL,
+				cost INTEGER NULL,
+				reason TEXT NULL,
+				reporter TEXT NOT NULL,
+				date INTEGER NOT NULL,
+				close_date INTEGER NULL,
+				cause INTEGER NULL,
+				plan_date TEXT NULL,
+				all_day_event INTEGET DEFAULT 0,
+				start_time TEXT NULL,
+				finish_time TEXT NULL,
+				issue INTEGER NULL
+				)' WHERE NAME = 'tasks';
+				PRAGMA writable_schema = 0;
+				COMMIT;
+			";
+			$qa = explode(';', $q);
+			$con = new Connect();
+			$db = $con->open();
+			foreach ($qa as $e)  {
+				$db->query($e);
+			}
+			$db->close();
+	}
+	
 	private $actions = array(
 				
 				array('1. Słownik kategorii przyczyn', 'check_rootcause', 'do_rootcause'),
@@ -335,6 +395,9 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 				array('5. Zadania przypisane do przczyn', 'check_causetask', 'do_causetask'),
 				array('6. Usunięcie kolumny "action" z tabeli zadań', 'check_remove_action_from_tasks', 'do_remove_action_from_tasks'),
 				array('7. Dodanie planowanej daty do zadań w BEZie', 'check_add_plan_date_to_tasks', 'do_add_plan_date_to_tasks'),
+				array('8. Dodanie typu dla zadań niezależnych w BEZie', 'check_add_type_to_tasks', 'do_add_type_to_tasks'),
+				array('9. Zmiana kolumny issue w zadaniach na NULL.',
+				'check_task_issue_null', 'do_task_issue_null')
 				);
 	/**
 	 * handle user request

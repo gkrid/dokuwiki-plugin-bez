@@ -70,7 +70,10 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 		return '<a href="'.$this->issue_uri($id).'">#'.$id.'</a>';
 	}
 	public function html_task_link($issue, $task) {
-		return '<a href="?id='.$this->id('issue_task', 'id', $issue, 'tid', $task).'">#'.$issue.' #z'.$task.'</a>';
+		if ($issue == NULL)
+			return '<a href="?id='.$this->id('show_task','tid', $task).'">#z'.$task.'</a>';
+		else
+			return '<a href="?id='.$this->id('issue_task', 'id', $issue, 'tid', $task).'">#'.$issue.' #z'.$task.'</a>';
 	}
 
 

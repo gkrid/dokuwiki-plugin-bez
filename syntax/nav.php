@@ -12,6 +12,8 @@ require_once DOKU_PLUGIN.'syntax.php';
 include_once DOKU_PLUGIN."bez/models/issues.php";
 include_once DOKU_PLUGIN."bez/models/causes.php";
 include_once DOKU_PLUGIN."bez/models/tasks.php";
+include_once DOKU_PLUGIN."bez/models/taskactions.php";
+include_once DOKU_PLUGIN."bez/models/tasktypes.php";
 /**
  * All DokuWiki plugins to extend the parser/rendering mechanism
  * need to inherit from this class
@@ -87,7 +89,7 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 		$cause_pages = array('issue_causes', 'issue_cause', 'cause_form', 'issue_cause_task');
 		$issue_pages = array_merge(array('issue', 'rr', '8d'), $task_pages, $cause_pages);
 
-		if (in_array($this->value['bez'], $issue_pages) || ($this->value[bez] == 'issue_report' && isset($this->value[id]))) {
+		if (in_array($this->value['bez'], $issue_pages) || ($this->value['bez'] == 'issue_report' && isset($this->value['id']))) {
 			$data['bez:issues']['open'] = true;
 			$id = (int)$this->value[id];
 
@@ -155,7 +157,93 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 			}
 
 		}
-		$data['bez:tasks'] = array('id' => 'bez:tasks', 'type' => 'f', 'level' => 2, 'title' => $this->getLang('bez_tasks'));
+		$data['bez:tasks'] = array('id' => 'bez:tasks', 'type' => 'd', 'level' => 2, 'title' => $this->getLang('bez_tasks'));
+		
+		if ($this->value['bez'] == 'tasks' || $this->value['bez'] == 'show_task'
+			|| $this->value['bez'] == 'task_form_plan'
+			|| $this->value['bez'] == 'issue_task'
+			|| $this->value['bez'] == 'issue_cause_task') {
+			$data['bez:tasks']['open'] = true;
+			
+
+			if (isset($this->value['year']))
+				$year = $this->value['year'];
+			else
+				$year = date('Y');
+			
+			//plan i realizacja
+			$plan_id = "bez:tasks:taskstate:0$tasktype:year:$year";
+			$data[$plan_id] = array('id' => $plan_id, 'type' => 'd', 'level' => 3, 'title' => $this->getLang('task_opened'));
+
+			if (isset($this->value['tid'])) {
+				$tasko = new Tasks();
+				$this->value['tasktype']  = $tasko->get_type($this->value['tid']);
+				$tasko = new Tasks();
+				$this->value['taskstate'] = $tasko->get_state($this->value['tid']);
+			}
+			
+			if (isset($this->value['taskstate'])) {
+				if ($this->value['taskstate'] == '0') {
+					$data[$plan_id]['open'] = true;
+				} elseif ($this->value['taskstate'] == '1') {
+					$realization_id = "bez:tasks:taskstate:1:year:$year";
+					$data[$realization_id] = array('id' => $realization_id, 'type' => 'd', 'level' => 3, 'title' => $this->getLang('task_done'), 'open' => true);
+				} elseif ($this->value['taskstate'] == '2') {
+					$realization_id = "bez:tasks:taskstate:1:year:$year";
+					$data[$realization_id] = array('id' => $realization_id, 'type' => 'd', 'level' => 3, 'title' => $this->getLang('task_done'), 'open' => false);
+					$rejected_id = "bez:tasks:taskstate:2:year:$year";
+					$data[$rejected_id] = array('id' => $rejected_id, 'type' => 'd', 'level' => 3, 'title' => $this->getLang('task_rejected'), 'open' => true);
+				}
+					
+			} else {
+				$realization_id = "bez:tasks:taskstate:1:year:$year";
+				$data[$realization_id] = array('id' => $realization_id, 'type' => 'd', 'level' => 3, 'title' => $this->getLang('task_done'), 'open' => false);
+				$rejected_id = "bez:tasks:taskstate:2:year:$year";
+				$data[$rejected_id] = array('id' => $rejected_id, 'type' => 'd', 'level' => 3, 'title' => $this->getLang('task_rejected'), 'open' => false);
+			}
+
+			
+
+			if (isset($this->value['taskstate'])) {
+				$taskstate = ':taskstate:'.$this->value['taskstate'];
+				$tasktypeso = new Tasktypes();
+				$tasktypes = $tasktypeso->get();
+				$page_id = "bez:tasks$taskstate:tasktype:-none:year:$year";
+				if (isset($this->value['tid']) && $this->value['tasktype'] == '') {
+					$data[$page_id] = array('id' => $page_id, 'type' => 'd', 'level' => 4, 'title' => $this->getLang('tasks_no_type'), 'open' => true);
+					
+					//$page_id = 'bez:show_task:tid:'.$this->value['tid'];
+					$page_id = $_GET['id'];
+					$data[$page_id.':perspective:task'] = array('id' => $page_id, 'type' => 'f', 'level' => 5, 'title' => '#z'.$this->value['tid']);
+
+				} else {
+					$data[$page_id] = array('id' => $page_id, 'type' => 'f', 'level' => 4, 'title' => $this->getLang('tasks_no_type'));
+				}
+				
+				
+				foreach ($tasktypes as $id => $tasktype) {
+					$page_id = "bez:tasks$taskstate:tasktype:$id:year:$year";
+					if (isset($this->value['tid']) && $this->value['tasktype'] == $id) {
+						$data[$page_id] = array('id' => $page_id, 'type' => 'd', 'level' => 4, 'title' => $tasktype, 'open' => true);
+						//$page_id = 'bez:show_task:tid:'.$this->value['tid'];
+						$page_id = $_GET['id'];
+						$data[$page_id.':perspective:task'] = array('id' => $page_id, 'type' => 'f', 'level' => 5, 'title' => '#z'.$this->value['tid']);
+					} else
+						$data[$page_id] = array('id' => $page_id, 'type' => 'f', 'level' => 4, 'title' => $tasktype);
+				}
+				
+				if ($this->value['taskstate'] == '0') {
+					$realization_id = "bez:tasks:taskstate:1:year:$year";
+					$data[$realization_id] = array('id' => $realization_id, 'type' => 'd', 'level' => 3, 'title' => $this->getLang('task_done'), 'open' => false);
+					$rejected_id = "bez:tasks:taskstate:2:year:$year";
+					$data[$rejected_id] = array('id' => $rejected_id, 'type' => 'd', 'level' => 3, 'title' => $this->getLang('task_rejected'), 'open' => false);
+				} else if ($this->value['taskstate'] == '1') {
+					$rejected_id = "bez:tasks:taskstate:2:year:$year";
+					$data[$rejected_id] = array('id' => $rejected_id, 'type' => 'd', 'level' => 3, 'title' => $this->getLang('task_rejected'), 'open' => false);
+				}
+			}
+			
+		}
 
 		$isso = new Issues();
 		$year_now = (int)date('Y');
@@ -206,6 +294,8 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 				$this->getLang('types_manage'));
 			$data['bez:root_causes'] = array('id' => 'bez:root_causes', 'type' => 'f', 'level' => 2, 'title' =>
 				$this->getLang('root_causes'));
+			$data['bez:task_types'] = array('id' => 'bez:task_types', 'type' => 'f', 'level' => 2, 'title' =>
+				$this->getLang('task_types'));
 		}
 
         $R->doc .= '<div class="plugin__bez">';
@@ -229,21 +319,26 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 			$item_value[urldecode($ex[$i])] = urldecode($ex[$i+1]);
 
 		//pola brane pod uwagę przy określaniu aktualnej strony
-		$fields = array('bez', 'tid', 'cid');
+		$fields = array('bez', 'tid', 'cid', 'tasktype', 'taskstate');
 		if ($item_value['bez'] == 'report' || $item_value['bez'] == 'report_open') {
 			$fields[] = 'month';
 			$fields[] = 'year';
 		}
 		if ($this->value[bez] == 'task_form' && isset($this->value[cid]))
 			unset($fields[0]);
-
+		
 		$actual_page = true;
 		foreach ($fields as $field)
 			if ($item_value[$field] != $this->value[$field])
 				$actual_page = false;
-
-
-
+				
+		//specjalny hak dla zadań, boję się ruszać całej procedury
+		if ($item_value['bez'] == 'issue_task' ||
+			$item_value['bez'] == 'issue_cause_task' ||
+			$item_value['bez'] == 'show_task')
+				if ($item_value['tid'] == $this->value['tid'])
+					$actual_page = true;
+			
         if(($item['type'] == 'd' && $item['open']) ||  $actual_page) {
 			$id = $item['id'];
 			if ($this->lang_code != $this->default_lang)

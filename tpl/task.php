@@ -39,34 +39,51 @@
 
 <?php
 //count colspan
+$top_colspan = 0;
+$bottom_colspan = 0;
+
+$top_columns = 1;
+if ($task['tasktype'] != '')
+	$top_columns++;
+
+if ($task['cost'] != 0)
+	$top_columns++;
+
+	
+
+if (isset($nparams['plan']))
+	$bottom_columns = 4;
+else if ($task['plan_date'] != '') {
+	$bottom_columns = 1;
+	if ($task['all_day_event'] == '0')
+		$bottom_columns = 3;
+} else
+	//w celu wyzerowania górnego colspana
+	$top_columns = 3;
+
+if ($top_columns > $bottom_columns)
+	$bottom_colspan = $top_columns - $bottom_columns + 1;
+elseif ($top_columns < $bottom_columns)
+	$top_colspan = $bottom_columns - $top_columns + 1;
+	
 $colspan1 = 0;
 $colspan2 = 0;
 $colspan3 = 0;
 
-if ($task['cost'] != 0 && $task['all_day_event'] == '1')
-	$colspan3 = 2;
-	
-if ($task['cost'] == 0 && $task['all_day_event'] == '0') {
-	$colspan1 = 3;
-	if (isset($nparams['plan']))
-		$colspan1 += 1;
-}
-
-if ($task['cost'] != 0 && $task['all_day_event'] == '0') {
-	$colspan2 = 2;
-	if (isset($nparams['plan']))
-		$colspan2 += 1;
-}
-
-/*
-if (isset($nparams['plan']) || $task['all_day_event'] == '0')
-	$colspan1 = 4;
 if ($task['cost'] != 0)
-	$colspan1 -= 2;
+	$colspan3 = $top_colspan;
+else if ($task['tasktype'] != '')
+	$colspan2 = $top_colspan;
+else
+	$colspan1 = $top_colspan;
 	
-if ($task['cost'] != 0 && $task['all_day_event'] == '1')
-	$colspan2 = 2;
-*/
+$colspan4 = 0;
+$colspan5 = 0;
+if ($task['all_day_event'] == '0')
+	$colspan5 = $bottom_colspan;
+else
+	$colspan4 = $bottom_colspan;
+
 ?>
 <table>	
 <tr>
@@ -74,9 +91,16 @@ if ($task['cost'] != 0 && $task['all_day_event'] == '1')
 			<strong><?php echo $bezlang['executor'] ?>:</strong>
 			<?php echo $task['executor'] ?>
 		</td>
-
-		<?php if ($task['cost'] != 0): ?>
+		
+		<?php if ($task['tasktype'] != ''): ?>
 			<td colspan="<?php echo $colspan2 ?>">
+				<strong><?php echo $bezlang['task_type'] ?>:</strong>
+				<?php echo $task['tasktype'] ?>
+			</td>
+		<?php endif ?>
+		
+		<?php if ($task['cost'] != 0): ?>
+			<td colspan="<?php echo $colspan3 ?>">
 				<strong><?php echo $bezlang['cost'] ?>:</strong>
 				<?php echo $task['cost'] ?>
 			</td>
@@ -85,12 +109,12 @@ if ($task['cost'] != 0 && $task['all_day_event'] == '1')
 
 <?php if ($task['plan_date'] != '' && !isset($nparams['plan'])): ?>
 <tr>
-	<td colspan="<?php echo $colspan3 ?>"><strong><?php echo $bezlang['plan_date'] ?>:</strong>
+	<td colspan="<?php echo $colspan4 ?>"><strong><?php echo $bezlang['plan_date'] ?>:</strong>
 	<?php echo $task['plan_date'] ?></td>
 	<?php if ($task['all_day_event'] == '0'): ?>
 		<td><strong><?php echo $bezlang['start_time'] ?>:</strong>
 		<?php echo $task['start_time'] ?></td>
-		<td><strong><?php echo $bezlang['finish_time'] ?>:</strong>
+		<td colspan="<?php echo $colspan5 ?>"><strong><?php echo $bezlang['finish_time'] ?>:</strong>
 		<?php echo $task['finish_time'] ?></td>
 	<?php endif ?>
 </tr>
@@ -116,8 +140,9 @@ if ($task['cost'] != 0 && $task['all_day_event'] == '1')
 		</a></td>
 </form>
 </tr>
+	
 <?php endif ?>
-</table>	
+</table>
 
 <?php echo $task['task'] ?>
 
@@ -154,12 +179,20 @@ if ($task['cost'] != 0 && $task['all_day_event'] == '1')
 
 <?php if (!isset($nparams['state']) && !isset($nparams['plan'])): ?>
 <div class="bez_buttons">
+<?php if ($task['plan_date'] != ''): ?>	
+		<a class="bds_inline_button"
+		href="?id=<?php echo $helper->id('icalendar', 'tid', $task['id']) ?>">
+		📅  <?php echo $bezlang['download_in_icalendar'] ?>
+	</a>
+<?php endif ?>
 	<?php if ($task['raw_state'] == 0): ?>
 		<?php if($task['executor_nick'] == $INFO['client'] || $helper->user_coordinator($template['issue']['id'])): ?> 
 		
 			<a class="bds_inline_button"
 				href="?id=<?php
-					if (isset($nparams['cid']))
+				 	if(!isset($template['issue']))
+						echo $helper->id('show_task', 'tid', $task['id'], 'plan', 'plan');
+					elseif (isset($nparams['cid']))
 						echo $helper->id('issue_cause_task', 'id', $template['issue']['id'], 'cid', $cause['id'], 'tid', $task['id'], 'plan', 'plan');
 					else
 						echo $helper->id('issue_task', 'id', $template['issue']['id'], 'tid', $task['id'], 'plan', 'plan');
@@ -169,7 +202,9 @@ if ($task['cost'] != 0 && $task['all_day_event'] == '1')
 			
 			<a class="bds_inline_button"
 				href="?id=<?php
-					if (isset($nparams['cid']))
+					if(!isset($template['issue']))
+						echo $helper->id('show_task', 'tid', $task['id'], 'state', '1');
+					elseif (isset($nparams['cid']))
 						echo $helper->id('issue_cause_task', 'id', $template['issue']['id'], 'cid', $cause['id'], 'tid', $task['id'], 'state', '1');
 					else
 						echo $helper->id('issue_task', 'id', $template['issue']['id'], 'tid', $task['id'], 'state', '1');
@@ -178,7 +213,9 @@ if ($task['cost'] != 0 && $task['all_day_event'] == '1')
 			</a>
 			<a class="bds_inline_button"
 				href="?id=<?php
-					if (isset($nparams['cid']))
+					if(!isset($template['issue']))
+						echo $helper->id('show_task', 'tid', $task['id'], 'state', '2');
+					elseif (isset($nparams['cid']))
 						echo $helper->id('issue_cause_task', 'id', $template['issue']['id'], 'cid', $cause['id'], 'tid', $task['id'], 'state', '2');
 					else
 						echo $helper->id('issue_task', 'id', $template['issue']['id'], 'tid', $task['id'], 'state', '2');
@@ -187,17 +224,26 @@ if ($task['cost'] != 0 && $task['all_day_event'] == '1')
 			</a>
 		<?php endif ?>
 	<?php endif ?>
-	<?php if($helper->user_coordinator($template['issue']['id'])): ?> 
-		<a class="bds_inline_button"
-			href="?id=<?php echo $this->id('task_form', 'id', $template['issue']['id'], 'cid', $cause[id], 'tid', $task['id']) ?>">
-		 	✎ <?php echo $bezlang['edit'] ?>
-		</a>
+	<?php if($helper->user_coordinator($template['issue']['id'])): ?>
+		<?php if(isset($template['issue'])): ?>
+			<a class="bds_inline_button"
+				href="?id=<?php echo $this->id('task_form', 'id', $template['issue']['id'], 'cid', $cause[id], 'tid', $task['id']) ?>">
+				✎ <?php echo $bezlang['edit'] ?>
+			</a>
+		<?php else: ?>
+			<a class="bds_inline_button"
+				href="?id=<?php echo $this->id('task_form_plan', 'tid', $task['id']) ?>">
+				✎ <?php echo $bezlang['edit'] ?>
+			</a>
+		<?php endif ?>
 	<?php endif ?>
 
 	<a class="bds_inline_button" href="
 	<?php echo $helper->mailto($task['executor_email'],
 	$bezlang['task'].': #'.$task['issue'].' '.$template['issue']['title'].' | #z'.$task['id'].' '.$task['action'],
-	DOKU_URL . 'doku.php?id='.$this->id('issue_task', 'id', $template['issue']['id'], 'tid', $task['id'])) ?>">
+	isset($template['issue']) ? 
+		DOKU_URL . 'doku.php?id='.$this->id('issue_task', 'id', $template['issue']['id'], 'tid', $task['id'])
+		: DOKU_URL . 'doku.php?id='.$this->id('show_task', 'tid', $task['id'])) ?>">
 		✉ <?php echo $bezlang['send_mail'] ?>
 	</a>
 </div>

@@ -1,7 +1,9 @@
 <?php if ($helper->user_coordinator($template['issue']['id'])): ?>
-	<?php $issue = $template['issue'] ?>
-	<?php include "issue_box.php" ?>
-	<br>
+	<?php if (isset($template['issue'])): ?>
+		<?php $issue = $template['issue'] ?>
+		<?php include "issue_box.php" ?><br>
+	<?php endif ?>
+
 	<?php if (isset($template['cause'])): ?>
 		<?php $cause = $template['cause'] ?>
 		<div class="bds_block" id="bez_causes">
@@ -18,7 +20,7 @@
 					<span><strong>#z<?php echo $nparams['tid'] ?></strong></span>
 					</div>
 					
-					<?php if ($helper->user_coordinator($template['issue']['id'])): ?>
+					<?php if (isset($template['issue']) && $helper->user_coordinator($template['issue']['id'])): ?>
 					<div class="row">
 						<label for="cause_id"><?php echo ucfirst($bezlang['cause']) ?>:</label>
 						<span>
@@ -47,11 +49,26 @@
 				</select>
 				</span>
 				</div>
+				
 				<div class="row">
-				<label for="action"><?php echo $bezlang['action'] ?>:</label>
+				<label for="executor"><?php echo $bezlang['task_type'] ?>:</label>
+				<span>
+					<select name="tasktype">
+						<option <?php if ($value['tasktype'] == '') echo 'selected' ?> value="">-- <?php echo $bezlang['none'] ?> --</option>
+						<?php foreach ($template['tasktypes'] as $id => $type): ?>
+							<option <?php if ($value['tasktype'] == $id) echo 'selected' ?> value="<?php echo $id ?>"><?php echo $type ?></option>
+						<?php endforeach ?>
+					</select>
+				</span>
+				</div>
+						
+				<div class="row">
+				<label for="action"><?php echo $bezlang['class'] ?>:</label>
 				<span>
 					<strong>
-						<?php if (!isset($template['cause'])): ?>
+						<?php if (!isset($template['issue'])): ?>
+							<?php echo $bezlang['programme'] ?>
+						<?php elseif (!isset($template['cause'])): ?>
 							<?php echo $bezlang['correction'] ?>
 							<input type="hidden" name="action" value="0" />
 						<?php elseif ($template['cause']['potential'] == 0): ?>
@@ -68,6 +85,39 @@
 				<div class="row">
 					<label for="task"><?php echo $bezlang['description'] ?>:</label>
 					<span><textarea name="task" id="task" <?php echo $disabled ?>><?php echo $value['task'] ?></textarea></span>
+				</div>
+				
+				<div class="row">
+					<label for="task_plan"><?php echo $bezlang['task_plan'] ?>:</label>
+					<span><input name="task_plan" id="task_plan" type="checkbox"
+					<?php if ($value['plan_date'] != ''): ?>
+						checked
+					<?php endif ?>
+					<?php echo $disabled ?>></span>
+				</div>
+				
+				<div class="row task_plan_field">
+					<label for="plan_date"><?php echo $bezlang['plan_date'] ?>:</label>
+					<span>
+						<input name="plan_date" style="width:90px;" value="<?php echo $value['plan_date'] ?>"/> <label><input type="checkbox" name="all_day_event" value="1" 
+					<?php if (isset($value['all_day_event']) && $value['all_day_event'] != '0'): ?>
+						checked
+					<?php endif ?> /> <?php echo $bezlang['all_day_event'] ?></label>
+					</span>
+				</div>
+				
+				<div class="row task_plan_field">
+					<label for="start_time"><?php echo $bezlang['start_time'] ?>:</label>
+					<span>
+						<input name="start_time" style="width:60px;" class="bez_timepicker" value="<?php echo $value['start_time'] ?>"/>
+					</span>
+				</div>
+				
+				<div class="row task_plan_field">
+					<label for="finish_time"><?php echo $bezlang['finish_time'] ?>:</label>
+					<span>
+						<input name="finish_time" style="width:60px;" class="bez_timepicker" value="<?php echo $value['finish_time'] ?>"/>
+					</span>
 				</div>
 
 				<div class="row">
@@ -97,7 +147,9 @@
 			</fieldset>
 			<input type="submit" value="<?php echo $template['task_button'] ?>">
 			<a href="?id=<?php
-				if (isset($nparams[tid]))
+				if (!isset($template['issue']))
+					echo $this->id('show_task', 'tid', $nparams['tid']);
+				elseif (isset($nparams[tid]))
 					echo $this->id('issue_task', 'id', $template['issue']['id'], 'tid', $nparams[tid]);
 				else
 					echo $this->id('issue_tasks', 'id', $template['issue']['id']);
@@ -107,8 +159,5 @@
 			</a>
 
 		</form>
-	<?php endif ?>
-	<a name="z_"></a>
-	</div>
-</div>
-
+<?php endif ?>
+<a name="z_"></a>
