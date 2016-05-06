@@ -50,11 +50,22 @@
 	<select name="executor">
 		<option <?php if ($value['executor'] == '-all') echo 'selected' ?>
 			value="-all">--- <?php echo $bezlang['all'] ?> ---</option>
-	<?php foreach ($template['executors'] as $nick => $name): ?>
-		<option <?php if ($value['executor'] == $nick) echo 'selected' ?>
-			value="<?php echo $nick ?>"><?php echo $name ?></option>
-	<?php endforeach ?>
+	<optgroup label="<?php echo $bezlang['users'] ?>">
+		<?php foreach ($template['executors'] as $nick => $name): ?>
+			<option <?php if ($value['executor'] == $nick) echo 'selected' ?>
+				value="<?php echo $nick ?>"><?php echo $name ?></option>
+		<?php endforeach ?>
+	</optgroup>
+	
+	<optgroup label="<?php echo $bezlang['groups'] ?>">
+		<?php foreach ($template['groups'] as $name): ?>
+			<?php $group = "@$name" ?>
+			<option <?php if ($value['executor'] == $group) echo 'selected' ?>
+				value="<?php echo $group ?>"><?php echo $group ?></option>
+		<?php endforeach ?>
+	</optgroup>
 	</select>
+	
 </label>
 
 
@@ -83,7 +94,7 @@
 			<option <?php if ($value['month'] == '-all') echo 'selected' ?>
 				value="-all">--- <?php echo $bezlang['all'] ?> ---</option>
 		<?php foreach ($template['months'] as $id => $month): ?>
-			<option <?php if ($value['month'] === $id) echo 'selected' ?>
+			<option <?php if ($value['month'] == $id) echo 'selected' ?>
 				value="<?php echo $id ?>"><?php echo $bezlang[$month] ?></option>
 		<?php endforeach ?>
 		</select>

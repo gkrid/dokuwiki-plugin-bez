@@ -18,9 +18,9 @@
 			</h2>
 			<?php echo $helper->wiki_parse($comment['content']) ?>
 
-			<?php if ($template['issue'][raw_state] == 0 &&
+			<?php if ($template['issue']['raw_state'] == 0 &&
 						($comment['reporter_nick'] == $INFO['client'] ||
-						$helper->user_coordinator($template[issue][id]))): ?> 
+						$helper->user_coordinator($template['issue']['id']))): ?> 
 				<div class="bez_buttons">
 					<a class="bds_inline_button"
 					href="?id=<?php echo $this->id('issue', 'id', $template['issue']['id'], 'action', 'comment_edit', 'kid', $comment['id']) ?>#k_">

@@ -27,11 +27,20 @@
 				value="-all">--- <?php echo $bezlang['all'] ?> ---</option>
 			<option <?php if ($value['coordinator'] == '-none') echo 'selected' ?>
 				value="-none">--- <?php echo $bezlang['none'] ?> ---</option>
-		<?php foreach ($template['coordinators'] as $nick => $name): ?>
-			<option <?php if ($value['coordinator'] == $nick) echo 'selected' ?>
-				value="<?php echo $nick ?>"><?php echo $name ?></option>
+		<optgroup label="<?php echo $bezlang['users'] ?>">
+			<?php foreach ($template['coordinators'] as $nick => $name): ?>
+				<option <?php if ($value['coordinator'] == $nick) echo 'selected' ?>
+					value="<?php echo $nick ?>"><?php echo $name ?></option>
+			<?php endforeach ?>
+	</optgroup>	
+	<optgroup label="<?php echo $bezlang['groups'] ?>">
+		<?php foreach ($template['groups'] as $name): ?>
+			<?php $group = "@$name" ?>
+			<option <?php if ($value['coordinator'] == $group) echo 'selected' ?>
+				value="<?php echo $group ?>"><?php echo $group ?></option>
 		<?php endforeach ?>
-		</select>
+	</optgroup>
+	</select>
 	</label>
 		
 	<label><?php echo $bezlang['root_cause'] ?>:
@@ -64,18 +73,13 @@
 			<?php if (isset($value['sort_open']) && $value['sort_open'] == 'on') echo 'checked="checked"' ?>>
 	</label>
 	<label><input type="submit" value="<?php echo $bezlang['filter'] ?>" /></label>
-	<label>[<a class="" href="
-		<?php echo $helper->mailto('',
-		'[BEZ] '.$bezlang['issues_juxtaposition'],
-		DOKU_URL . 'doku.php?id='.$_GET['id']) ?>">
-		✉ <?php echo $bezlang['send_mail'] ?>
-	</a>]</label>
 </form>
 </div>
 
 <table class="bez bez_sumarise">
 	<tr>
-		<th><?php echo $bezlang['id'] ?>/<?php echo $bezlang['state'] ?></th>
+		<th><?php echo $bezlang['id'] ?></th>
+		<th><?php echo $bezlang['state'] ?></th>
 		<th><?php echo $bezlang['type'] ?></th>
 		<th><?php echo $bezlang['title'] ?></th>
 		<th><?php echo $bezlang['coordinator'] ?></th>
@@ -87,8 +91,10 @@
 	<?php foreach ($template['issues'] as $issue): ?>
 		<tr class="pr<?php echo $issue['priority'] ?>">
 			<td>
-				<?php echo $this->html_issue_link($issue['id']) ?><br>
-				<?php echo $issue['state'] ?>
+				<?php echo $this->html_issue_link($issue['id']) ?>
+			</td>
+			<td>
+			<?php echo $issue['state'] ?>
 			</td>
 			<td><?php echo $issue['type'] ?></td>
 			<td><?php echo $issue['title'] ?></td>
@@ -127,5 +133,10 @@
 		<td colspan="2"><?php echo $template['total_cost'] ?></td>
 	</tr>
 </table>
-
+[<a class="" href="
+		<?php echo $helper->mailto('',
+		'[BEZ] '.$bezlang['issues_juxtaposition'],
+		DOKU_URL . 'doku.php?id='.$_GET['id']) ?>">
+		✉ <?php echo $bezlang['send_mail'] ?>
+	</a>]
 </div>

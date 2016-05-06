@@ -52,7 +52,10 @@ $template['uri'] = $uri;
 
 $template['states'] = $stao->get_list();
 $template['issue_types'] = $issto->get();
+
 $template['coordinators'] = $usro->get();
+$template['groups'] = $usro->groups();
+
 $template['years'] = $isso->get_years();
 $template['rootcauses'] = $rootco->get();
 

@@ -434,13 +434,21 @@ class Issues extends Connect {
 			if ($filters['type'] == '-all' || array_key_exists($filters['type'], $isstyo->get()))
 				$data['type'] = $filters['type'];
 		}
-
+		
 		if (isset($filters['coordinator'])) {
 			$usro = new Users();
-			$coords = $usro->nicks();
-			if ($filters['coordinator'] == '-all' || $filters['coordinator'] == '-none' ||
-				in_array($filters['coordinator'], $coords))
+			$excs = $usro->nicks();
+			
+			if ($filters['coordinator'] == '-all' || $filters['coordinator'] == '-none')
 				$data['coordinator'] = $filters['coordinator'];
+			else if ($filters['coordinator'][0] == '@') {
+				$groups = $usro->groups();
+				$group = substr($filters['coordinator'], 1);
+				if (in_array($group, $groups))
+					$data['coordinator'] = $filters['coordinator'];
+			} else if (in_array($filters['coordinator'], $excs)) {
+				$data['coordinator'] = $filters['coordinator'];
+			}
 		}
 
 		if (isset($filters['year'])) {
@@ -485,7 +493,7 @@ class Issues extends Connect {
 			//$where[] = "issues.title LIKE '%".str_replace('_', '\\_', $title)."%' ESCAPE '\\'";
 			$where[] = "issues.title GLOB '*$title*'";
 		}
-
+		
 
 		foreach ($vfilters as $name => $value)
 			if ($value != '-all')
@@ -522,7 +530,18 @@ class Issues extends Connect {
 		if ($coordinator != '-all') {
 			if ($coordinator == '-none') 
 				$where[] = "(issues.coordinator = '-proposal' OR issues.coordinator = '-rejected')";
-			else 
+			elseif ($coordinator[0] == '@') {
+				$group = substr($coordinator, 1);
+				$usro = new Users();
+				$users = $usro->users_of_group($group);
+				
+				$usr_where = array();
+				foreach($users as $user) {
+					$usr_where[] = "issues.coordinator = '".$this->escape($user)."'";
+				}
+
+				$where[] = "(".implode(" OR ", $usr_where).")";
+			} else 
 				$where[] = "issues.coordinator = '$coordinator'";
 		}
 		$rootcause_join = '(issues LEFT JOIN issuetypes ON issues.type = issuetypes.id)';
@@ -544,7 +563,7 @@ class Issues extends Connect {
 		if (isset($sort_open) && $sort_open == 'on')
 			$order = 'ORDER BY issues.date DESC, issues.priority DESC, issues.last_mod DESC';
 		else
-			$order = 'ORDER BY issues.priority DESC, issues.last_mod DESC, issues.date DESC';
+			$order = 'ORDER BY issues.state, issues.priority DESC, issues.last_mod DESC, issues.date DESC';
 
 		$a = $this->fetch_assoc("
 			SELECT issues.id, issues.priority, issues.state, issuetypes.$lang as type,

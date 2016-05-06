@@ -27,7 +27,7 @@ if (isset($raw_filters)) {
 	$filters = $tasko->validate_filters($raw_filters);
 	$query_uri = '';
 	foreach ($filters as $k => $v)
-		if ($v != '-all')
+		if ($v != '-all' && $v != '')
 			$query_uri .= ':'.urlencode($k).':'.urlencode($v);
 		
 	if ($query_uri == "")
@@ -55,7 +55,10 @@ $template['issues'] = $isso->get_ids();
 $template['actions'] = $taskao->get();
 
 $template['states'] = $taskso->get();
+
 $template['executors'] = $usro->get();
+$template['groups'] = $usro->groups();
+
 $template['years'] = $tasko->get_years();
 
 $tasks = $tasko->get_filtered($value);
@@ -92,5 +95,15 @@ if ($nparams['taskstate'] == '0')
 else
 	$template['view'] = 'realization';
 
-$template['months'] = array('jan', 'feb', 'mar', 'apr', 'may', 'june', 'july', 'aug',
-							'sept', 'oct', 'nov', 'dec');
+$template['months'] = array(1 => 'jan',
+							2 => 'feb',
+							3 => 'mar',
+							4 => 'apr',
+							5 => 'may',
+							6 => 'june',
+							7 => 'july',
+							8 => 'aug',
+							9 => 'sept',
+							10 => 'oct',
+							11 => 'nov',
+							12 => 'dec');

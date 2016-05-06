@@ -70,4 +70,36 @@ class Users {
 	public function nicks() {
 		return array_keys($this->get());
 	}
+	
+
+	public function groups() {
+		global $auth;
+		$wikiusers = $auth->retrieveUsers();
+		$groups = array();
+		foreach ($wikiusers as $data) {
+			$groups = array_merge($groups, $data['grps']);
+		}
+		$groups = array_unique($groups);
+		
+		$helper = plugin_load('helper', 'bez');
+		$hidden = $helper->get_hidden_groups();
+		
+		$groups = array_diff($groups, $hidden);
+		
+		sort($groups);
+		
+		return $groups;
+	}
+	
+	public function users_of_group($group) {
+		global $auth;
+		
+		$wikiusers = $auth->retrieveUsers();
+		$users = array();
+		foreach ($wikiusers as $nick => $data)
+			if (in_array($group, $data['grps']))
+				$users[] = $nick;
+
+		return $users;
+	}
 }

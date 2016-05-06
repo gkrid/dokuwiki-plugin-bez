@@ -60,14 +60,6 @@
 </span>
 </div>
 <?php if ($template['action'] == 'update' && $template['user_coordinator']): ?>
-	<?php if ($template['any_task_open']) : ?>
-		<div class="row" >
-			<div style="display:table-cell"><br><br></div>
-			<label style="position: relative">
-				<div class="info" style="position: absolute; left: -10em; width:29em;"><?php echo $bezlang['info_no_all_tasks_closed'] ?></div>
-			</label>
-		</div>
-	<?php endif ?>
 	<div class="row">
 	<label for="state"><?php echo $bezlang['state'] ?>:</label>
 	<span>

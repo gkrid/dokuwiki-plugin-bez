@@ -226,4 +226,15 @@ class helper_plugin_bez extends dokuwiki_plugin
 			$title = $_SERVER['HTTP_HOST'];
 		return $title;
 	}
+	
+	public function get_hidden_groups() {
+		global $conf;
+		$groups_s = $this->getConf('hidden_groups');
+		$groups = explode(',', $groups_s);
+		foreach($groups as &$group)
+			$group = trim($group);
+			
+		return $groups;
+	}
+
 }

@@ -162,6 +162,7 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 		if ($this->value['bez'] == 'tasks' || $this->value['bez'] == 'show_task'
 			|| $this->value['bez'] == 'task_form_plan'
 			|| $this->value['bez'] == 'issue_task'
+			|| $this->value['bez'] == 'task_form'
 			|| $this->value['bez'] == 'issue_cause_task') {
 			$data['bez:tasks']['open'] = true;
 			
@@ -335,6 +336,7 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 		//specjalny hak dla zadań, boję się ruszać całej procedury
 		if ($item_value['bez'] == 'issue_task' ||
 			$item_value['bez'] == 'issue_cause_task' ||
+			$item_value['bez'] == 'task_form' ||
 			$item_value['bez'] == 'show_task')
 				if ($item_value['tid'] == $this->value['tid'])
 					$actual_page = true;

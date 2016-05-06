@@ -492,7 +492,13 @@ class Tasks extends Event {
 
 	public function validate_filters($filters) {
 
-		$data = array('issue' => '-all', 'naction' => '-all', 'taskstate' => '-all', 'executor' => '-all', 'year' => '-all');
+		$data = array('issue' => '-all', 'naction' => '-all', 'taskstate' => '-all', 'executor' => '-all', 'year' => '-all', 'task' => '', 'reason' => '');
+		
+		if (isset($filters['task']))
+			$data['task'] = str_replace(array(':', "'"), '', $filters['task']);
+			
+		if (isset($filters['reason']))
+			$data['reason'] = str_replace(array(':', "'"), '', $filters['reason']);
 
 		if (isset($filters['issue'])) {
 			$isso = new Issues();
@@ -515,11 +521,19 @@ class Tasks extends Event {
 
 
 		if (isset($filters['executor'])) {
-			//$excs = array_keys($this->get_executors());
 			$usro = new Users();
 			$excs = $usro->nicks();
-			if ($filters['executor'] == '-all' || in_array($filters['executor'], $excs))
+			
+			if ($filters['executor'] == '-all')
 				$data['executor'] = $filters['executor'];
+			else if ($filters['executor'][0] == '@') {
+				$groups = $usro->groups();
+				$group = substr($filters['executor'], 1);
+				if (in_array($group, $groups))
+					$data['executor'] = $filters['executor'];
+			} else if (in_array($filters['executor'], $excs)) {
+				$data['executor'] = $filters['executor'];
+			}
 		}
 
 		if (isset($filters['year'])) {
@@ -534,6 +548,15 @@ class Tasks extends Event {
 				ctype_digit($filters['tasktype']))
 					$data['tasktype'] = $filters['tasktype'];
 		}
+		
+		if (isset($filters['month'])) {
+			if ($filters['month'] == '-all' ||
+				(ctype_digit($filters['month'])
+				&& $filters['month'] >= 1 && $filters['month'] <= 12))
+					$data['month'] = $filters['month'];
+		} else {
+			$data['month'] = '-all';
+		}
 
 		return $data;
 	}
@@ -543,13 +566,44 @@ class Tasks extends Event {
 
 		$year = $vfilters['year'];
 		unset($vfilters['year']);
-
+		
+		$month = $vfilters['month'];
+		unset($vfilters['month']);
+		
+		
 		$where = array();
 
-		if (isset($vfilters[action])) {
-			$vfilters[naction] = $vfilters[action];
-			unset($vfilters[action]);
+		if (isset($vfilters['action'])) {
+			$vfilters['naction'] = $vfilters['action'];
+			unset($vfilters['action']);
 		}
+		
+		$task = $vfilters['task'];
+		unset($vfilters['task']);
+		if ($task != '') {
+			$where[] = "tasks.task GLOB '*".$this->escape($task)."*'";
+		}
+		
+		
+		$reason = $vfilters['reason'];
+		unset($vfilters['reason']);
+		if ($reason != '') {
+			$where[] = "tasks.reason GLOB '*".$this->escape($reason)."*'";
+		}
+		
+		if ($vfilters['executor'][0] == '@') {
+			$group = substr($vfilters['executor'], 1);
+			unset($vfilters['executor']);
+			$usro = new Users();
+			$users = $usro->users_of_group($group);
+			
+			$usr_where = array();
+			foreach($users as $user) {
+				$usr_where[] = "tasks.executor = '".$this->escape($user)."'";
+			}
+			$where[] = "(".implode(" OR ", $usr_where).")";
+		}
+		
 
 		foreach ($vfilters as $name => $value) {
 			if ($name == 'tasktype' && $value == '-none')
@@ -567,19 +621,42 @@ class Tasks extends Event {
 		if ($year != '-all') {
 			$state = $vfilters['taskstate'];
 			if ($state == '-all' || $state == '0')
-				$date_field = 'tasks.date';
+				$date_field = 'tasks.plan_date';
 			else
 				$date_field = 'tasks.close_date';
-
-			$year = (int)$year;
-			$where[] = "$date_field >= ".mktime(0,0,0,1,1,$year);
-			$where[] = "$date_field < ".mktime(0,0,0,1,1,$year+1);
+				
+			
+			if ($month != '-all') {
+				$month = (int)$month;
+				$year = (int)$year;
+				$start_date = date('Y-m-d', mktime(0,0,0,$month,1,$year));
+				$finish_date = date('Y-m-d', mktime(0,0,0,$month,
+								cal_days_in_month(CAL_GREGORIAN, $month, $year),$year));
+								
+				if ($date_field == 'tasks.plan_date') {
+					$where[] = "($date_field BETWEEN '$start_date' AND '$finish_date'
+								OR tasks.plan_date == '')";
+				} else {
+					$where[] = "$date_field >= ".mktime(0,0,0,$month,1,$year);
+					$where[] = "$date_field <= ".mktime(0,0,0,$month,cal_days_in_month(CAL_GREGORIAN, $month, $year),$year);
+				}
+			} else {
+				$year = (int)$year;
+				$start_date = date('Y-m-d', mktime(0,0,0,1,1,$year));
+				$finish_date = date('Y-m-d', mktime(0,0,0,12,31,$year));
+				if ($date_field == 'tasks.plan_date') {
+					$where[] = "($date_field BETWEEN '$start_date' AND '$finish_date'
+								OR tasks.plan_date == '')";
+				} else {
+					$where[] = "$date_field >= ".mktime(0,0,0,1,1,$year);
+					$where[] = "$date_field < ".mktime(0,0,0,1,1,$year+1);
+				}
+			}
 		}
 
 		$where_q = '';
 		if (count($where) > 0)
 			$where_q = 'WHERE '.implode(' AND ', $where);
-
 
 		$a = $this->fetch_assoc("SELECT tasks.id,tasks.state,
 									(CASE	WHEN tasks.issue IS NULL THEN '3'

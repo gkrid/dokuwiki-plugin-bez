@@ -422,3 +422,6 @@ $lang['show_desc_and_eval'] = 'Show descrpitions and evaluations';
 
 $lang['hide_desc'] = 'Hide descripitons';
 $lang['hide_desc_and_eval'] = 'Hide descripitons and evaluations';
+
+$lang['users'] = 'users';
+$lang['groups'] = 'groups';

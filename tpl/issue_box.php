@@ -39,6 +39,10 @@
 	<strong><?php echo $bezlang['coordinator'] ?>:</strong>
 	<?php echo $template['issue']['coordinator'] ?>
 </td>
+<td>
+	<strong><?php echo $bezlang['reporter'] ?>:</strong>
+	<?php echo $template['issue']['reporter'] ?>
+</td>
 </tr>
 </table>
 

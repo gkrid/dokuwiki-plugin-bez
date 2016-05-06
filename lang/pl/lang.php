@@ -439,3 +439,5 @@ $lang['show_desc_and_eval'] = 'Pokaż opisy i oceny';
 $lang['hide_desc'] = 'Ukryj opisy';
 $lang['hide_desc_and_eval'] = 'Ukryj opisy i oceny';
 
+$lang['users'] = 'użytkownicy';
+$lang['groups'] = 'grupy';
