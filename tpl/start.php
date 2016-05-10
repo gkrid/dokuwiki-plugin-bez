@@ -13,7 +13,7 @@
 		<?php echo $bezlang['close_issues'] ?>:
 		<strong><?php echo $template['my_issues'] ?></strong>
 	</a>
-	<a href="?id=<?php echo $this->id('tasks:state:0:executor:'.$template['client']) ?>" class="bez_start_button" id="bez_info_tasks">
+	<a href="?id=<?php echo $this->id('tasks:taskstate:0:executor:'.$template['client']) ?>" class="bez_start_button" id="bez_info_tasks">
 		<?php echo $bezlang['close_tasks'] ?>:
 		<strong><?php echo $template['my_tasks'] ?></strong>
 	</a>

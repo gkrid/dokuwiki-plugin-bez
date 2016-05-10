@@ -28,7 +28,7 @@ $no = count($isso->get_filtered(array('state' => '0', 'coordinator' => $INFO['cl
 $template['my_issues'] = $no;
 
 $tasko = new Tasks();
-$no = count($tasko->get_filtered(array('state' => '0', 'executor' => $INFO['client'])));
+$no = count($tasko->get_filtered(array('taskstate' => '0', 'executor' => $INFO['client'])));
 $template['my_tasks'] = $no;
 
 $no = count($isso->get_filtered( array('state' => '-proposal') ));
