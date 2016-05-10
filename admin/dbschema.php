@@ -356,9 +356,7 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 	}
 	
 	function do_task_issue_null() {
-		$q = "	BEGIN TRANSACTION;
-				PRAGMA writable_schema = 1;
-				UPDATE SQLITE_MASTER SET SQL = 'CREATE TABLE tasks (
+		$createq = "CREATE TABLE IF NOT EXISTS tasks (
 				id INTEGER PRIMARY KEY,
 				task TEXT NOT NULL,
 				state INTEGER NOT NULL,
@@ -375,9 +373,68 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 				start_time TEXT NULL,
 				finish_time TEXT NULL,
 				issue INTEGER NULL
-				)' WHERE NAME = 'tasks';
-				PRAGMA writable_schema = 0;
-				COMMIT;
+				)";
+				
+		$q = "	BEGIN TRANSACTION;
+			CREATE TEMPORARY TABLE tasks_backup
+			(
+				id INTEGER PRIMARY KEY,
+				task TEXT NOT NULL,
+				state INTEGER NOT NULL,
+				tasktype INTEGER NULL,
+				executor TEXT NOT NULL,
+				cost INTEGER NULL,
+				reason TEXT NULL,
+				reporter TEXT NOT NULL,
+				date INTEGER NOT NULL,
+				close_date INTEGER NULL,
+				cause INTEGER NULL,
+				plan_date TEXT NULL,
+				all_day_event INTEGET DEFAULT 0,
+				start_time TEXT NULL,
+				finish_time TEXT NULL,
+				issue INTEGER NULL
+				);
+			INSERT INTO tasks_backup SELECT
+					id,
+					task,
+					state,
+					tasktype,
+					executor,
+					cost,
+					reason,
+					reporter,
+					date,
+					close_date,
+					cause,
+					plan_date,
+					all_day_event,
+					start_time,
+					finish_time,
+					issue
+				FROM tasks;
+			DROP TABLE tasks;
+			$createq;
+			INSERT INTO tasks SELECT
+					id,
+					task,
+					state,
+					tasktype,
+					executor,
+					cost,
+					reason,
+					reporter,
+					date,
+					close_date,
+					cause,
+					plan_date,
+					all_day_event,
+					start_time,
+					finish_time,
+					issue
+				FROM tasks_backup;
+			DROP TABLE tasks_backup;
+			COMMIT;
 			";
 			$qa = explode(';', $q);
 			$con = new Connect();

@@ -505,8 +505,9 @@ class Tasks extends Event {
 	
 	public function get_plan_years() {
 		$all = $this->fetch_assoc("SELECT MIN(plan_date) as min_date, MAX(plan_date) as max_date FROM tasks WHERE plan_date != ''");
-		if (count($all) == 0)
-			return array();
+
+		if ($all['min_date'] == NULL)
+			return array(date('Y'));
 			
 		$oldest = $this->get_year($all[0]['min_date']);
 		$newest = $this->get_year($all[0]['max_date']);
@@ -520,8 +521,8 @@ class Tasks extends Event {
 
 	public function get_years() {
 		$all = $this->fetch_assoc("SELECT MIN(close_date) AS min, MAX(close_date) AS max FROM tasks");
-		if (count($all) == 0)
-			return array();
+		if ($all['min'] == NULL)
+			return array(date('Y'));
 			
 		$oldest = (int)date('Y', $all[0]['min']);
 		$newest = (int)date('Y', $all[0]['max']);
