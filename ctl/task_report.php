@@ -69,6 +69,11 @@ if (isset($nparams['tid'])) {
 		} 
 		$value = $_POST;
 	}
+	if (isset($nparams['duplicate'])) {
+		$tid = (int)$nparams['duplicate'];
+		$task = $tasko->getone($tid);
+		$value = $task;
+	}
 	$template['task_button'] = $bezlang['add'];
 	$template['task_action'] = $this->id('task_report', 'action', 'add');
 }

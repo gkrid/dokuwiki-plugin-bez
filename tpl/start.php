@@ -53,9 +53,17 @@
 						<span class="author"><?php echo $bezlang['coordinator'] ?>: <strong><?php echo $elm['coordinator'] ?></strong></span>
 				</a>
 			<?php elseif (strstr($elm['class'], 'task')): ?>
-				<a href="?id=<?php echo $this->id('issue_task', 'id', $elm[issue], 'tid', $elm[id]) ?>">
+				<?php if (isset($elm['issue'])): ?>
+					<a href="?id=<?php echo $this->id('issue_task', 'id', $elm['issue'], 'tid', $elm['id']) ?>">
+				<?php else: ?>
+					<a href="?id=<?php echo $this->id('show_task', 'tid', $elm['id']) ?>">
+				<?php endif ?>
 					<span class="time"><?php echo date('H:i', $elm['date']) ?></span>
+					<?php if (isset($elm['issue'])): ?>
 						<span class="id">#<?php echo $elm['issue'] ?> #z<?php echo $elm['id'] ?></span>
+					<?php else: ?>
+						<span class="id">#z<?php echo $elm['id'] ?></span>
+					<?php endif ?>
 						<?php echo $bezlang['task'] ?>
 						<?php echo lcfirst($elm['action']) ?>
 						<?php if ($elm['class'] == 'task_opened'): ?>

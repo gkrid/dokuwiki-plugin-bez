@@ -245,7 +245,7 @@
 </table>
 
 
-[ <a class="" href="?id=<?php echo $helper->id('icalendar', 'tid', $task['id']) ?>">
+[ <a class="" href="<?php echo $template['ical_link'] ?>">
 	📅 <?php echo $bezlang['download_in_icalendar'] ?>
 </a> ]
 [ <a class="" href="

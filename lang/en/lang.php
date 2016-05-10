@@ -425,3 +425,5 @@ $lang['hide_desc_and_eval'] = 'Hide descripitons and evaluations';
 
 $lang['users'] = 'users';
 $lang['groups'] = 'groups';
+
+$lang['duplicate'] = 'Duplicate';

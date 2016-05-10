@@ -441,3 +441,6 @@ $lang['hide_desc_and_eval'] = 'Ukryj opisy i oceny';
 
 $lang['users'] = 'użytkownicy';
 $lang['groups'] = 'grupy';
+
+$lang['duplicate'] = 'Powiel';
+

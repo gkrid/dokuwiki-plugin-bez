@@ -47,6 +47,13 @@ for ($i = 0; $i < count($params); $i += 2)
 //save filters
 foreach ($value as $k => $v)
 	setcookie("bez_tasks_filters[$k]", $v);
+	
+$ical_link = '?id=bez:tasks_ical';
+foreach ($value as $k => $v)
+	if ($v != '-all' && $v != '')
+		$ical_link .= ':'.urlencode($k).':'.urlencode($v);
+	
+$template['ical_link'] = $ical_link;
 
 $template['uri'] = $uri; 
 
@@ -59,8 +66,11 @@ $template['states'] = $taskso->get();
 $template['executors'] = $usro->get();
 $template['groups'] = $usro->groups();
 
-$template['years'] = $tasko->get_years();
-
+if ($nparams['taskstate'] == '0')
+	$template['years'] = $tasko->get_plan_years();
+else
+	$template['years'] = $tasko->get_years();
+	
 $tasks = $tasko->get_filtered($value);
 
 

@@ -194,6 +194,7 @@ class Tasks extends Event {
 			return $data;
 		}
 		$errors[] = 'Nie udało się dodać rekordu.';
+
 		return array();
 	}
 	public function update($post, $data, $id) {
@@ -318,7 +319,7 @@ class Tasks extends Event {
 
 		return $this->helper->days_array_merge($create, $close, $rejected);
 	}
-	public function join($row) {
+	public function join($row, $keep=array()) {
 		global $bezlang;
 		$usro = new Users();
 		$taskao = new Taskactions();
@@ -336,6 +337,22 @@ class Tasks extends Event {
 		$row['tasktype'] = $tasktypes[$row['tasktype']];
 
 		//$row['action'] = $taskao->name($row['action']);
+		
+		if ($row['state'] == 0) {
+			if ($row['plan_date'] != '') {
+				$plan_date = strtotime($row['plan_date']);
+				$diff = $plan_date - time();
+				if ($diff < 0)
+					$row['priority'] = 2;
+				else if ($diff / (60*60*24) < 30)
+					$row['priority'] = 1;
+				else
+					$row['priority'] = 0;
+			} else
+				$row['priority'] = 1;
+		} else {
+			$row['priority'] = 4;
+		}
 
 		if (isset($row[naction]))
 			switch($row[naction]) {
@@ -359,9 +376,13 @@ class Tasks extends Event {
 		$row['raw_state'] = $row['state'];
 		$row['state'] = $taskso->name($row['state']);
 
-		$wiki_text = $cache->get_task($row['id']);
-		$row['task'] = $wiki_text['task'];
-		$row['reason'] = $wiki_text['reason'];
+		if (!in_array('task', $keep) || !in_array('reason', $keep))
+			$wiki_text = $cache->get_task($row['id']);
+		
+		if (!in_array('task', $keep))
+			$row['task'] = $wiki_text['task'];
+		if (!in_array('reason', $keep))
+			$row['reason'] = $wiki_text['reason'];
 		
 		if (isset($row[cause_text])) {
 			$rootco = new Rootcauses();
@@ -476,15 +497,37 @@ class Tasks extends Event {
 		asort($execs);
 		return $execs;
 	}
-
-	public function get_years() {
-		$all = $this->fetch_assoc("SELECT date FROM tasks ORDER BY date LIMIT 1");
+	
+	public function get_year($iso_date) {
+		$tmp = explode('-', $iso_date);
+		return (int)$tmp[0];
+	}
+	
+	public function get_plan_years() {
+		$all = $this->fetch_assoc("SELECT MIN(plan_date) as min_date, MAX(plan_date) as max_date FROM tasks WHERE plan_date != ''");
 		if (count($all) == 0)
 			return array();
-		$oldest = date('Y', $all[0]['date']);
+			
+		$oldest = $this->get_year($all[0]['min_date']);
+		$newest = $this->get_year($all[0]['max_date']);
+
+		$years = array();
+		for ($year = $oldest; $year <= $newest; $year++)
+			$years[] = $year;
+
+		return $years;
+	}
+
+	public function get_years() {
+		$all = $this->fetch_assoc("SELECT MIN(close_date) AS min, MAX(close_date) AS max FROM tasks");
+		if (count($all) == 0)
+			return array();
+			
+		$oldest = (int)date('Y', $all[0]['min']);
+		$newest = (int)date('Y', $all[0]['max']);
 		
 		$years = array();
-		for ($year = $oldest; $year <= (int)date('Y'); $year++)
+		for ($year = $oldest; $year <= $newest; $year++)
 			$years[] = $year;
 
 		return $years;
@@ -537,7 +580,10 @@ class Tasks extends Event {
 		}
 
 		if (isset($filters['year'])) {
-			$years = $this->get_years();
+			if ($data['taskstate'] == '0')
+				$years = $this->get_plan_years();
+			else
+				$years = $this->get_years();
 			if ($filters['year'] == '-all' || in_array($filters['year'], $years))
 				$data['year'] = $filters['year'];
 		}
@@ -561,7 +607,7 @@ class Tasks extends Event {
 		return $data;
 	}
 
-	public function get_filtered($filters) {
+	public function get_filtered($filters, $keep=array()) {
 		$vfilters = $this->validate_filters($filters);
 
 		$year = $vfilters['year'];
@@ -664,26 +710,72 @@ class Tasks extends Event {
 											WHEN causes.potential = 0 THEN '1'
 											ELSE '2' END)AS naction,
 		tasks.executor, tasks.cost, tasks.date, tasks.close_date, tasks.issue, tasks.close_date,
-		issues.priority, tasks.tasktype, tasks.task, tasks.reason, tasks.plan_date, tasks.all_day_event,
+		tasks.tasktype, tasks.task, tasks.reason, tasks.plan_date, tasks.all_day_event,
 		tasks.start_time, tasks.finish_time
 		FROM tasks LEFT JOIN issues ON tasks.issue = issues.id 
 		LEFT JOIN causes ON tasks.cause = causes.id
 		$where_q ORDER BY priority DESC, tasks.date DESC");
 		foreach ($a as &$row)
-			$row = $this->join($row);
+			$row = $this->join($row, $keep);
 		return $a;
 	}
-
-	public function cron_get_unsolved() {
+//cron_get_coming_tasks, cron_get_outdated_tasks
+	public function cron_get_outdated_tasks() {
 		global $bezlang;
-		$a = $this->fetch_assoc("SELECT tasks.id, tasks.issue, tasks.executor, tasks.date, issues.priority,
+		$a = $this->fetch_assoc("SELECT tasks.id, tasks.issue, tasks.executor, tasks.date, issues.priority, tasks.plan_date, tasks.start_time, tasks.finish_time, tasktypes.pl as tasktype,
 									(CASE	WHEN tasks.issue IS NULL THEN '3'
 											WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
 											WHEN causes.potential = 0 THEN '1'
 											ELSE '2' END) AS naction
 								FROM tasks LEFT JOIN issues ON tasks.issue = issues.id 
 								LEFT JOIN causes ON tasks.cause = causes.id
-								WHERE tasks.state=0");
+								LEFT JOIN tasktypes ON tasks.tasktype = tasktypes.id
+								WHERE tasks.state=0 AND tasks.plan_date != ''
+									AND tasks.plan_date < date('now')");
+		foreach ($a as &$row)						
+			switch($row['naction']) {
+				case 0: $row['action'] = $bezlang['correction']; break;
+				case 1: $row['action'] = $bezlang['corrective_action']; break;
+				case 2: $row['action'] = $bezlang['preventive_action']; break;
+				case 3: $row['action'] = $bezlang['programme']; break;
+			}
+		return $a;
+	}
+	
+	//one month
+	public function cron_get_coming_tasks() {
+		global $bezlang;
+		$a = $this->fetch_assoc("SELECT tasks.id, tasks.issue, tasks.executor, tasks.date, issues.priority, tasks.plan_date, tasks.start_time, tasks.finish_time, tasktypes.pl as tasktype,
+									(CASE	WHEN tasks.issue IS NULL THEN '3'
+											WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
+											WHEN causes.potential = 0 THEN '1'
+											ELSE '2' END) AS naction
+								FROM tasks LEFT JOIN issues ON tasks.issue = issues.id 
+								LEFT JOIN causes ON tasks.cause = causes.id
+								LEFT JOIN tasktypes ON tasks.tasktype = tasktypes.id
+								WHERE tasks.state=0 AND tasks.plan_date != ''
+									AND tasks.plan_date > date('now', '-1 month')");
+		foreach ($a as &$row)						
+			switch($row['naction']) {
+				case 0: $row['action'] = $bezlang['correction']; break;
+				case 1: $row['action'] = $bezlang['corrective_action']; break;
+				case 2: $row['action'] = $bezlang['preventive_action']; break;
+				case 3: $row['action'] = $bezlang['programme']; break;
+			}
+		return $a;
+	}
+	
+	public function cron_get_open_tasks() {
+		global $bezlang;
+		$a = $this->fetch_assoc("SELECT tasks.id, tasks.issue, tasks.executor, tasks.date, issues.priority, tasktypes.pl as tasktype,
+									(CASE	WHEN tasks.issue IS NULL THEN '3'
+											WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
+											WHEN causes.potential = 0 THEN '1'
+											ELSE '2' END) AS naction
+								FROM tasks LEFT JOIN issues ON tasks.issue = issues.id 
+								LEFT JOIN causes ON tasks.cause = causes.id
+								LEFT JOIN tasktypes ON tasks.tasktype = tasktypes.id
+								WHERE tasks.state=0 AND tasks.plan_date = ''");
 		foreach ($a as &$row)						
 			switch($row['naction']) {
 				case 0: $row['action'] = $bezlang['correction']; break;

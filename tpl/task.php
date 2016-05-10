@@ -246,6 +246,12 @@ else
 		: DOKU_URL . 'doku.php?id='.$this->id('show_task', 'tid', $task['id'])) ?>">
 		✉ <?php echo $bezlang['send_mail'] ?>
 	</a>
+	
+		<a class="bds_inline_button"
+				href="?id=<?php echo $this->id('task_report', 'duplicate', $task['id']) ?>">
+				⇲ <?php echo $bezlang['duplicate'] ?>
+			</a>
+	
 </div>
 <?php endif ?>
 

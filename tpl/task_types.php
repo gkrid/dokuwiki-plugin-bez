@@ -35,7 +35,7 @@ Aby usunąć wybrany rekord, nadpisz jego pola pustymi wartościami.
 	<?php endif ?>
 	</td>
 	<td>
-	<a href="<?php echo $template['uri'] ?>?id=<?php echo $this->id('task_types', 'type', $type['id']) ?>">
+	<a href="<?php echo $template['uri'] ?>?id=<?php echo $this->id('tasks', 'tasktype', $type['id']) ?>">
 		<?php echo $type['refs'] ?>
 	</a>
 </td>

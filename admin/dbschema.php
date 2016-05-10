@@ -10,6 +10,8 @@ if(!defined('DOKU_INC')) die();
  
 $errors = array();
 include_once DOKU_PLUGIN."bez/models/connect.php";
+include_once DOKU_PLUGIN."bez/models/tasktypes.php";
+include_once DOKU_PLUGIN."bez/models/tasks.php";
 class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 
 	private $exp = false;
@@ -386,6 +388,56 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 			$db->close();
 	}
 	
+	function check_proza_import() {
+		$fname = DOKU_INC . 'data/proza_imported';
+		return file_exists($fname);
+	}
+	
+	function do_proza_import() {
+			$con = new Connect();
+			//$bez = $con->open();
+			$tasko = new Tasktypes();
+			$to = new Tasks();
+			$proza = new SQLite3(DOKU_INC . 'data/proza.sqlite');
+			
+			//groupy
+			$z_prozy_do_bezu = array();//mapownaie grup
+			$r = $proza->query("SELECT * FROM groups");
+			while ($w = $r->fetchArray(SQLITE3_ASSOC)) {
+				$post = $w;
+				unset($post['id']);
+				$tasko->add($post);
+				$lastid = $tasko->lastid();
+				$z_prozy_do_bezu[$w['id']] = $lastid;
+			}
+			
+			$r = $proza->query("SELECT * FROM events");
+			while ($w = $r->fetchArray(SQLITE3_ASSOC)) {
+				$rec = array(
+					'task' => $w['assumptions'],
+					'state' => $w['state'],
+					'tasktype' => $z_prozy_do_bezu[$w['group_n']],
+					'executor' => $w['coordinator'],
+					'cost' => $w['cost'],
+					'reason' => $w['summary'],
+					'reporter'	=> $w['coordinator'],
+					'date'	=> time(),
+					'all_day_event' => 1,
+					'plan_date' => $w['plan_date']
+					
+				);
+				if ($w['finish_date'] != '')
+					$rec['close_date'] = strtotime($w['finish_date']);
+					
+				$to->errinsert($rec, 'tasks');
+			}
+			
+			$proza->close();
+			//$bez->close();
+			$fname = DOKU_INC . 'data/proza_imported';
+			fopen($fname, "w");
+	}
+	
 	private $actions = array(
 				
 				array('1. Słownik kategorii przyczyn', 'check_rootcause', 'do_rootcause'),
@@ -397,7 +449,9 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 				array('7. Dodanie planowanej daty do zadań w BEZie', 'check_add_plan_date_to_tasks', 'do_add_plan_date_to_tasks'),
 				array('8. Dodanie typu dla zadań niezależnych w BEZie', 'check_add_type_to_tasks', 'do_add_type_to_tasks'),
 				array('9. Zmiana kolumny issue w zadaniach na NULL.',
-				'check_task_issue_null', 'do_task_issue_null')
+				'check_task_issue_null', 'do_task_issue_null'),
+				array('10. Zaimportuj zadania z PROZY.',
+				'check_proza_import', 'do_proza_import')
 				);
 	/**
 	 * handle user request
