@@ -1,15 +1,5 @@
 <div class="bez_filter_form">
 <form action="<?php echo $template['uri'] ?>?id=<?php echo $this->id('tasks') ?>" method="POST">
-<label><?php echo $bezlang['issue'] ?>:
-	<select name="issue">
-		<option <?php if ($value['issue'] == '-all') echo 'selected' ?>
-			value="-all">--- <?php echo $bezlang['all'] ?> ---</option>
-	<?php foreach ($template['issues'] as $issue_id): ?>
-		<option <?php if ($value['issue'] == $issue_id) echo 'selected' ?>
-			value="<?php echo $issue_id ?>">#<?php echo $issue_id ?></option>
-	<?php endforeach ?>
-	</select>
-</label>
 
 <label><?php echo $bezlang['class'] ?>:
 	<select name="action">

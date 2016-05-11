@@ -80,9 +80,8 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 
 		if ($helper->user_editor()) {
 			$data['bez:issue_report'] = array('id' => 'bez:issue_report', 'type' => 'f', 'level' => 2, 'title' => $this->getLang('bds_issue_report'));
-			$data['bez:task_report'] = array('id' => 'bez:task_report', 'type' => 'f', 'level' => 2, 'title' => $this->getLang('bds_task_report'));
-
 		}
+
 		$data['bez:issues'] = array('id' => 'bez:issues', 'type' => 'd', 'level' => 2, 'title' => $this->getLang('bds_issues'));
 
 		$task_pages = array('issue_tasks', 'task_form', 'issue_task');
@@ -157,6 +156,12 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 			}
 
 		}
+		
+		
+		if ($helper->user_editor()) {
+			$data['bez:task_report'] = array('id' => 'bez:task_report', 'type' => 'f', 'level' => 2, 'title' => $this->getLang('bds_task_report'));
+		}
+		
 		$data['bez:tasks'] = array('id' => 'bez:tasks', 'type' => 'd', 'level' => 2, 'title' => $this->getLang('bez_tasks'));
 		
 		if ($this->value['bez'] == 'tasks' || $this->value['bez'] == 'show_task'
@@ -173,7 +178,7 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 				$year = date('Y');
 			
 			//plan i realizacja
-			$plan_id = "bez:tasks:taskstate:0$tasktype:year:$year";
+			$plan_id = "bez:tasks:taskstate:0$tasktype";
 			$data[$plan_id] = array('id' => $plan_id, 'type' => 'd', 'level' => 3, 'title' => $this->getLang('task_opened'));
 
 			if (isset($this->value['tid'])) {

@@ -681,8 +681,8 @@ class Tasks extends Event {
 								cal_days_in_month(CAL_GREGORIAN, $month, $year),$year));
 								
 				if ($date_field == 'tasks.plan_date') {
-					$where[] = "($date_field BETWEEN '$start_date' AND '$finish_date'
-								OR tasks.plan_date == '')";
+					$where[] = "(($date_field BETWEEN '$start_date' AND '$finish_date')
+								OR tasks.plan_date = '' OR tasks.plan_date ISNULL)";
 				} else {
 					$where[] = "$date_field >= ".mktime(0,0,0,$month,1,$year);
 					$where[] = "$date_field <= ".mktime(0,0,0,$month,cal_days_in_month(CAL_GREGORIAN, $month, $year),$year);
@@ -692,8 +692,8 @@ class Tasks extends Event {
 				$start_date = date('Y-m-d', mktime(0,0,0,1,1,$year));
 				$finish_date = date('Y-m-d', mktime(0,0,0,12,31,$year));
 				if ($date_field == 'tasks.plan_date') {
-					$where[] = "($date_field BETWEEN '$start_date' AND '$finish_date'
-								OR tasks.plan_date == '')";
+					$where[] = "(($date_field BETWEEN '$start_date' AND '$finish_date')
+								OR tasks.plan_date = '' OR tasks.plan_date ISNULL)";
 				} else {
 					$where[] = "$date_field >= ".mktime(0,0,0,1,1,$year);
 					$where[] = "$date_field < ".mktime(0,0,0,1,1,$year+1);

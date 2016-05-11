@@ -4,7 +4,7 @@ $lang['bez_short'] = 'BEZ';
 $lang['bds_timeline'] = 'Historia';
 $lang['bds_issues'] = 'Problemy';
 $lang['bds_issue_report'] = 'Zgłoś problem';
-$lang['bds_task_report'] = 'Dodaj program';
+$lang['bds_task_report'] = 'Dodaj zadanie';
 $lang['report'] = 'Raport';
 $lang['report_open'] = 'Raport otwartych';
 $lang['bez_tasks'] = 'Zadania';
@@ -154,7 +154,7 @@ $lang['issue_closed_com'] = 'Problem został zamknięty %d, dalsze zmiany nie s�
 $lang['reopen_issue'] = 'Zmień status problemu';
 $lang['add'] = 'Dodaj';
 
-$lang['class'] = 'Typ działania';
+$lang['class'] = 'Typ zadania';
 
 $lang['open'] = 'Otwarte';
 $lang['closed'] = 'Zamknięte';
@@ -364,7 +364,7 @@ $lang['correction_nav'] = 'Korekcje';
 $lang['reaction'] = 'Reakcja';
 
 $lang['closed_tasks'] = 'Zadania zamknięte';
-$lang['root_causes'] = 'Karegorie przyczyn';
+$lang['root_causes'] = 'Typy przyczyn';
 
 $lang['version'] = 'wersja';
 
@@ -398,14 +398,14 @@ $lang['vald_valid_finish_hour_required'] = 'Podaj prawidłową godzinę zakoń
 
 $lang['download_in_icalendar'] = 'iCalendar';
 
-$lang['task_types'] = 'Typy zadań';
-$lang['task_type'] = 'Typ zadania';
+$lang['task_types'] = 'Programy';
+$lang['task_type'] = 'Program';
 
-$lang['programme'] = 'Program';
+$lang['programme'] = 'Programowe';
 
 $lang['tasks_no_type'] = '--- nieprzypisane ---';
 
-$lang ['plan'] = 'Plan';
+$lang ['plan'] = 'Data wykonania';
 
 $lang ['task_plan'] = "Zaplanuj";
 $lang ['task_realization'] = "Wykonanie";
