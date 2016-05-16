@@ -176,79 +176,39 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 				$year = $this->value['year'];
 			else
 				$year = date('Y');
-			
-			//plan i realizacja
-			$plan_id = "bez:tasks:taskstate:0$tasktype";
-			$data[$plan_id] = array('id' => $plan_id, 'type' => 'd', 'level' => 3, 'title' => $this->getLang('task_opened'));
+
 
 			if (isset($this->value['tid'])) {
 				$tasko = new Tasks();
 				$this->value['tasktype']  = $tasko->get_type($this->value['tid']);
-				$tasko = new Tasks();
-				$this->value['taskstate'] = $tasko->get_state($this->value['tid']);
 			}
 			
-			if (isset($this->value['taskstate'])) {
-				if ($this->value['taskstate'] == '0') {
-					$data[$plan_id]['open'] = true;
-				} elseif ($this->value['taskstate'] == '1') {
-					$realization_id = "bez:tasks:taskstate:1:year:$year";
-					$data[$realization_id] = array('id' => $realization_id, 'type' => 'd', 'level' => 3, 'title' => $this->getLang('task_done'), 'open' => true);
-				} elseif ($this->value['taskstate'] == '2') {
-					$realization_id = "bez:tasks:taskstate:1:year:$year";
-					$data[$realization_id] = array('id' => $realization_id, 'type' => 'd', 'level' => 3, 'title' => $this->getLang('task_done'), 'open' => false);
-					$rejected_id = "bez:tasks:taskstate:2:year:$year";
-					$data[$rejected_id] = array('id' => $rejected_id, 'type' => 'd', 'level' => 3, 'title' => $this->getLang('task_rejected'), 'open' => true);
-				}
-					
+
+			$tasktypeso = new Tasktypes();
+			$tasktypes = $tasktypeso->get();
+			$page_id = "bez:tasks:tasktype:-none:year:$year";
+			if (isset($this->value['tid']) && $this->value['tasktype'] == '') {
+				$data[$page_id] = array('id' => $page_id, 'type' => 'd', 'level' => 3, 'title' => $this->getLang('tasks_no_type'), 'open' => true);
+				
+				//$page_id = 'bez:show_task:tid:'.$this->value['tid'];
+				$page_id = $_GET['id'];
+				$data[$page_id.':perspective:task'] = array('id' => $page_id, 'type' => 'f', 'level' => 4, 'title' => '#z'.$this->value['tid']);
+
 			} else {
-				$realization_id = "bez:tasks:taskstate:1:year:$year";
-				$data[$realization_id] = array('id' => $realization_id, 'type' => 'd', 'level' => 3, 'title' => $this->getLang('task_done'), 'open' => false);
-				$rejected_id = "bez:tasks:taskstate:2:year:$year";
-				$data[$rejected_id] = array('id' => $rejected_id, 'type' => 'd', 'level' => 3, 'title' => $this->getLang('task_rejected'), 'open' => false);
+				$data[$page_id] = array('id' => $page_id, 'type' => 'f', 'level' => 3, 'title' => $this->getLang('tasks_no_type'));
 			}
-
 			
-
-			if (isset($this->value['taskstate'])) {
-				$taskstate = ':taskstate:'.$this->value['taskstate'];
-				$tasktypeso = new Tasktypes();
-				$tasktypes = $tasktypeso->get();
-				$page_id = "bez:tasks$taskstate:tasktype:-none:year:$year";
-				if (isset($this->value['tid']) && $this->value['tasktype'] == '') {
-					$data[$page_id] = array('id' => $page_id, 'type' => 'd', 'level' => 4, 'title' => $this->getLang('tasks_no_type'), 'open' => true);
-					
+			
+			foreach ($tasktypes as $id => $tasktype) {
+				$page_id = "bez:tasks:tasktype:$id:year:$year";
+				if (isset($this->value['tid']) && $this->value['tasktype'] == $id) {
+					$data[$page_id] = array('id' => $page_id, 'type' => 'd', 'level' => 3, 'title' => $tasktype, 'open' => true);
 					//$page_id = 'bez:show_task:tid:'.$this->value['tid'];
 					$page_id = $_GET['id'];
-					$data[$page_id.':perspective:task'] = array('id' => $page_id, 'type' => 'f', 'level' => 5, 'title' => '#z'.$this->value['tid']);
-
-				} else {
-					$data[$page_id] = array('id' => $page_id, 'type' => 'f', 'level' => 4, 'title' => $this->getLang('tasks_no_type'));
-				}
-				
-				
-				foreach ($tasktypes as $id => $tasktype) {
-					$page_id = "bez:tasks$taskstate:tasktype:$id:year:$year";
-					if (isset($this->value['tid']) && $this->value['tasktype'] == $id) {
-						$data[$page_id] = array('id' => $page_id, 'type' => 'd', 'level' => 4, 'title' => $tasktype, 'open' => true);
-						//$page_id = 'bez:show_task:tid:'.$this->value['tid'];
-						$page_id = $_GET['id'];
-						$data[$page_id.':perspective:task'] = array('id' => $page_id, 'type' => 'f', 'level' => 5, 'title' => '#z'.$this->value['tid']);
-					} else
-						$data[$page_id] = array('id' => $page_id, 'type' => 'f', 'level' => 4, 'title' => $tasktype);
-				}
-				
-				if ($this->value['taskstate'] == '0') {
-					$realization_id = "bez:tasks:taskstate:1:year:$year";
-					$data[$realization_id] = array('id' => $realization_id, 'type' => 'd', 'level' => 3, 'title' => $this->getLang('task_done'), 'open' => false);
-					$rejected_id = "bez:tasks:taskstate:2:year:$year";
-					$data[$rejected_id] = array('id' => $rejected_id, 'type' => 'd', 'level' => 3, 'title' => $this->getLang('task_rejected'), 'open' => false);
-				} else if ($this->value['taskstate'] == '1') {
-					$rejected_id = "bez:tasks:taskstate:2:year:$year";
-					$data[$rejected_id] = array('id' => $rejected_id, 'type' => 'd', 'level' => 3, 'title' => $this->getLang('task_rejected'), 'open' => false);
-				}
+					$data[$page_id.':perspective:task'] = array('id' => $page_id, 'type' => 'f', 'level' => 4, 'title' => '#z'.$this->value['tid']);
+				} else
+					$data[$page_id] = array('id' => $page_id, 'type' => 'f', 'level' => 3, 'title' => $tasktype);
 			}
-			
 		}
 
 		$isso = new Issues();

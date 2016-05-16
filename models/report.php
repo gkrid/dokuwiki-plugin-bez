@@ -95,18 +95,24 @@ class Report extends Connect {
 												GROUP BY type
 												ORDER BY issues.type");
 		
-		$iss_open = array();
-		foreach ($issues_open as $issue) { 
-			$iss_open[$issue['type']] = $issue;
+		$iss_close = array();
+		foreach ($issues as $issue) { 
+			$iss_close[$issue['type']] = $issue;
 		}
 		
-		foreach ($issues as &$issue) { 
-			$issue['number_of_open'] = $iss_open[$issue['type']]['number_of_open'];
-			$issue['cost_of_open'] = $iss_open[$issue['type']]['cost_of_open'];
-			$issue['average'] = $this->helper->days((int)$issue['average']);
+		foreach ($issues_open as &$issue) { 
+			if (isset($iss_close[$issue['type']])) {
+				$issue['number_of_close'] = $iss_close[$issue['type']]['number_of_close'];
+				$issue['cost_of_close'] = $iss_close[$issue['type']]['cost_of_close'];
+				$issue['average'] = $this->helper->days((int)$iss_close[$issue['type']]['average']);
+			} else {
+				$issue['number_of_close'] = 0;
+				$issue['cost_of_close'] = 0;
+				$issue['average'] = '---';
+			}
 		}
 		
-		$report['issues'] = $isso->join_all($issues);
+		$report['issues'] = $isso->join_all($issues_open);
 								
 		$a = $this->fetch_assoc("SELECT AVG(issues.last_mod-issues.date) AS average
 								FROM issues 
@@ -116,44 +122,53 @@ class Report extends Connect {
 		/*Tasks*/
 		
 		$where = $this->where($tasks_date, $filters);
+		
 		$tasko = new Tasks();
 		$tasks_open = $this->fetch_assoc("SELECT 
-							(CASE	WHEN tasks.cause IS NULL OR tasks.cause = '' THEN 0
+							(CASE	WHEN tasks.issue IS NULL THEN '3'
+									WHEN tasks.cause IS NULL OR tasks.cause = '' THEN 0
 									WHEN causes.potential = 0 THEN 1
 									ELSE 2 END) AS naction,
 									COUNT(*) AS number_of_open, SUM(cost) AS cost_of_open
-										FROM tasks JOIN issues ON tasks.issue = issues.id
+										FROM tasks LEFT JOIN issues ON tasks.issue = issues.id
 										LEFT JOIN causes ON tasks.cause = causes.id
 										WHERE 1 == 1 $where
 										GROUP BY naction
 										ORDER BY naction");
 										
 		$tasks = $this->fetch_assoc("SELECT 
-							(CASE	WHEN tasks.cause IS NULL OR tasks.cause = '' THEN 0
+							(CASE	WHEN tasks.issue IS NULL THEN '3'
+									WHEN tasks.cause IS NULL OR tasks.cause = '' THEN 0
 									WHEN causes.potential = 0 THEN 1
 									ELSE 2 END) AS naction,
 									COUNT(*) AS number_of_close, SUM(cost) AS cost_of_close,
 									AVG(tasks.close_date - tasks.date) AS average
-										FROM tasks JOIN issues ON tasks.issue = issues.id
+										FROM tasks LEFT JOIN issues ON tasks.issue = issues.id
 										LEFT JOIN causes ON tasks.cause = causes.id
 										WHERE tasks.state = 1 $where
 										GROUP BY naction
 										ORDER BY naction");
-										
-		$tsk_open = array();
-		foreach ($tasks_open as $task) { 
-			$tsk_open[$task['naction']] = $task;
+									
+		$tsk_closed = array();
+		foreach ($tasks as $task) { 
+			$tsk_closed[$task['naction']] = $task;
 		}
-					
+						
 		
-		foreach ($tasks as &$task) {
-			$task['number_of_open'] = $tsk_open[$task['naction']]['number_of_open'];
-			$task['cost_of_open'] = $tsk_open[$task['naction']]['cost_of_open'];
-			$task['average'] = $this->helper->days((int)$task['average']);
+		foreach ($tasks_open as &$task) {
+			if (isset($tsk_closed[$task['naction']])) {
+				$task['number_of_close'] = $tsk_closed[$task['naction']]['number_of_close'];
+				$task['cost_of_close'] = $tsk_closed[$task['naction']]['cost_of_close'];
+				$task['average'] = $this->helper->days((int)$tsk_closed[$task['naction']]['average']);
+			} else {
+				$task['number_of_close'] = 0;
+				$task['cost_of_close'] = 0;
+				$task['average'] = '---';
+			}
 		}
 
-		$report['tasks'] = $tasko->join_all($tasks);
-		
+		$report['tasks'] = $tasko->join_all($tasks_open);
+
 		$a = $this->fetch_assoc("SELECT AVG(tasks.close_date - tasks.date) AS average
 								FROM tasks JOIN issues ON tasks.issue = issues.id
 								WHERE tasks.state = 1 $where");

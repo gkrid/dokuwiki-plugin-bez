@@ -1,5 +1,5 @@
 <?php
-$lang['bez'] = 'Baza Elimnacji Zagrożeń';
+$lang['bez'] = 'Baza Eliminacji Zagrożeń';
 $lang['bez_short'] = 'BEZ';
 $lang['bds_timeline'] = 'Historia';
 $lang['bds_issues'] = 'Problemy';
@@ -405,7 +405,7 @@ $lang['programme'] = 'Programowe';
 
 $lang['tasks_no_type'] = '--- nieprzypisane ---';
 
-$lang ['plan'] = 'Data wykonania';
+$lang ['plan'] = 'Plan';
 
 $lang ['task_plan'] = "Zaplanuj";
 $lang ['task_realization'] = "Wykonanie";
@@ -415,7 +415,7 @@ $lang ['task_plan_nav'] = "Plan";
 $lang ['month'] = "Miesiąc";
 
 $lang ['report_date'] = "Planowana data wykonania";
-$lang ['close_date'] = "Data wykonania";
+$lang ['close_date'] = "Data zamknięcia";
 $lang ['reject_date'] = "Data odrzucenia";
 
 $lang['jan'] = 'styczeń';
@@ -431,7 +431,7 @@ $lang['oct'] = 'październik';
 $lang['nov'] = 'listopad';
 $lang['dec'] = 'grudzień';
 
-$lang['hours_no'] = 'Ilość godzin';
+$lang['hours_no'] = 'Godziny';
 
 $lang['show_desc'] = 'Pokaż opisy';
 $lang['show_desc_and_eval'] = 'Pokaż opisy i oceny';

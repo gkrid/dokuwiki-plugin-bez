@@ -69,15 +69,12 @@
 
 <div class="time_filter">
 	<label>
-		<strong>
-			<?php if ($nparams['taskstate'] == '2'): ?>
-				<?php echo $bezlang['reject_date'] ?>:
-			<?php elseif ($template['view'] == 'realization'): ?>
-				<?php echo $bezlang['close_date'] ?>:
-			<?php else: ?>
-				<?php echo $bezlang['report_date'] ?>:
-			<?php endif ?>
-		</strong>
+		<select name="date_type">
+			<option <?php if ($value['date_type'] == 'plan') echo 'selected' ?>
+				value="plan"><?php echo $bezlang['plan_date'] ?></option>
+			<option <?php if ($value['date_type'] == 'closed') echo 'selected' ?>
+				value="closed"><?php echo $bezlang['close_date'] ?></option>
+		</select>:
 	</label>
 	<label><?php echo $bezlang['month'] ?>:
 		<select name="month">
@@ -120,34 +117,26 @@
 <table class="bez bez_sumarise">
 <tr>
 	<th><?php echo $bezlang['id'] ?></th>
-	<th><?php echo $bezlang['class'] ?></th>
 	<th><?php echo $bezlang['state'] ?></th>
+	<th><?php echo $bezlang['class'] ?></th>
 	<th><?php echo $bezlang['task_type'] ?></th>
-	
 	<th><?php echo $bezlang['executor'] ?></th>
+	<th><?php echo $bezlang['plan'] ?></th>
+	<th><?php echo $bezlang['cost'] ?></th>
 	
-	<?php if ($template['view'] == 'realization'): ?>
-		<th><?php echo $bezlang['cost'] ?></th>
-	<?php endif ?>
-	
-	<?php if ($template['view'] == 'plan'): ?>
-		<th><?php echo $bezlang['date'] ?></th>
-		<th><?php echo $bezlang['plan'] ?></th>
-	<?php endif ?>
-	
-	<?php if ($template['view'] == 'realization'): ?>
-		<th><?php echo $bezlang['closed'] ?></th>
-		<th><?php echo $bezlang['hours_no'] ?></th>
-	<?php endif ?>
+	<th><?php echo $bezlang['closed'] ?></th>
+	<th><?php echo $bezlang['hours_no'] ?></th>
 	
 </tr>
 <?php foreach ($template['tasks'] as $task): ?>
 	<tr class="pr<?php echo $task['priority'] ?>">
 		<td><?php echo $this->html_task_link($task['issue'], $task['id']) ?>
 		</td>
-		<td><?php echo lcfirst($task['action']) ?></td>
 		<td>
 			<?php echo lcfirst($task['state']) ?>
+		</td>
+		<td>
+			<?php echo lcfirst($task['action']) ?>
 		</td>
 		<td>
 			<?php if ($task['tasktype'] == ''): ?>
@@ -158,19 +147,6 @@
 		</td>
 		<td><?php echo $task['executor'] ?></td>
 		
-		<?php if ($template['view'] == 'realization'): ?>
-		<td>
-			<?php if ($task['cost'] == ''): ?>
-				<em>---</em>
-			<?php else: ?>
-				<?php echo $task['cost'] ?>
-			<?php endif ?>
-		</td>
-		<?php endif ?>
-		<?php if ($template['view'] == 'plan'): ?>
-		<td>
-			<?php echo $helper->time2date($task['date']) ?> (<?php echo $helper->string_time_to_now($task['date']) ?>)
-		</td>
 		<td>
 		<?php if ($task['plan_date'] != ''): ?>
 			<?php echo $task['plan_date'] ?>
@@ -181,38 +157,38 @@
 			<em>---</em>
 		<?php endif ?>
 		</td>
-		<?php endif ?>
-		<?php if ($template['view'] == 'realization'): ?>
-			<td>
-				<?php if ($task['state'] == $bezlang['task_opened']): ?>
-					<em>---</em>
-				<?php else: ?>
-					<?php echo $helper->time2date($task['close_date']) ?>
-				<?php endif ?>
-			</td>
-			<td>
-				<?php if ($task['start_time'] == ''): ?>
-					<em>---</em>
-				<?php else: ?>
-					<?php echo $task['hours'] ?>
-				<?php endif ?>
-			</td>
-		<?php endif ?>
+
+		<td>
+			<?php if ($task['cost'] == ''): ?>
+				<em>---</em>
+			<?php else: ?>
+				<?php echo $task['cost'] ?>
+			<?php endif ?>
+		</td>
+
+		<td>
+			<?php if ($task['state'] == $bezlang['task_opened']): ?>
+				<em>---</em>
+			<?php else: ?>
+				<?php echo $helper->time2date($task['close_date']) ?>
+			<?php endif ?>
+		</td>
+		<td>
+			<?php if ($task['start_time'] == ''): ?>
+				<em>---</em>
+			<?php else: ?>
+				<?php echo $task['hours'] ?>
+			<?php endif ?>
+		</td>
 		</tr>
-		<?php
-			if ($template['view'] == 'realization')
-				$colspan = 8;
-			else
-				$colspan = 7;
-			?>
 		<tr class="bez_desc_row">
-			<td colspan="<?php echo $colspan ?>">
+			<td colspan="9">
 				<?php echo $task['task'] ?>
 			</td>
 		</tr>
 		<?php if ($template['view'] == 'realization'): ?>
 		<tr class="bez_desc_row">
-			<td colspan="<?php echo $colspan ?>">
+			<td colspan="9">
 				<?php if ($task['reason'] == ''): ?>
 					<em>---</em>
 				<?php else: ?>
@@ -224,13 +200,9 @@
 	<?php endforeach ?>
 	<tr>
 		<th><?php echo $bezlang['report_total'] ?></th>
-		<?php if ($template['view'] == 'realization'): ?>
-			<td colspan="4"><?php echo $template['tasks_stats']['total'] ?></td>
-			<td colspan="2"><?php echo $template['tasks_stats']['totalcost'] ?></td>
-			<td colspan="2"><?php echo $template['tasks_stats']['totalhours'] ?></td>
-		<?php else: ?>
-			<td colspan="6"><?php echo $template['tasks_stats']['total'] ?></td>
-		<?php endif ?>
+		<td colspan="5"><?php echo $template['tasks_stats']['total'] ?></td>
+		<td colspan="2"><?php echo $template['tasks_stats']['totalcost'] ?></td>
+		<td colspan="2"><?php echo $template['tasks_stats']['totalhours'] ?></td>
 	</tr>
 </table>
 

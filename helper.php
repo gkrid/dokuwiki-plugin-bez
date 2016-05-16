@@ -199,7 +199,7 @@ class helper_plugin_bez extends dokuwiki_plugin
 
 		return $array;
 	}
-	public function mail($to, $subject, $body, $URI='', $contentType = "text/plain", $debug = true) {
+	public function mail($to, $subject, $body, $URI='', $contentType = "text/plain", $debug = false) {
 		if ($debug) {
 			echo $to."\n";
 			echo $subject."\n";

@@ -40,7 +40,7 @@ if (isset($raw_filters)) {
 /*np. status:1:type:2:podmiot:PCA*/
 $value = array('issue' => '-all', 'action' => '-all', 'taskstate' => '-all',
 				'executor' => '-all', 'year' => '-all', 'tasktype' => '-all',
-				'month' => '-all', 'task' => '', 'reason' => '');
+				'month' => '-all', 'task' => '', 'reason' => '', 'date_type' => 'plan');
 for ($i = 0; $i < count($params); $i += 2)
 	$value[urldecode($params[$i])] = urldecode($params[$i+1]);
 	

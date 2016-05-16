@@ -605,6 +605,12 @@ class Tasks extends Event {
 			$data['month'] = '-all';
 		}
 
+
+		if (isset($filters['date_type'])) {
+			if ($filters['date_type'] == 'plan' || $filters['date_type'] == 'closed')
+				$data['date_type'] = $filters['date_type'];
+		}
+
 		return $data;
 	}
 
@@ -651,11 +657,13 @@ class Tasks extends Event {
 			$where[] = "(".implode(" OR ", $usr_where).")";
 		}
 		
-
+		$date_type = $vfilters['date_type'];
+		unset($vfilters['date_type']);
+		
 		foreach ($vfilters as $name => $value) {
 			if ($name == 'tasktype' && $value == '-none')
-				$value = '';
-			if ($value != '-all') {
+				$where[] = "(tasks.tasktype = '' OR tasks.tasktype ISNULL)";
+			else if ($value != '-all') {
 				if ($name == 'naction')
 					$where[] = "$name = '".$this->escape($value)."'";
 				elseif ($name == 'taskstate')
@@ -666,8 +674,7 @@ class Tasks extends Event {
 		}
 
 		if ($year != '-all') {
-			$state = $vfilters['taskstate'];
-			if ($state == '-all' || $state == '0')
+			if ($date_type == 'plan')
 				$date_field = 'tasks.plan_date';
 			else
 				$date_field = 'tasks.close_date';
@@ -682,7 +689,7 @@ class Tasks extends Event {
 								
 				if ($date_field == 'tasks.plan_date') {
 					$where[] = "(($date_field BETWEEN '$start_date' AND '$finish_date')
-								OR tasks.plan_date = '' OR tasks.plan_date ISNULL)";
+								OR (tasks.state = 0 AND (tasks.plan_date = '' OR tasks.plan_date ISNULL)))";
 				} else {
 					$where[] = "$date_field >= ".mktime(0,0,0,$month,1,$year);
 					$where[] = "$date_field <= ".mktime(0,0,0,$month,cal_days_in_month(CAL_GREGORIAN, $month, $year),$year);
@@ -693,7 +700,7 @@ class Tasks extends Event {
 				$finish_date = date('Y-m-d', mktime(0,0,0,12,31,$year));
 				if ($date_field == 'tasks.plan_date') {
 					$where[] = "(($date_field BETWEEN '$start_date' AND '$finish_date')
-								OR tasks.plan_date = '' OR tasks.plan_date ISNULL)";
+								OR (tasks.state = 0 AND (tasks.plan_date = '' OR tasks.plan_date ISNULL)))";
 				} else {
 					$where[] = "$date_field >= ".mktime(0,0,0,1,1,$year);
 					$where[] = "$date_field < ".mktime(0,0,0,1,1,$year+1);
