@@ -78,9 +78,6 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 			'bez:start' => array('id' => 'bez:start', 'type' => 'd', 'level' => 1, 'title' => $this->getLang('bez')),
 		);
 
-		if ($helper->user_editor()) {
-			$data['bez:issue_report'] = array('id' => 'bez:issue_report', 'type' => 'f', 'level' => 2, 'title' => $this->getLang('bds_issue_report'));
-		}
 
 		$data['bez:issues'] = array('id' => 'bez:issues', 'type' => 'd', 'level' => 2, 'title' => $this->getLang('bds_issues'));
 
@@ -88,7 +85,16 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 		$cause_pages = array('issue_causes', 'issue_cause', 'cause_form', 'issue_cause_task');
 		$issue_pages = array_merge(array('issue', 'rr', '8d'), $task_pages, $cause_pages);
 
+		if ($this->value['bez'] == 'issues' || $this->value['bez'] == 'issue_report') {
+			if ($helper->user_editor()) {
+				$data['bez:issue_report'] = array('id' => 'bez:issue_report', 'type' => 'f', 'level' => 3, 'title' => $this->getLang('bds_issue_report'));
+			}
+			$data['bez:issues']['open'] = true;
+		}
 		if (in_array($this->value['bez'], $issue_pages) || ($this->value['bez'] == 'issue_report' && isset($this->value['id']))) {
+			if ($helper->user_editor()) {
+				$data['bez:issue_report'] = array('id' => 'bez:issue_report', 'type' => 'f', 'level' => 3, 'title' => $this->getLang('bds_issue_report'));
+			}
 			$data['bez:issues']['open'] = true;
 			$id = (int)$this->value[id];
 
@@ -158,18 +164,19 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 		}
 		
 		
-		if ($helper->user_editor()) {
-			$data['bez:task_report'] = array('id' => 'bez:task_report', 'type' => 'f', 'level' => 2, 'title' => $this->getLang('bds_task_report'));
-		}
-		
 		$data['bez:tasks'] = array('id' => 'bez:tasks', 'type' => 'd', 'level' => 2, 'title' => $this->getLang('bez_tasks'));
 		
 		if ($this->value['bez'] == 'tasks' || $this->value['bez'] == 'show_task'
 			|| $this->value['bez'] == 'task_form_plan'
 			|| $this->value['bez'] == 'issue_task'
 			|| $this->value['bez'] == 'task_form'
+			|| $this->value['bez'] == 'task_report'
 			|| $this->value['bez'] == 'issue_cause_task') {
 			$data['bez:tasks']['open'] = true;
+			
+			if ($helper->user_editor()) {
+				$data['bez:task_report'] = array('id' => 'bez:task_report', 'type' => 'f', 'level' => 3, 'title' => $this->getLang('bds_task_report'));
+			}
 			
 
 			if (isset($this->value['year']))
