@@ -25,7 +25,7 @@ class Tasks extends Event {
 				date INTEGER NOT NULL,
 				close_date INTEGER NULL,
 				cause INTEGER NULL,
-				plan_date TEXT NULL,
+				plan_date TEXT NOT NULL,
 				all_day_event INTEGET DEFAULT 0,
 				start_time TEXT NULL,
 				finish_time TEXT NULL,
@@ -139,13 +139,11 @@ class Tasks extends Event {
 	public function validate_plan($post) {
 		global $errors, $bezlang;
 		$data = array();
-		if ($post['plan_date'] == '')
-			$data['plan_date'] = '';
-		else if ($post['plan_date'] != '' && strtotime($post['plan_date']) === false) {
+		if (strtotime($post['plan_date']) === false) {
 			$errors['plan_date'] = $bezlang['vald_valid_date_required'];
 		} else
 			$data['plan_date'] = date('Y-m-d', strtotime($post['plan_date']));
-			
+		
 		if (!isset($post['all_day_event']) && $data['plan_date'] != '') {
 			$data['all_day_event'] = '0';
 			if (!preg_match('/^[0-9]{1,2}:[0-9][0-9]$/', $post['start_time']) ||
@@ -181,7 +179,7 @@ class Tasks extends Event {
 			$this->issue->opened($data['issue']) &&
 			!$this->issue->is_proposal($data['issue']))
 			) {
-				
+			
 			$from_user = $this->validate($post);
 			$plan = $this->validate_plan($post);
 			$data = array_merge($data, $from_user, $plan);
@@ -520,12 +518,24 @@ class Tasks extends Event {
 	}
 
 	public function get_years() {
-		$all = $this->fetch_assoc("SELECT MIN(close_date) AS min, MAX(close_date) AS max FROM tasks");
-		if ($all['min'] == NULL)
-			return array(date('Y'));
+		$close = $this->fetch_assoc("SELECT MIN(close_date) AS min, MAX(close_date) AS max FROM tasks");
+		$plan = $this->fetch_assoc("SELECT MIN(plan_date) AS min, MAX(plan_date) AS max FROM tasks");
+		
+		if (count($close) == 0 && count($plan) == 0)
+			return array(date('Y'), 1);
+		if (count($close) == 0) {
+			$oldest = (int)date('Y', strtotime($plan[0]['min']));
+			$newest = (int)date('Y', strtotime($plan[0]['max']));
+		} else {
+			$plan_oldest = (int)date('Y', strtotime($plan[0]['min']));
+			$plan_newest = (int)date('Y', strtotime($plan[0]['max']));
 			
-		$oldest = (int)date('Y', $all[0]['min']);
-		$newest = (int)date('Y', $all[0]['max']);
+			$close_oldest = (int)date('Y', $close[0]['min']);
+			$close_newest = (int)date('Y', $close[0]['max']);
+			
+			$oldest = min($plan_oldest, $close_oldest);
+			$newest = max($plan_newest, $close_newest, (int)date('Y'));
+		}
 		
 		$years = array();
 		for ($year = $oldest; $year <= $newest; $year++)

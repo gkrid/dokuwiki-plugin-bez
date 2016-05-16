@@ -91,7 +91,9 @@ class Report extends Connect {
 												AVG(issues.last_mod-issues.date) AS average
 												FROM issues JOIN issuetypes ON type = issuetypes.id
 												LEFT JOIN tasks ON issues.id = tasks.issue
-												WHERE issues.state = 1 $where
+												WHERE issues.state = 1 $where AND
+												issues.coordinator != '-proposal' AND
+												issues.coordinator != '-rejected'
 												GROUP BY type
 												ORDER BY issues.type");
 		

@@ -87,14 +87,6 @@
 					<span><textarea name="task" id="task" <?php echo $disabled ?>><?php echo $value['task'] ?></textarea></span>
 				</div>
 				
-				<div class="row">
-					<label for="task_plan"><?php echo $bezlang['task_plan'] ?>:</label>
-					<span><input name="task_plan" id="task_plan" type="checkbox"
-					<?php if ($value['plan_date'] != ''): ?>
-						checked
-					<?php endif ?>
-					<?php echo $disabled ?>></span>
-				</div>
 				
 				<div class="row task_plan_field">
 					<label for="plan_date"><?php echo $bezlang['plan_date'] ?>:</label>

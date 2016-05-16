@@ -43,9 +43,6 @@ if (isset($nparams['tid'])) {
 		if ($cause_id != '')
 			$cause_id = (int)$cause_id;
 			
-		if (!isset($_POST['task_plan']))
-			unset($_POST['plan_date']);
-			
 		$data = $tasko->update($_POST, array('cause' => $cause_id), $tid);
 		if (count($errors) == 0) {
 
@@ -78,10 +75,7 @@ if (isset($nparams['tid'])) {
 		
 /*dodawania*/
 } else {
-	if (count($_POST) > 0) {
-		if (!isset($_POST['task_plan']))
-			unset($_POST['plan_date']);
-			
+	if (count($_POST) > 0) {			
 		$data = array('reporter' => $INFO['client'], 'date' => time(), 'issue' => $issue_id, 'cause' => $cause_id);
 		$data = $tasko->add($_POST, $data);
 		if (count($errors) == 0) {
@@ -99,7 +93,9 @@ if (isset($nparams['tid'])) {
 				header("Location: ?id=bez:issue_cause_task:id:$issue_id:cid:$cause_id:tid:$tid");
 		} 
 		$value = $_POST;
-	} 
+	} else {
+		$value['all_day_event'] = '1';
+	}
 	$template['task_button'] = $bezlang['add'];
 	$template['task_action'] = $this->id('task_form', 'id', $issue_id, 'cid', $cause_id, 'action', 'add');
 }

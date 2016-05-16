@@ -68,6 +68,8 @@ if (isset($nparams['tid'])) {
 			header("Location: ?id=bez:show_task:tid:$tid");
 		} 
 		$value = $_POST;
+	} else {
+		$value['all_day_event'] = '1';
 	}
 	if (isset($nparams['duplicate'])) {
 		$tid = (int)$nparams['duplicate'];

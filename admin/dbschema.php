@@ -495,6 +495,112 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 			fopen($fname, "w");
 	}
 	
+	function check_add_plan_date() {
+		$q = "PRAGMA table_info(tasks)";
+		$a = $this->connect->fetch_assoc($q);
+		$entity = false;
+		foreach ($a as $r) 
+			if ($r['name'] == 'plan_date' && $r['notnull'] == 1) {
+				return true;
+			}
+		return false;
+	}
+	
+	function do_add_plan_date() {
+		$con = new Connect();
+		$db = $con->open();
+		$db->query("UPDATE tasks SET plan_date=date(tasks.date, 'unixepoch', '+2 months'), all_day_event=1
+					WHERE tasks.plan_date = '' OR tasks.plan_date ISNULL;");
+		return;
+		$createq = "
+				CREATE TABLE IF NOT EXISTS tasks (
+				id INTEGER PRIMARY KEY,
+				task TEXT NOT NULL,
+				state INTEGER NOT NULL,
+				tasktype INTEGER NULL,
+				executor TEXT NOT NULL,
+				cost INTEGER NULL,
+				reason TEXT NULL,
+				reporter TEXT NOT NULL,
+				date INTEGER NOT NULL,
+				close_date INTEGER NULL,
+				cause INTEGER NULL,
+				plan_date TEXT NOT NULL,
+				all_day_event INTEGET DEFAULT 0,
+				start_time TEXT NULL,
+				finish_time TEXT NULL,
+				issue INTEGER NULL
+				)";
+				
+		$q = "	BEGIN TRANSACTION;
+			CREATE TEMPORARY TABLE tasks_backup
+			(
+				id INTEGER PRIMARY KEY,
+				task TEXT NOT NULL,
+				state INTEGER NOT NULL,
+				tasktype INTEGER NULL,
+				executor TEXT NOT NULL,
+				cost INTEGER NULL,
+				reason TEXT NULL,
+				reporter TEXT NOT NULL,
+				date INTEGER NOT NULL,
+				close_date INTEGER NULL,
+				cause INTEGER NULL,
+				plan_date TEXT NOT NULL,
+				all_day_event INTEGET DEFAULT 0,
+				start_time TEXT NULL,
+				finish_time TEXT NULL,
+				issue INTEGER NULL
+				);
+			INSERT INTO tasks_backup SELECT
+					id,
+					task,
+					state,
+					tasktype,
+					executor,
+					cost,
+					reason,
+					reporter,
+					date,
+					close_date,
+					cause,
+					plan_date,
+					all_day_event,
+					start_time,
+					finish_time,
+					issue
+				FROM tasks;
+			DROP TABLE tasks;
+			$createq;
+			INSERT INTO tasks SELECT
+					id,
+					task,
+					state,
+					tasktype,
+					executor,
+					cost,
+					reason,
+					reporter,
+					date,
+					close_date,
+					cause,
+					plan_date,
+					all_day_event,
+					start_time,
+					finish_time,
+					issue
+				FROM tasks_backup;
+			DROP TABLE tasks_backup;
+			COMMIT;
+			";
+			$qa = explode(';', $q);
+
+			foreach ($qa as $e)  {
+				$db->query($e);
+			}
+			$db->close();
+	}
+	
 	private $actions = array(
 				
 				array('1. Słownik kategorii przyczyn', 'check_rootcause', 'do_rootcause'),
@@ -508,7 +614,9 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 				array('9. Zmiana kolumny issue w zadaniach na NULL.',
 				'check_task_issue_null', 'do_task_issue_null'),
 				array('10. Zaimportuj zadania z PROZY.',
-				'check_proza_import', 'do_proza_import')
+				'check_proza_import', 'do_proza_import'),
+				array('11. Dodaj datę planowania zadań.',
+				'check_add_plan_date', 'do_add_plan_date')
 				);
 	/**
 	 * handle user request

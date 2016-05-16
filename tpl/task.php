@@ -187,18 +187,6 @@ else
 <?php endif ?>
 	<?php if ($task['raw_state'] == 0): ?>
 		<?php if($task['executor_nick'] == $INFO['client'] || $helper->user_coordinator($template['issue']['id'])): ?> 
-		
-			<a class="bds_inline_button"
-				href="?id=<?php
-				 	if(!isset($template['issue']))
-						echo $helper->id('show_task', 'tid', $task['id'], 'plan', 'plan');
-					elseif (isset($nparams['cid']))
-						echo $helper->id('issue_cause_task', 'id', $template['issue']['id'], 'cid', $cause['id'], 'tid', $task['id'], 'plan', 'plan');
-					else
-						echo $helper->id('issue_task', 'id', $template['issue']['id'], 'tid', $task['id'], 'plan', 'plan');
-				?>#form">
-			 	☑ <?php echo $bezlang['task_plan'] ?>
-			</a>
 			
 			<a class="bds_inline_button"
 				href="?id=<?php

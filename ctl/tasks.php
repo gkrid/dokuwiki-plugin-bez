@@ -66,10 +66,8 @@ $template['states'] = $taskso->get();
 $template['executors'] = $usro->get();
 $template['groups'] = $usro->groups();
 
-if ($nparams['taskstate'] == '0')
-	$template['years'] = $tasko->get_plan_years();
-else
-	$template['years'] = $tasko->get_years();
+
+$template['years'] = $tasko->get_years();
 	
 $tasks = $tasko->get_filtered($value);
 

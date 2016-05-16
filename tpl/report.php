@@ -263,7 +263,14 @@
 		<th><?php echo $bezlang['report_total'] ?></th>
 		<td><?php echo $number ?></td>
 		<td><?php echo $cost ?></td>
-		<td><?php echo $helper->days($average/$number) ?></td>
+		<td>
+			<?php
+				if ($number > 0)
+					echo $helper->days($average/$number);
+				else
+					echo "---";
+			?>
+		</td>
 	</tr>
 </table>
 
