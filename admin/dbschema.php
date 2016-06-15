@@ -499,10 +499,11 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 		$q = "PRAGMA table_info(tasks)";
 		$a = $this->connect->fetch_assoc($q);
 		$entity = false;
-		foreach ($a as $r) 
+		foreach ($a as $r) {
 			if ($r['name'] == 'plan_date' && $r['notnull'] == 1) {
 				return true;
 			}
+		}
 		return false;
 	}
 	
@@ -511,7 +512,7 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 		$db = $con->open();
 		$db->query("UPDATE tasks SET plan_date=date(tasks.date, 'unixepoch', '+2 months'), all_day_event=1
 					WHERE tasks.plan_date = '' OR tasks.plan_date ISNULL;");
-		return;
+
 		$createq = "
 				CREATE TABLE IF NOT EXISTS tasks (
 				id INTEGER PRIMARY KEY,
@@ -533,6 +534,7 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 				)";
 				
 		$q = "	BEGIN TRANSACTION;
+			DROP TABLE tasks_backup;
 			CREATE TEMPORARY TABLE tasks_backup
 			(
 				id INTEGER PRIMARY KEY,
