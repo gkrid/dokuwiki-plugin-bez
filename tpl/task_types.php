@@ -1,7 +1,7 @@
 <div class="info">
 Aby usunąć wybrany rekord, nadpisz jego pola pustymi wartościami.
 </div>
-<a href="<?php echo $template['uri'] ?>?id=<?php echo $this->id('types', 'action', 'clean') ?>">
+<a href="<?php echo $template['uri'] ?>?id=<?php echo $this->id('task_types', 'action', 'clean') ?>">
 	Wyczyść typy bez referencji.
 </a>
 <table>
@@ -15,7 +15,7 @@ Aby usunąć wybrany rekord, nadpisz jego pola pustymi wartościami.
 <tr>
 	<?php if (isset($template['edit']) && $template['edit'] == $type['id']): ?>
 	<form action="<?php echo $template['uri'] ?>
-				?id=<?php echo $this->id('task_types', 'action', 'update', $type['id']) ?>" method="POST">
+				?id=<?php echo $this->id('task_types', 'action', 'update', 'id', $type['id']) ?>" method="POST">
 		<td><input name="pl" value="<?php echo $value['pl'] ?>" /></td>
 		<td><input name="en" value="<?php echo $value['en'] ?>" /></td>
 		<td>
@@ -29,7 +29,7 @@ Aby usunąć wybrany rekord, nadpisz jego pola pustymi wartościami.
 	<td><?php echo $type['pl'] ?></td>
 	<td><?php echo $type['en'] ?></td>
 	<td>
-	<a href="<?php echo $template['uri'] ?>?id=<?php echo $this->id('task_types', 'action', 'edit', $type['id']) ?>">
+	<a href="<?php echo $template['uri'] ?>?id=<?php echo $this->id('task_types', 'action', 'edit', 'id', $type['id']) ?>">
 		<?php echo $bezlang['edit'] ?>
 	</a>
 	<?php endif ?>

@@ -6,7 +6,7 @@ if	( ! $helper->user_admin() ) {
 	$controller->preventDefault();
 } 
 
-$action = $params[1];
+$action = $nparams['action'];
 $typo = new Tasktypes();
 
 $types = $typo->get_clean();
@@ -17,7 +17,7 @@ if (count($_POST) > 0) {
 			header('Location: ?id=bez:task_types');
 
 	} else if ($action == 'update') {
-		$id = (int) $params[2];
+		$id = (int) $nparams['id'];
 		$row = $typo->get_one($id);
 		if (count($row) > 0) {
 			$typo->update($_POST, $id);
@@ -28,7 +28,7 @@ if (count($_POST) > 0) {
 	}
 	$value = $_POST;
 } else if ($action == 'edit') {
-	$id = (int) $params[2];
+	$id = (int) $nparams['id'];
 	$template['edit'] = $id;
 	$row = $typo->get_one($id);
 	if (count($row) > 0) {

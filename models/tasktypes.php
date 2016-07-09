@@ -79,7 +79,7 @@ class Tasktypes extends Connect {
 		if (strlen($data['pl']) == 0 && strlen($data['en']) == 0) {
 			$this->errquery("DELETE FROM tasktypes WHERE id=$id");
 		} else {
-			$this->errupdate($data, 'issuetypes', $id);
+			$this->errupdate($data, 'tasktypes', $id);
 		}
 		return $post;
 	}
