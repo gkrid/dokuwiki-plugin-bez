@@ -39,7 +39,7 @@
 		<?php if ($template['issue'][raw_state] == 0 && $helper->user_coordinator($template[issue][id])): ?> 
 			&nbsp;&nbsp;&nbsp;
 			<a href="?id=<?php echo $this->id('task_form', 'id', $template[issue][id], 'cid', $cause[id]) ?>">
-				dodaj
+				<?php echo $bezlang['add'] ?>
 			</a>
 		<?php endif ?>
 		</td>

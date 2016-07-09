@@ -406,6 +406,12 @@ class Tasks extends Event {
 				FROM tasks LEFT JOIN causes ON tasks.cause = causes.id WHERE tasks.issue=$issue $wcause";
 		return $this->fetch_assoc($q);
 	}
+	
+	public function get_corrections_ids($issue) {
+		$q = "SELECT tasks.id FROM tasks WHERE tasks.issue=$issue
+											AND (tasks.cause = '' OR tasks.cause is NULL)";
+		return $this->fetch_assoc($q);
+	}
 
 	public function get_preventive($issue) {
 		$issue = (int) $issue;

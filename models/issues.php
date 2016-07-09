@@ -4,6 +4,7 @@ include_once DOKU_PLUGIN."bez/models/issuetypes.php";
 include_once DOKU_PLUGIN."bez/models/states.php";
 include_once DOKU_PLUGIN."bez/models/users.php";
 include_once DOKU_PLUGIN."bez/models/tasks.php";
+include_once DOKU_PLUGIN."bez/models/causes.php";
 include_once DOKU_PLUGIN."bez/models/bezcache.php";
 include_once DOKU_PLUGIN."bez/models/rootcauses.php";
 
@@ -196,6 +197,7 @@ class Issues extends Connect {
 	public function join($a) {
 		$stao = new States();
 		$tasko = new Tasks();
+		$causo = new Causes();
 
 		$a['raw_state'] = $a['state'];
 		$a['state'] = $stao->name($a, $tasko->any_task($a['id']));
@@ -214,6 +216,9 @@ class Issues extends Connect {
 		$a['description'] = $wiki_text['description'];
 		$a['raw_opinion'] = $a['opinion'];
 		$a['opinion'] = $wiki_text['opinion'];
+		
+		$a['causes'] = $causo->get_ids($a['id']);
+		$a['corrections'] = $tasko->get_corrections_ids($a['id']);
 
 		return $a;
 	}

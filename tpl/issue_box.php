@@ -44,6 +44,50 @@
 	<?php echo $template['issue']['reporter'] ?>
 </td>
 </tr>
+<tr>
+<td colspan="2">
+	<strong><?php echo $bezlang['correction_nav'] ?>:</strong>
+	<?php foreach ($template['issue']['corrections'] as $correction): ?>
+		<?php if (isset($nparams['tid']) && $nparams['tid'] == $correction['id']) echo '<strong>' ?>
+		<a href="?id=<?php echo $this->id('issue_task', 'id', $template['issue']['id'],
+									'tid', $correction['id']) ?>">
+			#z<?php echo $correction['id'] ?>
+		</a>&nbsp;
+		<?php if (isset($nparams['tid']) && $nparams['tid'] == $correction['id']) echo '</strong>' ?>
+	<?php endforeach ?>
+
+	<?php if ($template['issue']['raw_state'] == 0 &&
+			$template['issue']['raw_coordinator'] != '-proposal' &&
+			$helper->user_coordinator($template['issue']['id'])): ?> 
+		&nbsp;&nbsp;
+		<a href="?id=<?php echo $this->id('task_form', 'id', $template['issue']['id']) ?>">
+			<?php echo $bezlang['add'] ?>
+		</a>
+	<?php endif ?> 
+</td>
+</tr>
+<tr>
+<td colspan="2">
+	<strong><?php echo $bezlang['causes'] ?>:</strong>
+	<?php foreach ($template['issue']['causes'] as $cause): ?>
+		<?php if (isset($nparams['cid']) && $nparams['cid'] == $cause['id']) echo '<strong>' ?>
+		<a href="?id=<?php echo $this->id('issue_cause', 'id', $template['issue']['id'],
+									'cid', $cause['id']) ?>">
+			#p<?php echo $cause['id'] ?>
+		</a>&nbsp;
+		<?php if (isset($nparams['cid']) && $nparams['cid'] == $cause['id']) echo '</strong>' ?>
+	<?php endforeach ?>
+
+	<?php if ($template['issue']['raw_state'] == 0 &&
+			$template['issue']['raw_coordinator'] != '-proposal' &&
+			$helper->user_coordinator($template['issue']['id'])): ?> 
+		&nbsp;&nbsp;
+		<a href="?id=<?php echo $this->id('cause_form', 'id', $template['issue']['id']) ?>">
+			<?php echo $bezlang['add'] ?>
+		</a>
+	<?php endif ?> 
+</td>
+</tr>
 </table>
 
 <?php echo $template['issue']['description'] ?>

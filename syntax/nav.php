@@ -104,61 +104,72 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 
 			$tasko = new Tasks();
 			$causo = new Causes();
-
-			$pid = "bez:issue:id:$id";
-			$data[$pid] = array('id' => $pid, 'type' => 'd', 'level' => 3,
-												'title' => "#$id", 'open' => true);
-
-			$pid = "bez:issue_tasks:id:$id";
-			$data[$pid] = array('id' => $pid, 'type' => 'd', 'level' => 4,
-								'title' => $this->getLang('correction_nav'));
-			if (in_array($this->value['bez'], $task_pages) && $this->value[cid] == '') {
-				$data[$pid][open] = true;
-
-				if ($issue_opened) {
-					$rpid = "bez:task_form:id:$id";
-					if ($helper->user_admin() && !$issue_proposal)
-						$data[$rpid] = array('id' => $rpid, 'type' => 'f', 'level' => 5,
-											'title' => $this->getLang('add_correction'));
-				}
-				$res = $tasko->get_filtered(array('issue' => $id, 'action' => '0'));
-				foreach ($res as $r) {
-					$rpid = "bez:issue_task:id:$id:tid:$r[id]";
-					$data[$rpid] = array('id' => $rpid, 'type' => 'f', 'level' => 5,
-										'title' => '#z'.$r[id]);
-				}
+			
+			$causes = $causo->get($id);
+			$tasks = $tasko->get_corrections_ids($id);
+			
+			$type = 'd';
+			if (count($causes) + count($tasks) == 0) {
+				$type = 'f';
 			}
 
-			$pid = "bez:issue_causes:id:$id";
-			$data[$pid] = array('id' => $pid, 'type' => 'd', 'level' => 4,
-								'title' => $this->getLang('causes'));
-			if (in_array($this->value['bez'], $cause_pages) || $this->value[cid] != '') {
-				$data[$pid][open] = true;
-				if ($issue_opened) {
-					$rpid = "bez:cause_form:id:$id";
-					if ($helper->user_admin() && !$issue_proposal)
+			$pid = "bez:issue:id:$id";
+			$data[$pid] = array('id' => $pid, 'type' => $type, 'level' => 3,
+												'title' => "#$id", 'open' => true);
+
+			if (count($tasks) > 0) {
+				$pid = "bez:issue_tasks:id:$id";
+				$data[$pid] = array('id' => $pid, 'type' => 'd', 'level' => 4,
+									'title' => $this->getLang('correction_nav'));
+				if (in_array($this->value['bez'], $task_pages) && $this->value[cid] == '') {
+					$data[$pid][open] = true;
+
+					if ($issue_opened) {
+						$rpid = "bez:task_form:id:$id";
+						if ($helper->user_admin() && !$issue_proposal)
+							$data[$rpid] = array('id' => $rpid, 'type' => 'f', 'level' => 5,
+												'title' => $this->getLang('add_correction'));
+					}
+					foreach ($tasks as $r) {
+						$rpid = "bez:issue_task:id:$id:tid:$r[id]";
 						$data[$rpid] = array('id' => $rpid, 'type' => 'f', 'level' => 5,
-											'title' => $this->getLang('add_cause'));
-				}
-				$res = $causo->get($id);
-				foreach ($res as $r) {
-					$rpid = "bez:issue_cause:id:$id:cid:$r[id]";
-					$data[$rpid] = array('id' => $rpid, 'type' => 'd', 'level' => 5,
-										'title' => '#p'.$r[id]);
-
-					if ((int)$this->value['cid'] == $r[id]) {
-						$data[$rpid][open] = true;
-
-						$pres = $tasko->get($id, $r['id']);
-						foreach ($pres as $pr) {
-							$rptid = "bez:issue_cause_task:id:$id:cid:$r[id]:tid:$pr[id]";
-							$data[$rptid] = array('id' => $rptid, 'type' => 'f', 'level' => 6,
-										'title' => '#z'.$pr[id]);
-
-						}
+											'title' => '#z'.$r['id']);
 					}
 				}
-				
+			}
+			
+			if (count($causes) > 0) {
+				$pid = "bez:issue_causes:id:$id";
+				$data[$pid] = array('id' => $pid, 'type' => 'd', 'level' => 4,
+									'title' => $this->getLang('causes'));
+				if (in_array($this->value['bez'], $cause_pages) || $this->value[cid] != '') {
+					$data[$pid][open] = true;
+					if ($issue_opened) {
+						$rpid = "bez:cause_form:id:$id";
+						if ($helper->user_admin() && !$issue_proposal)
+							$data[$rpid] = array('id' => $rpid, 'type' => 'f', 'level' => 5,
+												'title' => $this->getLang('add_cause'));
+					}
+					
+					foreach ($causes as $r) {
+						$rpid = "bez:issue_cause:id:$id:cid:$r[id]";
+						$data[$rpid] = array('id' => $rpid, 'type' => 'd', 'level' => 5,
+											'title' => '#p'.$r[id]);
+
+						if ((int)$this->value['cid'] == $r[id]) {
+							$data[$rpid][open] = true;
+
+							$pres = $tasko->get($id, $r['id']);
+							foreach ($pres as $pr) {
+								$rptid = "bez:issue_cause_task:id:$id:cid:$r[id]:tid:$pr[id]";
+								$data[$rptid] = array('id' => $rptid, 'type' => 'f', 'level' => 6,
+											'title' => '#z'.$pr[id]);
+
+							}
+						}
+					}
+					
+				}
 			}
 
 		}
