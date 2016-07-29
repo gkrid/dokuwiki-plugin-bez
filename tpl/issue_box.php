@@ -1,7 +1,7 @@
 <?php if ($template['opentasks']): ?>
 	<div class="info"><?php echo $bezlang['issue_unclosed_tasks'] ?></div>
 <?php endif ?>
-<?php if ($template['issue']['raw_coordinator'] == '-proposal'): ?>
+<?php if ($template['issue']['raw_state'] == 0 && $template['issue']['raw_coordinator'] == '-proposal'): ?>
 	<div class="info"><?php echo $bezlang['issue_is_proposal'] ?></div>
 <?php endif ?>
 <?php if ($template['cause_without_task']): ?>
