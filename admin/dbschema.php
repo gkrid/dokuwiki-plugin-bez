@@ -605,21 +605,33 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 	
 	private $actions = array(
 				
-				array('1. Słownik kategorii przyczyn', 'check_rootcause', 'do_rootcause'),
-				array('2. Słownik typów problemów', 'check_types', 'do_types'),
-				array('3. Usunięcie podmiotu w problemach', 'check_rementity', 'do_rementity'),
-				array('4. Kolumna "potential" w zadaniach', 'check_potentials', 'do_potentials'),
-				array('5. Zadania przypisane do przczyn', 'check_causetask', 'do_causetask'),
-				array('6. Usunięcie kolumny "action" z tabeli zadań', 'check_remove_action_from_tasks', 'do_remove_action_from_tasks'),
-				array('7. Dodanie planowanej daty do zadań w BEZie', 'check_add_plan_date_to_tasks', 'do_add_plan_date_to_tasks'),
-				array('8. Dodanie typu dla zadań niezależnych w BEZie', 'check_add_type_to_tasks', 'do_add_type_to_tasks'),
-				array('9. Zmiana kolumny issue w zadaniach na NULL.',
+				array('Słownik kategorii przyczyn', 'check_rootcause', 'do_rootcause'),
+				array('Słownik typów problemów', 'check_types', 'do_types'),
+				array('Usunięcie podmiotu w problemach', 'check_rementity', 'do_rementity'),
+				array('Kolumna "potential" w zadaniach', 'check_potentials', 'do_potentials'),
+				array('Zadania przypisane do przczyn', 'check_causetask', 'do_causetask'),
+				array('Usunięcie kolumny "action" z tabeli zadań', 'check_remove_action_from_tasks', 'do_remove_action_from_tasks'),
+				array('Dodanie planowanej daty do zadań w BEZie', 'check_add_plan_date_to_tasks', 'do_add_plan_date_to_tasks'),
+				array('Dodanie typu dla zadań niezależnych w BEZie', 'check_add_type_to_tasks', 'do_add_type_to_tasks'),
+				array('Zmiana kolumny issue w zadaniach na NULL.',
 				'check_task_issue_null', 'do_task_issue_null'),
-				array('10. Zaimportuj zadania z PROZY.',
+				array('Zaimportuj zadania z PROZY.',
 				'check_proza_import', 'do_proza_import'),
-				array('11. Dodaj datę planowania zadań.',
+				array('Dodaj datę planowania zadań.',
 				'check_add_plan_date', 'do_add_plan_date')
 				);
+
+	function _backup($sufix) {
+		$db_file = DOKU_INC . 'data/bez.sqlite';
+		$copy_file = DOKU_INC.'data/bez.sqlite.'.date('%c').'.'.$sufix;
+		if (!file_exists($db_file)) {
+			throw new Exception("database file: $db_file doesn't exists");
+		}
+		$copy = copy($db_file, $copy_file);
+		if (!$copy) {
+			throw new Exception("cannot create copy file: $copy_file");
+		}
+	}
 	/**
 	 * handle user request
 	 */
@@ -633,8 +645,14 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 	  $keys = array_keys($_POST[applay]);
 	  $pr_id = $keys[0];
 	  if (array_key_exists($pr_id, $this->actions)) {
-	  	$fname = $this->actions[$pr_id][2];
-	  	$this->$fname();
+		try {
+			//create db backup
+			$this->_backup('before'.$pr_id);
+			$fname = $this->actions[$pr_id][2];
+			$this->$fname();
+		} catch (Exception $e) {
+			$errors[] = $e->getMessage();
+		}
 	  }
 	}
 	
@@ -666,7 +684,7 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 		if ($is_applaied) ptln('<tr style="background-color: #0f0">');
 		else ptln('<tr style="background-color: #f00">');
 		
-	  	ptln("<td>$name</td>");
+	  	ptln("<td>$i. $name</td>");
 	  	
 	  	if ($is_applaied) ptln("<td>Zastosowana</td>");
 		else ptln('<td><input type="submit" name="applay['.$i.']"  value="Zastosuj" /></td>');
