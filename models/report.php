@@ -113,8 +113,8 @@ class Report extends Connect {
 				$issue['average'] = '---';
 			}
 		}
-		
-		$report['issues'] = $isso->join_all($issues_open);
+
+		$report['issues'] = $issues_open ;
 								
 		$a = $this->fetch_assoc("SELECT AVG(issues.last_mod-issues.date) AS average
 								FROM issues 

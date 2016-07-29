@@ -38,8 +38,8 @@ if (isset($value['year']))
 if (isset($value['month']))
 	$template['hidden']['month'] = $value['month'];
 
-
 $template['report'] = $repo->report($value);
+
 $subtitle = $bezlang['report'];
 
 
