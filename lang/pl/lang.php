@@ -403,7 +403,7 @@ $lang['task_type'] = 'Program';
 
 $lang['programme'] = 'Programowe';
 
-$lang['tasks_no_type'] = '--- nieprzypisane ---';
+$lang['tasks_no_type'] = '--- nieprogramowe ---';
 
 $lang ['plan'] = 'Plan';
 
