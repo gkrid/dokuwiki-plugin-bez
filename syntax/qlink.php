@@ -18,16 +18,22 @@ class syntax_plugin_bez_qlink extends DokuWiki_Syntax_Plugin {
     function getType() { return 'substition'; }
     function getSort() { return 34; }
 	function connectTo($mode) {
-		$this->Lexer->addSpecialPattern('#[0-9]+',$mode,'plugin_bez_qlink');
+		$this->Lexer->addSpecialPattern('#[z]?[0-9]+',$mode,'plugin_bez_qlink');
 	}
 
 
     function handle($match, $state, $pos, Doku_Handler $handler) {
-		$nr = substr($match, 1, strlen($match));
-		return $nr;
+		$code = substr($match, 1, 1);
+		if ($code === 'z') {
+			$nr = substr($match, 2, strlen($match));
+			return array('z', $nr);
+		} else {
+			$nr = substr($match, 1, strlen($match));
+			return array('', $nr);
+		}
     }
 
-    function render($mode, Doku_Renderer $renderer, $nr) {
+    function render($mode, Doku_Renderer $renderer, $link) {
 		if ($mode == 'xhtml') {
 			$id = $_GET['id'];
 			$ex = explode(':', $id);
@@ -38,7 +44,12 @@ class syntax_plugin_bez_qlink extends DokuWiki_Syntax_Plugin {
 				case 'en':
 					$lang_code = $ex[0].':';
 			}
-			$renderer->doc .= '<a href="?id='.$lang_code.'bez:issue:id:'.$nr.'">#'.$nr.'</a>';
+			$nr = $link[1];
+			if ($link[0] === 'z') {
+				$renderer->doc .= '<a href="?id='.$lang_code.'bez:show_task:id:'.$nr.'">#z'.$nr.'</a>';
+			} else {
+				$renderer->doc .= '<a href="?id='.$lang_code.'bez:issue:id:'.$nr.'">#'.$nr.'</a>';
+			}
 			return true;
 		}
 		return false;

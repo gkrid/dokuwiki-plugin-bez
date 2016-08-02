@@ -10,6 +10,14 @@ $task_id = (int)$nparams['tid'];
 
 $task_clean = $tasko->getone($task_id);
 
+if ($task_clean === NULL) {
+	header("Location: ?id=bez:tasks");
+} else if ($task_clean['issue'] !== NULL) {
+	header("Location: ?id=bez:issue_task:id:".$task_clean['issue'].":tid:".$task_id);
+}
+
+
+
 	
 $template['task'] = $tasko->join($task_clean);
 $task = $template['task'];
