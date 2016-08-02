@@ -1,19 +1,21 @@
-bds = {};
+var bds = {};
 
 bds.gup = function (name) {
-    name = name.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
-    var regexS = "[\\?&]" + name + "=([^&#]*)";
-    var regex = new RegExp(regexS);
-    var results = regex.exec(window.location.href);
-    if (results == null)
+    'use strict';
+    var regexS = "[\\?&]" + name + "=([^&#]*)",
+        regex = new RegExp(regexS),
+        results = regex.exec(window.location.href);
+    if (results === null) {
         return "";
-    else
+    } else {
         return results[1];
+    }
 };
 
-jQuery(document).ready(function() {
+jQuery(document).ready(function () {
+    'use strict';
 	var ids = ['description', 'cause', 'content', 'task', 'reason', 'opinion'];
-
+    
 	for (var i = 0; i < ids.length; i++) {
 		var textarea = jQuery("#" + ids[i]);
 		if (textarea.length > 0) {
@@ -32,11 +34,12 @@ jQuery(document).ready(function() {
 	});
 
 	//delete_button 
-	$delete_buts = jQuery("#bez_comments, #bez_causes").find(".bez_delete_button");
+	var $delete_buts = jQuery("#bez_comments, #bez_causes").find(".bez_delete_button");
 	jQuery("body").bind("click", function (e) {
 		var $target = jQuery(e.target);
-		if (!$target.is($delete_buts))
+		if (!$target.is($delete_buts)) {
 			$conf.hide();
+        }
 	});
 
 	$delete_buts.each(function() {
@@ -58,135 +61,6 @@ jQuery(document).ready(function() {
 			$conf.show();
 		});
 	});
-
-	//show/hide opinion
-	/*var $form = jQuery("#bez_issue_report.update"); 
-	if ($form.length > 0) {
-		var $coordinator = $form.find("select[name=coordinator]");
-		var $opinion_row = $form.find("textarea[name=opinion]").parents("div[class=row]");
-		var $status_row = $form.find("label[for=state]").parents("div[class=row]");
-		var $state = $form.find("input[name=state]");
-
-		//state.length == 0 -> nie możemy zmieniać statusu
-		if ($state.length == 0)
-			$opinion_row.hide();
-
-		var cval = $coordinator.val();
-		if (cval == '-proposal' || cval == '-rejected' ) {
-			$status_row.hide();
-			$opinion_row.hide();
-		}
-		
-
-		$coordinator.change(function () {
-			var cval = $coordinator.val();
-			if (cval == '-proposal' || cval == '-rejected') {
-				$status_row.hide();
-				$opinion_row.hide();
-			} else {
-				$status_row.show();
-				if ($form.find("input[name=state]:checked").val() == "1")
-					$opinion_row.show();
-			}
-		});
-		
-
-		if ($form.find("input[name=state]:checked").val() == "0")
-			$opinion_row.hide();
-
-		$state.change(function() {
-			$this = jQuery(this);
-			if ($this.val() == "0")
-				$opinion_row.hide();
-			else
-				$opinion_row.show();
-		});
-	}*/
-
-	//show/hide reason
-	/*$reason_row = jQuery(".bez_task_form textarea[name=reason]").parents("div[class=row]");
-	
-	if ($reason_row.length > 0) {
-		$select = jQuery(".bez_task_form select[name=state]");
-		$action = jQuery(".bez_task_form input[name=action]");
-
-		if ($select.val() == "0" || ($select.val() == "1" && $action.val() != "2"))
-			$reason_row.hide();
-		
-		var $label = jQuery(".bez_task_form label[for=reason]");
-		var text = $label.text();
-		console.log(text);
-		var res = text.match(/[a-z ]+/gi);
-
-		if ($select.val() == "1")
-			$label.text(res[1]+":");
-		else
-			$label.text(res[0]+":");
-		
-		$select.change(function() {
-			if (jQuery(this).val() == "0" || (jQuery(this).val() == "1" && $action.val() != "2"))
-				$reason_row.hide();
-			else
-				$reason_row.show();
-
-			if (jQuery(this).val() == "1" && $action.val() == "2")
-				$label.text(res[1]+":");
-			else
-				$label.text(res[0]+":");
-		});
-	}
-
-	var show = function() {
-			jQuery(this).siblings(".bds_block_content").show();
-			jQuery(this).find(".toggle").css("background-image", "url(lib/plugins/bez/images/expanded.png)");
-		};
-	var hide = function() {
-			jQuery(this).siblings(".bds_block_content").hide();
-			jQuery(this).find(".toggle").css("background-image", "url(lib/plugins/bez/images/collapsed.png)");
-		};
-
-	/*jQuery(".bds_block")
-		.each(function() {
-			$h1 = jQuery(this).find("h1").html(
-				function(index, oldhtml) {
-					return '<span class="toggle">'+oldhtml+'</span>';
-				});
-
-			$h1.find(".toggle").css(
-				{
-					'background': 'url("lib/plugins/bez/images/collapsed.png") no-repeat scroll 4px 50% rgba(0, 0, 0, 0)',
-					'border': 'medium none',
-					'border-radius': '0.3em',
-					'box-shadow': '0.1em 0.1em 0.3em 0 #BBBBBB',
-					'color': '#222222',
-					'padding': '0.3em 0.5em 0.3em 20px',
-					'text-shadow': '0.1em 0.1em #FCFCFC',
-					'cursor': 'pointer'
-				});
-
-
-			var hash = window.location.hash.substring(1);
-			if (hash.indexOf("k") === 0) {
-				var showed = "bez_comments";
-			} else if (hash.indexOf("p") === 0) {
-				var showed = "bez_causes";
-			} else if (hash.indexOf("z") === 0) {
-				var showed = "bez_tasks";
-			} else if (hash === "bds_change_issue") {
-				var showed = "bds_change_issue";
-			}
-
-			if (jQuery(this).attr("id") === showed) {
-				jQuery(this).find(".toggle").css("background-image", "url(lib/plugins/bez/images/expanded.png)");
-				jQuery(this).find("h1").toggle(hide, show);
-			} else {
-				jQuery(this).find(".bds_block_content").hide();
-				jQuery(this).find("h1").toggle(show, hide);
-			}
-		});
-	jQuery(".bds_block .history_anchor").click(function() {
-		show.call(jQuery("#bds_history h1")[0]);
-	});*/
 
 	//entities sort
 	jQuery("#entities_form input[type=button]").click(function() {
@@ -274,84 +148,82 @@ jQuery(document).ready(function() {
 	
 	//ukrywanie niepotrzebnych godzin zależnie od godziny rozpoczęcia
 	var hide_unneeded_hours = function ($this) {
-		hour = $this.val();
-		var index = hours.indexOf(hour);
+		var hour = $this.val(),
+            index = hours.indexOf(hour),
+            $finish_time_li = jQuery("#bez_timepicker_finish_time li");
 		
-		//finish time lis
-		var $finish_time_li = jQuery("#bez_timepicker_finish_time li");
 		$finish_time_li.show();
 		$finish_time_li.eq(index).prevAll().hide();
 		
-		if (jQuery("input[name=finish_time]").val() == '')
+		if (jQuery("input[name=finish_time]").val() === '') {
 			jQuery("input[name=finish_time]").val(hour);
-	}
+        }
+	};
 	jQuery("input[name=start_time]").blur(function () {
 		hide_unneeded_hours(jQuery(this));
 	});
 
 	
 	var autoFill = function (hour) {
-		if (hour.indexOf(":") === -1)
+		if (hour.indexOf(":") === -1) {
 			hour += ":00";
-		else if (hour.match(/^[0-9]{1,2}:$/g))
+        } else if (hour.match(/^[0-9]{1,2}:$/g)) {
 			hour += "00";
-		else if (hour.match(/^[0-9]{1,2}:(0|3)$/g))
+		} else if (hour.match(/^[0-9]{1,2}:(0|3)$/g)) {
 			hour += "0";
-		else if (hour.match(/^[0-9]{1,2}:(1|2)$/g))
+		} else if (hour.match(/^[0-9]{1,2}:(1|2)$/g)) {
 			hour = hour.slice(0,-1)+"00";
-		else if (hour.match(/^[0-9]{1,2}:[4-9]$/g))
+		} else if (hour.match(/^[0-9]{1,2}:[4-9]$/g)) {
 			hour = hour.slice(0,-1)+"30";
-		else if (hour.match(/^[0-9]{1,2}:(0|3)[1-9]$/g))
+		} else if (hour.match(/^[0-9]{1,2}:(0|3)[1-9]$/g)) {
 			hour = hour.slice(0,-1)+"0";
+        }
 		return hour;
-	}
+	};
 	var listScrool = function($list, hour) {
 		hour = autoFill(hour);
 		var index = hours.indexOf(hour);
-		if (index == -1) index = 0;
-		$li = $list.find("li:first");
+		if (index === -1) { 
+            index = 0;
+        }
+		var $li = $list.find("li:first");
 		//hidden lis
 		var $hid_lis = $list.find("li:hidden");
 		$list.scrollTop((index - $hid_lis.length - 1) * $li.outerHeight());
 		$list.find("li").removeClass("selected");
 		$list.find("li").eq(index).addClass("selected");
 		
-	}
+	};
 
 	jQuery(".bez_timepicker").each(function() {
 		var $this = jQuery(this);
 
-		var id = "bez_timepicker_"+$this.attr("name");
-		$wrapper = jQuery(document.createElement('div'))
-		.css({	'position': 'absolute',
-			}).addClass('bez_timepicker_wrapper')
-		.hide().attr("id", id).appendTo("body");
+		var id = "bez_timepicker_"+$this.attr("name"),
+		    $wrapper = jQuery(document.createElement('div'))
+                .css('position', 'absolute').addClass('bez_timepicker_wrapper')
+		        .hide().attr("id", id).appendTo("body");
 		
 		var offset = $this.offset();
 		offset.top += $this.outerHeight() + 1;
 		$wrapper.offset(offset);
 		
-		$ul = jQuery(document.createElement("ul")).appendTo($wrapper);
+		var $ul = jQuery(document.createElement("ul")).appendTo($wrapper);
 
 		
-		for (h in hours) {
-			hour = hours[h];
-			$li = jQuery(document.createElement("li"));
+		for (var h in hours) {
+			var hour = hours[h],
+			    $li = jQuery(document.createElement("li"));
 			$li.text(hour);
-			$li.on('mousedown', function(event) {
-				var id = jQuery(this).parents("div").attr("id");
-				var name = id.replace("bez_timepicker_", '');
+			$ul.append($li);
+		}
+       $ul.on('mousedown', 'li', function(event) {
+				var id = jQuery(this).parents("div").attr("id"),
+				    name = id.replace("bez_timepicker_", '');
 				jQuery("input[name="+name+"]").val(jQuery(this).text());
 				
 				jQuery(this).siblings().removeClass("selected");
 				jQuery(this).addClass("selected");
 			});
-			$ul.append($li);
-		}
-		
-
-		/*if ($this.val() != "")
-			listScrool($ul, $this.val());*/
 
 		$this.focus(function() {
 			var $this = jQuery(this);
@@ -398,42 +270,4 @@ jQuery(document).ready(function() {
 		}
 		e.preventDefault();
 	});
-
-	/*ukrywanie zakmniętych zadań i formularza dodawania nowych zadań*/
-	/*var $tasks = jQuery("#bez_tasks .bds_block_content");
-	if ($tasks.length > 0) {
-		var hidden = 0;
-		$tasks.find(".task").each(function () {
-			var $this = jQuery(this);
-			if ( ! $this.hasClass("opened")) {
-				$this.hide();
-				hidden++;
-			}
-		});
-		if (hidden > 0) {
-			$button = $tasks.find(".show_tasks_hidden");
-			console.log($button);
-			$button.show();
-			$button.click(function() {
-				$tasks.find(".task").show();
-				jQuery(this).hide();
-			});
-		}
-		//$form = $tasks.find("form");
-	}
-	jQuery(".bez_task_form").each(function () {
-		$this = jQuery(this);
-		if ( ! $this.hasClass('update')) {
-			$this.hide();
-			$add_task = $this.parent().find(".add_task");
-			$add_task.show();
-			$add_task.click(function(e) {
-				$add_task_btn = jQuery(this);
-				var form = $add_task_btn.parent().find("form");
-				form.show();
-				$add_task_btn.hide();
-				e.preventDefault();
-			});
-		}
-	});*/
 });
