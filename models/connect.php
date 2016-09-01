@@ -103,9 +103,15 @@ class Connect {
 		
 		$fields = implode(',', array_keys($data));
 		$values = '';
-		foreach ($data as $v)
-			$values .= "'".$this->escape($v)."',";
+		foreach ($data as $v) {
+			if ($v === '') {
+				$values .= 'NULL,';
+			} else {
+				$values .= "'".$this->escape($v)."',";
+			}
+		}
 		$values = substr($values, 0, -1);
+
 		$this->lastid = $this->ins_query("INSERT INTO $table ($fields) VALUES ($values)");
 		
 	}
