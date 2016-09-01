@@ -39,18 +39,19 @@ class admin_plugin_bez_csvimport extends DokuWiki_Admin_Plugin {
 			$tasko->errinsert(array(
 				'task' => $row[0],
 				'state' => $row[1],
-				'executor' => $row[2],
-				'cost' => $row[3],
-				'reason' => $row[4],
-				'reporter' => $row[5],
-				'date' => $row[6] == '' ? '' : strtotime($row[6]),
-				'close_date' => $row[7] == '' ? '' : strtotime($row[7]),
-				'cause' => $row[8],
-				'plan_date' => $row[9],
-				'all_day_event' => $row[10],
-				'start_time' => $row[11],
-				'finish_time' => $row[12],
-				'issue' => $row[13]
+				'tasktype' => $row[2],
+				'executor' => $row[3],
+				'cost' => $row[4],
+				'reason' => $row[5],
+				'reporter' => $row[6],
+				'date' => $row[7] == '' ? '' : strtotime($row[7]),
+				'close_date' => $row[8] == '' ? '' : strtotime($row[8]),
+				'cause' => $row[9],
+				'plan_date' => $row[10],
+				'all_day_event' => $row[11],
+				'start_time' => $row[12],
+				'finish_time' => $row[13],
+				'issue' => $row[14]
 			), 'tasks');
 		}
 		if (count($errors) == 0) {
@@ -80,7 +81,7 @@ class admin_plugin_bez_csvimport extends DokuWiki_Admin_Plugin {
 		ptln('<input type="hidden" name="do"   value="admin" />');
 		ptln('<input type="hidden" name="page" value="bez_csvimport" />');
 		formSecurityToken();
-		ptln('<label for="proza_data">Pierwsze pole jest polem nagłówka!<br>Kolejność pól: <i>Zadanie, Status, Wykonawca, Koszt, Przyczyna (zamknięcia/odrzucenia), Zgłaszający, Data zgłoszenia, Data Zamknięcia, Id przyczyny, Planowana data wykonania, Zdarzenie całodniowe (0/1), Godzina rozpoczęcia, Godzina Zakończenia, Id problemu</i><br />');
+		ptln('<label for="proza_data">Pierwsze pole jest polem nagłówka!<br>Kolejność pól: <i>Zadanie, Status, Typ zadania(id z tabelki typy), Wykonawca, Koszt, Przyczyna (zamknięcia/odrzucenia), Zgłaszający, Data zgłoszenia, Data Zamknięcia, Id przyczyny, Planowana data wykonania, Zdarzenie całodniowe (0/1), Godzina rozpoczęcia, Godzina Zakończenia, Id problemu</i><br />');
 		ptln('<i>status ∊ {0,1,2}</i>, gdzie 0 - otwarte, 1 - zamknięte, 2 - odrzucone, <br />');
 		ptln('<i>Wykonawca i Zgłaszający</i> musi być poprawnym nickiem użytkownika wiki.<br />');
 		ptln('Wszystkie daty muszą być podane w formacie: YYYY-MM-DD<br />');
