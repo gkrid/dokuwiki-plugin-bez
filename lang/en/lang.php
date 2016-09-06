@@ -430,3 +430,5 @@ $lang['groups'] = 'groups';
 $lang['duplicate'] = 'Duplicate';
 
 $lang['show_issue'] = 'Show issue';
+
+$lang['select'] = 'select';

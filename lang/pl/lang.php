@@ -447,3 +447,5 @@ $lang['duplicate'] = 'Powiel';
 
 $lang['show_issue'] = 'Pokaż problem';
 
+$lang['select'] = 'wybierz';
+

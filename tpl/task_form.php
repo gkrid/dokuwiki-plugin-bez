@@ -42,6 +42,7 @@
 				<label for="executor"><?php echo $bezlang['executor'] ?>:</label>
 				<span>
 				<select name="executor" id="executor" <?php echo $disabled ?>>
+					<option value="">--- <?php echo $bezlang['select'] ?>---</option>
 				<?php foreach ($template['users'] as $nick => $name): ?>
 					<option <?php if ($value['executor'] == $nick) echo 'selected' ?>
 					 value="<?php echo $nick ?>"><?php echo $name ?></option>
