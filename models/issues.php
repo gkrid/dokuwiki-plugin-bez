@@ -15,7 +15,6 @@ class Issues extends Connect {
 		parent::__construct();
 		$createq = "CREATE TABLE IF NOT EXISTS issues (
 				id INTEGER PRIMARY KEY,
-				priority INTEGER NOT NULL DEFAULT 0,
 				title TEXT NOT NULL,
 				description TEXT NOT NULL,
 				state INTEGER NOT NULL,
@@ -54,14 +53,6 @@ class Issues extends Connect {
 			$issue = $this->get_clean($issue_id);
 			$data['coordinator'] = $issue['coordinator'];
 		}
-
-		/*priorytet z przedziału 0-2, w razie co poprawiamy*/
-		$post['priority'] = (int)$post['priority'];
-		if ($post['priority'] > 2)
-			$post['priority'] = 2;
-		else if ($post['priority'] < 0)
-			$post['priority'] = 0;
-		$data['priority'] = $post['priority'];
 
 		$post['title'] = trim($post['title']);
 		if (strlen($post['title']) == 0) {
@@ -195,11 +186,15 @@ class Issues extends Connect {
 	}
 
 	public function join($a) {
+		global $bezlang;
+		
 		$stao = new States();
 		$tasko = new Tasks();
 		$causo = new Causes();
 
 		$a['raw_state'] = $a['state'];
+		
+		//$a['state'] = $stao->name($a, $tasko->any_task($a['id']));
 		$a['state'] = $stao->name($a, $tasko->any_task($a['id']));
 
 		$usro = new Users();
@@ -219,21 +214,24 @@ class Issues extends Connect {
 		
 		$a['causes'] = $causo->get_ids($a['id']);
 		$a['corrections'] = $tasko->get_corrections_ids($a['id']);
+		
+		//priorytet na podstaie zadań
+		//$a['priority'] = $tasko->issue_priority($a['id']);
+		if ($a['state'] == $bezlang['state_rejected']) {
+			$a['priority'] = '3';
+		} else if ($a['priority'] == NULL) {
+			$a['priority'] = 'None';
+		}
 
 		return $a;
 	}
 	
-	public function get_state($id) {
-		if ($id == '')
-			return false;
-		$stao = new States();
+	public function get_state($issue_clean) {
 		$tasko = new Tasks();
-		$result = $this->fetch_assoc("SELECT state, coordinator FROM issues WHERE id=$id");
-		$a = $result[0];
-		$res = array();
-		$res['state'] = $stao->name($a['state'], $a['coordinator'], $tasko->any_task($a['id']));
-		$res['raw_state'] = $a['state'];
-		return $res;
+		$stao = new States();
+		$state = $stao->name($issue_clean, $tasko->any_task($issue_clean['id']));
+		
+		return array('state' => $state, 'raw_state' => $a['state']);
 	}
 
 	public function get_clean($id) {
@@ -243,7 +241,12 @@ class Issues extends Connect {
 
 		$id = (int) $id;
 
-		$a = $this->fetch_assoc("SELECT * FROM issues WHERE id=$id");
+		$a = $this->fetch_assoc("SELECT *,
+				(SELECT MIN((CASE	WHEN tasks.state > 0 THEN '3'
+					WHEN tasks.plan_date >= date('now', '+1 month') THEN '2'
+					WHEN tasks.plan_date >= date('now') THEN '1'
+					ELSE '0' END)) FROM tasks WHERE tasks.issue = issues.id) AS priority FROM issues WHERE id=$id");
+		
 		if (count($a) == 0) {
 			$errors[] = $bezlang['error_issue_id_not_specifed'];
 			return array();
@@ -316,8 +319,15 @@ class Issues extends Connect {
 		if ($conf['lang'] != 'pl')
 			$lang = 'en';
 
-		$a = $this->fetch_assoc("SELECT issues.id, priority, title, description, state, opinion,
-								issuetypes.$lang as type, coordinator, reporter, date, last_mod
+		$a = $this->fetch_assoc("SELECT issues.id, title, description, state, opinion,
+								issuetypes.$lang as type, coordinator, reporter, date, last_mod,
+								(SELECT COUNT(tasks.id) FROM tasks WHERE tasks.state != 0 AND
+									issues.id = tasks.issue) AS tasks_closed,
+								(SELECT COUNT(tasks.id) FROM tasks WHERE issues.id = tasks.issue) AS tasks_all,
+								(SELECT MIN((CASE	WHEN tasks.state > 0 THEN '3'
+											WHEN tasks.plan_date >= date('now', '+1 month') THEN '2'
+											WHEN tasks.plan_date >= date('now') THEN '1'
+											ELSE '0' END)) FROM tasks WHERE tasks.issue = issues.id) AS priority
 								FROM issues LEFT JOIN issuetypes ON issues.type = issuetypes.id WHERE issues.id=$id");
 		if (count($a) == 0) {
 			$errors[] = $bezlang['error_issue_id_not_specifed'];
@@ -566,24 +576,30 @@ class Issues extends Connect {
 			$lang = 'en';
 
 		if (isset($sort_open) && $sort_open == 'on')
-			$order = 'ORDER BY issues.date DESC, issues.priority DESC, issues.last_mod DESC';
+			$order = 'ORDER BY issues.date DESC, state, priority, issues.last_mod DESC';
 		else
-			$order = 'ORDER BY issues.state, issues.priority DESC, issues.last_mod DESC, issues.date DESC';
+			$order = 'ORDER BY priority, state, issues.date DESC';
 
 		$a = $this->fetch_assoc("
-			SELECT issues.id, issues.priority, issues.state, issuetypes.$lang as type,
+			SELECT issues.id, issues.state, issuetypes.$lang as type,
 				issues.title, issues.coordinator, issues.date, issues.last_mod,
 				(SELECT COUNT(tasks.id) FROM tasks WHERE tasks.state != 0 AND issues.id = tasks.issue)
 				AS tasks_closed,
 				(SELECT COUNT(tasks.id) FROM tasks WHERE issues.id = tasks.issue) AS tasks_all,
-				(SELECT SUM(cost) FROM tasks WHERE tasks.issue = issues.id GROUP BY tasks.issue) AS cost
+				(SELECT SUM(cost) FROM tasks WHERE tasks.issue = issues.id GROUP BY tasks.issue) AS cost,
+				(SELECT MIN((CASE	WHEN tasks.state > 0 THEN '3'
+											WHEN tasks.plan_date >= date('now', '+1 month') THEN '2'
+											WHEN tasks.plan_date >= date('now') THEN '1'
+											ELSE '0' END)) FROM tasks WHERE tasks.issue = issues.id) AS priority
 				FROM $rootcause_join
 				$where_q
 				$rootcause_group
 				$order
 			");
-		foreach ($a as &$row)
+			//var_dump($a);
+		foreach ($a as &$row) {
 			$row = $this->join($row);
+		}
 		return $a;
 	}
 	public function get_oldest_close_date() {

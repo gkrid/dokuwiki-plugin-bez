@@ -40,7 +40,7 @@ class States {
 		global $bezlang;
 		return $bezlang['state_rejected'] == $name;
 	}
-	/*pobierz nazwę stanu, uwzględniając -proposal i -rejected*/
+	/*pobierz nazwę stanu, uwzględniając -proposal i -rejected i wykonane*/
 	public function name($issue, $anytask=true) {
 		global $bezlang;
 		$id = (int)$issue['state'];

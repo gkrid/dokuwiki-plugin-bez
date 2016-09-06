@@ -603,6 +603,86 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 			$db->close();
 	}
 	
+	
+function check_issues_remove_priority() {
+		$q = "PRAGMA table_info(issues)";
+		$a = $this->connect->fetch_assoc($q);
+		$entity = false;
+		foreach ($a as $r) {
+			if ($r['name'] == 'priority') {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+function do_issues_remove_priority() {
+		$con = new Connect();
+		$db = $con->open();
+
+		$createq = "
+				CREATE TABLE IF NOT EXISTS issues (
+				id INTEGER PRIMARY KEY,
+				title TEXT NOT NULL,
+				description TEXT NOT NULL,
+				state INTEGER NOT NULL,
+				opinion TEXT NULL,
+				type INTEGER NOT NULL,
+				coordinator TEXT NOT NULL,
+				reporter TEXT NOT NULL,
+				date INTEGER NOT NULL,
+				last_mod INTEGER)";
+				
+		$q = "	BEGIN TRANSACTION;
+			CREATE TEMPORARY TABLE issues_backup
+			(
+				id INTEGER PRIMARY KEY,
+				title TEXT NOT NULL,
+				description TEXT NOT NULL,
+				state INTEGER NOT NULL,
+				opinion TEXT NULL,
+				type INTEGER NOT NULL,
+				coordinator TEXT NOT NULL,
+				reporter TEXT NOT NULL,
+				date INTEGER NOT NULL,
+				last_mod INTEGER);
+			INSERT INTO issues_backup SELECT
+					id,
+					title,
+					description,
+					state,
+					opinion,
+					type,
+					coordinator,
+					reporter,
+					date,
+					last_mod
+				FROM issues;
+			DROP TABLE issues;
+			$createq;
+			INSERT INTO issues SELECT
+					id,
+					title,
+					description,
+					state,
+					opinion,
+					type,
+					coordinator,
+					reporter,
+					date,
+					last_mod
+				FROM issues_backup;
+			DROP TABLE issues_backup;
+			COMMIT;
+			";
+			$qa = explode(';', $q);
+
+			foreach ($qa as $e)  {
+				$db->query($e);
+			}
+			$db->close();
+	}
+	
 	private $actions = array(
 				
 				array('Słownik kategorii przyczyn', 'check_rootcause', 'do_rootcause'),
@@ -618,7 +698,9 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 				array('Zaimportuj zadania z PROZY.',
 				'check_proza_import', 'do_proza_import'),
 				array('Dodaj datę planowania zadań.',
-				'check_add_plan_date', 'do_add_plan_date')
+				'check_add_plan_date', 'do_add_plan_date'),
+				array('Usuń priorytet z tabeli problemów',
+				'check_issues_remove_priority', 'do_issues_remove_priority')
 				);
 
 	function _backup($sufix) {

@@ -18,6 +18,10 @@ $isso = new Issues();
 $usro = new Users();
 $tasko = new Tasks();
 
+if ($issue_id != NULL) {
+	$clean = $isso->get_clean($issue_id);
+}
+
 if (count($_POST) > 0) {
 	if ($action == 'update') {
 		$updated = $isso->update($_POST, array(), $issue_id);
@@ -59,7 +63,7 @@ if (count($_POST) > 0) {
 	if (count($errors) == 0)
 		header('Location: ?id='.$this->id('issue', 'id', $isso->lastid()));
 } elseif ($issue_id != NULL) {
-	$value = $isso->get_clean($issue_id);
+	$value = $clean;
 	$template['any_task_open'] = $tasko->any_open($issue_id);
 	$action = 'update';
 } else {
@@ -81,7 +85,16 @@ $template['nicks'] = $usro->get();
 $template['uri'] = $uri;
 $template['issue_id'] = $issue_id;
 
-$state = $isso->get_state($issue_id);
+if ($issue_id != NULL) {
+	$state = $isso->get_state($value, $issue_id);
+	$priority = $clean['priority'];
+	if ($priority == NULL) {
+		$priority = 'None';
+	}
+	$template['priority'] = $priority;
+} else {
+	$template['priority'] = 'None';
+}
 
 $template['state'] = $state['state'];
 $template['raw_state'] = $state['raw_state'];

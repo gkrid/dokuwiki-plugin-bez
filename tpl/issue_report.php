@@ -1,11 +1,6 @@
-<div id="bez_issue_report" class="bds_block <?php echo $template['action'] ?>">
+<div class="bds_block <?php echo $template['action'] ?>">
 <form action="<?php echo $template['uri'] ?>?id=<?php echo $this->id('issue_report', 'id', $template['issue_id'], 'action', $template['action']) ?>" method="POST">
-<div class="priorities">
-<label><input <?php if ($value['priority'] == '0') echo 'checked' ?> type="radio" name="priority" value="0"><?php echo $bezlang['priority_marginal'] ?></label>
-<label><input <?php if (!isset($value['priority']) || $value['priority'] == '1') echo 'checked' ?> type="radio" name="priority" value="1"><?php echo $bezlang['priority_important'] ?></label>
-<label><input <?php if ($value['priority'] == '2') echo 'checked' ?> type="radio" name="priority" value="2"><?php echo $bezlang['priority_crucial'] ?></label>
-</div>
-<fieldset class="bds_form">
+<fieldset id="bds_issue_box"  class="bds_form pr<?php echo $template['priority'] ?>">
 
 <?php if ($template['action'] == 'update'): ?>
 <div class="row">

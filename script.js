@@ -70,57 +70,6 @@ jQuery(document).ready(function () {
 		textarea.val(lines.join("\n"));
 	});
 
-	/*Zmiana kolorów podczas zmiany priorytetów*/
-	var $issue_rep = jQuery("#bez_issue_report");
-	if ($issue_rep.length > 0) {
-		var colors = {'0': '#B0D2B6', '1':  '#dd9', '2': '#F0AFAD'}; 
-		var bgcolors = {'0': '#eeF6F0', '1':  '#ffd', '2': '#F8e8E8'}; 
-		var $form = $issue_rep.find(".bds_form");
-		var $prior = $issue_rep.find(".priorities");
-
-		$prior.find("input").hide();
-		$prior.find("label").css({
-				'margin-right': '5px',
-				'padding' : '5px',
-				'background-color' : '#F7F7F0',
-				'border' : '2px solid',
-				'border-bottom' : '0',
-				'border-top-left-radius' : '5px',
-				'border-top-right-radius' : '5px',
-				'position' : 'relative',
-				'top' : '-1px'
-		});
-
-		$form.css({
-			'border': '2px solid',
-			'border-top-left-radius': '0',
-			'position' : 'relative',
-			'z-index': '100'
-		});
-
-
-		$prior.find("label").each(function() {
-			var $this = jQuery(this);
-			var ind = $this.index();
-			$this.css('border-color', colors[ind]);
-			$this.css('background-color', bgcolors[ind]);
-		});
-
-		var change_color = function() {
-			var color = $prior.find("input:checked").val();
-			$form.css('border-color', colors[color]);
-			$form.css('background-color', bgcolors[color]);
-			/*ustaw*/
-			$prior.find("label").css('z-index', '0');
-			$prior.find("input:checked").parents("label").css('z-index', '1000');
-		};
-		change_color();
-
-		$prior.change(function() {
-			change_color();
-		});
-	}
-	
 	jQuery("input[name=plan_date]").datepicker({
 		dateFormat: "yy-mm-dd"
 		});

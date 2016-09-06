@@ -273,7 +273,7 @@ class Tasks extends Event {
 										WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
 										WHEN causes.potential = 0 THEN '1'
 										ELSE '2' END) AS naction,
-			tasks.issue, tasks.task, tasks.date, tasks.executor, tasks.reason, issues.priority
+			tasks.issue, tasks.task, tasks.date, tasks.executor, tasks.reason
 			FROM tasks LEFT JOIN issues ON tasks.issue = issues.id LEFT JOIN causes ON tasks.cause = causes.id
 			WHERE tasks.date > $border_date
 			ORDER BY tasks.date DESC");
@@ -288,7 +288,7 @@ class Tasks extends Event {
 										WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
 										WHEN causes.potential = 0 THEN '1'
 										ELSE '2' END)  AS naction,
-				tasks.issue, tasks.task, tasks.close_date, tasks.executor, tasks.reason, issues.priority
+				tasks.issue, tasks.task, tasks.close_date, tasks.executor, tasks.reason
 				FROM tasks LEFT JOIN issues ON tasks.issue = issues.id LEFT JOIN causes ON tasks.cause = causes.id
 				WHERE tasks.close_date > $border_date 
 				AND   tasks.state = 1 ORDER BY tasks.close_date DESC");
@@ -304,7 +304,7 @@ class Tasks extends Event {
 										WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
 										WHEN causes.potential = 0 THEN '1'
 										ELSE '2' END) AS naction,
-				tasks.issue, tasks.task, tasks.close_date, tasks.executor, tasks.reason, issues.priority
+				tasks.issue, tasks.task, tasks.close_date, tasks.executor, tasks.reason
 				FROM tasks LEFT JOIN issues ON tasks.issue = issues.id LEFT JOIN causes ON tasks.cause = causes.id
 				WHERE tasks.close_date > $border_date 
 				AND   tasks.state = 2 ORDER BY tasks.close_date DESC");
@@ -333,24 +333,6 @@ class Tasks extends Event {
 		$row['executor_email'] = $usro->email($row['executor']);
 		$row['executor'] = $usro->name($row['executor']);
 		$row['tasktype'] = $tasktypes[$row['tasktype']];
-
-		//$row['action'] = $taskao->name($row['action']);
-		
-		if ($row['state'] == 0) {
-			if ($row['plan_date'] != '') {
-				$plan_date = strtotime($row['plan_date']);
-				$diff = $plan_date - time();
-				if ($diff < 0)
-					$row['priority'] = 2;
-				else if ($diff / (60*60*24) < 30)
-					$row['priority'] = 1;
-				else
-					$row['priority'] = 0;
-			} else
-				$row['priority'] = 1;
-		} else {
-			$row['priority'] = 4;
-		}
 
 		if (isset($row[naction]))
 			switch($row[naction]) {
@@ -469,10 +451,10 @@ class Tasks extends Event {
 											WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
 											WHEN causes.potential = 0 THEN '1'
 											ELSE '2' END) AS naction,
-		tasks.executor, tasks.cost, tasks.date, tasks.close_date, tasks.issue, tasks.close_date, issues.priority
+		tasks.executor, tasks.cost, tasks.date, tasks.close_date, tasks.issue, tasks.close_date
 		FROM tasks LEFT JOIN issues ON tasks.issue = issues.id 
 		LEFT JOIN causes ON tasks.cause = causes.id
-		WHERE tasks.state != 2 AND tasks.issue = $issue ORDER BY priority DESC, tasks.date DESC");
+		WHERE tasks.state != 2 AND tasks.issue = $issue ORDER BY tasks.plan_date, tasks.start_time DESC");
 		$b = array();
 		$taskao = new Taskactions();
 		foreach ($a as $row) {
@@ -733,24 +715,46 @@ class Tasks extends Event {
 											WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
 											WHEN causes.potential = 0 THEN '1'
 											ELSE '2' END)AS naction,
+									(CASE	WHEN tasks.state > 0 THEN '3'
+											WHEN tasks.plan_date >= date('now', '+1 month') THEN '2'
+											WHEN tasks.plan_date >= date('now') THEN '1'
+											ELSE '0' END) as priority,
 		tasks.executor, tasks.cost, tasks.date, tasks.close_date, tasks.issue, tasks.close_date,
 		tasks.tasktype, tasks.task, tasks.reason, tasks.plan_date, tasks.all_day_event,
 		tasks.start_time, tasks.finish_time
 		FROM tasks LEFT JOIN issues ON tasks.issue = issues.id 
 		LEFT JOIN causes ON tasks.cause = causes.id
-		$where_q ORDER BY priority DESC, tasks.date DESC");
+		$where_q ORDER BY priority, tasks.plan_date, tasks.start_time");
 		foreach ($a as &$row)
 			$row = $this->join($row, $keep);
 		return $a;
 	}
+	
+	//~ function issue_priority($id) {
+		//~ $id = (int)$id;
+		//~ $a = $this->fetch_assoc("SELECT MAX((CASE	WHEN tasks.state > 0 THEN '-1'
+											//~ WHEN tasks.plan_date >= date('now', '+1 month') THEN '0'
+											//~ WHEN tasks.plan_date >= date('now') THEN '1'
+											//~ ELSE '2' END)) as priority FROM tasks WHERE issue = $id");
+								
+		//~ if ($a[0]['priority'] == NULL) {
+			//~ return 'None';
+		//~ } else {
+			//~ return $a[0]['priority'];
+		//~ }
+	//~ }
 //cron_get_coming_tasks, cron_get_outdated_tasks
 	public function cron_get_outdated_tasks() {
 		global $bezlang;
-		$a = $this->fetch_assoc("SELECT tasks.id, tasks.issue, tasks.executor, tasks.date, issues.priority, tasks.plan_date, tasks.start_time, tasks.finish_time, tasktypes.pl as tasktype,
+		$a = $this->fetch_assoc("SELECT tasks.id, tasks.issue, tasks.executor, tasks.date, tasks.plan_date, tasks.start_time, tasks.finish_time, tasktypes.pl as tasktype,
 									(CASE	WHEN tasks.issue IS NULL THEN '3'
 											WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
 											WHEN causes.potential = 0 THEN '1'
-											ELSE '2' END) AS naction
+											ELSE '2' END) AS naction,
+									(CASE	WHEN tasks.state > 0 THEN '3'
+											WHEN tasks.plan_date >= date('now', '+1 month') THEN '0'
+											WHEN tasks.plan_date >= date('now') THEN '1'
+											ELSE '2' END) as priority,
 								FROM tasks LEFT JOIN issues ON tasks.issue = issues.id 
 								LEFT JOIN causes ON tasks.cause = causes.id
 								LEFT JOIN tasktypes ON tasks.tasktype = tasktypes.id
@@ -769,7 +773,7 @@ class Tasks extends Event {
 	//one month
 	public function cron_get_coming_tasks() {
 		global $bezlang;
-		$a = $this->fetch_assoc("SELECT tasks.id, tasks.issue, tasks.executor, tasks.date, issues.priority, tasks.plan_date, tasks.start_time, tasks.finish_time, tasktypes.pl as tasktype,
+		$a = $this->fetch_assoc("SELECT tasks.id, tasks.issue, tasks.executor, tasks.date, tasks.plan_date, tasks.start_time, tasks.finish_time, tasktypes.pl as tasktype,
 									(CASE	WHEN tasks.issue IS NULL THEN '3'
 											WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
 											WHEN causes.potential = 0 THEN '1'
@@ -791,7 +795,7 @@ class Tasks extends Event {
 	
 	public function cron_get_open_tasks() {
 		global $bezlang;
-		$a = $this->fetch_assoc("SELECT tasks.id, tasks.issue, tasks.executor, tasks.date, issues.priority, tasktypes.pl as tasktype,
+		$a = $this->fetch_assoc("SELECT tasks.id, tasks.issue, tasks.executor, tasks.date, tasktypes.pl as tasktype,
 									(CASE	WHEN tasks.issue IS NULL THEN '3'
 											WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
 											WHEN causes.potential = 0 THEN '1'
