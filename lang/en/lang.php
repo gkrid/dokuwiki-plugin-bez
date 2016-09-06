@@ -428,3 +428,5 @@ $lang['users'] = 'users';
 $lang['groups'] = 'groups';
 
 $lang['duplicate'] = 'Duplicate';
+
+$lang['show_issue'] = 'Show issue';

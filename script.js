@@ -204,6 +204,11 @@ jQuery(document).ready(function () {
 	});
 	hide_unneeded_hours(jQuery("input[name=start_time]"));
 	
+	jQuery("#bez_task_context").hide();
+	jQuery("#bez_task_context_show_button").show().click(function () {
+		jQuery("#bez_task_context").show();
+		jQuery(this).hide();
+	});
 	
 	//bez_show_desc
 	jQuery(".bez_desc_row").hide();

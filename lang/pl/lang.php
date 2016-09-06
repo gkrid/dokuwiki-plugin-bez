@@ -445,3 +445,5 @@ $lang['groups'] = 'grupy';
 
 $lang['duplicate'] = 'Powiel';
 
+$lang['show_issue'] = 'Pokaż problem';
+

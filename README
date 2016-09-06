@@ -7,3 +7,4 @@ Wersja 2016-09-06:
 		2 -> zielony
 		3 -> biały
 	- #30 #z129 - Dodano wirtualny status: "Przeterminowane" do zadań.
+	- #28 #z128 - Dodano ukrywanie Problemu przy widoku zadania.
