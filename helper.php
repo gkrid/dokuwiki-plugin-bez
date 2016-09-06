@@ -126,6 +126,13 @@ class helper_plugin_bez extends dokuwiki_plugin
 		}
 		return $time_str;
 	}
+	
+	public function days_left($date) {
+		$d = date_create($date);
+		$now = date_create('now');
+		$interval = date_diff($now, $d);
+		return $interval->format('%R%a '.$this->getLang('days'));
+	}
 
 	public function string_time_to_now($value) {
 		$diff = time() - $value;

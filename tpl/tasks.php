@@ -164,6 +164,9 @@
 		<td>
 		<?php if ($task['plan_date'] != ''): ?>
 			<?php echo $task['plan_date'] ?>
+			<?php if ($task['raw_state'] == '0'): ?>
+				(<?php echo $helper->days_left($task['plan_date']) ?>)
+			<?php endif ?>
 			<?php if ($task['all_day_event'] == '0'): ?>
 				<?php echo $task['start_time'] ?>&nbsp;-&nbsp;<?php echo $task['finish_time'] ?>
 			<?php endif ?>
