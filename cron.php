@@ -64,12 +64,13 @@ try {
 }
 
 $issues = $isso->cron_get_unsolved();
+
 log_errors();
 foreach ($issues as $issue) {
 	$key = $issue['coordinator'];
 	if (!isset($msg[$key]))
 		$msg[$key] = array('issues' => array(), 'coming_tasks' => array(),
-							'open_tasks' => array(), 'outdated_tasks' => array());
+							'outdated_tasks' => array());
 
 	$msg[$key]['issues'][] = $issue;
 }
@@ -80,7 +81,7 @@ foreach ($coming_tasks_all as $task) {
 	$key = $task['executor'];
 	if (!isset($msg[$key]))
 		$msg[$key] = array('issues' => array(), 'coming_tasks' => array(),
-							'open_tasks' => array(), 'outdated_tasks' => array());
+							'outdated_tasks' => array());
 
 	$msg[$key]['coming_tasks'][] = $task;
 }
@@ -91,20 +92,9 @@ foreach ($outdated_tasks_all as $task) {
 	$key = $task['executor'];
 	if (!isset($msg[$key]))
 		$msg[$key] = array('issues' => array(), 'coming_tasks' => array(),
-							'open_tasks' => array(), 'outdated_tasks' => array());
+							'outdated_tasks' => array());
 
 	$msg[$key]['outdated_tasks'][] = $task;
-}
-
-$open_tasks_all  = $tasko->cron_get_open_tasks();
-log_errors();
-foreach ($open_tasks_all as $task) {
-	$key = $task['executor'];
-	if (!isset($msg[$key]))
-		$msg[$key] = array('issues' => array(), 'coming_tasks' => array(),
-							'open_tasks' => array(), 'outdated_tasks' => array());
-
-	$msg[$key]['open_tasks'][] = $task;
 }
 
 //outdated_tasks, coming_tasks, open_tasks
@@ -116,10 +106,9 @@ foreach ($msg as $user => $data) {
 	$his_issues = $data['issues'];
 	$outdated_tasks = $data['outdated_tasks'];
 	$coming_tasks = $data['coming_tasks'];
-	$open_tasks = $data['open_tasks'];
+
 	
-	if (count($his_issues) + count($outdated_tasks) + count($coming_tasks)
-		+ count($open_tasks) == 0)
+	if (count($his_issues) + count($outdated_tasks) + count($coming_tasks) == 0)
 		continue;
 
 	$to = $udata['name'].' <'.$udata['mail'].'>';

@@ -738,36 +738,22 @@ class Tasks extends Event {
 		return $a;
 	}
 	
-	//~ function issue_priority($id) {
-		//~ $id = (int)$id;
-		//~ $a = $this->fetch_assoc("SELECT MAX((CASE	WHEN tasks.state > 0 THEN '-1'
-											//~ WHEN tasks.plan_date >= date('now', '+1 month') THEN '0'
-											//~ WHEN tasks.plan_date >= date('now') THEN '1'
-											//~ ELSE '2' END)) as priority FROM tasks WHERE issue = $id");
-								
-		//~ if ($a[0]['priority'] == NULL) {
-			//~ return 'None';
-		//~ } else {
-			//~ return $a[0]['priority'];
-		//~ }
-	//~ }
-//cron_get_coming_tasks, cron_get_outdated_tasks
+	//cron_get_coming_tasks, cron_get_outdated_tasks
 	public function cron_get_outdated_tasks() {
 		global $bezlang;
-		$a = $this->fetch_assoc("SELECT tasks.id, tasks.issue, tasks.executor, tasks.date, tasks.plan_date, tasks.start_time, tasks.finish_time, tasktypes.pl as tasktype,
+		$a = $this->fetch_assoc("SELECT tasks.id, tasks.issue, tasks.executor, tasks.date, tasks.plan_date, tasks.start_time, tasks.finish_time, tasktypes.pl as tasktype, all_day_event,
 									(CASE	WHEN tasks.issue IS NULL THEN '3'
 											WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
 											WHEN causes.potential = 0 THEN '1'
 											ELSE '2' END) AS naction,
 									(CASE	WHEN tasks.state > 0 THEN '3'
-											WHEN tasks.plan_date >= date('now', '+1 month') THEN '0'
+											WHEN tasks.plan_date >= date('now', '+1 month') THEN '2'
 											WHEN tasks.plan_date >= date('now') THEN '1'
-											ELSE '2' END) as priority,
+											ELSE '0' END) AS priority
 								FROM tasks LEFT JOIN issues ON tasks.issue = issues.id 
 								LEFT JOIN causes ON tasks.cause = causes.id
 								LEFT JOIN tasktypes ON tasks.tasktype = tasktypes.id
-								WHERE tasks.state=0 AND tasks.plan_date != ''
-									AND tasks.plan_date < date('now')");
+								WHERE priority = '0'");
 		foreach ($a as &$row)						
 			switch($row['naction']) {
 				case 0: $row['action'] = $bezlang['correction']; break;
@@ -781,37 +767,19 @@ class Tasks extends Event {
 	//one month
 	public function cron_get_coming_tasks() {
 		global $bezlang;
-		$a = $this->fetch_assoc("SELECT tasks.id, tasks.issue, tasks.executor, tasks.date, tasks.plan_date, tasks.start_time, tasks.finish_time, tasktypes.pl as tasktype,
+		$a = $this->fetch_assoc("SELECT tasks.id, tasks.issue, tasks.executor, tasks.date, tasks.plan_date, tasks.start_time, tasks.finish_time, tasktypes.pl as tasktype, all_day_event,
 									(CASE	WHEN tasks.issue IS NULL THEN '3'
 											WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
 											WHEN causes.potential = 0 THEN '1'
-											ELSE '2' END) AS naction
+											ELSE '2' END) AS naction,
+									(CASE	WHEN tasks.state > 0 THEN '3'
+											WHEN tasks.plan_date >= date('now', '+1 month') THEN '2'
+											WHEN tasks.plan_date >= date('now') THEN '1'
+											ELSE '0' END) AS priority
 								FROM tasks LEFT JOIN issues ON tasks.issue = issues.id 
 								LEFT JOIN causes ON tasks.cause = causes.id
 								LEFT JOIN tasktypes ON tasks.tasktype = tasktypes.id
-								WHERE tasks.state=0 AND tasks.plan_date != ''
-									AND tasks.plan_date > date('now', '-1 month')");
-		foreach ($a as &$row)						
-			switch($row['naction']) {
-				case 0: $row['action'] = $bezlang['correction']; break;
-				case 1: $row['action'] = $bezlang['corrective_action']; break;
-				case 2: $row['action'] = $bezlang['preventive_action']; break;
-				case 3: $row['action'] = $bezlang['programme']; break;
-			}
-		return $a;
-	}
-	
-	public function cron_get_open_tasks() {
-		global $bezlang;
-		$a = $this->fetch_assoc("SELECT tasks.id, tasks.issue, tasks.executor, tasks.date, tasktypes.pl as tasktype,
-									(CASE	WHEN tasks.issue IS NULL THEN '3'
-											WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
-											WHEN causes.potential = 0 THEN '1'
-											ELSE '2' END) AS naction
-								FROM tasks LEFT JOIN issues ON tasks.issue = issues.id 
-								LEFT JOIN causes ON tasks.cause = causes.id
-								LEFT JOIN tasktypes ON tasks.tasktype = tasktypes.id
-								WHERE tasks.state=0 AND tasks.plan_date = ''");
+								WHERE priority = '1'");
 		foreach ($a as &$row)						
 			switch($row['naction']) {
 				case 0: $row['action'] = $bezlang['correction']; break;
