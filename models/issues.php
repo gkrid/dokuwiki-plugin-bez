@@ -578,7 +578,7 @@ class Issues extends Connect {
 		if (isset($sort_open) && $sort_open == 'on')
 			$order = 'ORDER BY issues.date DESC, state, priority, issues.last_mod DESC';
 		else
-			$order = 'ORDER BY priority, state, issues.date DESC';
+			$order = 'ORDER BY state, priority, issues.date DESC';
 
 		$a = $this->fetch_assoc("
 			SELECT issues.id, issues.state, issuetypes.$lang as type,
