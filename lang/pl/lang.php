@@ -221,6 +221,7 @@ $lang['environment'] = 'Środowisko';
 $lang['communication'] = "Komunikacja";
 
 $lang['task_opened'] = 'Otwarte';
+$lang ['task_outdated'] = 'Przeterminowane';
 $lang ['task_done'] = 'Wykonane';
 $lang ['task_plan'] = "Zaplanuj";
 $lang ['task_rejected'] = 'Odrzucone';

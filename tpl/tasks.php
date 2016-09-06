@@ -145,6 +145,9 @@
 		</td>
 		<td>
 			<?php echo lcfirst($task['state']) ?>
+			<?php if ($task['priority'] == '0'): ?>
+			(<?php echo lcfirst($bezlang['task_outdated']) ?>)
+			<?php endif ?>
 		</td>
 		<td>
 			<?php echo lcfirst($task['action']) ?>

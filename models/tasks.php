@@ -557,8 +557,11 @@ class Tasks extends Event {
 		//!!! taskstate changing to state
 		if (isset($filters['taskstate'])) {
 			$taskso = new Taskstates();
-			if ($filters['taskstate'] == '-all' || array_key_exists($filters['taskstate'], array_keys($taskso->get())))
-				$data['taskstate'] = $filters['taskstate'];
+			if ($filters['taskstate'] == '-all' ||
+				$filters['taskstate'] == '-outdated' ||
+				array_key_exists($filters['taskstate'], array_keys($taskso->get()))) {
+					$data['taskstate'] = $filters['taskstate'];
+				}
 		}
 
 
@@ -657,6 +660,11 @@ class Tasks extends Event {
 		
 		$date_type = $vfilters['date_type'];
 		unset($vfilters['date_type']);
+		
+		if ($vfilters['taskstate'] == '-outdated') {
+			$vfilters['taskstate'] = '0';
+			$where[] = "tasks.plan_date < date('now')";
+		}
 		
 		foreach ($vfilters as $name => $value) {
 			if ($name == 'tasktype' && $value == '-none')

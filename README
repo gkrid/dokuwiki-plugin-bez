@@ -1,4 +1,4 @@
-Wersja 2016-09-:
+Wersja 2016-09-06:
 	- Usunięto priorytet z Problemów. Obecnie w Tabeli Problemów kolor Problemu uzależniony jest od koloru Zadań w nim zawartych. Jeżeli zawiera choć jedno zadanie czerwone, kolor jest czerwony. Jeżeli brak czerwonych i choć jedno zadanie jest żółte, kolor jest żółty. Jeżeli brak czerwonych i żółtych i choć jedno zadanie jest zielone, kolor zielony. Jeżeli nie zawiera żadnych zadań kolor niebieski. Jeżeli problem jest zamknięty bądź dorzucony, kolor biały.
 	Kodowanie kolorów:
 		NULL -> niebieski
@@ -6,3 +6,4 @@ Wersja 2016-09-:
 		1 -> żółty
 		2 -> zielony
 		3 -> biały
+	- #30 #z129 - Dodano wirtualny status: "Przeterminowane" do zadań.

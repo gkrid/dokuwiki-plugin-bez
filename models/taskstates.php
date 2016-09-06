@@ -4,11 +4,13 @@ class Taskstates {
 	public function get() {
 		global $bezlang;
 		return array(	
-				$bezlang['task_opened'],
-				$bezlang['task_done'],
-				$bezlang['task_rejected']
+				'0' => $bezlang['task_opened'],
+				'-outdated' => $bezlang['task_outdated'],
+				'1' => $bezlang['task_done'],
+				'2' => $bezlang['task_rejected']
 			);
 	}
+	
 	public function id($name) {
 		switch ($name) {
 			case 'opened': return 0;

@@ -3,12 +3,13 @@
 class States {
 	public function get($anytask = true) {
 		global $bezlang;
-		$a = array($bezlang['state_opened']);
+		$a = array();
+		$a['0'] = $bezlang['state_opened'];
 		$a['-done'] = $bezlang['state_done'];
 		if ($anytask)
-			$a[] = $bezlang['state_closed'];
+			$a['1'] = $bezlang['state_closed'];
 		else
-			$a[] = $bezlang['state_rejected'];
+			$a['1'] = $bezlang['state_rejected'];
 		return $a;
 	}
 	public function get_list() {
