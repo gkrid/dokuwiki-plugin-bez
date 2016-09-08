@@ -434,3 +434,5 @@ $lang['duplicate'] = 'Duplicate';
 $lang['show_issue'] = 'Show issue';
 
 $lang['select'] = 'select';
+
+$lang['not_relevant'] = 'not relevant';

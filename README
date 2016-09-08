@@ -1,6 +1,6 @@
 Wersja 2016-09-08:
 	- w raporcie osobno zliczamy zadania zamknięte na czas i zamknięte po terminie #37
-
+	- streszczenie opisu Zadania w tabeli Zadań #38
 
 Wersja 2016-09-06:
 	- Usunięto priorytet z Problemów. Obecnie w Tabeli Problemów kolor Problemu uzależniony jest od koloru Zadań w nim zawartych. Jeżeli zawiera choć jedno zadanie czerwone, kolor jest czerwony. Jeżeli brak czerwonych i choć jedno zadanie jest żółte, kolor jest żółty. Jeżeli brak czerwonych i żółtych i choć jedno zadanie jest zielone, kolor zielony. Jeżeli nie zawiera żadnych zadań kolor niebieski. Jeżeli problem jest zamknięty bądź dorzucony, kolor biały.

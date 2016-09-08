@@ -42,8 +42,8 @@
 <h2><?php echo $bezlang['2d'] ?></h2>
 <?php echo  $template['issue']['description'] ?>
 
+<h2><?php echo $bezlang['3d'] ?></h2>
 <?php if (count($template['tasks']['3d'] ) > 0): ?>
-	<h2><?php echo $bezlang['3d'] ?></h2>
 	<?php $tasks = $template['tasks']['3d'] ?>
 		<table>
 		<tr>
@@ -88,10 +88,12 @@
 			</tr>
 		<?php endforeach ?>
 		</table>
+<?php else: ?>
+	<p><i><?php echo $bezlang['not_relevant'] ?></i></p>
 <?php endif ?>
 
+<h2><?php echo $bezlang['4d'] ?></h2>	
 <?php if (count($template['causes']) > 0): ?>	
-	<h2><?php echo $bezlang['4d'] ?></h2>	
 	<table>
 	<?php foreach ($template['causes'] as $rootcause => $cause): ?>
 
@@ -110,13 +112,17 @@
 		<?php endforeach ?>
 	<?php endforeach ?>
 	</table>
+<?php else: ?>
+	<p><i><?php echo $bezlang['not_relevant'] ?></i></p>
 <?php endif ?>
 
 <?php unset($template['tasks']['3d']) ?>
 
-<?php if (count($template['tasks']) > 0): ?>
-	<?php foreach($template['tasks'] as $nd => $tasks): ?>
-		<h2><?php echo $bezlang[$nd] ?></h2>
+
+<?php foreach(array('5d', '6d') as $nd): ?>
+	<h2><?php echo $bezlang[$nd] ?></h2>
+	<?php if (count($template['tasks'][$nd]) > 0): ?>	
+		<?php $tasks = $template['tasks'][$nd] ?>
 		<table>
 		<tr>
 			<th><?php echo $bezlang['id'] ?></th>
@@ -160,15 +166,18 @@
 			</tr>
 		<?php endforeach ?>
 		</table>
-	<?php endforeach ?>
-<?php endif ?>
+	<?php else: ?>
+		<p><i><?php echo $bezlang['not_relevant'] ?></i></p>
+	<?php endif ?>
+<?php endforeach ?>
 
 
 
+<h2><?php echo $bezlang['7d'] ?></h2>
 <?php if (strlen(trim($template['issue']['opinion'])) > 0): ?>
-	<h2><?php echo $bezlang['7d'] ?></h2>
 	<?php echo  $template['issue']['opinion'] ?>
-
+<?php else: ?>
+	<p><i><?php echo $bezlang['not_relevant'] ?></i></p>
 <?php endif ?>
 
 <h2><?php echo $bezlang['8d'] ?></h2>

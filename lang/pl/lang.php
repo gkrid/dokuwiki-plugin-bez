@@ -451,3 +451,5 @@ $lang['show_issue'] = 'Pokaż problem';
 
 $lang['select'] = 'wybierz';
 
+$lang['not_relevant'] = 'nie dotyczy';
+
