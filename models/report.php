@@ -143,7 +143,43 @@ class Report extends Connect {
 									WHEN tasks.cause IS NULL OR tasks.cause = '' THEN 0
 									WHEN causes.potential = 0 THEN 1
 									ELSE 2 END) AS naction,
-									COUNT(*) AS number_of_close, SUM(cost) AS cost_of_close,
+									COUNT(*) AS number_of_closed_on_time
+										FROM tasks LEFT JOIN issues ON tasks.issue = issues.id
+										LEFT JOIN causes ON tasks.cause = causes.id
+										WHERE tasks.state = 1 AND date(tasks.close_date, 'unixepoch') <= tasks.plan_date $where
+										GROUP BY naction
+										ORDER BY naction");
+									
+		$tsk_closed_on_time = array();
+		foreach ($tasks as $task) { 
+			$tsk_closed_on_time[$task['naction']] = $task;
+		}
+		
+		
+		$tasks = $this->fetch_assoc("SELECT 
+							(CASE	WHEN tasks.issue IS NULL THEN '3'
+									WHEN tasks.cause IS NULL OR tasks.cause = '' THEN 0
+									WHEN causes.potential = 0 THEN 1
+									ELSE 2 END) AS naction,
+									COUNT(*) AS number_of_closed_off_time
+										FROM tasks LEFT JOIN issues ON tasks.issue = issues.id
+										LEFT JOIN causes ON tasks.cause = causes.id
+										WHERE tasks.state = 1 AND date(tasks.close_date, 'unixepoch') > tasks.plan_date $where
+										GROUP BY naction
+										ORDER BY naction");
+									
+		$tsk_closed_off_time = array();
+		foreach ($tasks as $task) { 
+			$tsk_closed_off_time[$task['naction']] = $task;
+		}
+		
+		
+		$tasks = $this->fetch_assoc("SELECT 
+							(CASE	WHEN tasks.issue IS NULL THEN '3'
+									WHEN tasks.cause IS NULL OR tasks.cause = '' THEN 0
+									WHEN causes.potential = 0 THEN 1
+									ELSE 2 END) AS naction,
+									SUM(cost) AS cost_of_close,
 									AVG(tasks.close_date - tasks.date) AS average
 										FROM tasks LEFT JOIN issues ON tasks.issue = issues.id
 										LEFT JOIN causes ON tasks.cause = causes.id
@@ -158,12 +194,22 @@ class Report extends Connect {
 						
 		
 		foreach ($tasks_open as &$task) {
+			if (isset($tsk_closed_on_time[$task['naction']])) {
+				$task['number_of_closed_on_time'] = $tsk_closed_on_time[$task['naction']]['number_of_closed_on_time'];
+			} else {
+				$task['number_of_closed_on_time'] = 0;
+			}
+			
+			if (isset($tsk_closed_off_time[$task['naction']])) {
+				$task['number_of_closed_off_time'] = $tsk_closed_off_time[$task['naction']]['number_of_closed_off_time'];
+			} else {
+				$task['number_of_closed_off_time'] = 0;
+			}
+			
 			if (isset($tsk_closed[$task['naction']])) {
-				$task['number_of_close'] = $tsk_closed[$task['naction']]['number_of_close'];
 				$task['cost_of_close'] = $tsk_closed[$task['naction']]['cost_of_close'];
 				$task['average'] = $this->helper->days((int)$tsk_closed[$task['naction']]['average']);
 			} else {
-				$task['number_of_close'] = 0;
 				$task['cost_of_close'] = 0;
 				$task['average'] = '---';
 			}

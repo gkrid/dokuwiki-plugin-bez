@@ -381,6 +381,8 @@ $lang['cause_without_task'] = 'Nie możesz zamknąć problemu jeżeli posiada on
 
 $lang['number_of_open'] = 'Ilość otwartych';
 $lang['number_of_close'] = 'W tym zamkniętych';
+$lang['number_of_close_on_time'] = 'W tym zamkniętych na czas';
+$lang['number_of_close_off_time'] = 'W tym zamkniętych po terminie';
 $lang['diffirence'] = 'Różnica';
 
 $lang['cost_of_open'] = 'Koszt otwartych';

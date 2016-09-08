@@ -369,6 +369,8 @@ $lang['cause_without_task'] = 'You cannot close the issue if you have some cause
 
 $lang['number_of_open'] = 'Number of open';
 $lang['number_of_close'] = 'Number of closed';
+$lang['number_of_close_on_time'] = 'Number of closed on time';
+$lang['number_of_close_off_time'] = 'Number of closed off time';
 $lang['diffirence'] = 'Diffirence';
 
 $lang['cost_of_open'] = 'Cost of open';

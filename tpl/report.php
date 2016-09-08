@@ -102,29 +102,34 @@
 
 
 <?php $number_of_open = 0 ?>
-<?php $number_of_close = 0 ?>
+<?php $number_of_close_on_time = 0 ?>
+<?php $number_of_close_off_time = 0 ?>
 <table class="bez_sumarise">
 	<tr>
 		<th><?php echo $bezlang['class'] ?></th>
 		<th><?php echo $bezlang['number_of_open'] ?></th>
-		<th><?php echo $bezlang['number_of_close'] ?></th>
+		<th><?php echo $bezlang['number_of_close_on_time'] ?></th>
+		<th><?php echo $bezlang['number_of_close_off_time'] ?></th>
 		<th><?php echo $bezlang['diffirence'] ?></th>
 	</tr>
 	<?php foreach ($template['report']['tasks'] as $task): ?>
 		<tr>
 			<td><?php echo $task['action'] ?></td>
 			<td><?php echo $task['number_of_open'] ?></td>
-			<td><?php echo $task['number_of_close'] ?></td>
-			<td><?php echo $task['number_of_open'] - $task['number_of_close'] ?></td>
+			<td><?php echo $task['number_of_closed_on_time'] ?></td>
+			<td><?php echo $task['number_of_closed_off_time'] ?></td>
+			<td><?php echo $task['number_of_open'] - $task['number_of_closed_on_time'] - $task['number_of_closed_off_time'] ?></td>
 		</tr>
 		<?php $number_of_open += (int)$task['number_of_open'] ?>
-		<?php $number_of_close += (int)$task['number_of_close'] ?>
+		<?php $number_of_close_on_time += (int)$task['number_of_closed_on_time'] ?>
+		<?php $number_of_close_off_time += (int)$task['number_of_closed_off_time'] ?>
 	<?php endforeach ?>
 	<tr>
 		<th><?php echo $bezlang['report_total'] ?></th>
 		<td><?php echo $number_of_open ?></td>
-		<td><?php echo $number_of_close ?></td>
-		<td><?php echo $number_of_open - $number_of_close ?></td>
+		<td><?php echo $number_of_close_on_time ?></td>
+		<td><?php echo $number_of_close_off_time ?></td>
+		<td><?php echo $number_of_open - $number_of_close_on_time - $number_of_close_off_time  ?></td>
 	</tr>
 </table>
 
