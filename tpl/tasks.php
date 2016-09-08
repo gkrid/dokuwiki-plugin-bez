@@ -131,6 +131,8 @@
 	<th><?php echo $bezlang['state'] ?></th>
 	<th><?php echo $bezlang['class'] ?></th>
 	<th><?php echo $bezlang['task_type'] ?></th>
+	<th><?php echo $bezlang['description'] ?></th>
+	
 	<th><?php echo $bezlang['executor'] ?></th>
 	<th><?php echo $bezlang['plan'] ?></th>
 	<th><?php echo $bezlang['cost'] ?></th>
@@ -140,7 +142,7 @@
 	
 </tr>
 <?php foreach ($template['tasks'] as $task): ?>
-	<tr class="pr<?php echo $task['priority'] ?>">
+	<tr class="pr<?php echo $task['priority'] ?>" data-bez-row-id="<?php echo $task['id'] ?>">
 		<td><?php echo $this->html_task_link($task['issue'], $task['id']) ?>
 		</td>
 		<td>
@@ -159,6 +161,8 @@
 				<?php echo $task['tasktype'] ?>
 			<?php endif ?>
 		</td>
+		<?php $sentences = preg_split("/[.\[]+/", trim($task['raw_task'])) ?>
+		<td><?php echo $sentences[0] ?> <a class="bez_show_single_desc" href="#">(...)</a></td>
 		<td><?php echo $task['executor'] ?></td>
 		
 		<td>
@@ -198,13 +202,13 @@
 			<?php endif ?>
 		</td>
 		</tr>
-		<tr class="bez_desc_row">
+		<tr class="bez_desc_row task<?php echo $task['id'] ?>">
 			<td colspan="9">
 				<?php echo $task['task'] ?>
 			</td>
 		</tr>
 		<?php if ($template['view'] == 'realization'): ?>
-		<tr class="bez_desc_row">
+		<tr class="bez_desc_row task<?php echo $task['id'] ?>">
 			<td colspan="9">
 				<?php if ($task['reason'] == ''): ?>
 					<em>---</em>

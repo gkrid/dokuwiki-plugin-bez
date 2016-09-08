@@ -224,4 +224,17 @@ jQuery(document).ready(function () {
 		}
 		e.preventDefault();
 	});
+	
+	jQuery(".bez_show_single_desc").on('click', function(e) {
+		var $row = jQuery(this).parents('tr'),
+			row_id = $row.data('bez-row-id'),
+			$desc_rows = $row.parents('table').find('.task'+row_id);
+			
+		if ($desc_rows.is(":visible")) {
+			$desc_rows.hide();
+		} else {
+			$desc_rows.show();
+		}
+		e.preventDefault();
+	});
 });

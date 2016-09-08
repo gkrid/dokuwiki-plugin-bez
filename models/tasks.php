@@ -356,6 +356,8 @@ class Tasks extends Event {
 		$row['raw_state'] = $row['state'];
 		$row['state'] = $taskso->name($row['state']);
 
+		$row['raw_task'] = $row['task'];
+
 		if (!in_array('task', $keep) || !in_array('reason', $keep))
 			$wiki_text = $cache->get_task($row['id']);
 		
