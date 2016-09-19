@@ -511,9 +511,10 @@ class Tasks extends Event {
 		$close = $this->fetch_assoc("SELECT MIN(close_date) AS min, MAX(close_date) AS max FROM tasks");
 		$plan = $this->fetch_assoc("SELECT MIN(plan_date) AS min, MAX(plan_date) AS max FROM tasks");
 		
-		if (count($close) == 0 && count($plan) == 0)
-			return array(date('Y'), 1);
-		if (count($close) == 0) {
+		if ($close[0]['min'] == NULL && $close[0]['max'] == NULL &&
+			$plan[0]['min'] == NULL && $plan[0]['max'] == NULL)
+			return array(date('Y'));
+		if ($close[0]['min'] == NULL && $close[0]['max'] == NULL) {
 			$oldest = (int)date('Y', strtotime($plan[0]['min']));
 			$newest = (int)date('Y', strtotime($plan[0]['max']));
 		} else {

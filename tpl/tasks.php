@@ -221,9 +221,9 @@
 	<?php endforeach ?>
 	<tr>
 		<th><?php echo $bezlang['report_total'] ?></th>
-		<td colspan="5"><?php echo $template['tasks_stats']['total'] ?></td>
+		<td colspan="6"><?php echo $template['tasks_stats']['total'] ?></td>
 		<td colspan="2"><?php echo $template['tasks_stats']['totalcost'] ?></td>
-		<td colspan="2"><?php echo $template['tasks_stats']['totalhours'] ?></td>
+		<td colspan="1"><?php echo $template['tasks_stats']['totalhours'] ?></td>
 	</tr>
 </table>
 
