@@ -36,17 +36,23 @@ class Tasks extends Event {
 	public function can_modify($task_id) {
 		$task = $this->getone($task_id);
 
-		if ($task)
-			if ($this->helper->user_coordinator($task['issue']) || $this->helper->user_admin()) 
+		if ($task) {
+			if ($this->helper->user_coordinator($task['issue']) ||
+			$this->helper->user_admin()) {
 				return true;
+			}
+		}
 
 		return false;
 	}
 	public function can_change_state($task_id) {
 		global $INFO;
 		$task = $this->getone($task_id);
-		if ($task['executor'] == $INFO['client'] && $this->issue->opened($task['issue']))
+
+		if ($task['executor'] == $INFO['client'] &&
+			($task['issue'] == NULL || $this->issue->opened($task['issue']))) {
 			return true;
+		}
 
 		return false;
 	}

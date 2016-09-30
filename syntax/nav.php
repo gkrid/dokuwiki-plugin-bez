@@ -185,7 +185,7 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 			|| $this->value['bez'] == 'issue_cause_task') {
 			$data['bez:tasks']['open'] = true;
 			
-			if ($helper->user_editor()) {
+			if ($helper->user_admin()) {
 				$data['bez:task_report'] = array('id' => 'bez:task_report', 'type' => 'f', 'level' => 3, 'title' => $this->getLang('bds_task_report'));
 			}
 			
@@ -208,8 +208,8 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 			if (isset($this->value['tid']) && $this->value['tasktype'] == '') {
 				$data[$page_id] = array('id' => $page_id, 'type' => 'd', 'level' => 3, 'title' => $this->getLang('tasks_no_type'), 'open' => true);
 				
-				//$page_id = 'bez:show_task:tid:'.$this->value['tid'];
-				$page_id = $_GET['id'];
+				$page_id = 'bez:show_task:tid:'.$this->value['tid'];
+				//$page_id = $_GET['id'];
 				$data[$page_id.':perspective:task'] = array('id' => $page_id, 'type' => 'f', 'level' => 4, 'title' => '#z'.$this->value['tid']);
 
 			} else {
@@ -221,8 +221,8 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 				$page_id = "bez:tasks:tasktype:$id:year:$year";
 				if (isset($this->value['tid']) && $this->value['tasktype'] == $id) {
 					$data[$page_id] = array('id' => $page_id, 'type' => 'd', 'level' => 3, 'title' => $tasktype, 'open' => true);
-					//$page_id = 'bez:show_task:tid:'.$this->value['tid'];
-					$page_id = $_GET['id'];
+					$page_id = 'bez:show_task:tid:'.$this->value['tid'];
+					//$page_id = $_GET['id'];
 					$data[$page_id.':perspective:task'] = array('id' => $page_id, 'type' => 'f', 'level' => 4, 'title' => '#z'.$this->value['tid']);
 				} else
 					$data[$page_id] = array('id' => $page_id, 'type' => 'f', 'level' => 3, 'title' => $tasktype);
