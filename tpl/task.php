@@ -171,8 +171,8 @@ else
 		<h3><?php echo $bezlang['reason'] ?></h3>
 	<?php elseif ($task['raw_state'] == 1): ?>
 		<h3><?php echo $bezlang['evaluation'] ?></h3>
+		<?php echo $task['reason'] ?>
 	<?php endif ?>
-	<?php echo $task['reason'] ?>
 <?php endif ?>
 
 
