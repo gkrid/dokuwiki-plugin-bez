@@ -203,13 +203,13 @@
 		</td>
 		</tr>
 		<tr class="bez_desc_row task<?php echo $task['id'] ?>">
-			<td colspan="9">
+			<td colspan="10">
 				<?php echo $task['task'] ?>
 			</td>
 		</tr>
 		<?php if ($template['view'] == 'realization'): ?>
 		<tr class="bez_desc_row task<?php echo $task['id'] ?>">
-			<td colspan="9">
+			<td colspan="10">
 				<?php if ($task['reason'] == ''): ?>
 					<em>---</em>
 				<?php else: ?>
