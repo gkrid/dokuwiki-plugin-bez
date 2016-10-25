@@ -17,7 +17,7 @@ jQuery(document).ready(function () {
 	var ids = ['description', 'cause', 'content', 'task', 'reason', 'opinion'];
     
 	for (var i = 0; i < ids.length; i++) {
-		var textarea = jQuery("#" + ids[i]);
+		var textarea = jQuery("textarea#" + ids[i]);
 		if (textarea.length > 0) {
 			textarea.before('<div id="toolbar'+ids[i]+'"></div>');
 			if (textarea.parents("form").find("input[name=id]").length === 0) {

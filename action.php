@@ -2,6 +2,9 @@
  
 if(!defined('DOKU_INC')) die();
 
+require_once DOKU_PLUGIN.'bez/mdl/factory.php';
+
+
 class action_plugin_bez extends DokuWiki_Action_Plugin {
 
 	private $helper;
@@ -9,6 +12,8 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 	private $params = array();
 	private $norender = false;
 	private $lang_code = '';
+	
+	private $auth, $model;
 
 	/**
 	 * Register its handlers with the DokuWiki's event controller
@@ -52,7 +57,7 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 			setcookie("bez_tasks_filters[year]", date("Y"));
 		if(!isset($_COOKIE[bez_issues_filters]))
 			setcookie("bez_issues_filters[year]", date("Y"));
-	}
+			}
 
 	public function id() {
 		$args = func_get_args();
@@ -89,6 +94,11 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 	{
 		global $auth, $conf, $INFO, $ID;
 		global $template, $bezlang, $value, $errors;
+		
+		$this->auth = new BEZ_mdl_Auth($auth, $INFO['client']);
+		$this->validator = new BEZ_mdl_Validator($auth);
+		$this->model = new BEZ_mdl_Factory($this->auth, $this->validator);
+		
 
 		if ($this->action == '')
 			return false;

@@ -683,6 +683,21 @@ function do_issues_remove_priority() {
 			$db->close();
 	}
 	
+	function check_add_coordinator_to_tasktypes() {
+		$q = "PRAGMA table_info(tasktypes)";
+		$a = $this->connect->fetch_assoc($q);
+		$entity = false;
+		foreach ($a as $r) 
+			if ($r['name'] == 'coordinator')
+				return true;
+		return false;
+	}
+	
+	function do_add_coordinator_to_tasktypes() {
+		$q = "ALTER TABLE tasktypes ADD COLUMN coordinator TEXT NOT NULL DEFAULT 'rolewniczak'";
+		$this->connect->errquery($q);
+	}
+	
 	private $actions = array(
 				
 				array('Słownik kategorii przyczyn', 'check_rootcause', 'do_rootcause'),
@@ -700,7 +715,9 @@ function do_issues_remove_priority() {
 				array('Dodaj datę planowania zadań.',
 				'check_add_plan_date', 'do_add_plan_date'),
 				array('Usuń priorytet z tabeli problemów',
-				'check_issues_remove_priority', 'do_issues_remove_priority')
+				'check_issues_remove_priority', 'do_issues_remove_priority'),
+				array('Dodaj koordynatora do programów',
+				'check_add_coordinator_to_tasktypes', 'do_add_coordinator_to_tasktypes')
 				);
 
 	function _backup($sufix) {
