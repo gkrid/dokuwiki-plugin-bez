@@ -33,7 +33,7 @@ if ($task->cause != '') {
 if (isset($nparams['state']) && $nparams['state'] === '0') {
 	try {
 		$task->set_state(array('state' => '0'));
-		$this->model->save_task($task);
+		$this->model->tasks->save($task);
 						
 		if ($cause_id == '') {
 			header("Location: ?id=bez:issue_task:id:$issue_id:tid:$task_id");
