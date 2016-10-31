@@ -9,37 +9,37 @@ require_once 'task.php';
  * 12:bez7:start#macierz_przypadkow_uzycia
  */
 class BEZ_mdl_Auth {
-	private $dw_auth;
 	/*
 	 * 0 - brak uprawnień
 	 * 5 - komentator
-	 * 10 - wykonawca (exector)
+	 * 10 - wykonawca (executor)
+	 * 12 - koordynator "Programu" (programm coordinator)
 	 * 15 - koordynator (coordinaotr)
 	 * 20 - administrator
 	 */
-	private $user_nick, $level;
+	private $dw_auth, $user_nick, $level = 0;
 	
-	private $coordinator, $executor;
-	private function getAbsoluteLevel() {
-		$userd = $this->dw_auth->getUserData($this->user_nick); 
-
-		if ($userd === false) {
-			return 0;
+	private $coordinator, $program_coordinator, $executor;
+	
+	private function update_level($level) {
+		if ($level > $this->level) {
+			$this->level = $level;
 		}
-
-		$grps = $userd['grps'];
-		if (in_array('admin', $grps ) || in_array('bez_admin', $grps )) {
-			return 20;
-		}
-		
-		return 5;
 	}
 		
 	public function __construct($dw_auth, $user_nick) {
-		$this->user_nick = $user_nick;
 		$this->dw_auth = $dw_auth;
+		$this->user_nick = $user_nick;
 		
-		$this->level = $this->getAbsoluteLevel();
+		$userd = $this->dw_auth->getUserData($this->user_nick); 
+		if ($userd !== false) {
+			$grps = $userd['grps'];
+			if (in_array('admin', $grps ) || in_array('bez_admin', $grps )) {
+				$this->update_level(20);
+			} else {
+				$this->update_level(5);
+			}
+		}
 	}
 	
 	public function get_level() {
@@ -53,51 +53,21 @@ class BEZ_mdl_Auth {
 	public function set_executor($executor) {
 		$this->executor = $executor;
 		if ($this->executor === $this->user_nick) {
-			$this->level = 10;
+			$this->update_level(10);
 		}
 	}
 	
 	public function set_coordinator($coordinator) {
 		$this->coordinator = $coordinator;
 		if ($this->coordinator === $this->user_nick) {
-			$this->level = 15;
+			$this->update_level(15);
 		}
 	}
-
 	
-	
-	public function zgloszenie_problemu() {
-		if ($this->level >= 5) {
-			return true;
+	public function set_programm_coordinator($program_coordinator) {
+		$this->program_coordinator = $program_coordinator;
+		if ($this->program_coordinator === $this->user_nick) {
+			$this->update_level(12);
 		}
-		return false;
 	}
-	
-	public function komentarz_do_problemu() {
-		if ($this->level >= 5) {
-			return true;
-		}
-		return false;
-	}
-	
-	public function otwarcie_zadania($issue) {
-		if ($issue->coordinator === $this->user_nick) {
-		}
-		
-		if ($this->level >= 15) {
-			return true;
-		}
-		return false;
-	}
-	
-	public function zamkniecie_zadania($task) {
-		$this->updateRelatieveLevel($issue, $task);
-		
-		if ($this->level >= 15) {
-			return true;
-		}
-		return false;
-	}
-	
-
 }

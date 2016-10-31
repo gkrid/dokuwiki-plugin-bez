@@ -228,6 +228,7 @@ $lang ['task_rejected'] = 'Odrzucone';
 
 $lang ['task_do'] = 'Wykonano';
 $lang ['task_reject'] = 'Odrzuć';
+$lang ['task_reopen'] = 'Otwórz ponownie';
 
 $lang['reason_reopen'] = 'Przyczyna ponownego otwarcia'; 
 $lang['reason_done']  = 'Przyczyna zakończenia';
@@ -453,3 +454,7 @@ $lang['select'] = 'wybierz';
 
 $lang['not_relevant'] = 'nie dotyczy';
 
+$lang['validate_is_null'] = 'pole nie może być puste.';
+$lang['validate_validate_iso_date'] = 'niepoprawny format daty.';
+
+$lang['tasktype'] = 'Program';

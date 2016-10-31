@@ -19,7 +19,7 @@
 				<span><strong>#z<?php echo $nparams['tid'] ?></strong></span>
 				</div>
 				
-				<?php if (isset($template['issue']) && $helper->user_coordinator($template['issue']['id'])): ?>
+				<?php if ($template['auth_level'] >= 15 && $template['task_action'] == 'task_form'): ?>
 				<div class="row">
 					<label for="cause"><?php echo ucfirst($bezlang['cause']) ?>:</label>
 					<span>
@@ -36,7 +36,7 @@
 				</div>
 				<?php endif ?>
 			<?php endif ?>
-			<?php if (!$helper->user_coordinator($template['issue']['id'])) $disabled = 'disabled' ?> 
+			<?php if ($template['auth_level'] < 15) $disabled = 'disabled' ?> 
 			<div class="row">
 			<label for="executor"><?php echo $bezlang['executor'] ?>:</label>
 			<span>
@@ -53,12 +53,19 @@
 			<div class="row">
 			<label for="executor"><?php echo $bezlang['task_type'] ?>:</label>
 			<span>
-				<select name="tasktype">
-					<option <?php if ($value['tasktype'] == '') echo 'selected' ?> value="">-- <?php echo $bezlang['none'] ?> --</option>
-					<?php foreach ($template['tasktypes'] as $id => $type): ?>
-						<option <?php if ($value['tasktype'] == $id) echo 'selected' ?> value="<?php echo $id ?>"><?php echo $type ?></option>
-					<?php endforeach ?>
-				</select>
+				<?php if (isset($nparams['tasktype'])): ?>
+					<input type="hidden" name="tasktype" value="<?php echo $value['tasktype'] ?>">
+					<strong>
+					<?php echo $template['tasktype_name'] ?>
+					</strong>
+				<?php else: ?>
+					<select name="tasktype">
+						<option <?php if ($value['tasktype'] == '') echo 'selected' ?> value="">-- <?php echo $bezlang['select'] ?> --</option>
+						<?php foreach ($template['tasktypes'] as $tasktype): ?>
+							<option <?php if ($value['tasktype'] == $tasktype->id) echo 'selected' ?> value="<?php echo $tasktype->id ?>"><?php echo $tasktype->type ?></option>
+						<?php endforeach ?>
+					</select>
+				<?php endif ?>
 			</span>
 			</div>
 					
@@ -86,7 +93,6 @@
 				<label for="task"><?php echo $bezlang['description'] ?>:</label>
 				<span><textarea name="task" id="task" <?php echo $disabled ?>><?php echo $value['task'] ?></textarea></span>
 			</div>
-			
 			
 			<div class="row task_plan_field">
 				<label for="plan_date"><?php echo $bezlang['plan_date'] ?>:</label>

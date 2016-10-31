@@ -229,6 +229,7 @@ $lang ['task_rejected'] = "Rejected";
 
 $lang ['task_do'] = 'Done';
 $lang ['task_reject'] = 'Reject';
+$lang ['task_reopen'] = 'Reopen';
 
 $lang['reason_reopen'] = "Reason for reopening ";
 $lang['reason_done']  = "Reason for closing";
@@ -436,3 +437,6 @@ $lang['show_issue'] = 'Show issue';
 $lang['select'] = 'select';
 
 $lang['not_relevant'] = 'not relevant';
+
+$lang['validate_is_null'] = 'cannot be empty.';
+$lang['validate_validate_iso_date'] = 'bad date format.';

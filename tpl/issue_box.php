@@ -77,7 +77,7 @@
 		</a>&nbsp;
 		<?php if (isset($nparams['cid']) && $nparams['cid'] == $cause['id']) echo '</strong>' ?>
 	<?php endforeach ?>
-
+	<?php unset($cause); ?>
 	<?php if ($template['issue']['raw_state'] == 0 &&
 			$template['issue']['raw_coordinator'] != '-proposal' &&
 			$helper->user_coordinator($template['issue']['id'])): ?> 
@@ -86,6 +86,7 @@
 			<?php echo $bezlang['add'] ?>
 		</a>
 	<?php endif ?> 
+
 </td>
 </tr>
 </table>

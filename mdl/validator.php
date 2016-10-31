@@ -1,23 +1,24 @@
 <?php
 
 class BEZ_mdl_Validator {
-	private $rules, $errors, $dw_auth;
-	public function __construct($dw_auth) {
-		$this->dw_auth = $dw_auth;
+	private $rules=array(), $errors, $model;
+	public function __construct($model) {
+		$this->model = $model;
 	}
 	
 	public function set_rules($rules) {
-		$this->rules = $rules;
+		$this->rules = array_merge($this->rules, $rules);
 	}
 	
 	public function get_errors() {
 		return $this->errors;
 	}
 	
-	public function validate($data) {
+	public function validate($data, $fields) {
 		$val_data = array();
+
 		foreach ($data as $key => $value) {
-			if (!isset($this->rules[$key])) {
+			if (!isset($this->rules[$key]) || !in_array($key, $fields)) {
 				continue;
 			}
 			$rules = $this->rules[$key][0];
@@ -27,6 +28,7 @@ class BEZ_mdl_Validator {
 				$this->errors[$key] = 'is_null';
 				continue;
 			} else if ($null === 'NULL' && $value === '') {
+				$val_data[$key] = $value;
 				continue;
 			}
 
@@ -49,6 +51,7 @@ class BEZ_mdl_Validator {
 		if (count($this->errors) > 0) {
 			return false;
 		}
+
 		return $val_data;
 	}
 	
@@ -60,7 +63,7 @@ class BEZ_mdl_Validator {
 	}
 	
 	public function validate_dw_user($user) {
-		$wiki_users = $this->dw_auth->retrieveUsers();
+		$wiki_users = $this->model->users->get_all();
 		if (array_key_exists($user, $wiki_users)) {
 			return true;
 		}

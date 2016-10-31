@@ -8,8 +8,8 @@
 		</div>
 	<?php endif ?>
 </div>
+						
 <a href="#" id="bez_task_context_show_button"><?php echo $bezlang['show_issue'] ?></a>
-	
 
 <div class="bds_block" id="bez_tasks">
 	<br>

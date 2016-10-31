@@ -1,3 +1,8 @@
+Wersja 2016-10-31:
+    - usunięcie błędu: #50, #51, #53
+    - program zadania jest wymagany przy dodawaniu zadania.
+    - programy zarządzania mogą mieć przypisanych koordynatorów, którzy mogą dodawać do nich zadania.
+
 Wersja 2016-09-30:
     - usunięcie błędu: #49
 

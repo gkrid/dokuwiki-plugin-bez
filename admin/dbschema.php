@@ -698,8 +698,35 @@ function do_issues_remove_priority() {
 		$this->connect->errquery($q);
 	}
 	
+	function check_add_cache_to_tasks() {
+		$q = "PRAGMA table_info(tasks)";
+		$a = $this->connect->fetch_assoc($q);
+		$entity = false;
+		foreach ($a as $r) {
+			if ($r['name'] == 'task_cache') {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	function do_add_cache_to_tasks() {
+		$q = "ALTER TABLE tasks ADD COLUMN task_cache TEXT NOT NULL DEFAULT ''";
+		$this->connect->errquery($q);
+		$q = "ALTER TABLE tasks ADD COLUMN reason_cache TEXT NULL";
+		$this->connect->errquery($q);
+		
+		$result = $this->connect->fetch_assoc("SELECT * FROM tasks_cache ");
+		foreach ($result as $task_cache) {
+			$this->connect->errupdate(array(
+				'task_cache' => $task_cache['task'],
+				'reason_cache' => $task_cache['reason']
+			), 'tasks', $task_cache['id']);
+		}
+		
+	}
+	
 	private $actions = array(
-				
 				array('Słownik kategorii przyczyn', 'check_rootcause', 'do_rootcause'),
 				array('Słownik typów problemów', 'check_types', 'do_types'),
 				array('Usunięcie podmiotu w problemach', 'check_rementity', 'do_rementity'),
@@ -717,8 +744,10 @@ function do_issues_remove_priority() {
 				array('Usuń priorytet z tabeli problemów',
 				'check_issues_remove_priority', 'do_issues_remove_priority'),
 				array('Dodaj koordynatora do programów',
-				'check_add_coordinator_to_tasktypes', 'do_add_coordinator_to_tasktypes')
-				);
+				'check_add_coordinator_to_tasktypes', 'do_add_coordinator_to_tasktypes'),
+				array('Dodaj cache do zadań',
+				'check_add_cache_to_tasks', 'do_add_cache_to_tasks')
+		);
 
 	function _backup($sufix) {
 		$db_file = DOKU_INC . 'data/bez.sqlite';

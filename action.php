@@ -2,7 +2,7 @@
  
 if(!defined('DOKU_INC')) die();
 
-require_once DOKU_PLUGIN.'bez/mdl/factory.php';
+require_once DOKU_PLUGIN.'bez/mdl/model.php';
 
 
 class action_plugin_bez extends DokuWiki_Action_Plugin {
@@ -13,7 +13,7 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 	private $norender = false;
 	private $lang_code = '';
 	
-	private $auth, $model;
+	private $model;
 
 	/**
 	 * Register its handlers with the DokuWiki's event controller
@@ -95,10 +95,7 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 		global $auth, $conf, $INFO, $ID;
 		global $template, $bezlang, $value, $errors;
 		
-		$this->auth = new BEZ_mdl_Auth($auth, $INFO['client']);
-		$this->validator = new BEZ_mdl_Validator($auth);
-		$this->model = new BEZ_mdl_Factory($this->auth, $this->validator);
-		
+		$this->model = new BEZ_mdl_Model($auth, $INFO['client'], $conf['lang']);
 
 		if ($this->action == '')
 			return false;
@@ -150,9 +147,16 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 
 		if (!isset($errors))
 			$errors= array();
-		foreach ($errors as $error) {
+		foreach ($errors as $field => $error) {
+			if (!isset($bezlang[$field])) {
+				continue;
+			}
 			echo '<div class="error">';
-			echo $error;
+			if ($field != '') {
+				echo '<b>'.$bezlang[$field].':</b> '.$bezlang['validate_'.$error];
+			} else {
+				echo $error;
+			}
 			echo '</div>';
 		}
 

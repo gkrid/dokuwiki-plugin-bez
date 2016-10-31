@@ -6,10 +6,10 @@ include_once DOKU_PLUGIN."bez/models/users.php";
 include_once DOKU_PLUGIN."bez/models/tasktypes.php";
 include_once DOKU_PLUGIN."bez/models/bezcache.php";
 
-$tasko = new Tasks();
+//~ $tasko = new Tasks();
 $causo = new Causes();
-$usro = new Users();
-$tasktypeso = new Tasktypes();
+//~ $usro = new Users();
+//~ $tasktypeso = new Tasktypes();
 $bezcache = new Bezcache();
 
 $issue_id = (int)$nparams['id'];
@@ -26,15 +26,16 @@ if (isset($nparams['tid'])) {
 	$action = $nparams['action'];
 	$tid = (int)$nparams['tid'];
 	
-	$task = $this->model->task($tid);
-	
-	$taskso = new Taskstates();
-	$task_states = $taskso->get();
+	$task = $this->model->tasks->get_one($tid);
+	$template['auth_level'] = $task->get_level();
+
+	//$task_states = $task->get_states();
 
 	//~ $template['raw_state'] = $task['state'];
 	//~ $template['state']  = $task_states[$task['state']];
-	if (isset($nparams['id']))
+	if (isset($nparams['id'])) {
 		$template['causes'] = $causo->get($issue_id);
+	}
 	
 	if (!$action)
 		$action = 'edit';
@@ -71,12 +72,18 @@ if (isset($nparams['tid'])) {
 		//~ }
 		//~ $value = $_POST;
 		try {
+			//checkboxes 
+			if (!isset($_POST['all_day_event'])) {
+				$_POST['all_day_event'] = '0';
+			}
 			$task->set_data($_POST);
+			$task->set_acl($_POST);
+			
 			if ($task->any_errors()) {
-				$errors = $this->validator->get_errors();
+				$errors = $task->get_errors();
 				$value = $_POST;
 			} else {
-				$this->model->save_task($task);
+				$this->model->tasks->save($task);
 				$bezcache->task_toupdate($task->id);
 								
 								
@@ -93,15 +100,24 @@ if (isset($nparams['tid'])) {
 			echo nl2br($e);
 		}
 	}
+	
 	$template['task_button'] = $bezlang['change_task_button'];
-	if (isset($nparams['id']))
-		$template['task_action'] = $this->id('task_form', 'id', $issue_id, 'cid', $cause_id, 'tid', $tid, 'action', 'update');
-	else
-		$template['task_action'] = $this->id('task_form_plan', 'tid', $tid, 'action', 'update');
+	$template['task_action'] = $this->id('task_form', 'id', $task->issue, 'cid', $task->cause, 'tid', $task->id, 'action', 'update');
+
+
 		
 /*dodawania*/
 } else {
-	if (count($_POST) > 0) {			
+	$defaults = array('issue' => $issue_id, 'cause' => $cause_id, 'tasktype' => $_POST['tasktype']);
+	//~ if (isset($_POST['tasktype']) && $_POST['tasktype'] != '') {
+		//~ $defaults['tasktype'] = $_POST['tasktype'];
+	//~ }
+	
+	$task = $this->model->tasks->create_object($defaults);
+		
+	$template['auth_level'] = $task->get_level();
+
+	if (count($_POST) > 0) {
 		//~ $data = array('reporter' => $INFO['client'], 'date' => time(), 'issue' => $issue_id, 'cause' => $cause_id);
 		//~ $data = $tasko->add($_POST, $data);
 		//~ if (count($errors) == 0) {
@@ -120,13 +136,30 @@ if (isset($nparams['tid'])) {
 		//~ } 
 		//~ $value = $_POST;
 		try {
-			$task = $this->model->create_task_object('0', $issue_id);
+			//checkboxes 
+			if (!isset($_POST['all_day_event'])) {
+				$_POST['all_day_event'] = '0';
+			}
 			$task->set_data($_POST);
 			if ($task->any_errors()) {
-				$errors = $this->validator->get_errors();
+				$errors = $task->get_errors();
 				$value = $_POST;
 			} else {
-				$this->model->save_task($task);			
+				$tid = $this->model->tasks->save($task);
+				$issue_id = $taks->issue;		
+				$cause_id = $this->cause;
+				
+				$title = 'Dodano zadanie';
+				$exec = $task->executor;
+				$subject = "[$conf[title]] $title: #$issue_id #z$tid";
+				$to = $this->model->users->get_user_full_name($exec).' <'.$this->model->users->get_user_email($exec).'>';
+				if ($cause_id == '') {
+					$body = "$uri?id=".$this->id('issue_task', 'id', $issue_id, 'tid', $tid);
+				} else {
+					$body = "$uri?id=".$this->id('issue_cause_task', 'id', $issue_id, 'cid', $cause_id, 'tid', $tid);
+				}
+				$this->helper->mail($to, $subject, $body);
+				
 				if ($cause_id == '') {
 					header("Location: ?id=bez:issue_task:id:$issue_id:tid:$tid");
 				} else {
@@ -139,8 +172,10 @@ if (isset($nparams['tid'])) {
 	} else {
 		$value['all_day_event'] = '1';
 	}
+
 	$template['task_button'] = $bezlang['add'];
 	$template['task_action'] = $this->id('task_form', 'id', $issue_id, 'cid', $cause_id, 'action', 'add');
+
 }
 
 if (isset($nparams['id'])) {
@@ -152,7 +187,5 @@ if (isset($nparams['id'])) {
 	//~ $template['cause_without_task'] = $isso->cause_without_task($issue_id);
 }
 
-$template['users'] = $usro->get();
-
-$tasktypes = $tasktypeso->get();
-$template['tasktypes'] = $tasktypes;
+$template['users'] = $this->model->users->get_all();
+$template['tasktypes'] = $this->model->tasktypes->get_all();
