@@ -36,11 +36,10 @@
 				</div>
 				<?php endif ?>
 			<?php endif ?>
-			<?php if ($template['auth_level'] < 15) $disabled = 'disabled' ?> 
 			<div class="row">
 			<label for="executor"><?php echo $bezlang['executor'] ?>:</label>
 			<span>
-			<select name="executor" id="executor" <?php echo $disabled ?>>
+			<select name="executor" id="executor">
 				<option value="">--- <?php echo $bezlang['select'] ?>---</option>
 			<?php foreach ($template['users'] as $nick => $name): ?>
 				<option <?php if ($value['executor'] == $nick) echo 'selected' ?>
@@ -50,24 +49,26 @@
 			</span>
 			</div>
 			
-			<div class="row">
-			<label for="executor"><?php echo $bezlang['task_type'] ?>:</label>
-			<span>
-				<?php if (isset($nparams['tasktype'])): ?>
-					<input type="hidden" name="tasktype" value="<?php echo $value['tasktype'] ?>">
-					<strong>
-					<?php echo $template['tasktype_name'] ?>
-					</strong>
-				<?php else: ?>
-					<select name="tasktype">
-						<option <?php if ($value['tasktype'] == '') echo 'selected' ?> value="">-- <?php echo $bezlang['select'] ?> --</option>
-						<?php foreach ($template['tasktypes'] as $tasktype): ?>
-							<option <?php if ($value['tasktype'] == $tasktype->id) echo 'selected' ?> value="<?php echo $tasktype->id ?>"><?php echo $tasktype->type ?></option>
-						<?php endforeach ?>
-					</select>
-				<?php endif ?>
-			</span>
-			</div>
+			<?php if (!isset($template['issue']) || isset($template['cause'])): ?> 
+				<div class="row">
+				<label for="executor"><?php echo $bezlang['task_type'] ?>:</label>
+				<span>
+					<?php if (isset($nparams['tasktype']) && $template['auth_level'] < 20): ?>
+						<input type="hidden" name="tasktype" value="<?php echo $value['tasktype'] ?>">
+						<strong>
+						<?php echo $template['tasktype_name'] ?>
+						</strong>
+					<?php else: ?>
+						<select name="tasktype">
+							<option <?php if ($value['tasktype'] == '') echo 'selected' ?> value="">-- <?php echo $bezlang['select'] ?> --</option>
+							<?php foreach ($template['tasktypes'] as $tasktype): ?>
+								<option <?php if ($value['tasktype'] == $tasktype->id) echo 'selected' ?> value="<?php echo $tasktype->id ?>"><?php echo $tasktype->type ?></option>
+							<?php endforeach ?>
+						</select>
+					<?php endif ?>
+				</span>
+				</div>
+			<?php endif ?>
 					
 			<div class="row">
 			<label for="action"><?php echo $bezlang['class'] ?>:</label>
@@ -91,7 +92,7 @@
 
 			<div class="row">
 				<label for="task"><?php echo $bezlang['description'] ?>:</label>
-				<span><textarea name="task" id="task" <?php echo $disabled ?>><?php echo $value['task'] ?></textarea></span>
+				<span><textarea name="task" id="task"><?php echo $value['task'] ?></textarea></span>
 			</div>
 			
 			<div class="row task_plan_field">
@@ -120,7 +121,7 @@
 
 			<div class="row">
 				<label for="cost"><?php echo $bezlang['cost'] ?>:</label>
-				<span><input name="cost" id="cost" value="<?php echo $value['cost'] ?>" <?php echo $disabled ?>></span>
+				<span><input name="cost" id="cost" value="<?php echo $value['cost'] ?>"></span>
 			</div>
 			<?php if (isset($nparams['tid'])): ?>
 				<div class="row">

@@ -45,11 +45,6 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 		
 		$val_data = $this->validator->validate($defaults, array('cause', 'tasktype', 'issue', 'coordinator', 'program_coordinator'));
 			
-		//~ if ($val_data === false) {
-			//~ $this->errors = true;
-			//~ echo 'BEZ_mdl_Task: error when setting defaults '.var_export($this->get_errors(), true);
-			//~ return false;
-		//~ }
 		
 		if (isset($val_data['cause'])) {
 			$this->cause = $val_data['cause'];
@@ -78,17 +73,6 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 		}
 	}
 	
-	//~ private function set_coordinator() {
-		//~ if ($this->issue !== NULL) {
-			//~ $issue = $this->model->issues->get_one($this->issue);
-			//~ $this->coordinator = $issue->coordinator;
-		//~ } else if ($this->tasktype !== NULL) {
-			//~ $tasktype = $this->model->tasktypes->get_one($this->tasktype);
-			//~ $this->coordinator = $tasktype->coordinator;
-		//~ }
-		
-	//~ }
-	
 	//by defaults you can set: cause, tasktype and issue
 	//tasktype is required
 	public function __construct($model, $defaults=array()) {
@@ -102,7 +86,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 			'cause' => array(array('numeric'), 'NULL'),
 			
 			'executor' => array(array('dw_user'), 'NOT NULL'),
-			'tasktype' => array(array('numeric'), 'NOT NULL'),
+			
 			'issue' => array(array('numeric'), 'NULL'),
 			
 			'task' => array(array('length', 1000), 'NOT NULL'),
@@ -119,11 +103,22 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 			'program_coordinator' => array(array('dw_user'), 'NOT NULL'),
 		));
 		
+		//takstype required	
+		if ($this->cause == NULL && $this->issue != NULL) {
+			$this->validator->set_rules(array(
+				'tasktype' => array(array('must_be_empty'), 'NULL')
+			));
+		} else {
+			$this->validator->set_rules(array(
+				'tasktype' => array(array('numeric'), 'NOT NULL')
+			));
+		}
+		
 		//we've created empty object
 		if ($this->id === NULL) {
 			$this->set_defaults($defaults);
 		}
-		
+
 		$this->auth->set_coordinator($this->coordinator);
 		$this->auth->set_programm_coordinator($this->program_coordinator);
 		$this->auth->set_executor($this->executor);

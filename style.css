@@ -730,6 +730,14 @@ input.days {
 	background: #1980EC;
 }
 
-
+.bez_limit_text {
+   overflow: hidden;
+   text-overflow: ellipsis;
+   display: -webkit-box;
+   -webkit-box-orient: vertical;
+   -webkit-line-clamp: 3; /* number of lines to show */
+   line-height: 2;        /* fallback */
+   max-height: 6;       /* fallback */
+}
 
 

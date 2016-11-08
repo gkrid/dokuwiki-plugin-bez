@@ -6,10 +6,7 @@ include_once DOKU_PLUGIN."bez/models/users.php";
 include_once DOKU_PLUGIN."bez/models/tasktypes.php";
 include_once DOKU_PLUGIN."bez/models/bezcache.php";
 
-//~ $tasko = new Tasks();
 $causo = new Causes();
-//~ $usro = new Users();
-//~ $tasktypeso = new Tasktypes();
 $bezcache = new Bezcache();
 
 $issue_id = (int)$nparams['id'];
@@ -29,10 +26,6 @@ if (isset($nparams['tid'])) {
 	$task = $this->model->tasks->get_one($tid);
 	$template['auth_level'] = $task->get_level();
 
-	//$task_states = $task->get_states();
-
-	//~ $template['raw_state'] = $task['state'];
-	//~ $template['state']  = $task_states[$task['state']];
 	if (isset($nparams['id'])) {
 		$template['causes'] = $causo->get($issue_id);
 	}
@@ -42,35 +35,7 @@ if (isset($nparams['tid'])) {
 
 	if ($action == 'edit') {
 		$value = $task->get_assoc();
-		//~ $value['cause_id'] = $task['cause'];
 	} else if ($action == 'update') {
-		//~ $cause_id = $_POST['cause_id'];
-		//~ if ($cause_id != '')
-			//~ $cause_id = (int)$cause_id;
-			
-		//~ $data = $tasko->update($_POST, array('cause' => $cause_id), $tid);
-		//~ if (count($errors) == 0) {
-
-			//~ $title = 'Zmiana w zadaniu';
-			//~ $exec = $data['executor'];
-			//~ $subject = "[$conf[title]] $title: #$issue_id #z$tid";
-			//~ $to = $usro->name($exec).' <'.$usro->email($exec).'>';
-			//~ if (isset($nparams['id']))
-				//~ $body = "$uri?id=".$this->id('issue_task', 'id', $issue_id, 'tid', $tid);
-			//~ else
-				//~ $body = "$uri?id=".$this->id('show_task', 'tid', $tid);
-				
-			//~ $this->helper->mail($to, $subject, $body);
-			
-			//~ $cause_id = $_POST['cause_id'];
-			//~ if (!isset($nparams['id']))
-				//~ header("Location: ?id=bez:show_task:tid:$tid");
-			//~ elseif ($cause_id == '')
-				//~ header("Location: ?id=bez:issue_task:id:$issue_id:tid:$tid");
-			//~ else
-				//~ header("Location: ?id=bez:issue_cause_task:id:$issue_id:cid:$cause_id:tid:$tid");
-		//~ }
-		//~ $value = $_POST;
 		try {
 			//checkboxes 
 			if (!isset($_POST['all_day_event'])) {
@@ -87,10 +52,9 @@ if (isset($nparams['tid'])) {
 				$bezcache->task_toupdate($task->id);
 								
 								
-				$cause_id = $_POST['cause_id'];
-				if (!isset($nparams['id'])) {
-					header("Location: ?id=bez:show_task:tid:$tid");
-				} elseif ($cause_id == '') {
+				$cause_id = $task->cause;
+				$issue_id = $task->issue;
+				if ($cause_id == NULL) {
 					header("Location: ?id=bez:issue_task:id:$issue_id:tid:$tid");
 				} else {
 					header("Location: ?id=bez:issue_cause_task:id:$issue_id:cid:$cause_id:tid:$tid");
@@ -102,39 +66,26 @@ if (isset($nparams['tid'])) {
 	}
 	
 	$template['task_button'] = $bezlang['change_task_button'];
-	$template['task_action'] = $this->id('task_form', 'id', $task->issue, 'cid', $task->cause, 'tid', $task->id, 'action', 'update');
+	
+	if ($task->cause == NULL) {
+		$template['task_action'] = $this->id('task_form', 'id', $task->issue, 'tid', $task->id, 'action', 'update');
+	} else {
+		$template['task_action'] = $this->id('task_form', 'id', $task->issue, 'cid', $task->cause, 'tid', $task->id, 'action', 'update');
+	}
 
 
 		
 /*dodawania*/
 } else {
 	$defaults = array('issue' => $issue_id, 'cause' => $cause_id, 'tasktype' => $_POST['tasktype']);
-	//~ if (isset($_POST['tasktype']) && $_POST['tasktype'] != '') {
-		//~ $defaults['tasktype'] = $_POST['tasktype'];
-	//~ }
-	
+
 	$task = $this->model->tasks->create_object($defaults);
 		
 	$template['auth_level'] = $task->get_level();
+	
+
 
 	if (count($_POST) > 0) {
-		//~ $data = array('reporter' => $INFO['client'], 'date' => time(), 'issue' => $issue_id, 'cause' => $cause_id);
-		//~ $data = $tasko->add($_POST, $data);
-		//~ if (count($errors) == 0) {
-			//~ $tid = $tasko->lastid();
-			//~ $title = 'Dodano zadanie';
-			//~ $exec = $data['executor'];
-			//~ $subject = "[$conf[title]] $title: #$issue_id #z$tid";
-			//~ $to = $usro->name($exec).' <'.$usro->email($exec).'>';
-			//~ $body = "$uri?id=".$this->id('issue_task', 'id', $issue_id, 'tid', $tid);
-			//~ $this->helper->mail($to, $subject, $body);
-			
-			//~ if ($cause_id == '')
-				//~ header("Location: ?id=bez:issue_task:id:$issue_id:tid:$tid");
-			//~ else
-				//~ header("Location: ?id=bez:issue_cause_task:id:$issue_id:cid:$cause_id:tid:$tid");
-		//~ } 
-		//~ $value = $_POST;
 		try {
 			//checkboxes 
 			if (!isset($_POST['all_day_event'])) {
@@ -146,8 +97,8 @@ if (isset($nparams['tid'])) {
 				$value = $_POST;
 			} else {
 				$tid = $this->model->tasks->save($task);
-				$issue_id = $taks->issue;		
-				$cause_id = $this->cause;
+				$issue_id = $task->issue;		
+				$cause_id = $task->cause;
 				
 				$title = 'Dodano zadanie';
 				$exec = $task->executor;
@@ -174,17 +125,17 @@ if (isset($nparams['tid'])) {
 	}
 
 	$template['task_button'] = $bezlang['add'];
-	$template['task_action'] = $this->id('task_form', 'id', $issue_id, 'cid', $cause_id, 'action', 'add');
+	if ($task->cause == NULL) {
+		$template['task_action'] = $this->id('task_form', 'id', $task->issue, 'action', 'add');
+	} else {
+		$template['task_action'] = $this->id('task_form', 'id', $task->issue, 'cid', $task->cause, 'action', 'add');
+	}
 
 }
 
 if (isset($nparams['id'])) {
 	$isso = new Issues();
 	$template['issue'] = $isso->get($issue_id);
-
-	//~ $template['anytasks'] = $tasko->any_task($issue_id);
-	//~ $template['opentasks'] = $tasko->any_open($issue_id);
-	//~ $template['cause_without_task'] = $isso->cause_without_task($issue_id);
 }
 
 $template['users'] = $this->model->users->get_all();

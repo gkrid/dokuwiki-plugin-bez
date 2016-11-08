@@ -157,8 +157,12 @@
 				<?php echo $task['tasktype'] ?>
 			<?php endif ?>
 		</td>
-		<?php $sentences = preg_split("/[.\[]+/", trim($task['raw_task'])) ?>
-		<td><?php echo $sentences[0] ?> <a class="bez_show_single_desc" href="#">(...)</a></td>
+		<td>
+			<div style="max-width:200px;max-height:60px;overflow:hidden;">
+			<?php echo $task['task'] ?>
+			</div>
+			 <a class="bez_show_single_desc" href="#">(...)</a>
+			</td>
 		<td><?php echo $task['executor'] ?></td>
 		
 		<td>

@@ -116,4 +116,11 @@ class BEZ_mdl_Validator {
 		}
 		return false;
 	}
+	
+	public function validate_must_be_empty($value) {
+		if ($value == '') {
+			return true;
+		}
+		return false;
+	}
 }
