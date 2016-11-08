@@ -463,6 +463,7 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 			while ($w = $r->fetchArray(SQLITE3_ASSOC)) {
 				$post = $w;
 				unset($post['id']);
+				$post['coordinator'] = 'rolewniczak';
 				$tasko->add($post);
 				$lastid = $tasko->lastid();
 				$z_prozy_do_bezu[$w['id']] = $lastid;
