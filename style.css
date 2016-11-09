@@ -1,3 +1,12 @@
+@font-face {
+    font-family: 'Awesome'; /*a name to be used later*/
+    src: url('fontawesome-webfont.woff'); /*URL to font*/
+}
+
+.bez_awesome {
+	font-family: Awesome;
+}
+
 #bds_issue_box {
 	position: relative;
 	background: #fff;
@@ -730,14 +739,117 @@ input.days {
 	background: #1980EC;
 }
 
-.bez_limit_text {
-   overflow: hidden;
-   text-overflow: ellipsis;
-   display: -webkit-box;
-   -webkit-box-orient: vertical;
-   -webkit-line-clamp: 3; /* number of lines to show */
-   line-height: 2;        /* fallback */
-   max-height: 6;       /* fallback */
+/*comments*/
+
+.bez_comments .bez_comment {
+	margin-top: 10px;
+	width: 100%;
+	display: table;
 }
+
+.bez_comments .bez_avatar {
+	display: table-cell;
+	vertical-align: top;
+	width: 50px;
+}
+
+.bez_comments .bez_text_comment {
+	display: table-cell;
+}
+
+.bez_comments .bez_content {
+	box-sizing: border-box;
+	border-radius: 0 0 3px 3px;
+	border: 1px solid #ddd; 
+	margin-top: -1px;
+	margin-left: 13px;
+	padding: 8px;
+}
+
+.bez_comments .bez_comment h2 {
+	font-size: 15px;
+	font-weight: normal;
+	height:50px;
+	line-height:50px;
+    
+	display: block;
+	position: relative;
+	color: #767676;
+	background: #F7F7F7;
+	box-sizing: border-box;
+	border-radius: 0 3px 0 0;
+	border: 1px solid #ddd; 
+	border-left: 0;
+	padding-left: 5px;
+	margin-left: 14px;
+	margin-bottom:0;
+}
+
+.bez_comments .bez_arrow-tip-container {
+	display: block;
+	width:50px;
+	height:50px;
+	position:absolute;
+	overflow:hidden;
+}
+.bez_comments .bez_arrow-tip {
+	display:block;
+	width:50px;
+	height:50px;
+	transform:rotate(45deg) skew(20deg,20deg);
+}
+.bez_comments .bez_arrow-tip-grad {
+	display:block;
+	width:100%;
+	height:100%;
+	background: #F7F7F7;
+	border: 1px solid #ddd; 
+}
+
+.bez_comments textarea {
+	display: block;
+	box-sizing: border-box;
+	width: 100%;
+	margin-bottom: 10px;
+	height: 200px;
+}
+
+.bez_toolbar {
+	display: inline-block;
+}
+
+.bez_comment.bez_my_comment h2 {
+	background: #f2f8fa;
+	border-color: #bfccd1;
+
+}
+
+.bez_comment.bez_my_comment .bez_arrow-tip-grad {
+	background: #f2f8fa;
+	border-color: #bfccd1;
+
+}
+
+.bez_comments.bez_my_comment .bez_content {
+	border-color: #bfccd1;
+}
+
+.bez_comments .bez_comment_buttons {
+	display: inline-block;
+	position: absolute;
+	right: 20px;
+}
+
+.bez_comments .bez_comment_buttons a {
+	color: #767676;
+	display: inline-block;
+	margin-left: 20px;
+}
+
+.bez_comments .bez_comment_buttons a:hover {
+	color: #2b73b7;
+	text-decoration: none;
+}
+
 
 

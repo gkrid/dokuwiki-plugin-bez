@@ -46,10 +46,12 @@
 			<?php echo $this->model->users->get_user_full_name($task->executor) ?>
 		</td>
 
-		<td colspan="<?php echo $tasktype_colspan ?>">
-			<strong><?php echo $bezlang['task_type'] ?>:</strong>
-			<?php echo $task->tasktype_string ?>
-		</td>
+		<?php if ($task->tasktype_string != ''): ?>
+			<td colspan="<?php echo $tasktype_colspan ?>">
+				<strong><?php echo $bezlang['task_type'] ?>:</strong>
+				<?php echo $task->tasktype_string ?>
+			</td>
+		<?php endif ?>
 		
 		<?php if ($task->cost != ''): ?>
 			<td colspan="<?php echo $cost_colspan ?>">
@@ -113,7 +115,7 @@
 
 	<a class="bds_inline_button"
 		href="?id=<?php echo $helper->id('icalendar', 'tid', $task->id) ?>">
-		📅  <?php echo $bezlang['download_in_icalendar'] ?>
+		<span class="bez_awesome">&#xf073;</span>  <?php echo $bezlang['download_in_icalendar'] ?>
 	</a>
 
 	<?php if ($task->state == '0' && $task->get_level() >= 10): ?>

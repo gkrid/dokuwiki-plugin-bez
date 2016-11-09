@@ -171,7 +171,7 @@ $lang['task_changed'] = 'Zadanie zmienione';
 $lang['task_rejected_header'] = 'Zadanie odrzucone';
 $lang['task_closed'] = 'Zadanie zakończone';
 $lang['task_reopened'] = 'Zadanie ponownie otwarte';
-$lang['comment_added'] = 'Komentarz dodany';
+$lang['comment_added'] = 'dodał komentarz';
 $lang['comment_changed'] = 'Komentarz zmieniony';
 
 $lang['replay_by_task'] = 'Odpowiedz, dodając zadanie';

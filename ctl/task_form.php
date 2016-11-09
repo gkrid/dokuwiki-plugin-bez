@@ -10,7 +10,6 @@ $causo = new Causes();
 $bezcache = new Bezcache();
 
 $issue_id = (int)$nparams['id'];
-
 /*casue*/
 $cause_id = '';
 if (isset($nparams['cid']) && $nparams['cid'] != '') {
@@ -51,9 +50,6 @@ if (isset($nparams['tid'])) {
 				$this->model->tasks->save($task);
 				$bezcache->task_toupdate($task->id);
 								
-								
-				$cause_id = $task->cause;
-				$issue_id = $task->issue;
 				if ($cause_id == NULL) {
 					header("Location: ?id=bez:issue_task:id:$issue_id:tid:$tid");
 				} else {
@@ -97,8 +93,6 @@ if (isset($nparams['tid'])) {
 				$value = $_POST;
 			} else {
 				$tid = $this->model->tasks->save($task);
-				$issue_id = $task->issue;		
-				$cause_id = $task->cause;
 				
 				$title = 'Dodano zadanie';
 				$exec = $task->executor;
@@ -125,10 +119,10 @@ if (isset($nparams['tid'])) {
 	}
 
 	$template['task_button'] = $bezlang['add'];
-	if ($task->cause == NULL) {
-		$template['task_action'] = $this->id('task_form', 'id', $task->issue, 'action', 'add');
+	if ($cause_id == '') {
+		$template['task_action'] = $this->id('task_form', 'id', $issue_id, 'action', 'add');
 	} else {
-		$template['task_action'] = $this->id('task_form', 'id', $task->issue, 'cid', $task->cause, 'action', 'add');
+		$template['task_action'] = $this->id('task_form', 'id', $issue_id, 'cid', $cause_id, 'action', 'add');
 	}
 
 }

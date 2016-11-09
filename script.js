@@ -14,7 +14,7 @@ bds.gup = function (name) {
 
 jQuery(document).ready(function () {
     'use strict';
-	var ids = ['description', 'cause', 'content', 'task', 'reason', 'opinion'];
+	var ids = ['description', 'cause', 'task', 'reason', 'opinion'];
     
 	for (var i = 0; i < ids.length; i++) {
 		var textarea = jQuery("textarea#" + ids[i]);
@@ -26,7 +26,22 @@ jQuery(document).ready(function () {
 			initToolbar('toolbar'+ids[i], ids[i], toolbar);
 		}
 	}
-
+	
+	//comment
+	if (jQuery('#content').length > 0) {
+		var $textarea = jQuery('#content');
+		var $header = $textarea.parents(".bez_comment").find(".bez_toolbar");
+		$header.append('<div id="toolbarcontent"></div>');
+		initToolbar('toolbarcontent', 'content', toolbar);
+		
+		jQuery(".bez_button_notify").on('click', function (e) {
+			e.preventDefault();
+			
+			var selection = DWgetSelection($textarea[0]);
+			pasteText(selection, '@', {nosel: true});
+		});
+	}
+	
 	var $conf = jQuery("#bez_removal_confirm");
 	$conf.find(".no").click(function(e) {
 		e.preventDefault();
@@ -40,6 +55,10 @@ jQuery(document).ready(function () {
 		if (!$target.is($delete_buts)) {
 			$conf.hide();
         }
+	});
+	
+	jQuery('.bez_delete_prompt').click('on', function () {
+		return confirm('Are you sure you want to delete this item?');
 	});
 
 	$delete_buts.each(function() {

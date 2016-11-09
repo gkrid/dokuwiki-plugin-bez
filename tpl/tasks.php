@@ -229,7 +229,7 @@
 
 
 [ <a class="" href="<?php echo $template['ical_link'] ?>">
-	📅 <?php echo $bezlang['download_in_icalendar'] ?>
+	<span class="bez_awesome">&#xf073;</span> <?php echo $bezlang['download_in_icalendar'] ?>
 </a> ]
 [ <a class="" href="
 	<?php echo $helper->mailto('',

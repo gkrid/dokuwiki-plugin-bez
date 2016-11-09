@@ -10,6 +10,10 @@ class BEZ_mdl_Validator {
 		$this->rules = array_merge($this->rules, $rules);
 	}
 	
+	public function get_rules() {
+		return $this->rules;
+	}
+	
 	public function get_errors() {
 		return $this->errors;
 	}

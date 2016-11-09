@@ -1,7 +1,7 @@
 base bez
 author Szymon Olewniczak
 email (my first name) [at] imz [dot] re
-date 2016-10-31
+date 2016-11-09
 name bez
 desc SQLite based application helping in managing nonconformities and customers complaints.
 url http://www.dokuwiki.org/plugin:bez

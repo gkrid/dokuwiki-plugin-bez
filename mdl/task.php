@@ -38,12 +38,12 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 		return array('coordinator', 'program_coordinator', 'action');
 	}
 	
-	private function set_defaults($defaults) {
-		//meta
-		$this->reporter = $this->auth->get_user();
-		$this->date = time();
+	private function set_defaults() {
+
 		
 		$val_data = $this->validator->validate($defaults, array('cause', 'tasktype', 'issue', 'coordinator', 'program_coordinator'));
+		
+		var_dump($this->validator->get_rules());
 			
 		
 		if (isset($val_data['cause'])) {
@@ -64,7 +64,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 			$this->program_coordinator = $val_data['program_coordinator'];
 		}
 		
-		$this->state = '0';
+
 		
 		
 		if ($val_data === false) {
@@ -77,6 +77,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 	//tasktype is required
 	public function __construct($model, $defaults=array()) {
 		parent::__construct($model);
+
 				
 		//array(filter, NULL)
 		$this->validator->set_rules(array(
@@ -103,6 +104,27 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 			'program_coordinator' => array(array('dw_user'), 'NOT NULL'),
 		));
 		
+		//we've created empty object
+		if ($this->id === NULL) {
+			//meta
+			$this->reporter = $this->auth->get_user();
+			$this->date = time();
+			
+			$this->state = '0';
+		
+			$val_data = $this->validator->validate($defaults, array('cause', 'issue', 'coordinator', 'program_coordinator'));
+			
+			if ($val_data === false) {
+				throw new Execption('$defaults invalid: '.print_r($this->validator->get_errors(), true));
+			}
+			
+			$this->cause = $val_data['cause'];
+			$this->issue = $val_data['issue'];
+			$this->coordinator = $val_data['coordinator'];
+			$this->program_coordinator = $val_data['program_coordinator'];
+		
+		}
+		
 		//takstype required	
 		if ($this->cause == NULL && $this->issue != NULL) {
 			$this->validator->set_rules(array(
@@ -116,9 +138,15 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 		
 		//we've created empty object
 		if ($this->id === NULL) {
-			$this->set_defaults($defaults);
+			$val_data = $this->validator->validate($defaults, array('tasktype'));
+			
+			if ($val_data === false) {
+				throw new Execption('tasktype invalid: '.print_r($this->validator->get_errors(), true));
+			}
+			
+			$this->tasktype = $val_data['tasktype'];
 		}
-
+		
 		$this->auth->set_coordinator($this->coordinator);
 		$this->auth->set_programm_coordinator($this->program_coordinator);
 		$this->auth->set_executor($this->executor);
