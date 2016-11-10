@@ -21,7 +21,7 @@ class BEZ_mdl_Model {
 		}
 	}
 	
-	public function __construct($dw_auth, $user_nick, $lang_code) {
+	public function __construct($dw_auth, $user_nick, $lang_code='en') {
 		$this->dw_auth = $dw_auth;
 		$this->user_nick = $user_nick;
 				

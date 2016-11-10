@@ -190,6 +190,14 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 		return true;
 	}
 	
+	public function update_cache() {
+		if ($this->auth->get_level() < 20) {
+			return false;
+		}
+		$this->task_cache = $this->helper->wiki_parse($this->task);
+		$this->reason_cache = $this->helper->wiki_parse($this->reason);
+	}
+	
 	public function set_data($data) {
 		if ($this->auth->get_level() < 15) {
 			return false;
