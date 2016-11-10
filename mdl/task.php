@@ -15,10 +15,10 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 	
 	//acl
 	//coordinator is defined by issue or tasktype
-	protected $tasktype, $issue;
+	protected $issue;
 	
 	//data
-	protected $cause, $executor, $task, $plan_date, $cost, $all_day_event, $start_time, $finish_time;
+	protected $cause, $executor, $task, $plan_date, $cost, $all_day_event, $start_time, $finish_time, $tasktype;
 	
 	//state
 	protected $state, $reason;
@@ -139,9 +139,8 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 		//we've created empty object
 		if ($this->id === NULL) {
 			$val_data = $this->validator->validate($defaults, array('tasktype'));
-			
 			if ($val_data === false) {
-				throw new Execption('tasktype invalid: '.print_r($this->validator->get_errors(), true));
+				throw new Exception('tasktype invalid: '.print_r($this->validator->get_errors(), true));
 			}
 			
 			$this->tasktype = $val_data['tasktype'];
@@ -176,7 +175,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 			return false;
 		}
 		
-		$val_data = $this->validator->validate($data, array('tasktype', 'issue'));
+		$val_data = $this->validator->validate($data, array('issue'));
 		if ($val_data === false) {
 			$this->errors = true;
 			return false;
@@ -202,9 +201,9 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 		if ($this->auth->get_level() < 15) {
 			return false;
 		}
-			
+				
 		$val_data = $this->validator->validate($data, array('executor',
-		'cause', 'task', 'plan_date', 'cost', 'all_day_event', 'start_time', 'finish_time'));
+		'cause', 'task', 'plan_date', 'cost', 'all_day_event', 'start_time', 'finish_time', 'tasktype'));
 		if ($val_data === false) {
 			$this->errors = true;
 			return false;
@@ -214,6 +213,11 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 		foreach ($val_data as $k => $v) {
 				$this->$k = $v;
 		}
+		
+		if ($this->issue != NULL && $this->cause == NULL) {
+			$this->tasktype = NULL;
+		}
+		
 		$this->auth->set_executor($this->executor);
 		
 		//set parsed

@@ -19,7 +19,7 @@
 				<span><strong>#z<?php echo $nparams['tid'] ?></strong></span>
 				</div>
 				
-				<?php if ($template['auth_level'] >= 15 && $template['task_action'] == 'task_form'): ?>
+				<?php if ($template['auth_level'] >= 15 && isset($template['issue'])): ?>
 				<div class="row">
 					<label for="cause"><?php echo ucfirst($bezlang['cause']) ?>:</label>
 					<span>
@@ -51,7 +51,7 @@
 			
 			<?php if (!isset($template['issue']) || isset($template['cause'])): ?> 
 				<div class="row">
-				<label for="executor"><?php echo $bezlang['task_type'] ?>:</label>
+				<label for="tasktype"><?php echo $bezlang['task_type'] ?>:</label>
 				<span>
 					<?php if (isset($nparams['tasktype']) && $template['auth_level'] < 20): ?>
 						<input type="hidden" name="tasktype" value="<?php echo $value['tasktype'] ?>">
@@ -59,7 +59,7 @@
 						<?php echo $template['tasktype_name'] ?>
 						</strong>
 					<?php else: ?>
-						<select name="tasktype">
+						<select id="tasktype" name="tasktype">
 							<option <?php if ($value['tasktype'] == '') echo 'selected' ?> value="">-- <?php echo $bezlang['select'] ?> --</option>
 							<?php foreach ($template['tasktypes'] as $tasktype): ?>
 								<option <?php if ($value['tasktype'] == $tasktype->id) echo 'selected' ?> value="<?php echo $tasktype->id ?>"><?php echo $tasktype->type ?></option>

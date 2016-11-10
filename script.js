@@ -60,6 +60,18 @@ jQuery(document).ready(function () {
 	jQuery('.bez_delete_prompt').click('on', function () {
 		return confirm('Are you sure you want to delete this item?');
 	});
+	
+	//cause in task
+	jQuery('#cause').on('change', function () {
+			var val = jQuery(this).val(),
+				$tasktype_row = jQuery('#tasktype').parents('.row');
+			console.log(val);
+			if (val === '') {
+				$tasktype_row.hide();
+			} else { 
+				$tasktype_row.show();
+			}
+	});
 
 	$delete_buts.each(function() {
 		jQuery(this).click(function(e) {

@@ -73,7 +73,7 @@ if (isset($nparams['tid'])) {
 		
 /*dodawania*/
 } else {
-	$defaults = array('issue' => $issue_id, 'cause' => $cause_id, 'tasktype' => $_POST['tasktype']);
+	$defaults = array('issue' => $issue_id, 'cause' => $cause_id);
 
 	$task = $this->model->tasks->create_object($defaults);
 		
