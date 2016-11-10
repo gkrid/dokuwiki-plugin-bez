@@ -50,13 +50,26 @@ $auth = new auth_plugin_authplain();
 
 
 $model = new BEZ_mdl_Model($auth, $user);
+$bezcache = new Bezcache();
 $helper = new helper_plugin_bez();
 
 
 if (array_key_exists('r', $options)) {
 	foreach ($model->tasks->get_all() as $task) {
+		echo "Updating cache of #".$task->id."\n";
 		$task->update_cache();
 		$model->tasks->save($task);
+		
+		//old cache mechanizm
+		$query = 'UPDATE tasks_cache
+					SET task=:task, reason=:reason, toupdate=0 WHERE id=:id';
+		$sth = $model->db->prepare($query);
+		$sth->execute(array(
+						':task' => $task->task_cache,
+						':reason' => $task->reason_cache,
+						':id' => $task->id
+						));
+
 	}
 } else {
 	usage();
