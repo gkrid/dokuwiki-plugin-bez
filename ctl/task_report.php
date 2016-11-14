@@ -65,8 +65,6 @@ if (isset($nparams['tid'])) {
 				$value = $_POST;
 			} else {
 				$tid = $this->model->tasks->save($task);
-				
-				$tid = $this->model->tasks->save($task);
 				$title = 'Dodano zadanie';
 				$exec = $task->executor;
 				$subject = "[$conf[title]] $title: #z$tid";

@@ -37,42 +37,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 	public function get_virtual_columns() {
 		return array('coordinator', 'program_coordinator', 'action');
 	}
-	
-	private function set_defaults() {
-
 		
-		$val_data = $this->validator->validate($defaults, array('cause', 'tasktype', 'issue', 'coordinator', 'program_coordinator'));
-		
-		var_dump($this->validator->get_rules());
-			
-		
-		if (isset($val_data['cause'])) {
-			$this->cause = $val_data['cause'];
-		}
-		if (isset($val_data['tasktype'])) {
-			$this->tasktype = $val_data['tasktype'];
-		}
-		if (isset($val_data['issue'])) {
-			$this->issue = $val_data['issue'];
-		}
-
-		if (isset($val_data['coordinator'])) {
-			$this->coordinator = $val_data['coordinator'];
-		}
-		
-		if (isset($val_data['program_coordinator'])) {
-			$this->program_coordinator = $val_data['program_coordinator'];
-		}
-		
-
-		
-		
-		if ($val_data === false) {
-			$this->errors = true;
-			return false;
-		}
-	}
-	
 	//by defaults you can set: cause, tasktype and issue
 	//tasktype is required
 	public function __construct($model, $defaults=array()) {
@@ -214,8 +179,11 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 				$this->$k = $v;
 		}
 		
+		//specjalne reguły
 		if ($this->issue != NULL && $this->cause == NULL) {
 			$this->tasktype = NULL;
+		} else if ($this->issue == NULL) {
+			$this->cause = NULL;
 		}
 		
 		$this->auth->set_executor($this->executor);
