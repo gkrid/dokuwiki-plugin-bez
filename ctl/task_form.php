@@ -10,6 +10,8 @@ $causo = new Causes();
 $bezcache = new Bezcache();
 
 $issue_id = (int)$nparams['id'];
+$issue = $this->model->issues->get_one($issue_id);
+
 /*casue*/
 $cause_id = '';
 if (isset($nparams['cid']) && $nparams['cid'] != '') {
@@ -49,6 +51,10 @@ if (isset($nparams['tid'])) {
 			} else {
 				$this->model->tasks->save($task);
 				$bezcache->task_toupdate($task->id);
+				
+				$issue->add_participant($task->executor);
+				$issue->update_last_activity();
+				$this->model->issues->save($issue);
 								
 				if ($cause_id == NULL) {
 					header("Location: ?id=bez:issue_task:id:$issue_id:tid:$tid");
@@ -94,6 +100,10 @@ if (isset($nparams['tid'])) {
 			} else {
 				$tid = $this->model->tasks->save($task);
 				
+				$issue->add_participant($task->executor);
+				$issue->update_last_activity();
+				$this->model->issues->save($issue);
+				
 				$title = 'Dodano zadanie';
 				$exec = $task->executor;
 				$subject = "[$conf[title]] $title: #$issue_id #z$tid";
@@ -134,3 +144,5 @@ if (isset($nparams['id'])) {
 
 $template['users'] = $this->model->users->get_all();
 $template['tasktypes'] = $this->model->tasktypes->get_all();
+
+$template['issue_object'] = $this->model->issues->get_one($issue_id);

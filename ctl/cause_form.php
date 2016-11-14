@@ -46,3 +46,4 @@ $template['rootcauses'] = $rootco->get();
 $tasko = new Tasks();
 $template['anytasks'] = $tasko->any_task($issue_id);
 $template['opentasks'] = $tasko->any_open($issue_id);
+$template['issue_object'] = $this->model->issues->get_one($issue_id);

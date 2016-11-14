@@ -164,3 +164,11 @@
 </form>
 <?php endif ?>
 </div>
+
+<table id="bez_issue_activity">
+	<tr>
+		<th><?php echo $bezlang['comment_last_activity'] ?>: </th><td><?php echo $template['issue_object']->last_activity ?></td>
+		
+		<th><?php echo $bezlang['comment_participants'] ?>: </th><td><?php echo implode(', ', $template['issue_object']->get_participants_names()); ?></td>
+	</tr>
+</table>

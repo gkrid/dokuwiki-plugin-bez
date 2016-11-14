@@ -24,6 +24,15 @@ class BEZ_mdl_Users {
 		return $a;
 	}
 	
+	public function exists($nick) {
+		$users = $this->get_all();
+		if (array_key_exists($nick, $users)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
 	public function get_user_full_name($nick) {
 		if ($this->auth->get_level() < 5) {
 			return false;

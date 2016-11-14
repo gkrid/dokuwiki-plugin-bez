@@ -74,25 +74,4 @@ class BEZ_mdl_Tasks extends BEZ_mdl_Factory {
 		$task = new BEZ_mdl_Task($this->model, $defaults);
 		return $task;
 	}
-	
-	public function save($task) {
-		if ($task->any_errors()) {
-			return false;
-		}
-		
-		$set = array();
-		$execute = array();
-		foreach ($task->get_columns() as $column) {
-			$set[] = ":$column";
-			$execute[':'.$column] = $task->$column;
-		}
-		
-		$query = 'REPLACE INTO tasks ('.implode(',', $task->get_columns()).')
-									VALUES ('.implode(',', $set).')';
-									
-		$sth = $this->model->db->prepare($query);
-		$sth->execute($execute);
-		
-		return $this->model->db->lastInsertId();
-	}
 }

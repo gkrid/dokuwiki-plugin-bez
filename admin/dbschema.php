@@ -727,6 +727,147 @@ function do_issues_remove_priority() {
 		
 	}
 	
+	function check_add_activity_to_issue() {
+		$q = "PRAGMA table_info(issues)";
+		$a = $this->connect->fetch_assoc($q);
+		$entity = false;
+		foreach ($a as $r) {
+			if ($r['name'] == 'last_activity') {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	function do_add_activity_to_issue() {
+		$q = "ALTER TABLE issues ADD COLUMN last_activity DATE NOT NULL DEFAULT ''";
+		$this->connect->errquery($q);
+		
+		$q = "UPDATE issues SET last_activity=(datetime('now','localtime'));";
+		$this->connect->errquery($q);
+		
+		$q = "ALTER TABLE issues ADD COLUMN participants TEXT NOT NULL DEFAULT ''";
+		$this->connect->errquery($q);
+		
+		$issues = $this->connect->fetch_assoc("SELECT * FROM issues");
+		foreach($issues as $issue) {
+			$participants = [];
+			$id = $issue['id'];
+			$reporter = $issue['reporter'];
+			$coordinator = $issue['coordinator'];
+			
+			$participants[$reporter] = $reporter;
+			$participants[$coordinator] = $coordinator;
+				
+			$com = $this->connect->fetch_assoc("SELECT reporter FROM comments WHERE issue=$id");
+			foreach ($com as $c) {
+				$reporter = $c['reporter'];
+				$participants[$reporter] = $reporter;
+			}
+			$tsk = $this->connect->fetch_assoc("SELECT reporter,executor FROM tasks WHERE issue=$id");
+			foreach ($tsk as $t) {
+				$reporter = $t['reporter'];
+				$executor = $t['executor'];
+				
+				$participants[$reporter] = $reporter;
+				$participants[$executor] = $executor;
+			}
+			$cause = $this->connect->fetch_assoc("SELECT reporter FROM causes WHERE issue=$id");
+			foreach ($cause as $c) {
+				$reporter = $c['reporter'];
+				$participants[$reporter] = $reporter;
+			}
+			$part = implode(',', $participants);
+			
+			$q = "UPDATE issues SET participants='$part' WHERE id=$id";
+			$this->connect->errquery($q);
+		}
+	}
+	
+		function check_issue_primary_key() {
+		$q = "PRAGMA table_info(issues)";
+		$a = $this->connect->fetch_assoc($q);
+		$entity = false;
+		foreach ($a as $r) {
+				if ($r['name'] == 'id' && $r['pk'] === 0) {
+					return false;
+				}
+		}
+		return true;
+	}
+	
+	function do_issue_primary_key() {
+	$createq = 'CREATE TABLE issues (
+    "id" INTEGER PRIMARY KEY,
+    "title" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "state" INTEGER NOT NULL,
+    "opinion" TEXT,
+    "type" INTEGER NOT NULL,
+    "coordinator" TEXT NOT NULL,
+    "reporter" TEXT NOT NULL,
+    "date" INTEGER NOT NULL,
+    "last_mod" INTEGER NULL,
+    "last_activity" TEXT NOT NULL,
+    "participants" TEXT NOT NULL
+);';
+		$q = 'BEGIN TRANSACTION;
+			CREATE TEMPORARY TABLE issues_backup
+			(
+					    "id" INTEGER PRIMARY KEY,
+    "title" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
+    "state" INTEGER NOT NULL,
+    "opinion" TEXT,
+    "type" INTEGER NOT NULL,
+    "coordinator" TEXT NOT NULL,
+    "reporter" TEXT NOT NULL,
+    "date" INTEGER NOT NULL,
+    "last_mod" INTEGER NULL,
+    "last_activity" TEXT NOT NULL,
+    "participants" TEXT NOT NULL);
+			INSERT INTO issues_backup SELECT
+					id,
+					title,
+					description,
+					state,
+					opinion,
+					type,
+					coordinator,
+					reporter,
+					date,
+					last_mod,
+					last_activity,
+					participants
+				FROM issues;
+			DROP TABLE issues;
+			'.$createq.'
+			INSERT INTO issues SELECT 
+					id,
+					title,
+					description,
+					state,
+					opinion,
+					type,
+					coordinator,
+					reporter,
+					date,
+					last_mod,
+					last_activity,
+					participants
+				FROM issues_backup;
+			DROP TABLE issues_backup;
+			COMMIT;
+			';
+			$qa = explode(';', $q);
+			$con = new Connect();
+			$db = $con->open();
+			foreach ($qa as $e)  {
+				$db->query($e);
+			}
+			$db->close();
+	}
+	
 	private $actions = array(
 				array('Słownik kategorii przyczyn', 'check_rootcause', 'do_rootcause'),
 				array('Słownik typów problemów', 'check_types', 'do_types'),
@@ -747,7 +888,11 @@ function do_issues_remove_priority() {
 				array('Dodaj koordynatora do programów',
 				'check_add_coordinator_to_tasktypes', 'do_add_coordinator_to_tasktypes'),
 				array('Dodaj cache do zadań',
-				'check_add_cache_to_tasks', 'do_add_cache_to_tasks')
+				'check_add_cache_to_tasks', 'do_add_cache_to_tasks'),
+				array('Dodaj aktywność do problemów',
+				'check_add_activity_to_issue', 'do_add_activity_to_issue'),
+				array('Dodaj klucz główny do problemów',
+				'check_issue_primary_key', 'do_issue_primary_key')
 		);
 
 	function _backup($sufix) {

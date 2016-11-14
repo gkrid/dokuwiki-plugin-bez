@@ -458,3 +458,6 @@ $lang['validate_is_null'] = 'pole nie może być puste.';
 $lang['validate_validate_iso_date'] = 'niepoprawny format daty.';
 
 $lang['tasktype'] = 'Program';
+
+$lang['comment_last_activity'] = 'Ostatnia aktywność';
+$lang['comment_participants'] = 'Osoby zaangażowane';

@@ -851,5 +851,11 @@ input.days {
 	text-decoration: none;
 }
 
+#bez_issue_activity {
+	margin-top: 10px;
+	width: 100%;
+	font-size: 0.8em;
+}
+
 
 
