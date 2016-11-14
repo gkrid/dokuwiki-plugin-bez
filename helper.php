@@ -51,21 +51,14 @@ class helper_plugin_bez extends dokuwiki_plugin
 	public function user_viewer() {
 		global $INFO, $auth;
 
-		$userd = $auth->getUserData($INFO['client']); 
-
-		if (isset($userd['grps']) && (in_array('user', $userd['grps']) || in_array('admin', $userd['grps'])))
+		if ($auth->getUserData($INFO['client']) !== NULL)
 			return true;
 
 		return false;
 	}
 
 	public function user_editor() {
-		global $ID;
-
-		if (auth_quickaclcheck($ID) >= AUTH_EDIT)
-			return true;
-
-		return false;
+		return $this->user_viewer();
 	}
 
 	public function user_coordinator($issue_id) {

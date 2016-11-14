@@ -97,6 +97,12 @@ class Issues extends Connect {
 			$from_user = $this->validate($post);
 			$data = array_merge($data, $from_user);
 			$data['last_mod'] = time();
+			$data['last_activity'] = date('Y-m-d H:i:s');
+			
+			$data['participants'] = $data['reporter'];
+			if ($data['coordinator'] !== '-proposal') {
+				$data['coordinator'] .= ','.$data['reporter'];
+			}
 			$this->errinsert($data, 'issues');
 			return $data;
 		}
@@ -112,6 +118,7 @@ class Issues extends Connect {
 			if ($issue['state'] == 1)
 				$from_user2 = $this->validate_close($post);
 			$data = array_merge($data, $from_user, $from_user2);
+			$data['last_activity'] = date('Y-m-d H:i:s');
 			$this->errupdate($data, 'issues', $id);
 
 			$cache = new Bezcache();
