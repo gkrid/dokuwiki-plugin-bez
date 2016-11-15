@@ -45,3 +45,4 @@ if (count($_POST) > 0) {
 	$value['opinion'] = $template['issue']['raw_opinion'];
 }
 
+$template['issue_object'] = $this->model->issues->get_one($issue_id);
