@@ -461,6 +461,21 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 			//~ $tasko = new Tasktypes();
 			//$to = new Tasks();
 			$proza = new SQLite3(DOKU_INC . 'data/proza.sqlite');
+			
+			//sprawdź czy mamy wszystkich potrzebnych użytkowników
+			$r = $proza->query("SELECT coordinator FROM events GROUP BY coordinator");
+			$wiki_users = $this->model->users->get_all();
+			$unknown_users = array();
+			while ($w = $r->fetchArray(SQLITE3_ASSOC)) {
+				$user = $w['coordinator'];
+				if (!array_key_exists($user, $wiki_users)) {
+					$unknown_users[] = $user;
+				}
+			}
+			
+			if (!empty($unknown_users)) {
+				throw new Exception('PROZA has unknown users: '.implode(',', $unknown_users));
+			}
 
 			//groupy
 			$z_prozy_do_bezu = array();//mapownaie grup
@@ -483,12 +498,13 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 				//~ $lastid = $tasko->lastid();
 				//~ $z_prozy_do_bezu[$w['id']] = $lastid;
 			}			
-			
+						
 			$r = $proza->query("SELECT * FROM events");
 			while ($w = $r->fetchArray(SQLITE3_ASSOC)) {
 				
 				$meta = array('reporter' => $w['coordinator'] ,
 								'date' => time());
+								
 				if ($w['finish_date'] != '') {
 					$meta['close_date'] = strtotime($w['finish_date']);
 				}
@@ -502,15 +518,25 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 					
 				);
 				
-				$state = array('state' => $w['state'],
+				$state_data = array('state' => $w['state'],
 								'reson'=> $w['summary']);
 				
 				$tasktype = $z_prozy_do_bezu[$w['group_n']];
 				
 				$task = $this->model->tasks->create_object(array('tasktype' => $tasktype));
-				$task->set_meta($meta);
-				$task->set_data($data);
-				$task->set_state($state);
+				$state = $task->set_meta($meta);
+				if ($state == false) {
+					throw new Exception(print_r($task->get_errors(), true));
+				}
+				$state = $task->set_data($data);
+				if ($state == false) {
+					throw new Exception(print_r($task->get_errors(), true));
+				}
+				$state = $task->set_state($state_data);
+				if ($state == false) {
+					throw new Exception(print_r($task->get_errors(), true));
+				}
+
 				$this->model->tasks->save($task);
 			}
 			

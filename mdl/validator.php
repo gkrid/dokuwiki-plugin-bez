@@ -32,10 +32,10 @@ class BEZ_mdl_Validator {
 			$rules = $this->rules[$key][0];
 			$null = $this->rules[$key][1];
 			
-			if ($null === 'NOT NULL' && $value === '') {
+			if ($null === 'NOT NULL' && $value == '') {
 				$this->errors[$key] = 'is_null';
 				continue;
-			} else if ($null === 'NULL' && $value === '') {
+			} else if ($null === 'NULL' && $value == '') {
 				$val_data[$key] = $value;
 				continue;
 			}

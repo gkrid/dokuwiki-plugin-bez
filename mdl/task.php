@@ -76,6 +76,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 			$this->date = time();
 			
 			$this->state = '0';
+			$this->all_day_event = '1';
 		
 			$val_data = $this->validator->validate($defaults, array('cause', 'issue', 'coordinator', 'program_coordinator'));
 			
