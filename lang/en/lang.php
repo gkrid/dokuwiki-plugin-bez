@@ -440,6 +440,8 @@ $lang['not_relevant'] = 'not relevant';
 
 $lang['validate_is_null'] = 'cannot be empty.';
 $lang['validate_validate_iso_date'] = 'bad date format.';
+$lang['validate_must_be_0'] = 'must be 0.';
+$lang['refs'] = 'References';
 
 $lang['comment_last_activity'] = 'Last activity';
 $lang['comment_participants'] = 'Participants';

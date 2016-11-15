@@ -12,6 +12,9 @@ $errors = array();
 include_once DOKU_PLUGIN."bez/models/connect.php";
 include_once DOKU_PLUGIN."bez/models/tasktypes.php";
 include_once DOKU_PLUGIN."bez/models/tasks.php";
+
+require_once DOKU_PLUGIN.'bez/mdl/model.php';
+
 class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 
 	private $exp = false;
@@ -22,7 +25,9 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 	}
 	
 	function __construct() {
+		global $auth, $INFO;
 		$this->connect = new Connect();
+		$this->model = new BEZ_mdl_Model($auth, $INFO['client'], $conf['lang']);
 	}
 	
 	function check_remove_action_from_tasks() {
@@ -451,43 +456,62 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 	}
 	
 	function do_proza_import() {
-			$con = new Connect();
+			//~ $con = new Connect();
 			//$bez = $con->open();
-			$tasko = new Tasktypes();
-			$to = new Tasks();
+			//~ $tasko = new Tasktypes();
+			//$to = new Tasks();
 			$proza = new SQLite3(DOKU_INC . 'data/proza.sqlite');
-			
+
 			//groupy
 			$z_prozy_do_bezu = array();//mapownaie grup
 			$r = $proza->query("SELECT * FROM groups");
 			while ($w = $r->fetchArray(SQLITE3_ASSOC)) {
-				$post = $w;
-				unset($post['id']);
-				$post['coordinator'] = 'rolewniczak';
-				$tasko->add($post);
-				$lastid = $tasko->lastid();
+				//~ $post = $w;
+				//~ unset($post['id']);
+				//~ $post['coordinator'] = 'rolewniczak';
+				$tasktype = $this->model->tasktypes->create_object();
+				$tasktype->set(array(
+							'pl' => $w['pl'],
+							'en' => $w['en'],
+							'coordinator' => 'rolewniczak'
+							
+				));
+				$lastid = $this->model->tasktypes->save($tasktype);
 				$z_prozy_do_bezu[$w['id']] = $lastid;
-			}
+				
+				//~ $tasko->add($post);
+				//~ $lastid = $tasko->lastid();
+				//~ $z_prozy_do_bezu[$w['id']] = $lastid;
+			}			
 			
 			$r = $proza->query("SELECT * FROM events");
 			while ($w = $r->fetchArray(SQLITE3_ASSOC)) {
-				$rec = array(
+				
+				$meta = array('reporter' => $w['coordinator'] ,
+								'date' => time());
+				if ($w['finish_date'] != '') {
+					$meta['close_date'] = strtotime($w['finish_date']);
+				}
+				
+				$data = array(
 					'task' => $w['assumptions'],
-					'state' => $w['state'],
-					'tasktype' => $z_prozy_do_bezu[$w['group_n']],
 					'executor' => $w['coordinator'],
 					'cost' => $w['cost'],
-					'reason' => $w['summary'],
-					'reporter'	=> $w['coordinator'],
-					'date'	=> time(),
 					'all_day_event' => 1,
 					'plan_date' => $w['plan_date']
 					
 				);
-				if ($w['finish_date'] != '')
-					$rec['close_date'] = strtotime($w['finish_date']);
-					
-				$to->errinsert($rec, 'tasks');
+				
+				$state = array('state' => $w['state'],
+								'reson'=> $w['summary']);
+				
+				$tasktype = $z_prozy_do_bezu[$w['group_n']];
+				
+				$task = $this->model->tasks->create_object(array('tasktype' => $tasktype));
+				$task->set_meta($meta);
+				$task->set_data($data);
+				$task->set_state($state);
+				$this->model->tasks->save($task);
 			}
 			
 			$proza->close();

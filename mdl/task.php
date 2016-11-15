@@ -80,7 +80,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 			$val_data = $this->validator->validate($defaults, array('cause', 'issue', 'coordinator', 'program_coordinator'));
 			
 			if ($val_data === false) {
-				throw new Execption('$defaults invalid: '.print_r($this->validator->get_errors(), true));
+				throw new Exception('$defaults invalid: '.print_r($this->validator->get_errors(), true));
 			}
 			
 			$this->cause = $val_data['cause'];

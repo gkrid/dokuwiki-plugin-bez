@@ -50,8 +50,8 @@ class helper_plugin_bez extends dokuwiki_plugin
 	}
 	public function user_viewer() {
 		global $INFO, $auth;
-
-		if ($auth->getUserData($INFO['client']) !== NULL)
+	
+		if ($auth->getUserData($INFO['client']) !== false)
 			return true;
 
 		return false;

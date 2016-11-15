@@ -18,6 +18,10 @@ class BEZ_mdl_Validator {
 		return $this->errors;
 	}
 	
+	public function set_error($field, $code) {
+		$this->errors[$field] = $code;
+	}
+	
 	public function validate($data, $fields) {
 		$val_data = array();
 

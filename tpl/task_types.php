@@ -1,15 +1,9 @@
-<div class="info">
-Aby usunąć wybrany rekord, nadpisz jego pola pustymi wartościami.
-</div>
-<a href="<?php echo $template['uri'] ?>?id=<?php echo $this->id('task_types', 'action', 'clean') ?>">
-	Wyczyść typy bez referencji.
-</a>
 <table>
 <tr>
 	<th>Polski</th>
 	<th>English</th>
 	<th>Coordinator</th>
-	<th colspan="2">References</th>
+	<th colspan="3">References</th>
 </tr>
 </tr>
 <?php foreach ($template['types'] as $type): ?>
@@ -43,8 +37,14 @@ Aby usunąć wybrany rekord, nadpisz jego pola pustymi wartościami.
 	<a href="<?php echo $template['uri'] ?>?id=<?php echo $this->id('task_types', 'action', 'edit', 'id', $type->id) ?>">
 		<?php echo $bezlang['edit'] ?>
 	</a>
-	<?php endif ?>
 	</td>
+	<td>
+	<a onclick="return confirm('Czy na pewno chcesz usunąć ten program?')"
+		href="<?php echo $template['uri'] ?>?id=<?php echo $this->id('task_types', 'action', 'remove', 'id', $type->id) ?>">
+		<?php echo $bezlang['delete'] ?>
+	</a>
+	</td>
+	<?php endif ?>
 	<td>
 	<a href="<?php echo $template['uri'] ?>?id=<?php echo $this->id('tasks', 'tasktype', $type->id) ?>">
 		<?php echo $type->refs ?>

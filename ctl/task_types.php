@@ -19,7 +19,7 @@ if (count($_POST) > 0) {
 		$tasktype->set($_POST);
 		
 		if ($tasktype->any_errors()) {
-			$errors = $this->validator->get_errors();
+			$errors = $tasktype->get_errors();
 			$value = $_POST;
 		} else {
 			$this->model->tasktypes->save($tasktype);
@@ -34,10 +34,16 @@ if (count($_POST) > 0) {
 	
 	$tasktype = $this->model->tasktypes->get_one($nparams['id']);
 	$value = $tasktype->get_assoc();
-} else if ($action == 'clean') {
-	$typo->clean_empty();
-	header('Location: ?id=bez:task_types');
-}
+	
+} else if ($action == 'remove') {
+	$tasktype = $this->model->tasktypes->get_one($nparams['id']);
+	if ($tasktype != NULL) {
+		$tasktype->remove();
+		if ($tasktype->any_errors()) {
+			$errors = $tasktype->get_errors();		
+		}
+	}
+} 
 
 $template['types'] = $types;
 $template['uri'] = $uri;

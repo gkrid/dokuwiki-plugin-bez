@@ -6,14 +6,19 @@ require_once 'entity.php';
 
 class BEZ_mdl_Tasktype extends BEZ_mdl_Entity {
 
-	protected $id, $pl, $en, $coordinator, $type;
+	protected $id, $pl, $en, $coordinator;
+	protected $refs, $type;
 	
 	public function get_columns() {
 		return array('id', 'pl', 'en', 'coordinator');
 	}
 	
 	public function get_virtual_columns() {
-		return array('type');
+		return array('type', 'refs');
+	}
+	
+	public function get_table_name() {
+		return 'tasktypes';
 	}
 		
 	private function set_type() {
@@ -51,5 +56,16 @@ class BEZ_mdl_Tasktype extends BEZ_mdl_Entity {
 		}
 		$this->auth->set_coordinator($this->coordinator);
 		$this->set_type();
+	}
+	
+	public function remove() {
+		if ($this->auth->get_level() < 20) {
+			return false;
+		}
+		if ($this->refs > 0) {
+			$this->validator->set_error('refs', 'must_be_0');
+			return false;
+		}
+		parent::remove();
 	}
 }

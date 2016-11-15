@@ -456,6 +456,9 @@ $lang['not_relevant'] = 'nie dotyczy';
 
 $lang['validate_is_null'] = 'pole nie może być puste.';
 $lang['validate_validate_iso_date'] = 'niepoprawny format daty.';
+$lang['validate_must_be_0'] = 'musi być równa 0.';
+$lang['refs'] = 'Ilość referencji';
+
 
 $lang['tasktype'] = 'Program';
 

@@ -51,4 +51,10 @@ class BEZ_mdl_Entity {
 		$this->validator = new BEZ_mdl_Validator($this->model);
 		$this->helper = plugin_load('helper', 'bez');
 	}
+	
+	/*Function protected to prevent accidential calling on child class */
+	protected function remove() {
+		$sth = $this->model->db->prepare('DELETE FROM '.$this->get_table_name().' WHERE id = ?');
+		$sth->execute(array($this->id));
+	}
 }

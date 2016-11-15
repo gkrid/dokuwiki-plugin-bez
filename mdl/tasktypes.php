@@ -12,7 +12,9 @@ class BEZ_mdl_Tasktypes extends BEZ_mdl_Factory {
 			return false;
 		}
 		
-		$sth = $this->model->db->prepare('SELECT * FROM tasktypes WHERE id = ?');
+		$sth = $this->model->db->prepare('SELECT *,
+					(SELECT COUNT(*) FROM tasks WHERE tasktype=tasktypes.id) AS refs
+					FROM tasktypes WHERE id = ?');
 		$sth->execute(array($id));
 		
 		$tasktype = $sth->fetchObject("BEZ_mdl_Tasktype",
@@ -29,7 +31,7 @@ class BEZ_mdl_Tasktypes extends BEZ_mdl_Factory {
 		if (in_array('refs', $additional_fields)) {
 			$q = 'SELECT *,
 					(SELECT COUNT(*) FROM tasks WHERE tasktype=tasktypes.id) AS refs
-					FROM tasktypes;';
+					FROM tasktypes';
 		} else {
 			$q = 'SELECT * FROM tasktypes';
 		}
@@ -47,21 +49,4 @@ class BEZ_mdl_Tasktypes extends BEZ_mdl_Factory {
 		return $tasktype;
 	}
 	
-	public function save($tasktype) {
-		if ($tasktype->any_errors()) {
-			return false;
-		}
-		
-		$set = array();
-		$execute = array();
-		foreach ($tasktype->get_columns() as $column) {
-			$set[] = ":$column";
-			$execute[':'.$column] = $tasktype->$column;
-		}
-		
-		$query = 'REPLACE INTO tasktypes ('.implode(',', $tasktype->get_columns()).')
-									VALUES ('.implode(',', $set).')';
-		$sth = $this->model->db->prepare($query);
-		$sth->execute($execute);
-	} 
 }
