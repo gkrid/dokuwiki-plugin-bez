@@ -80,11 +80,10 @@ if (isset($nparams['tid'])) {
 /*dodawania*/
 } else {
 	$defaults = array('issue' => $issue_id, 'cause' => $cause_id);
-
-	$task = $this->model->tasks->create_object($defaults);
-		
-	$template['auth_level'] = $task->get_level();
 	
+	$task = $this->model->tasks->create_object($defaults);
+
+	$template['auth_level'] = $task->get_level();
 
 
 	if (count($_POST) > 0) {
