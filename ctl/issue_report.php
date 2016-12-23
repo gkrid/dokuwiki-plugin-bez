@@ -41,8 +41,9 @@ if (count($_POST) > 0) {
 		$data = array('reporter' => $usro->get_nick(), 'date' => time());
 
 		$stao = new States();
-		if ($_POST['coordinator'] == NULL)
+		if ($_POST['coordinator'] == NULL) {
 			$data['coordinator'] = '-proposal';
+		}
 		$data['state'] = $stao->id('opened');
 
 		$inserted = $isso->add($_POST, $data);

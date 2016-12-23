@@ -101,7 +101,7 @@ class Issues extends Connect {
 			
 			$data['participants'] = $data['reporter'];
 			if ($data['coordinator'] !== '-proposal') {
-				$data['coordinator'] .= ','.$data['reporter'];
+				$data['participants'] .= ','.$data['coordinator'];
 			}
 			$this->errinsert($data, 'issues');
 			return $data;

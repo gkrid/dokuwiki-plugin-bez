@@ -24,7 +24,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 	protected $state, $reason;
 	
 	//virtual
-	protected $coordinator, $program_coordinator, $action;
+	protected $coordinators, $action;
 	
 	public function get_columns() {
 		return array('id', 'reporter', 'date', 'close_date', 'cause',
@@ -35,7 +35,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 	}
 	
 	public function get_virtual_columns() {
-		return array('coordinator', 'program_coordinator', 'action');
+		return array('coordinators', 'action');
 	}
 		
 	//by defaults you can set: cause, tasktype and issue
@@ -65,8 +65,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 			'state' => array(array('select', array('0', '1', '2')), 'NULL'),
 			'reason' => array(array('length', 1000), 'NULL'),
 			
-			'coordinator' => array(array('dw_user'), 'NOT NULL'),
-			'program_coordinator' => array(array('dw_user'), 'NOT NULL'),
+			'coordinators' => array(array('array of', array('dw_user')), 'NOT NULL'),
 		));
 		
 		//we've created empty object
@@ -78,7 +77,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 			$this->state = '0';
 			$this->all_day_event = '1';
 		
-			$val_data = $this->validator->validate($defaults, array('cause', 'issue', 'coordinator', 'program_coordinator'));
+			$val_data = $this->validator->validate($defaults, array('cause', 'issue', 'coordinators'));
 			
 			if ($val_data === false) {
 				echo 'error: $defaults invalid: '.print_r($this->validator->get_errors(), true);
@@ -86,15 +85,14 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 			
 			$this->cause = $val_data['cause'];
 			$this->issue = $val_data['issue'];
-			$this->coordinator = $val_data['coordinator'];
-			$this->program_coordinator = $val_data['program_coordinator'];
+			$this->coordinators = $val_data['coordinators'];
 		
 		}
 
 		//takstype required	
-		if ($this->cause == NULL && $this->issue != NULL) {
+		if ($this->issue != NULL) {
 			$this->validator->set_rules(array(
-				'tasktype' => array(array('must_be_empty'), 'NULL')
+				'tasktype' => array(array('numeric'), 'NULL')
 			));
 		} else {
 			$this->validator->set_rules(array(
@@ -106,14 +104,13 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 		if ($this->id === NULL) {
 			$val_data = $this->validator->validate($defaults, array('tasktype'));
 			if ($val_data === false) {
-				throw new Exception('tasktype invalid: '.print_r($this->validator->get_errors(), true));
+				echo 'tasktype invalid: '.print_r($this->validator->get_errors(), true);
 			}
 			
 			$this->tasktype = $val_data['tasktype'];
 		}
 		
 		$this->auth->set_coordinator($this->coordinator);
-		$this->auth->set_programm_coordinator($this->program_coordinator);
 		$this->auth->set_executor($this->executor);
 	}
 	

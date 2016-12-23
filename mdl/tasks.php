@@ -58,17 +58,13 @@ class BEZ_mdl_Tasks extends BEZ_mdl_Factory {
 	
 	public function create_object($defaults) {
 		if (isset($defaults['issue'])) {
-			$defaults['coordinator'] =
-				$this->model->issues->get_one($defaults['issue'])->coordinator;
-			if (isset($defaults['tasktype'])) {
-				$defaults['program_coordinator'] =
-					$this->model->tasktypes->get_one($defaults['tasktype'])->coordinator;
-			} else {
-				$defaults['program_coordinator'] = $defaults['coordinator'];
-			}
+			$defaults['coordinators'] =
+				array($this->model->issues->get_one($defaults['issue'])->coordinator);
 		} elseif (isset($defaults['tasktype'])) {
-			$defaults['coordinator'] = $defaults['program_coordinator'] = 
-					$this->model->tasktypes->get_one($defaults['tasktype'])->coordinator;
+			$defaults['coordinator'] = $this->model->tasktypes->get_coordinators($defaults['tasktype']);
+		} else {
+			echo 'cannot create object with no issue or tasktype';
+			return null;
 		}
 
 		$task = new BEZ_mdl_Task($this->model, $defaults);

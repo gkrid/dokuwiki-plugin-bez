@@ -145,3 +145,5 @@ $template['users'] = $this->model->users->get_all();
 $template['tasktypes'] = $this->model->tasktypes->get_all();
 
 $template['issue_object'] = $this->model->issues->get_one($issue_id);
+
+

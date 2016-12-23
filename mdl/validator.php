@@ -22,6 +22,28 @@ class BEZ_mdl_Validator {
 		$this->errors[$field] = $code;
 	}
 	
+	protected function check_against_val_method($value, $method, $args) {
+		$validator = 'validate_'.$method;
+		if (!method_exists($this, $validator)) {
+			throw new Exception("there is no validation function $validator");
+		}
+		
+		array_unshift($args, $value);
+		return call_user_func_array(array($this, $validator), $args);
+	}
+	
+	public function validate_one($value, $method, $args, $null) {
+			if ($null === 'NOT NULL' && $value == '') {
+				$this->errors[$key] = 'is_null';
+				return false;
+			} else if ($null === 'NULL' && $value == '') {
+				$val_data[$key] = $value;
+				return false;
+			}
+
+			return $this->check_against_val_method($value, $method, $args);
+	}
+	
 	public function validate($data, $fields) {
 		$val_data = array();
 
@@ -29,26 +51,11 @@ class BEZ_mdl_Validator {
 			if (!isset($this->rules[$key]) || !in_array($key, $fields)) {
 				continue;
 			}
-			$rules = $this->rules[$key][0];
+			$args = $this->rules[$key][0];
 			$null = $this->rules[$key][1];
 			
-			if ($null === 'NOT NULL' && $value == '') {
-				$this->errors[$key] = 'is_null';
-				continue;
-			} else if ($null === 'NULL' && $value == '') {
-				$val_data[$key] = $value;
-				continue;
-			}
-
-			$method = $rules[0];
-			$validator = 'validate_'.$method;
-			if (!method_exists($this, $validator)) {
-				throw new Exception("there is no validation function $validator");
-			}
-			
-			$args = $rules;
-			$args[0] = $value;
-			$result = call_user_func_array(array($this, $validator), $args);
+			$method = array_shift($args);
+			$result = $this->validate_one($value, $method, $args, $null);
 			
 			if ($result === false) {
 				$this->errors[$key] = $validator;
@@ -61,6 +68,19 @@ class BEZ_mdl_Validator {
 		}
 
 		return $val_data;
+	}
+	
+	public function validate_array_of($array, $args) {
+		
+		$method = array_shift($args);
+		
+		foreach ($array as $value) {
+			$result = $this->check_against_val_method($value, $method, $args);
+			if ($result === false) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	public function validate_select($value, $options) {

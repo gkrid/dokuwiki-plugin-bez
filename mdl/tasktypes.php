@@ -44,6 +44,11 @@ class BEZ_mdl_Tasktypes extends BEZ_mdl_Factory {
 		return $sth;
 	}
 	
+	public function get_coordinators($id) {
+		$one = $this->get_one($id);
+		return array($one['coordinator']);
+	}
+	
 	public function create_object() {
 		$tasktype = new BEZ_mdl_Tasktype($this->model);
 		return $tasktype;
