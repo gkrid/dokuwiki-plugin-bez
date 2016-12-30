@@ -29,16 +29,16 @@ class BEZ_mdl_Validator {
 		}
 		
 		array_unshift($args, $value);
-		return call_user_func_array(array($this, $validator), $args);
+		$result = call_user_func_array(array($this, $validator), $args);
+		return array($result, $method);
 	}
 	
 	public function validate_one($value, $method, $args, $null) {
-			if ($null === 'NOT NULL' && $value == '') {
-				$this->errors[$key] = 'is_null';
-				return false;
-			} else if ($null === 'NULL' && $value == '') {
+			if ($null === 'NOT NULL' && $value === '') {
+				return array(false, 'is_null');
+			} else if ($null === 'NULL' && $value === '') {
 				$val_data[$key] = $value;
-				return false;
+				return true;
 			}
 
 			return $this->check_against_val_method($value, $method, $args);
@@ -55,10 +55,10 @@ class BEZ_mdl_Validator {
 			$null = $this->rules[$key][1];
 			
 			$method = array_shift($args);
-			$result = $this->validate_one($value, $method, $args, $null);
+			list($result, $code) = $this->validate_one($value, $method, $args, $null);
 			
 			if ($result === false) {
-				$this->errors[$key] = $validator;
+				$this->errors[$key] = $code;
 			} else {
 				$val_data[$key] = $value;
 			}
@@ -90,9 +90,10 @@ class BEZ_mdl_Validator {
 		return false;
 	}
 	
-	public function validate_dw_user($user) {
+	public function validate_dw_user($user, $addtitional_values=array()) {
 		$wiki_users = $this->model->users->get_all();
-		if (array_key_exists($user, $wiki_users)) {
+		if (array_key_exists($user, $wiki_users) ||
+			in_array($user, $addtitional_values)) {
 			return true;
 		}
 		return false;

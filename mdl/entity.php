@@ -13,6 +13,10 @@ class BEZ_mdl_Entity {
 		return $this->auth->get_level();
 	}
 	
+	public function get_user() {
+		return $this->auth->get_user();
+	}
+	
 	public function get_columns() {
 		return array();
 	}

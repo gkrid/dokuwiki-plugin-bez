@@ -16,7 +16,7 @@ class BEZ_mdl_Tasks extends BEZ_mdl_Factory {
 								WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
 								WHEN causes.potential = 0 THEN '1'
 								ELSE '2' END) AS action,
-						(CASE WHEN tasks.issue IS NULL THEN tasktypes.coordinator 
+						(CASE WHEN tasks.issue IS NULL THEN '-none' 
 							  ELSE issues.coordinator END) AS coordinator,
 						tasktypes.coordinator AS program_coordinator
 						FROM tasks
@@ -57,16 +57,32 @@ class BEZ_mdl_Tasks extends BEZ_mdl_Factory {
 	}
 	
 	public function create_object($defaults) {
+		echo "<b>Warngin: </b> function create_object depraced";
+		
 		if (isset($defaults['issue'])) {
-			$defaults['coordinators'] =
-				array($this->model->issues->get_one($defaults['issue'])->coordinator);
+			$defaults['coordinator'] =
+				$this->model->issues->get_one($defaults['issue'])->coordinator;
 		} elseif (isset($defaults['tasktype'])) {
-			$defaults['coordinator'] = $this->model->tasktypes->get_coordinators($defaults['tasktype']);
+			$defaults['coordinator'] = '-all';
 		} else {
-			echo 'cannot create object with no issue or tasktype';
-			return null;
+			throw new Exception('cannot create object with no issue or tasktype');
 		}
 
+		$task = new BEZ_mdl_Task($this->model, $defaults);
+		return $task;
+	}
+	
+	public function create_object_program($defaults) {
+		$defaults['coordinator'] = '-none';
+		
+		$task = new BEZ_mdl_Task($this->model, $defaults);
+		return $task;
+	}
+	
+	public function create_object_issue($defaults) {
+		$coordinator = $this->model->issues->get_one($issue)->coordinator;
+		$defaults['coordinator'] = $coordinator;
+		
 		$task = new BEZ_mdl_Task($this->model, $defaults);
 		return $task;
 	}

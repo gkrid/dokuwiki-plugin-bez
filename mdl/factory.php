@@ -15,7 +15,7 @@ class BEZ_mdl_Factory {
 	public function get_level() {
 		return $this->auth->get_level();
 	}
-	
+		
 	public function get_table_name() {
 		$class = get_class($this);
 		$exp = explode('_', $class);
@@ -34,7 +34,7 @@ class BEZ_mdl_Factory {
 			$set[] = ":$column";
 			$execute[':'.$column] = $obj->$column;
 		}
-			
+				
 		$query = 'REPLACE INTO '.$this->get_table_name().'
 							('.implode(',', $obj->get_columns()).')
 							VALUES ('.implode(',', $set).')';

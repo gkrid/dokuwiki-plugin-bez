@@ -36,6 +36,16 @@
 		$tasktype_colspan = 2;
 	} elseif ($task->cost != '' && $task->all_day_event == '1') {
 		$plan_date_colspan = 3;
+	} elseif ($task->cost != '' && $task->all_day_event == '0') {
+		/*leave default*/
+	}
+	
+	function td_with_colspan($colspan) {
+		if ($colspan === 1) {
+			echo '<td>';
+		} else {
+			echo '<td colspan="'.$colspan.'">';
+		}
 	}
 ?>
 
@@ -47,14 +57,14 @@
 		</td>
 
 		<?php if ($task->tasktype_string != ''): ?>
-			<td colspan="<?php echo $tasktype_colspan ?>">
+			<?php echo td_with_colspan($tasktype_colspan) ?>
 				<strong><?php echo $bezlang['task_type'] ?>:</strong>
 				<?php echo $task->tasktype_string ?>
 			</td>
 		<?php endif ?>
 		
 		<?php if ($task->cost != ''): ?>
-			<td colspan="<?php echo $cost_colspan ?>">
+			<?php echo td_with_colspan($cost_colspan) ?>
 				<strong><?php echo $bezlang['cost'] ?>:</strong>
 				<?php echo $task->cost ?>
 			</td>
@@ -62,8 +72,10 @@
 </tr>
 
 <tr>
-	<td colspan="<?php echo $plan_date_colspan ?>"><strong><?php echo $bezlang['plan_date'] ?>:</strong>
-	<?php echo $task->plan_date ?></td>
+	<?php echo td_with_colspan($plan_date_colspan) ?>
+		<strong><?php echo $bezlang['plan_date'] ?>:</strong>
+		<?php echo $task->plan_date ?>
+	</td>
 	
 	<?php if ($task->all_day_event == '0'): ?>
 		<td><strong><?php echo $bezlang['start_time'] ?>:</strong>
@@ -157,8 +169,8 @@
 			 	↻ <?php echo $bezlang['task_reopen'] ?>
 			</a>
 	<?php endif ?>
-	
-	<?php if($task->get_level() >= 15): ?>
+
+	<?php if($task->get_level() >= 15 || $task->reporter === $task->get_user()): ?>
 			<a class="bds_inline_button"
 				href="?id=<?php
 					if($task->issue == '') {
@@ -181,8 +193,8 @@
 		: DOKU_URL . 'doku.php?id='.$this->id('show_task', 'tid', $task->id)) ?>">
 		✉ <?php echo $bezlang['send_mail'] ?>
 	</a>
-	
-	<?php if($task->get_level() >= 12): ?>
+
+	<?php if ($task->tasktype != NULL && $task->get_level() >= 5): ?>
 		<a class="bds_inline_button"
 				href="?id=<?php echo $this->id('task_report', 'duplicate', $task->id, 'tasktype', $task->tasktype) ?>">
 				⇲ <?php echo $bezlang['duplicate'] ?>

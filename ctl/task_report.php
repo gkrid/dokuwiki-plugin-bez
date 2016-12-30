@@ -7,7 +7,9 @@ if (isset($nparams['tid'])) {
 	$action = $nparams['action'];
 	$tid = (int)$nparams['tid'];
 	$task = $this->model->tasks->get_one($tid);
+	
 	$template['auth_level'] = $task->get_level();
+	$template['state_string'] = $task->state_string();
 	
 	if (!$action) {
 		$action = 'edit';
@@ -23,6 +25,8 @@ if (isset($nparams['tid'])) {
 			}
 			$task->set_data($_POST);
 			$task->set_acl($_POST);
+			//for reason
+			$task->set_state($_POST);
 					
 			if ($task->any_errors()) {
 				$errors = $task->get_errors();
@@ -44,8 +48,9 @@ if (isset($nparams['tid'])) {
 	
 /*dodawania*/
 } else {
-	$task = $this->model->tasks->create_object(
+	$task = $this->model->tasks->create_object_program(
 							array('tasktype' => $nparams['tasktype']));
+							
 	$template['auth_level'] = $task->get_level();
 	$value['tasktype'] = $nparams['tasktype'];
 	
@@ -90,6 +95,8 @@ if (isset($nparams['tid'])) {
 	$template['task_action'] = $this->id('task_report', 'tasktype', $nparams['tasktype']);
 }
 
+$template['user'] = $task->get_user();
+$template['user_name'] = $this->model->users->get_user_full_name($template['user']);
 
 $template['users'] = $this->model->users->get_all();
 $template['tasktypes'] = $this->model->tasktypes->get_all();

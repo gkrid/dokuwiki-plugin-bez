@@ -95,83 +95,88 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 		global $auth, $conf, $INFO, $ID;
 		global $template, $bezlang, $value, $errors;
 		
-		$this->model = new BEZ_mdl_Model($auth, $INFO['client'], $conf['lang']);
+		try {
+			$this->model = new BEZ_mdl_Model($auth, $INFO['client'], $conf['lang']);
 
-		if ($this->action == '')
-			return false;
+			if ($this->action == '')
+				return false;
 
-		$event->preventDefault();
+			$event->preventDefault();
 
 
-		if	( ! ($this->helper->token_viewer() || $this->helper->user_viewer()))
-			return false;
+			if	( ! ($this->helper->token_viewer() || $this->helper->user_viewer()))
+				return false;
 
-		$ctl= DOKU_PLUGIN."bez/ctl/".str_replace('/', '', $this->action).".php";
-		if (file_exists($ctl)) {
-			$bezlang = $this->lang;
-			$helper = $this->helper;
-			$helper->lang_code = $this->lang_code;
+			$ctl= DOKU_PLUGIN."bez/ctl/".str_replace('/', '', $this->action).".php";
+			if (file_exists($ctl)) {
+				$bezlang = $this->lang;
+				$helper = $this->helper;
+				$helper->lang_code = $this->lang_code;
 
-			$params = $this->params;
-			$nparams = array();
-			for ($i = 0; $i < count($params); $i += 2)
-				$nparams[$params[$i]] = $params[$i+1];
+				$params = $this->params;
+				$nparams = array();
+				for ($i = 0; $i < count($params); $i += 2)
+					$nparams[$params[$i]] = $params[$i+1];
 
-			$uri = DOKU_URL . 'doku.php';
-			$controller = $this;
-			try {
+				$uri = DOKU_URL . 'doku.php';
+				$controller = $this;
 				include_once $ctl;
-			} catch(Exception $e) {
-				/*preventDefault*/
-				$this->norender = true;
 			}
+		} catch(Exception $e) {
+			echo $e;
+			/*preventDefault*/
+			$this->norender = true;
 		}
 	}
 
 	public function tpl_act_render($event, $param)
 	{
 		global $template, $bezlang, $value, $errors, $INFO;
-		if ($this->action == '')
-			return false;
+		try {
+			
+			if ($this->action == '')
+				return false;
 
-		$event->preventDefault();
+			$event->preventDefault();
 
-		/*przerywamy wyświetlanie*/
-		if ($this->norender)
-			return false;
+			/*przerywamy wyświetlanie*/
+			if ($this->norender)
+				return false;
 
-		if	( ! ($this->helper->token_viewer() || $this->helper->user_viewer())) {
-			html_denied();
-			return false;
-		}
-
-		if (!isset($errors))
-			$errors= array();
-		foreach ($errors as $field => $error) {
-			if (!isset($bezlang[$field])) {
-				continue;
+			if	( ! ($this->helper->token_viewer() || $this->helper->user_viewer())) {
+				html_denied();
+				return false;
 			}
-			echo '<div class="error">';
-			if ($field != '') {
-				echo '<b>'.$bezlang[$field].':</b> '.$bezlang['validate_'.$error];
-			} else {
-				echo $error;
+
+			if (!isset($errors)) {
+				$errors= array();
 			}
-			echo '</div>';
-		}
 
-		$tpl = DOKU_PLUGIN."bez/tpl/".str_replace('/', '', $this->action).".php";
-		if (file_exists($tpl)) {
-			$bezlang = $this->lang;
-			$helper = $this->helper;
-			$helper->lang_code = $this->lang_code;
+			foreach ($errors as $field => $error) {
+				echo '<div class="error">';
+				if ($field != '' && isset($bezlang[$field])) {
+					echo '<b>'.$bezlang[$field].':</b> '.$bezlang['validate_'.$error];
+				} else {
+					echo $error;
+				}
+				echo '</div>';
+			}
 
-			$params = $this->params;
-			$nparams = array();
-			for ($i = 0; $i < count($params); $i += 2)
-				$nparams[$params[$i]] = $params[$i+1];
+			$tpl = DOKU_PLUGIN."bez/tpl/".str_replace('/', '', $this->action).".php";
+			if (file_exists($tpl)) {
+				$bezlang = $this->lang;
+				$helper = $this->helper;
+				$helper->lang_code = $this->lang_code;
 
-			include_once $tpl;
+				$params = $this->params;
+				$nparams = array();
+				for ($i = 0; $i < count($params); $i += 2)
+					$nparams[$params[$i]] = $params[$i+1];
+
+				include_once $tpl;
+			}
+		} catch(Exception $e) {
+			echo $e;
 		}
 	}
 }

@@ -13,7 +13,6 @@ class BEZ_mdl_Auth {
 	 * 0 - brak uprawnień
 	 * 5 - komentator
 	 * 10 - wykonawca (executor)
-	 * 12 - koordynator "Programu" (programm coordinator)
 	 * 15 - koordynator (coordinaotr)
 	 * 20 - administrator
 	 */
@@ -57,17 +56,11 @@ class BEZ_mdl_Auth {
 		}
 	}
 	
+	//special coordinator all allows all user to edit 
 	public function set_coordinator($coordinator) {
 		$this->coordinator = $coordinator;
 		if ($this->coordinator === $this->user_nick) {
 			$this->update_level(15);
-		}
-	}
-	
-	public function set_programm_coordinator($program_coordinator) {
-		$this->program_coordinator = $program_coordinator;
-		if ($this->program_coordinator === $this->user_nick) {
-			$this->update_level(12);
 		}
 	}
 }

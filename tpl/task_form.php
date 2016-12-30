@@ -39,36 +39,43 @@
 			<div class="row">
 			<label for="executor"><?php echo $bezlang['executor'] ?>:</label>
 			<span>
-			<select name="executor" id="executor">
-				<option value="">--- <?php echo $bezlang['select'] ?>---</option>
-			<?php foreach ($template['users'] as $nick => $name): ?>
-				<option <?php if ($value['executor'] == $nick) echo 'selected' ?>
-				 value="<?php echo $nick ?>"><?php echo $name ?></option>
-			<?php endforeach ?>
-			</select>
+			<?php if ($template['auth_level'] >= 15): ?>	
+				<select name="executor" id="executor">
+					<option value="">--- <?php echo $bezlang['select'] ?>---</option>
+				<?php foreach ($template['users'] as $nick => $name): ?>
+					<option <?php if ($value['executor'] == $nick) echo 'selected' ?>
+					 value="<?php echo $nick ?>"><?php echo $name ?></option>
+				<?php endforeach ?>
+				</select>
+			<?php else: ?>
+				<input type="hidden" name="executor" value="<?php echo $template['user'] ?>">
+				<strong>
+				<?php echo $template['user_name'] ?>
+				</strong>
+			<?php endif ?>
+			
+			
 			</span>
 			</div>
 			
-			<?php if (!isset($template['issue']) || isset($template['cause'])): ?> 
-				<div class="row">
-				<label for="tasktype"><?php echo $bezlang['task_type'] ?>:</label>
-				<span>
-					<?php if (isset($nparams['tasktype']) && $template['auth_level'] < 20): ?>
-						<input type="hidden" name="tasktype" value="<?php echo $value['tasktype'] ?>">
-						<strong>
-						<?php echo $template['tasktype_name'] ?>
-						</strong>
-					<?php else: ?>
-						<select id="tasktype" name="tasktype">
-							<option <?php if ($value['tasktype'] == '') echo 'selected' ?> value="">-- <?php echo $bezlang['select'] ?> --</option>
-							<?php foreach ($template['tasktypes'] as $tasktype): ?>
-								<option <?php if ($value['tasktype'] == $tasktype->id) echo 'selected' ?> value="<?php echo $tasktype->id ?>"><?php echo $tasktype->type ?></option>
-							<?php endforeach ?>
-						</select>
-					<?php endif ?>
-				</span>
-				</div>
-			<?php endif ?>
+			<div class="row">
+			<label for="tasktype"><?php echo $bezlang['task_type'] ?>:</label>
+			<span>
+				<?php if ($template['auth_level'] < 15): ?>
+					<input type="hidden" name="tasktype" value="<?php echo $nparams['tasktype'] ?>">
+					<strong>
+					<?php echo $template['tasktype_name'] ?>
+					</strong>
+				<?php else: ?>
+					<select id="tasktype" name="tasktype">
+						<option <?php if ($value['tasktype'] == '') echo 'selected' ?> value=""><?php echo $bezlang['tasks_no_type'] ?></option>
+						<?php foreach ($template['tasktypes'] as $tasktype): ?>
+							<option <?php if ($value['tasktype'] == $tasktype->id) echo 'selected' ?> value="<?php echo $tasktype->id ?>"><?php echo $tasktype->type ?></option>
+						<?php endforeach ?>
+					</select>
+				<?php endif ?>
+			</span>
+			</div>
 					
 			<div class="row">
 			<label for="action"><?php echo $bezlang['class'] ?>:</label>
@@ -127,16 +134,17 @@
 				<div class="row">
 				<label for="task_state"><?php echo $bezlang['task_state'] ?>:</label>
 				<span>
-					<strong><?php echo $template['state'] ?></strong>
+					<strong><?php echo $bezlang[$template['state_string']] ?></strong>
 				</span>
 				</div>
-				<?php if ($template['raw_state'] != 0): ?>
+				
+				<?php if ($template['state_string'] != 'task_opened'): ?>
 				<div class="row">
 					<label for="reason">
-						<?php if ($template['raw_state'] == 1): ?>
-							<?php echo $bezlang['evaluation'] ?>
+						<?php if ($template['state_string'] == 'task_done'): ?>
+							<?php echo $bezlang['evaluation'] ?>:
 						<?php else: ?>
-							<?php echo $bezlang['reason'] ?>
+							<?php echo $bezlang['reason'] ?>:
 						<?php endif ?>
 					</label>
 					<span><textarea name="reason" id="reason"><?php echo $value['reason'] ?></textarea></span>

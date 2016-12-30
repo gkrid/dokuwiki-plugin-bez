@@ -222,10 +222,10 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 				if ($this->value['tasktype'] == $tasktype->id) {	
 					$data[$page_id] = array('id' => $page_id, 'type' => 'd', 'level' => 3, 'title' => $tasktype->type, 'open' => true);
 	
-					if ($tasktype->get_level() >= 15) {
-						$report_id = "bez:task_report:tasktype:".$tasktype->id;
-						$data[$report_id] = array('id' => $report_id, 'type' => 'f', 'level' => 4, 'title' => $this->getLang('bds_task_report'));
-					}
+					//~ if ($tasktype->get_level() >= 15) {
+					$report_id = "bez:task_report:tasktype:".$tasktype->id;
+					$data[$report_id] = array('id' => $report_id, 'type' => 'f', 'level' => 4, 'title' => $this->getLang('bds_task_report'));
+					//~ }
 					if (isset($this->value['tid'])) {
 						$page_id = 'bez:show_task:tid:'.$this->value['tid'];
 						//$page_id = $_GET['id'];

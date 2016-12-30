@@ -106,7 +106,7 @@ table.bez .prNone , #bds_timeline dt.prNone {
 #bds_issue_box table th, #bds_issue_box table td, .bds_block th, .bds_block td {
 	border:0;
 	background: none;
-	border-bottom: 1px dotted #bbb;
+	border-bottom: 1px solid #bbb;
 	font-size: 0.8em;
 }
 

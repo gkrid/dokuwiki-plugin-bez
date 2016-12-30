@@ -25,7 +25,9 @@ if (isset($nparams['tid'])) {
 	$tid = (int)$nparams['tid'];
 	
 	$task = $this->model->tasks->get_one($tid);
+	
 	$template['auth_level'] = $task->get_level();
+	$template['state_string'] = $task->state_string();
 
 	if (isset($nparams['id'])) {
 		$template['causes'] = $causo->get($issue_id);
@@ -44,6 +46,8 @@ if (isset($nparams['tid'])) {
 			}
 			$task->set_data($_POST);
 			$task->set_acl($_POST);
+			//for reason
+			$task->set_state($_POST);
 			
 			if ($task->any_errors()) {
 				$errors = $task->get_errors();
@@ -93,6 +97,7 @@ if (isset($nparams['tid'])) {
 				$_POST['all_day_event'] = '0';
 			}
 			$task->set_data($_POST);
+			
 			if ($task->any_errors()) {
 				$errors = $task->get_errors();
 				$value = $_POST;
@@ -140,6 +145,10 @@ if (isset($nparams['id'])) {
 	$isso = new Issues();
 	$template['issue'] = $isso->get($issue_id);
 }
+
+$template['user'] = $task->get_user();
+$template['user_name'] = $this->model->users->get_user_full_name($template['user']);
+
 
 $template['users'] = $this->model->users->get_all();
 $template['tasktypes'] = $this->model->tasktypes->get_all();
