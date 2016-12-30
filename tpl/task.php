@@ -29,15 +29,16 @@
 	$cost_colspan = 1;
 	$tasktype_colspan = 1;
 	$plan_date_colspan = 1;
+	$finish_time_colspan = 1;
 	
 	if ($task->cost == '' && $task->all_day_event == '1') {
-		$plan_date_colspan = 2;
-	} elseif ($task->cost == '' && $task->all_day_event == '0') {
-		$tasktype_colspan = 2;
-	} elseif ($task->cost != '' && $task->all_day_event == '1') {
 		$plan_date_colspan = 3;
-	} elseif ($task->cost != '' && $task->all_day_event == '0') {
+	} elseif ($task->cost == '' && $task->all_day_event == '0') {
 		/*leave default*/
+	} elseif ($task->cost != '' && $task->all_day_event == '1') {
+		$plan_date_colspan = 4;
+	} elseif ($task->cost != '' && $task->all_day_event == '0') {
+		$finish_time_colspan = 2;
 	}
 	
 	function td_with_colspan($colspan) {
@@ -54,6 +55,11 @@
 		<td>
 			<strong><?php echo $bezlang['executor'] ?>:</strong>
 			<?php echo $this->model->users->get_user_full_name($task->executor) ?>
+		</td>
+		
+		<td>
+			<strong><?php echo $bezlang['reporter'] ?>:</strong>
+			<?php echo $this->model->users->get_user_full_name($task->reporter) ?>
 		</td>
 
 		<?php if ($task->tasktype_string != ''): ?>
@@ -80,7 +86,8 @@
 	<?php if ($task->all_day_event == '0'): ?>
 		<td><strong><?php echo $bezlang['start_time'] ?>:</strong>
 		<?php echo $task->start_time ?></td>
-		<td><strong><?php echo $bezlang['finish_time'] ?>:</strong>
+		<?php echo td_with_colspan($finish_time_colspan) ?>
+		<strong><?php echo $bezlang['finish_time'] ?>:</strong>
 		<?php echo $task->finish_time ?></td>
 	<?php endif ?>
 	

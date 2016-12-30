@@ -249,7 +249,7 @@ class Tasks extends Event {
 	public function getone($id) {
 		$id = (int) $id;
 		$a = $this->fetch_assoc("SELECT
-		tasks.id,task,executor,state,cost,reason,tasks.reporter,tasks.date,
+		tasks.id, tasks.task_cache, tasks.reason_cache, task,executor,state,cost,reason,tasks.reporter,tasks.date,
 		close_date,tasks.issue,tasks.cause, causes.potential, tasks.cause,
 		tasks.plan_date, tasks.all_day_event, tasks.start_time, tasks.finish_time,
 		tasks.tasktype
@@ -278,7 +278,7 @@ class Tasks extends Event {
 		
 		$border_date = time() - $days*24*60*60;
 		
-		$res = $this->fetch_assoc("SELECT tasks.id, 
+		$res = $this->fetch_assoc("SELECT tasks.id, tasks.task_cache, tasks.reason_cache,
 								(CASE	WHEN tasks.issue IS NULL THEN '3'
 										WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
 										WHEN causes.potential = 0 THEN '1'
@@ -293,7 +293,7 @@ class Tasks extends Event {
 			foreach ($issues as $ik => $issue)
 				$create[$day][$ik]['class'] = 'task_opened';
 
-		$res2 = $this->fetch_assoc("SELECT tasks.id, 
+		$res2 = $this->fetch_assoc("SELECT tasks.id, tasks.task_cache, tasks.reason_cache,
 								(CASE	WHEN tasks.issue IS NULL THEN '3'
 										WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
 										WHEN causes.potential = 0 THEN '1'
@@ -309,7 +309,7 @@ class Tasks extends Event {
 				$close[$day][$ik]['date'] = $close[$day][$ik]['close_date'];
 			}
 
-		$res3 = $this->fetch_assoc("SELECT tasks.id, 
+		$res3 = $this->fetch_assoc("SELECT tasks.id, tasks.task_cache, tasks.reason_cache,
 								(CASE	WHEN tasks.issue IS NULL THEN '3'
 										WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
 										WHEN causes.potential = 0 THEN '1'
@@ -398,7 +398,7 @@ class Tasks extends Event {
 
 
 		$q = "SELECT
-				tasks.id,task,executor,state,cost,reason,tasks.reporter,tasks.date,
+				tasks.id, tasks.task_cache, tasks.reason_cache, task,executor,state,cost,reason,tasks.reporter,tasks.date,
 				close_date,tasks.issue,tasks.cause, causes.potential, causes.cause as cause_text, causes.rootcause, causes.id as cause_id
 				FROM tasks LEFT JOIN causes ON tasks.cause = causes.id WHERE tasks.issue=$issue $wcause";
 		return $this->fetch_assoc($q);
@@ -412,7 +412,7 @@ class Tasks extends Event {
 
 	public function get_preventive($issue) {
 		$issue = (int) $issue;
-		$q = "SELECT tasks.id, causes.id as cid, tasks.task, tasks.executor, tasks.state, tasks.date, tasks.close_date, tasks.reason, tasks.issue
+		$q = "SELECT tasks.id, tasks.task_cache, tasks.reason_cache, causes.id as cid, tasks.task, tasks.executor, tasks.state, tasks.date, tasks.close_date, tasks.reason, tasks.issue
 				FROM tasks LEFT JOIN causes ON tasks.cause = causes.id
 				WHERE tasks.issue=$issue AND causes.potential = 1 AND tasks.state != 2";
 		$rows = $this->fetch_assoc($q);
@@ -461,7 +461,7 @@ class Tasks extends Event {
 
 	public function get_by_8d($issue) {
 		$issue = (int)$issue;
-		$a = $this->fetch_assoc("SELECT tasks.id,tasks.state,
+		$a = $this->fetch_assoc("SELECT tasks.id, tasks.task_cache, tasks.reason_cache, tasks.state,
 									(CASE	WHEN tasks.issue IS NULL THEN '3'
 											WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
 											WHEN causes.potential = 0 THEN '1'
@@ -734,7 +734,7 @@ class Tasks extends Event {
 		if (count($where) > 0)
 			$where_q = 'WHERE '.implode(' AND ', $where);
 
-		$a = $this->fetch_assoc("SELECT tasks.id,tasks.state,
+		$a = $this->fetch_assoc("SELECT tasks.id,tasks.state, tasks.task_cache, tasks.reason_cache,
 									(CASE	WHEN tasks.issue IS NULL THEN '3'
 											WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
 											WHEN causes.potential = 0 THEN '1'
@@ -757,7 +757,7 @@ class Tasks extends Event {
 	//cron_get_coming_tasks, cron_get_outdated_tasks
 	public function cron_get_outdated_tasks() {
 		global $bezlang;
-		$a = $this->fetch_assoc("SELECT tasks.id, tasks.issue, tasks.executor, tasks.date, tasks.plan_date, tasks.start_time, tasks.finish_time, tasktypes.pl as tasktype, all_day_event,
+		$a = $this->fetch_assoc("SELECT tasks.id, tasks.task_cache, tasks.reason_cache, tasks.issue, tasks.executor, tasks.date, tasks.plan_date, tasks.start_time, tasks.finish_time, tasktypes.pl as tasktype, all_day_event,
 									(CASE	WHEN tasks.issue IS NULL THEN '3'
 											WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
 											WHEN causes.potential = 0 THEN '1'
@@ -783,7 +783,7 @@ class Tasks extends Event {
 	//one month
 	public function cron_get_coming_tasks() {
 		global $bezlang;
-		$a = $this->fetch_assoc("SELECT tasks.id, tasks.issue, tasks.executor, tasks.date, tasks.plan_date, tasks.start_time, tasks.finish_time, tasktypes.pl as tasktype, all_day_event,
+		$a = $this->fetch_assoc("SELECT tasks.id, tasks.task_cache, tasks.reason_cache, tasks.issue, tasks.executor, tasks.date, tasks.plan_date, tasks.start_time, tasks.finish_time, tasktypes.pl as tasktype, all_day_event,
 									(CASE	WHEN tasks.issue IS NULL THEN '3'
 											WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
 											WHEN causes.potential = 0 THEN '1'

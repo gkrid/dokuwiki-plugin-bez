@@ -918,6 +918,53 @@ function do_issues_remove_priority() {
 			$db->close();
 	}
 	
+	private function check_remove_coordinator_from_tasktypes() {
+		$q = "PRAGMA table_info(tasktypes)";
+		$a = $this->connect->fetch_assoc($q);
+		$entity = false;
+		foreach ($a as $r) {
+			if ($r['name'] == 'coordinator') {
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	private function do_remove_coordinator_from_tasktypes() {
+	$con = new Connect();
+		$db = $con->open();
+
+		$createq = "
+				CREATE TABLE tasktypes (
+				id INTEGER PRIMARY KEY,
+				pl VARCHAR(100) NOT NULL,
+				en VARCHAR(100) NOT NULL);";
+				
+		$q = "	BEGIN TRANSACTION;
+			CREATE TEMPORARY TABLE tasktypes_backup
+			(
+				id INTEGER PRIMARY KEY,
+				pl VARCHAR(100) NOT NULL,
+				en VARCHAR(100) NOT NULL);
+			INSERT INTO tasktypes_backup SELECT
+					id,pl,en
+				FROM tasktypes;
+			DROP TABLE tasktypes;
+			$createq;
+			INSERT INTO tasktypes SELECT
+					id,pl,en
+				FROM tasktypes_backup;
+			DROP TABLE tasktypes_backup;
+			COMMIT;
+			";
+			$qa = explode(';', $q);
+
+			foreach ($qa as $e)  {
+				$db->query($e);
+			}
+			$db->close();
+	}
+	
 	private $actions = array(
 				array('Słownik kategorii przyczyn', 'check_rootcause', 'do_rootcause'),
 				array('Słownik typów problemów', 'check_types', 'do_types'),
@@ -942,7 +989,9 @@ function do_issues_remove_priority() {
 				array('Dodaj aktywność do problemów',
 				'check_add_activity_to_issue', 'do_add_activity_to_issue'),
 				array('Dodaj klucz główny do problemów',
-				'check_issue_primary_key', 'do_issue_primary_key')
+				'check_issue_primary_key', 'do_issue_primary_key'),
+				array('Usuń koordynatora z programów',
+				'check_remove_coordinator_from_tasktypes', 'do_remove_coordinator_from_tasktypes')
 		);
 
 	function _backup($sufix) {

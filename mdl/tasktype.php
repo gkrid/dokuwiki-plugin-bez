@@ -6,11 +6,11 @@ require_once 'entity.php';
 
 class BEZ_mdl_Tasktype extends BEZ_mdl_Entity {
 
-	protected $id, $pl, $en, $coordinator;
+	protected $id, $pl, $en;
 	protected $refs, $type;
 	
 	public function get_columns() {
-		return array('id', 'pl', 'en', 'coordinator');
+		return array('id', 'pl', 'en');
 	}
 	
 	public function get_virtual_columns() {
@@ -31,12 +31,10 @@ class BEZ_mdl_Tasktype extends BEZ_mdl_Entity {
 		
 		$this->validator->set_rules(array(
 			'pl' => array(array('length', 100), 'NOT NULL'),
-			'en' => array(array('length', 100), 'NOT NULL'),
-			'coordinator' => array(array('dw_user'), 'NOT NULL')
+			'en' => array(array('length', 100), 'NOT NULL')
 		));
 		
 		$this->set_type();
-		$this->auth->set_coordinator($this->coordinator);
 	}
 	
 	public function set($data) {
@@ -44,7 +42,7 @@ class BEZ_mdl_Tasktype extends BEZ_mdl_Entity {
 			return false;
 		}
 		
-		$val_data = $this->validator->validate($data, array('pl', 'en' ,'coordinator')); 
+		$val_data = $this->validator->validate($data, array('pl', 'en')); 
 		if ($val_data === false) {
 			$this->errors = true;
 			return false;
@@ -54,7 +52,6 @@ class BEZ_mdl_Tasktype extends BEZ_mdl_Entity {
 		foreach ($val_data as $k => $v) {
 			$this->$k = $v;
 		}
-		$this->auth->set_coordinator($this->coordinator);
 		$this->set_type();
 	}
 	
