@@ -1,5 +1,5 @@
 <?php
-include_once DOKU_PLUGIN."bez/models/bezcache.php";
+//~ include_once DOKU_PLUGIN."bez/models/bezcache.php";
 
 
 if (isset($nparams['tid'])) {
@@ -33,8 +33,8 @@ if (isset($nparams['tid'])) {
 				$value = $_POST;
 			} else {
 				$this->model->tasks->save($task);
-				$bezcache = new Bezcache();	
-				$bezcache->task_toupdate($task->id);
+				//~ $bezcache = new Bezcache();	
+				//~ $bezcache->task_toupdate($task->id);
 								
 				header("Location: ?id=bez:show_task:tid:".$task->id);
 			} 

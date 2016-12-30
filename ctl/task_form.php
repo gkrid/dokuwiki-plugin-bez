@@ -4,10 +4,10 @@ include_once DOKU_PLUGIN."bez/models/tasks.php";
 include_once DOKU_PLUGIN."bez/models/causes.php";
 include_once DOKU_PLUGIN."bez/models/users.php";
 include_once DOKU_PLUGIN."bez/models/tasktypes.php";
-include_once DOKU_PLUGIN."bez/models/bezcache.php";
+//~ include_once DOKU_PLUGIN."bez/models/bezcache.php";
 
 $causo = new Causes();
-$bezcache = new Bezcache();
+//~ $bezcache = new Bezcache();
 
 $issue_id = (int)$nparams['id'];
 $issue = $this->model->issues->get_one($issue_id);
@@ -54,7 +54,7 @@ if (isset($nparams['tid'])) {
 				$value = $_POST;
 			} else {
 				$this->model->tasks->save($task);
-				$bezcache->task_toupdate($task->id);
+				//~ $bezcache->task_toupdate($task->id);
 				
 				$issue->add_participant($task->executor);
 				$issue->update_last_activity();
@@ -85,7 +85,7 @@ if (isset($nparams['tid'])) {
 } else {
 	$defaults = array('issue' => $issue_id, 'cause' => $cause_id);
 	
-	$task = $this->model->tasks->create_object($defaults);
+	$task = $this->model->tasks->create_object_issue($defaults);
 
 	$template['auth_level'] = $task->get_level();
 

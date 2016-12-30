@@ -202,37 +202,41 @@ class Tasks extends Event {
 		return array();
 	}
 	public function update($post, $data, $id) {
-		$task = $this->getone($id);
+		throw new Exception('upgrade tasks using new model');
+		
+		//~ $task = $this->getone($id);
 
-		$cache = new Bezcache();
-		if ($this->can_modify($id)) {
-			$from_user = $this->validate($post);
-			$plan = $this->validate_plan($post);
-			$data = array_merge($data, $from_user, $plan);
-			$this->errupdate($data, 'tasks', $id);
-			$cache->task_toupdate($id);
-			//$this->issue->update_last_mod($task['issue']);
+		//~ $cache = new Bezcache();
+		//~ if ($this->can_modify($id)) {
+			//~ $from_user = $this->validate($post);
+			//~ $plan = $this->validate_plan($post);
+			//~ $data = array_merge($data, $from_user, $plan);
+			//~ $this->errupdate($data, 'tasks', $id);
+			//~ $cache->task_toupdate($id);
+			//~ //$this->issue->update_last_mod($task['issue']);
 
 
-			return $data;
-		}
-		return false;
+			//~ return $data;
+		//~ }
+		//~ return false;
 	}
 	public function update_state($state, $reason, $id) {
-		$cache = new Bezcache();
-		if ($this->can_modify($id) || $this->can_change_state($id)) {
-			$state = $this->val_state($state);
-			$reason = $this->val_reason($reason);
-			$data = array('state' => $state, 'reason' => $reason);
+		throw new Exception('upgrade tasks using new model');
+		
+		//~ $cache = new Bezcache();
+		//~ if ($this->can_modify($id) || $this->can_change_state($id)) {
+			//~ $state = $this->val_state($state);
+			//~ $reason = $this->val_reason($reason);
+			//~ $data = array('state' => $state, 'reason' => $reason);
 			
-			$data['close_date'] = time();
+			//~ $data['close_date'] = time();
 			
-			$this->errupdate($data, 'tasks', $id);
-			$cache->task_toupdate($id);
-			//$this->issue->update_last_mod($task['issue']);
+			//~ $this->errupdate($data, 'tasks', $id);
+			//~ $cache->task_toupdate($id);
+			//~ //$this->issue->update_last_mod($task['issue']);
 
-			return $data;
-		}
+			//~ return $data;
+		//~ }
 	}
 	
 	public function save_plan($post, $id) {
@@ -330,7 +334,7 @@ class Tasks extends Event {
 		$taskso = new Taskstates();
 		$stato = new States();
 		$taskto = new Tasktypes();
-		$cache = new Bezcache();
+		//~ $cache = new Bezcache();
 		
 		$tasktypes = $taskto->get();
 
@@ -364,8 +368,11 @@ class Tasks extends Event {
 
 		$row['raw_task'] = $row['task'];
 
-		if (!in_array('task', $keep) || !in_array('reason', $keep))
-			$wiki_text = $cache->get_task($row['id']);
+		$wiki_text = array();
+		if (!in_array('task', $keep) || !in_array('reason', $keep)) {
+			$wiki_text['task'] = $row['task_cache'];
+			$wiki_text['reason'] = $row['reason_cache'];
+		}
 		
 		if (!in_array('task', $keep))
 			$row['task'] = $wiki_text['task'];
@@ -411,7 +418,7 @@ class Tasks extends Event {
 		$rows = $this->fetch_assoc($q);
 
 		$rootco = new Rootcauses();
-		$cache = new Bezcache();
+		//~ $cache = new Bezcache();
 
 		$bycause = array();
 		foreach ($rows as &$row) {
@@ -424,8 +431,8 @@ class Tasks extends Event {
 			$row['state'] = $taskso->name($row['state']);
 
 			$wiki_text = $cache->get_task($row['id']);
-			$row['task'] = $wiki_text['task'];
-			$row['reason'] = $wiki_text['reason'];
+			$row['task'] = $row['task_cache'];
+			$row['reason'] = $wiki_text['reason_cache'];
 
 			if (!isset($bycause[$row[cid]]))
 				$bycause[$row[cid]] = array();

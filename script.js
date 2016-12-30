@@ -62,16 +62,16 @@ jQuery(document).ready(function () {
 	});
 	
 	//cause in task
-	jQuery('#cause').on('change', function () {
-			var val = jQuery(this).val(),
-				$tasktype_row = jQuery('#tasktype').parents('.row');
-			console.log(val);
-			if (val === '') {
-				$tasktype_row.hide();
-			} else { 
-				$tasktype_row.show();
-			}
-	});
+	//~ jQuery('#cause').on('change', function () {
+			//~ var val = jQuery(this).val(),
+				//~ $tasktype_row = jQuery('#tasktype').parents('.row');
+			//~ console.log(val);
+			//~ if (val === '') {
+				//~ $tasktype_row.hide();
+			//~ } else { 
+				//~ $tasktype_row.show();
+			//~ }
+	//~ });
 
 	$delete_buts.each(function() {
 		jQuery(this).click(function(e) {

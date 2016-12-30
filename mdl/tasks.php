@@ -80,7 +80,10 @@ class BEZ_mdl_Tasks extends BEZ_mdl_Factory {
 	}
 	
 	public function create_object_issue($defaults) {
-		$coordinator = $this->model->issues->get_one($issue)->coordinator;
+		$issue_id = $defaults['issue'];
+		$issue = $this->model->issues->get_one($issue_id);
+		
+		$coordinator = $issue->coordinator;
 		$defaults['coordinator'] = $coordinator;
 		
 		$task = new BEZ_mdl_Task($this->model, $defaults);

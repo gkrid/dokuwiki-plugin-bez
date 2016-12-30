@@ -48,7 +48,7 @@ CREATE TABLE causes_cache (
 CREATE TABLE tasktypes (
 				id INTEGER PRIMARY KEY,
 				pl VARCHAR(100) NOT NULL,
-				en VARCHAR(100) NOT NULL, coordinator TEXT NOT NULL DEFAULT 'rolewniczak');
+				en VARCHAR(100) NOT NULL);
 CREATE TABLE tasks (
 				id INTEGER PRIMARY KEY,
 				task TEXT NOT NULL,
