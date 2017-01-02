@@ -480,6 +480,16 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 			//groupy
 			$z_prozy_do_bezu = array();//mapownaie grup
 			$r = $proza->query("SELECT * FROM groups");
+			
+			$q = "CREATE TABLE IF NOT EXISTS tasktypes (
+				id INTEGER PRIMARY KEY,
+				pl VARCHAR(100) NOT NULL,
+				en VARCHAR(100) NOT NULL)";
+			$con = new Connect();
+			$db = $con->open();
+			$db->query($q);
+			$db->close();
+		
 			while ($w = $r->fetchArray(SQLITE3_ASSOC)) {
 				//~ $post = $w;
 				//~ unset($post['id']);

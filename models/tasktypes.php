@@ -9,8 +9,7 @@ class Tasktypes extends Connect {
 		$q = "CREATE TABLE IF NOT EXISTS tasktypes (
 				id INTEGER PRIMARY KEY,
 				pl VARCHAR(100) NOT NULL,
-				en VARCHAR(100) NOT NULL,
-				coordinator TEXT NOT NULL)";
+				en VARCHAR(100) NOT NULL)";
 		$this->errquery($q);
 	}
 	public function can_modify() {
