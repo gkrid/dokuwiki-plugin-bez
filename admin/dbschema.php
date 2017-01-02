@@ -487,9 +487,7 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 				$tasktype = $this->model->tasktypes->create_object();
 				$tasktype->set(array(
 							'pl' => $w['pl'],
-							'en' => $w['en'],
-							'coordinator' => 'rolewniczak'
-							
+							'en' => $w['en']							
 				));
 				$lastid = $this->model->tasktypes->save($tasktype);
 				$z_prozy_do_bezu[$w['id']] = $lastid;
