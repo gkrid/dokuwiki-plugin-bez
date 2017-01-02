@@ -73,7 +73,7 @@
 </fieldset>
 
 <input type="submit" value="<?php echo $bezlang['save'] ?>">
- <a href="#" onclick="window.history.back()" class="bez_delete_button bez_link_button bez_cancel_button">
+ <a href="<?php echo $template['uri'] ?>?id=<?php echo $this->id('issue', 'id', $template['issue_id']) ?>" class="bez_delete_button bez_link_button bez_cancel_button">
 	<?php echo $bezlang['cancel'] ?>
 </a>
 </form>

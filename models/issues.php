@@ -135,8 +135,8 @@ class Issues extends Connect {
 		$tasko = new Tasks();
 		
 		if ($this->helper->user_admin() || $issue['coordinator'] == $INFO['client']
-			&& $this->any_task($id)
-			&& !$this->any_open($id)
+			&& $tasko->any_task($id)
+			&& !$tasko->any_open($id)
 			&& !$this->cause_without_task($id)
 			) {
 			$from_user = $this->validate_close($post, $id);
