@@ -531,7 +531,7 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 				
 				$tasktype = $z_prozy_do_bezu[$w['group_n']];
 				
-				$task = $this->model->tasks->create_object(array('tasktype' => $tasktype));
+				$task = $this->model->tasks->create_object_program(array('tasktype' => $tasktype));
 				$state = $task->set_meta($meta);
 				if ($state == false) {
 					throw new Exception(print_r($task->get_errors(), true));
