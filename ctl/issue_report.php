@@ -25,8 +25,14 @@ if ($issue_id != NULL) {
 if (count($_POST) > 0) {
 	if ($action == 'update') {
 		$updated = $isso->update($_POST, array(), $issue_id);
-		if (count($errors) == 0 && !in_array($updated['coordinator'], $isso->coord_special)) {
+		if (count($errors) == 0 && !in_array($updated['coordinator'], $isso->coord_special)) {			
 			$coord = $updated['coordinator'];
+						
+			$issue = $this->model->issues->get_one($issue_id);
+			$issue->add_participant($coord);
+			//Don't update last activiti on issue change
+			//$issue->update_last_activity();
+			$this->model->issues->save($issue);
 
 			$issto = new Issuetypes();
 			$types = $issto->get();
@@ -48,8 +54,8 @@ if (count($_POST) > 0) {
 
 		$inserted = $isso->add($_POST, $data);
 		if (count($errors) == 0 && !in_array($inserted['coordinator'], $isso->coord_special)) {
-			$coord = $inserted['coordinator'];
-
+			$coord = $updated['coordinator'];
+						
 			$issto = new Issuetypes();
 			$types = $issto->get();
 			$type = $types[$inserted['type']];
@@ -66,6 +72,7 @@ if (count($_POST) > 0) {
 } elseif ($issue_id != NULL) {
 	$value = $clean;
 	$template['any_task_open'] = $tasko->any_open($issue_id);
+	$template['anytasks'] = $tasko->any_task($issue_id);
 	$action = 'update';
 } else {
 	$action = 'add';
@@ -93,9 +100,11 @@ if ($issue_id != NULL) {
 		$priority = 'None';
 	}
 	$template['priority'] = $priority;
+	$template['state'] = $state['state'];
+	$template['raw_state'] = $state['raw_state'];
+
 } else {
 	$template['priority'] = 'None';
 }
 
-$template['state'] = $state['state'];
-$template['raw_state'] = $state['raw_state'];
+

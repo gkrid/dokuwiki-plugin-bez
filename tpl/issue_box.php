@@ -55,6 +55,9 @@
 		</a>&nbsp;
 		<?php if (isset($nparams['tid']) && $nparams['tid'] == $correction['id']) echo '</strong>' ?>
 	<?php endforeach ?>
+	<?php if (count($template['issue']['corrections']) == 0): ?>
+		<span style="font-style: italic; color: #666;"><?php echo $bezlang['none'] ?></span>
+	<?php endif?>
 
 	<?php if ($template['issue']['raw_state'] == 0 &&
 			$template['issue']['raw_coordinator'] != '-proposal' &&
@@ -63,7 +66,7 @@
 		<a href="?id=<?php echo $this->id('task_form', 'id', $template['issue']['id']) ?>">
 			<?php echo $bezlang['add'] ?>
 		</a>
-	<?php elseif($template['issue']['raw_coordinator'] == '-proposal'): ?>
+	<?php elseif($template['issue']['state'] == $bezlang['state_proposal']): ?>
 		<span style="font-style: italic; color: #666;"><?php echo $bezlang['issue_is_proposal'] ?></span>
 	<?php endif ?> 
 </td>
@@ -79,6 +82,9 @@
 		</a>&nbsp;
 		<?php if (isset($nparams['cid']) && $nparams['cid'] == $cause['id']) echo '</strong>' ?>
 	<?php endforeach ?>
+	<?php if (count($template['issue']['causes']) == 0): ?>
+		<span style="font-style: italic; color: #666;"><?php echo $bezlang['none'] ?></span>
+	<?php endif?>
 	<?php unset($cause); ?>
 	<?php if ($template['issue']['raw_state'] == 0 &&
 			$template['issue']['raw_coordinator'] != '-proposal' &&
@@ -87,7 +93,7 @@
 		<a href="?id=<?php echo $this->id('cause_form', 'id', $template['issue']['id']) ?>">
 			<?php echo $bezlang['add'] ?>
 		</a>
-	<?php elseif($template['issue']['raw_coordinator'] == '-proposal'): ?>
+	<?php elseif($template['issue']['state'] == $bezlang['state_proposal']): ?>
 		<span style="font-style: italic; color: #666;"><?php echo $bezlang['issue_is_proposal'] ?></span>
 	<?php endif ?> 
 
@@ -108,6 +114,7 @@
 	<?php echo $template['issue']['opinion'] ?>
 <?php endif ?>
 
+<?php if (!$template['close']): ?>
 <div class="bez_buttons">
 	<?php if ($helper->user_coordinator($template['issue']['id'])): ?>
 		<?php if ($template['issue']['raw_state'] == 1): ?>
@@ -146,7 +153,26 @@
 		⎚ <?php echo $bezlang['rr_report'] ?>
 	</a>
 </div>
-
+<?php else: ?>
+<h2>
+	<?php if ($template['anytasks']): ?>
+		<?php echo $bezlang['opinion'] ?>
+	<?php else: ?>
+		<?php echo $bezlang['reason'] ?>
+	<?php endif ?>
+</h2>
+<form action="<?php echo $template['uri'] ?>?id=<?php echo $this->id('issue_close', 'id', $template['issue_id'], 'action', 'close') ?>" method="POST" class="bez_form">
+	<textarea name="opinion" id="opinion" class="edit"><?php echo $value['opinion'] ?></textarea>
+	<?php if ($template['anytasks']): ?>
+		<input type="submit" value="<?php echo $bezlang['close_issue'] ?>">
+	<?php else: ?>
+		<input type="submit" value="<?php echo $bezlang['reject_issue'] ?>">
+	<?php endif ?>
+	 <a href="#" onclick="window.history.back()" class="bez_delete_button bez_link_button bez_cancel_button">
+		<?php echo $bezlang['cancel'] ?>
+	</a>
+</form>
+<?php endif ?>
 </div>
 
 <table id="bez_issue_activity">

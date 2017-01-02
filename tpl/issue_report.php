@@ -63,7 +63,13 @@
 	</div>
 	<?php if ($template['raw_state'] == 1) : ?>
 		<div class="row">
-			<label for="opinion"><?php echo $bezlang['opinion'] ?>:</label>
+			<label for="opinion">
+				<?php if ($template['anytasks']): ?>
+					<?php echo $bezlang['opinion'] ?>:
+				<?php else: ?>
+					<?php echo $bezlang['reason'] ?>:
+				<?php endif ?>
+			</label>
 			<span>
 				<textarea name="opinion" id="opinion" class="edit"><?php echo $value['opinion'] ?></textarea>
 			</span>

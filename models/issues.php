@@ -181,20 +181,22 @@ class Issues extends Connect {
 		return false;
 	}
 
-	public function join_coordinator($coord) {
+	public function join_coordinator($a) {
 		global $bezlang;
 		$usro = new Users();
+		$coord = $a['coordinator'];
+
 		if (!in_array($coord, $this->coord_special))
 			return $usro->name($coord);
-		else if ($coord == '-proposal')
+		else if ($a['state'] == $bezlang['state_proposal'])
 			return $bezlang['none'].' ('.$bezlang['state_proposal'].')';
-		else if ($coord == '-rejected')
+		else if ($a['state'] == $bezlang['state_rejected'])
 			return $bezlang['none'].' ('.$bezlang['state_rejected'].')';
 	}
 
 	public function join($a) {
 		global $bezlang;
-		
+
 		$stao = new States();
 		$tasko = new Tasks();
 		$causo = new Causes();
@@ -209,7 +211,7 @@ class Issues extends Connect {
 
 		$a['raw_coordinator'] = $a['coordinator'];
 		$a['coordinator_email'] = $usro->email($a['coordinator']);
-		$a['coordinator'] = $this->join_coordinator($a['coordinator']);
+		$a['coordinator'] = $this->join_coordinator($a);
 
 		$a['date'] = (int)$a['date'];
 
@@ -238,7 +240,7 @@ class Issues extends Connect {
 		$stao = new States();
 		$state = $stao->name($issue_clean, $tasko->any_task($issue_clean['id']));
 		
-		return array('state' => $state, 'raw_state' => $a['state']);
+		return array('state' => $state, 'raw_state' => $issue_clean['state']);
 	}
 
 	public function get_clean($id) {

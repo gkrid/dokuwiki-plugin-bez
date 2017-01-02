@@ -807,7 +807,9 @@ function do_issues_remove_priority() {
 			$coordinator = $issue['coordinator'];
 			
 			$participants[$reporter] = $reporter;
-			$participants[$coordinator] = $coordinator;
+			if ($coordinator !== '-proposal' && $coordinator !== '-rejected') {
+				$participants[$coordinator] = $coordinator;
+			}
 				
 			$com = $this->connect->fetch_assoc("SELECT reporter FROM comments WHERE issue=$id");
 			foreach ($com as $c) {

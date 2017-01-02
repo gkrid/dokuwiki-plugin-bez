@@ -84,6 +84,7 @@
 		<th><?php echo $bezlang['title'] ?></th>
 		<th><?php echo $bezlang['coordinator'] ?></th>
 		<th><?php echo $bezlang['date'] ?></th>
+		<th><?php echo $bezlang['last_mod_date'] ?></th>
 		<th><?php echo $bezlang['closed'] ?></th>
 		<th><?php echo $bezlang['cost'] ?></th>
 		<th><?php echo $bezlang['closed_tasks'] ?></th>
@@ -100,6 +101,7 @@
 			<td><?php echo $issue['title'] ?></td>
 			<td><?php echo $issue['coordinator'] ?></td>
 			<td><?php echo $helper->time2date($issue['date']) ?> (<?php echo $helper->string_time_to_now($issue['date']) ?>)</td>
+			<td><?php echo $helper->time2date($issue['last_mod']) ?> (<?php echo $helper->string_time_to_now($issue['last_mod']) ?>)</td>
 			<td>
 				<?php if ($issue['raw_state'] != 1): ?>
 					<em>---</em>
@@ -129,7 +131,7 @@
 	<?php endforeach ?>
 	<tr>
 		<th><?php echo $bezlang['report_total'] ?></th>
-		<td colspan="6"><?php echo count($template['issues']) ?></td>
+		<td colspan="7"><?php echo count($template['issues']) ?></td>
 		<td colspan="2"><?php echo $template['total_cost'] ?></td>
 	</tr>
 </table>
