@@ -34,9 +34,9 @@ class BEZ_mdl_Validator {
 	}
 	
 	public function validate_one($value, $method, $args, $null) {
-			if ($null === 'NOT NULL' && $value === '') {
+			if ($null === 'NOT NULL' && $value == '') {
 				return array(false, 'is_null');
-			} else if ($null === 'NULL' && $value === '') {
+			} else if ($null === 'NULL' && $value == '') {
 				$val_data[$key] = $value;
 				return true;
 			}

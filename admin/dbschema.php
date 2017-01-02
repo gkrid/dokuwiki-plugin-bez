@@ -516,7 +516,6 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 				if ($w['finish_date'] != '') {
 					$meta['close_date'] = strtotime($w['finish_date']);
 				}
-				var_dump($w['cost']);
 				
 				$data = array(
 					'task' => $w['assumptions'],
