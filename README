@@ -1,3 +1,10 @@
+Wersja 2017-01-28:
+	- zmieniono system uprawnień: każdy może dodawać zadania programowe, których sam jest wykonwacą
+	- usunięto koordynatorów programów
+	- usunięto błąd uniemożliwiający dodanie kordynatora przy zgłaszaniu problemu
+	- zadanie zawiera informację o osobie je zgłaszającej
+	- można edytować Ocenę i Przyczynę Odrzucenia zadań 
+
 Wersja 2016-11-15:
 	- usunięto błąd uprawnień
 	- umożliwiono usuwanie Programów ze słownika
