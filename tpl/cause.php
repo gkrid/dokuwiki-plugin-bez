@@ -10,8 +10,6 @@
 		<?php else: ?>
 			<?php echo $bezlang['potential_cause'] ?>
 		<?php endif ?>
-
-		(<?php echo lcfirst($cause['rootcause']) ?>)
 	</h2>
 	<table>	
 	<tr>

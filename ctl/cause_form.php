@@ -1,7 +1,6 @@
 <?php
 include_once DOKU_PLUGIN."bez/models/issues.php";
 include_once DOKU_PLUGIN."bez/models/causes.php";
-include_once DOKU_PLUGIN."bez/models/rootcauses.php";
 include_once DOKU_PLUGIN."bez/models/tasks.php";
 
 $causo = new Causes();
@@ -40,8 +39,6 @@ if (isset($params[3])) {
 	$template['cause_action'] = $this->id('cause_form', 'id', $issue_id);
 }
 
-$rootco = new Rootcauses();
-$template['rootcauses'] = $rootco->get();
 
 $tasko = new Tasks();
 $template['anytasks'] = $tasko->any_task($issue_id);

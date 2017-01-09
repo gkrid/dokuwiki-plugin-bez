@@ -249,7 +249,7 @@
 	<?php $average = 0?>
 	<?php foreach ($template['report']['causes'] as $cause): ?>
 		<tr>
-			<td><?php echo $cause['rootcause'] ?></td>
+			<td><?php echo $cause['type'] ?></td>
 			<td><?php echo $cause['number'] ?></td>
 			<td>
 				<?php if ($cause['cost'] == ''): ?>

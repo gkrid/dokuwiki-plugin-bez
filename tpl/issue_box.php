@@ -155,10 +155,6 @@
 	<a href="<?php echo $helper->link_8d($template[issue][id]) ?>" class="bds_inline_button bds_report_button">
 		⎙ <?php echo $bezlang['8d_report'] ?>
 	</a>
-
-	<a href="<?php echo $helper->link_rr($template[issue][id]) ?>" class="bds_inline_button bds_report_button">
-		⎚ <?php echo $bezlang['rr_report'] ?>
-	</a>
 </div>
 <?php else: ?>
 <h2>

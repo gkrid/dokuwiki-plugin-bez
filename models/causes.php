@@ -1,7 +1,6 @@
 <?php
 include_once DOKU_PLUGIN."bez/models/connect.php";
 include_once DOKU_PLUGIN."bez/models/users.php";
-include_once DOKU_PLUGIN."bez/models/rootcauses.php";
 include_once DOKU_PLUGIN."bez/models/event.php";
 include_once DOKU_PLUGIN."bez/models/tasks.php";
 include_once DOKU_PLUGIN."bez/models/bezcache.php";
@@ -14,7 +13,6 @@ class Causes extends Event {
 				id INTEGER PRIMARY KEY,
 				potential INTEGER DEFAULT 0,
 				cause TEXT NOT NULL,
-				rootcause INTEGER NOT NULL,
 				reporter INTEGER NOT NULL,
 				date INTEGER NOT NULL,
 				issue INTEGER NOT NULL)";
@@ -42,16 +40,11 @@ class Causes extends Event {
 
 		$data['cause'] = $post['cause'];
 
-		$rootco = new Rootcauses();
-		if ( ! array_key_exists((int)$post['rootcause'], $rootco->get()))
-			$errors['type'] = $bezlang['vald_root_cause'];
-
-		if ($post[potential] == '1')
-			$data[potential] = 1;
-		else
-			$data[potential] = 0;
-		 
-		$data['rootcause'] = (int)$post['rootcause'];
+		if ($post['potential'] == '1') {
+			$data['potential'] = 1;
+		} else {
+			$data['potential'] = 0;
+		}
 
 		return $data;
 	}
@@ -96,10 +89,8 @@ class Causes extends Event {
 
 	public function join($a) {
 		$usro = new Users();
-		$rootco = new Rootcauses();
 		$a['reporter_nick'] = $a['reporter'];
 		$a['reporter'] = $usro->name($a['reporter']);
-		$a['rootcause'] = $rootco->name($a['rootcause']);
 
 		$a[tasks] = array();
 		$tasko = new Tasks();
@@ -136,15 +127,7 @@ class Causes extends Event {
 	}
 
 	public function get_by_rootcause($issue) {
-		$a = $this->get($issue);
-		$b = array();
-		foreach ($a as $row) {
-			$k = $row['rootcause'];
-			if ( !isset($b[$k]) )
-				$b[$k] = array();
-			$b[$k][] = $row;
-		}
-		return $b;
+		return array();
 	}
 	public function get_by_days($days=7) {
 		if (!$this->helper->user_viewer()) return false;
@@ -153,14 +136,12 @@ class Causes extends Event {
 		$res = $this->fetch_assoc("SELECT * FROM causes WHERE date > $border_date");
 		
 		$cache = new Bezcache();
-		$rootco = new Rootcauses();
 		
 		$create = $this->sort_by_days($res, 'date', false);
 		foreach ($create as $day => $causes)
 			foreach ($causes as $k => $cause) {
 				$create[$day][$k]['class'] = 'cause';
 				$create[$day][$k]['cause'] = $cache->get_cause($create[$day][$k]['id']);
-				$create[$day][$k]['rootcause'] = $rootco->name($create[$day][$k]['rootcause']);
 			}
 		return $create;
 	}

@@ -284,8 +284,8 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 		if ($helper->user_admin() && $data['bez:start']['open'] == true) {
 			$data['bez:types'] = array('id' => 'bez:types', 'type' => 'f', 'level' => 2, 'title' =>
 				$this->getLang('types_manage'));
-			$data['bez:root_causes'] = array('id' => 'bez:root_causes', 'type' => 'f', 'level' => 2, 'title' =>
-				$this->getLang('root_causes'));
+			//~ $data['bez:root_causes'] = array('id' => 'bez:root_causes', 'type' => 'f', 'level' => 2, 'title' =>
+				//~ $this->getLang('root_causes'));
 			$data['bez:task_types'] = array('id' => 'bez:task_types', 'type' => 'f', 'level' => 2, 'title' =>
 				$this->getLang('task_types'));
 		}

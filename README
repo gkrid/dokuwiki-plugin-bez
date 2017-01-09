@@ -1,4 +1,8 @@
-Wersja 2017-01-28:
+Wersja 2017-01-09:
+  - usunięto "przyczynę źródłową" z przyczyn;
+  - typ problemu nie jest wymagany;
+
+Wersja 2017-01-02:
 	- zmieniono system uprawnień: każdy może dodawać zadania programowe, których sam jest wykonwacą
 	- usunięto koordynatorów programów
 	- usunięto błąd uniemożliwiający dodanie kordynatora przy zgłaszaniu problemu

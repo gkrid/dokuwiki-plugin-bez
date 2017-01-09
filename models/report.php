@@ -226,17 +226,20 @@ class Report extends Connect {
 
 		/*causes*/
 
-		$where = $this->where("causes.date", $filters);
+		$where = $this->where("tasks.date", $filters);
 
 		$caso = new Causes();
 		//onlyt causes with closed tasks
-		$report['causes'] = $this->fetch_assoc("SELECT rootcause, COUNT(*) AS number,
-												MAX(tasks.close_date - tasks.date) AS average,
-												SUM(tasks.cost) as cost 
-												FROM causes JOIN tasks ON tasks.cause = causes.id
-												WHERE tasks.state == 1 $where
-												GROUP BY rootcause
-												ORDER BY rootcause");
+		$report['causes'] = $this->fetch_assoc("
+							SELECT tasktypes.$lang as type, COUNT(*) AS number,
+							MAX(tasks.close_date - tasks.date) AS average,
+							SUM(tasks.cost) as cost 
+							FROM tasks JOIN tasktypes ON tasks.tasktype = tasktypes.id
+							WHERE tasks.issue IS NOT NULL AND
+								  tasks.tasktype IS NOT NULL AND
+								  tasks.state = 1
+								  $where
+							GROUP BY tasks.tasktype");
 
 		/*$a = $this->fetch_assoc("SELECT MAX(tasks.close_date - tasks.date) AS average
 									FROM causes JOIN tasks ON tasks.cause = causes.id

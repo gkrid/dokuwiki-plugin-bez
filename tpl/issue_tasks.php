@@ -4,7 +4,9 @@
 	<h1><?php echo $bezlang['correction_nav'] ?> <span>(<?php echo count($template['tasks']) ?>)</span></h1>
 	<div class="bds_block_content">
 		<?php foreach ($template['tasks'] as $task): ?>
-			<?php include "task.php" ?>
+				<a href="?id=<?php echo $this->id('show_task', 'tid', $task['id']) ?>">
+					#z<?php echo $task['id'] ?>
+				</a>
 		<?php endforeach ?>
 	</div>
 	<?php if ($template['issue']['raw_state'] == 0 &&

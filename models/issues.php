@@ -6,7 +6,6 @@ include_once DOKU_PLUGIN."bez/models/users.php";
 include_once DOKU_PLUGIN."bez/models/tasks.php";
 include_once DOKU_PLUGIN."bez/models/causes.php";
 include_once DOKU_PLUGIN."bez/models/bezcache.php";
-include_once DOKU_PLUGIN."bez/models/rootcauses.php";
 
 class Issues extends Connect {
 	public $coord_special = array('-proposal', '-rejected');
@@ -435,7 +434,7 @@ class Issues extends Connect {
 	public function validate_filters($filters) {
 
 	$data = array('title' => '', 'state' => '-all', 'type' => '-all', 'coordinator' => '-all', 'year' => '-all',
-				'sort_open' => '', 'rootcause' => '-all');
+				'sort_open' => '');
 
 		if (isset($filters['title'])) {
 			if (strlen($post['title']) <= $title_max && preg_match('/^[[:alnum:] \-,._]*$/ui', $filters['title']))
@@ -485,12 +484,6 @@ class Issues extends Connect {
 			if ($filters['year'] == '-all' || in_array($filters['year'], $years))
 				$data['year'] = $filters['year'];
 		}
-		
-		if (isset($filters['rootcause'])) {
-			$rootco = new Rootcauses();
-			if ($filters['rootcause'] == '-all' || array_key_exists($filters['rootcause'], $rootco->get()))
-				$data['rootcause'] = (int)$filters['rootcause'];
-		}
 
 		return $data;
 	}
@@ -506,14 +499,12 @@ class Issues extends Connect {
 		$state = $vfilters['state'];
 		$type = $vfilters['type'];
 		$coordinator = $vfilters['coordinator'];
-		$rootcause = $vfilters['rootcause'];
 
 
 		unset($vfilters['year']);
 		unset($vfilters['state']);
 		unset($vfilters['type']);
 		unset($vfilters['coordinator']);
-		unset($vfilters['rootcause']);
 		
 		$title = $vfilters['title'];
 		unset($vfilters['title']);
@@ -582,13 +573,6 @@ class Issues extends Connect {
 			} else 
 				$where[] = "issues.coordinator = '$coordinator'";
 		}
-		$rootcause_join = '(issues LEFT JOIN issuetypes ON issues.type = issuetypes.id)';
-		$rootcause_group = '';
-		if($rootcause != '-all') {
-			$rootcause_join = 'causes JOIN issues ON causes.issue = issues.id LEFT JOIN issuetypes ON issues.type = issuetypes.id';
-			$rootcause_group = 'GROUP BY issues.id';
-			$where[] = 'causes.rootcause = '.$this->escape($rootcause);
-		}
 
 		$where_q = '';
 		if (count($where) > 0)
@@ -614,9 +598,8 @@ class Issues extends Connect {
 											WHEN tasks.plan_date >= date('now', '+1 month') THEN '2'
 											WHEN tasks.plan_date >= date('now') THEN '1'
 											ELSE '0' END)) FROM tasks WHERE tasks.issue = issues.id) AS priority
-				FROM $rootcause_join
+				FROM issues LEFT JOIN issuetypes ON issues.type = issuetypes.id
 				$where_q
-				$rootcause_group
 				$order
 			");
 		foreach ($a as &$row) {

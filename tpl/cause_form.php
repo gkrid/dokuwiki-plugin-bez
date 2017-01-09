@@ -20,17 +20,6 @@
 				</span>
 			</div>
 			<div class="row">
-			<label for="rootcause"><?php echo $bezlang['root_cause'] ?>:</label>
-			<span>
-				<select name="rootcause" id="rootcause">
-				<?php foreach ($template['rootcauses'] as $key => $name): ?>
-					<option <?php if ($value['rootcause'] == $key) echo 'selected' ?>
-					 value="<?php echo $key ?>"><?php echo $name ?></option>
-				<?php endforeach ?>
-				</select>
-			</span>
-			</div>
-			<div class="row">
 				<label for="cause"><?php echo $bezlang['description'] ?>:</label>
 				<span><textarea name="cause" id="cause"><?php echo $value['cause'] ?></textarea></span>
 			</div>

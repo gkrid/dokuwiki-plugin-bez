@@ -1064,6 +1064,69 @@ function do_issues_remove_priority() {
 			$db->close();
 	}
 	
+	function check_remove_root_cause() {
+		$q = "PRAGMA table_info(causes)";
+		$a = $this->connect->fetch_assoc($q);
+		$entity = false;
+		foreach ($a as $r) {
+			
+				if ($r['name'] == 'rootcause') {
+					return false;
+				}
+		}
+		return true;
+	}
+	
+	function do_remove_root_cause() {
+		$createq = 'CREATE TABLE causes (
+				id INTEGER PRIMARY KEY,
+				cause TEXT NOT NULL,
+				cause_cache TEXT NULL,
+				reporter INTEGER NOT NULL,
+				date INTEGER NOT NULL,
+				issue INTEGER NOT NULL,
+				potential INTEGER DEFAULT 0);';
+			$q = 'BEGIN TRANSACTION;
+				CREATE TEMPORARY TABLE causes_backup
+				(
+				id INTEGER PRIMARY KEY,
+				cause TEXT NOT NULL,
+				reporter INTEGER NOT NULL,
+				date INTEGER NOT NULL,
+				issue INTEGER NOT NULL,
+				potential INTEGER DEFAULT 0);
+				
+			INSERT INTO causes_backup SELECT
+					id,
+					cause,
+					reporter,
+					date,
+					issue,
+					potential
+				FROM causes;
+			DROP TABLE causes;
+			'.$createq.'
+			INSERT INTO causes SELECT 
+					id,
+					cause,
+					cause,
+					reporter,
+					date,
+					issue,
+					potential
+				FROM causes_backup;
+			DROP TABLE causes_backup;
+			COMMIT;
+			';
+			$qa = explode(';', $q);
+			$con = new Connect();
+			$db = $con->open();
+			foreach ($qa as $e)  {
+				$db->query($e);
+			}
+			$db->close();
+	}
+	
 	private $actions = array(
 				array('Słownik kategorii przyczyn', 'check_rootcause', 'do_rootcause'),
 				array('Słownik typów problemów', 'check_types', 'do_types'),
@@ -1092,7 +1155,9 @@ function do_issues_remove_priority() {
 				array('Usuń koordynatora z programów',
 				'check_remove_coordinator_from_tasktypes', 'do_remove_coordinator_from_tasktypes'),
 				array('Nie wymagaj typu problemu przy propozycjach i dodaj pole cache do issue',
-				'check_issue_type_null', 'do_issue_type_null')
+				'check_issue_type_null', 'do_issue_type_null'),
+				array('Usuń przyczynę źródłową z przyczyn.',
+				'check_remove_root_cause', 'do_remove_root_cause')
 		);
 
 	function _backup($sufix) {

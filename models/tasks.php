@@ -7,7 +7,6 @@ include_once DOKU_PLUGIN."bez/models/states.php";
 include_once DOKU_PLUGIN."bez/models/event.php";
 include_once DOKU_PLUGIN."bez/models/bezcache.php";
 include_once DOKU_PLUGIN."bez/models/issues.php";
-include_once DOKU_PLUGIN."bez/models/rootcauses.php";
 
 class Tasks extends Event {
 	public function __construct() {
@@ -379,10 +378,8 @@ class Tasks extends Event {
 		if (!in_array('reason', $keep))
 			$row['reason'] = $wiki_text['reason'];
 		
-		if (isset($row[cause_text])) {
-			$rootco = new Rootcauses();
-			$row[cause_text] = $this->helper->wiki_parse($row[cause_text]);
-			$row['rootcause'] = $rootco->name($row['rootcause']);
+		if (isset($row['cause_text'])) {
+			$row['cause_text'] = $this->helper->wiki_parse($row[cause_text]);
 		}
 
 		return $row;
@@ -399,7 +396,7 @@ class Tasks extends Event {
 
 		$q = "SELECT
 				tasks.id, tasks.task_cache, tasks.reason_cache, task,executor,state,cost,reason,tasks.reporter,tasks.date,
-				close_date,tasks.issue,tasks.cause, causes.potential, causes.cause as cause_text, causes.rootcause, causes.id as cause_id
+				close_date,tasks.issue,tasks.cause, causes.potential, causes.cause as cause_text, causes.id as cause_id
 				FROM tasks LEFT JOIN causes ON tasks.cause = causes.id WHERE tasks.issue=$issue $wcause";
 		return $this->fetch_assoc($q);
 	}

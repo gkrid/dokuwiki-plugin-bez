@@ -10,7 +10,7 @@ CREATE TABLE comments (
 CREATE TABLE causes (
 				id INTEGER PRIMARY KEY,
 				cause TEXT NOT NULL,
-				rootcause INTEGER NOT NULL,
+				cause_cache TEXT NULL,
 				reporter INTEGER NOT NULL,
 				date INTEGER NOT NULL,
 				issue INTEGER NOT NULL, potential INTEGER DEFAULT 0);
@@ -71,8 +71,10 @@ CREATE TABLE issues (
     "id" INTEGER PRIMARY KEY,
     "title" TEXT NOT NULL,
     "description" TEXT NOT NULL,
+    "description_cache" TEXT NULL,
     "state" INTEGER NOT NULL,
-    "opinion" TEXT,
+    "opinion" TEXT NULL,
+    "opinion_cache" TEXT NULL,
     "type" INTEGER NULL,
     "coordinator" TEXT NOT NULL,
     "reporter" TEXT NOT NULL,

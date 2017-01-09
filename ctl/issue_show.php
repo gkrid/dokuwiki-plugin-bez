@@ -4,7 +4,6 @@ include_once DOKU_PLUGIN."bez/models/issues.php";
 include_once DOKU_PLUGIN."bez/models/states.php";
 include_once DOKU_PLUGIN."bez/models/comments.php";
 include_once DOKU_PLUGIN."bez/models/causes.php";
-include_once DOKU_PLUGIN."bez/models/rootcauses.php";
 include_once DOKU_PLUGIN."bez/models/users.php";
 include_once DOKU_PLUGIN."bez/models/tasks.php";
 include_once DOKU_PLUGIN."bez/models/taskactions.php";
@@ -113,9 +112,6 @@ foreach ($template['causes'] as &$cause) {
 
 /*popbierz tylko korekcyjne*/
 $template['tasks'] = $tasko->get($issue_id, NULL);
-
-$rootco = new Rootcauses();
-$template['rootcauses'] = $rootco->get();
 
 /*user is coordinator or admin*/
 $template['user_is_coordinator'] = $helper->user_coordinator($issue_id);
