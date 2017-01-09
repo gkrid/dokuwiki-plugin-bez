@@ -15,6 +15,8 @@
 		<select name="type">
 			<option <?php if ($value['type'] == '-all') echo 'selected' ?>
 				value="-all">--- <?php echo $bezlang['all'] ?> ---</option>
+			<option <?php if ($value['type'] == '-none') echo 'selected' ?>
+			value="-none">--- <?php echo $bezlang['issue_type_no_specified'] ?> ---</option>
 		<?php foreach ($template['issue_types'] as $key => $name): ?>
 			<option <?php if ($value['type'] == (string)$key) echo 'selected' ?>
 				value="<?php echo $key ?>"><?php echo $name ?></option>
@@ -97,11 +99,20 @@
 			<td>
 			<?php echo $issue['state'] ?>
 			</td>
-			<td><?php echo $issue['type'] ?></td>
+			<td>
+				<?php if ($issue['type'] == ''): ?>
+					<i style="color: #777"><?php echo $bezlang['issue_type_no_specified'] ?></i>
+				<?php else: ?>
+					<?php echo $issue['type'] ?>
+				<?php endif ?>
+			</td>
 			<td><?php echo $issue['title'] ?></td>
 			<td><?php echo $issue['coordinator'] ?></td>
 			<td><?php echo $helper->time2date($issue['date']) ?> (<?php echo $helper->string_time_to_now($issue['date']) ?>)</td>
-			<td><?php echo $helper->time2date($issue['last_mod']) ?> (<?php echo $helper->string_time_to_now($issue['last_mod']) ?>)</td>
+			<td>
+				<?php $unix = strtotime($issue['last_activity']) ?>
+				<?php echo $helper->time2date($unix) ?> (<?php echo $helper->string_time_to_now($unix) ?>)
+			</td>
 			<td>
 				<?php if ($issue['raw_state'] != 1): ?>
 					<em>---</em>

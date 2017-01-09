@@ -14,7 +14,14 @@
 <div id="bds_issue_box" class="pr<?php echo $template['issue']['priority'] ?>">
 <h1>
 <?php echo $this->html_issue_link($template['issue']['id']) ?>
-<?php echo $template['issue']['type'] ?> (<?php echo $template['issue']['state'] ?>)
+
+<?php if ($template['issue']['type'] != ''): ?>
+<?php echo $template['issue']['type'] ?>
+<?php else: ?>
+<i style="color: #777"><?php echo $bezlang['issue_type_no_specified'] ?></i>
+<?php endif ?>
+
+(<?php echo $template['issue']['state'] ?>)
 </h1>
 
 <h1><?php echo $template['issue']['title'] ?></h1>

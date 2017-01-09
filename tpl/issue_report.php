@@ -10,10 +10,13 @@
 <?php endif ?>
 
 
+<?php if ($template['user_admin']): ?>
 <div class="row">
 <label for="type"><?php echo $bezlang['type'] ?>:</label>
 <span>
 <select name="type" id="type">
+<option <?php if ($value['type'] == '') echo 'selected' ?>
+	value="">--- <?php echo $bezlang['issue_type_no_specified'] ?> ---</option>
 <?php foreach ($template['issue_types'] as $key => $name): ?>
 	<option <?php if ($value['type'] == $key) echo 'selected' ?>
 	 value="<?php echo $key ?>"><?php echo $name ?></option>
@@ -22,7 +25,6 @@
 </span>
 </div>
 
-<?php if ($template['user_admin']): ?>
 <div class="row">
 <label for="coordinator"><?php echo $bezlang['coordinator'] ?>:</label>
 <span>

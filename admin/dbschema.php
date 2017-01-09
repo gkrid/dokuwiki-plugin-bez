@@ -975,6 +975,95 @@ function do_issues_remove_priority() {
 			$db->close();
 	}
 	
+		function check_issue_type_null() {
+		$q = "PRAGMA table_info(issues)";
+		$a = $this->connect->fetch_assoc($q);
+		$entity = false;
+		foreach ($a as $r) {
+			
+				if ($r['name'] == 'type' && $r['notnull'] === 1) {
+					return false;
+				}
+		}
+		return true;
+	}
+	
+	function do_issue_type_null() {
+		$createq = 'CREATE TABLE issues (
+		"id" INTEGER PRIMARY KEY,
+		"title" TEXT NOT NULL,
+		"description" TEXT NOT NULL,
+		"description_cache" TEXT NULL,
+		"state" INTEGER NOT NULL,
+		"opinion" TEXT,
+		"opinion_cache" NULL,
+		"type" INTEGER NULL,
+		"coordinator" TEXT NOT NULL,
+		"reporter" TEXT NOT NULL,
+		"date" INTEGER NOT NULL,
+		"last_mod" INTEGER NULL,
+		"last_activity" TEXT NOT NULL,
+		"participants" TEXT NOT NULL
+	);';
+			$q = 'BEGIN TRANSACTION;
+				CREATE TEMPORARY TABLE issues_backup
+				(
+							"id" INTEGER PRIMARY KEY,
+		"title" TEXT NOT NULL,
+		"description" TEXT NOT NULL,
+		"state" INTEGER NOT NULL,
+		"opinion" TEXT,
+		"type" INTEGER NOT NULL,
+		"coordinator" TEXT NOT NULL,
+		"reporter" TEXT NOT NULL,
+		"date" INTEGER NOT NULL,
+		"last_mod" INTEGER NULL,
+		"last_activity" TEXT NOT NULL,
+		"participants" TEXT NOT NULL);
+			INSERT INTO issues_backup SELECT
+					id,
+					title,
+					description,
+					state,
+					opinion,
+					type,
+					coordinator,
+					reporter,
+					date,
+					last_mod,
+					last_activity,
+					participants
+				FROM issues;
+			DROP TABLE issues;
+			'.$createq.'
+			INSERT INTO issues SELECT 
+					id,
+					title,
+					description,
+					description,
+					state,
+					opinion,
+					opinion,
+					type,
+					coordinator,
+					reporter,
+					date,
+					last_mod,
+					last_activity,
+					participants
+				FROM issues_backup;
+			DROP TABLE issues_backup;
+			COMMIT;
+			';
+			$qa = explode(';', $q);
+			$con = new Connect();
+			$db = $con->open();
+			foreach ($qa as $e)  {
+				$db->query($e);
+			}
+			$db->close();
+	}
+	
 	private $actions = array(
 				array('Słownik kategorii przyczyn', 'check_rootcause', 'do_rootcause'),
 				array('Słownik typów problemów', 'check_types', 'do_types'),
@@ -1001,7 +1090,9 @@ function do_issues_remove_priority() {
 				array('Dodaj klucz główny do problemów',
 				'check_issue_primary_key', 'do_issue_primary_key'),
 				array('Usuń koordynatora z programów',
-				'check_remove_coordinator_from_tasktypes', 'do_remove_coordinator_from_tasktypes')
+				'check_remove_coordinator_from_tasktypes', 'do_remove_coordinator_from_tasktypes'),
+				array('Nie wymagaj typu problemu przy propozycjach i dodaj pole cache do issue',
+				'check_issue_type_null', 'do_issue_type_null')
 		);
 
 	function _backup($sufix) {

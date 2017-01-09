@@ -464,3 +464,5 @@ $lang['tasktype'] = 'Program';
 
 $lang['comment_last_activity'] = 'Ostatnia aktywność';
 $lang['comment_participants'] = 'Osoby zaangażowane';
+
+$lang['issue_type_no_specified'] = 'typ nieokreślony';

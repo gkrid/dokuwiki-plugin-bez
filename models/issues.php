@@ -35,10 +35,10 @@ class Issues extends Connect {
 		$description_max = 65000;
 
 		$isstyo = new Issuetypes();
-		if ( ! array_key_exists((int)$post['type'], $isstyo->get())) {
+		if ($post['type'] != '' && ! array_key_exists($post['type'], $isstyo->get())) {
 			$errors['type'] = $bezlang['vald_type_required'];
 		} 
-		$data['type'] = (int)$post['type'];
+		$data['type'] = $post['type'];
 
 		/*Jeżeli nie jesteśmy adminem, to jeżeli chodzi o koordynatorów nie mamy nic do gadania*/
 		/*Koordynator nie jest wymagany*/
@@ -449,14 +449,19 @@ class Issues extends Connect {
 
 		if (isset($filters['state'])) {
 			$stato = new States();
-			if ($filters['state'] == '-all' || array_key_exists($filters['state'], $stato->get_list()))
-				$data['state'] = $filters['state'];
+			if ($filters['state'] == '-all'  ||
+				array_key_exists($filters['state'], $stato->get_list())) {
+					$data['state'] = $filters['state'];
+				}
 		}
 
 		if (isset($filters['type'])) {
 			$isstyo = new Issuetypes();
-			if ($filters['type'] == '-all' || array_key_exists($filters['type'], $isstyo->get()))
-				$data['type'] = $filters['type'];
+			if ($filters['type'] == '-all'  ||
+				$filters['type'] == '-none' ||
+				array_key_exists($filters['type'], $isstyo->get())) {
+					$data['type'] = $filters['type'];
+				}
 		}
 		
 		if (isset($filters['coordinator'])) {
@@ -499,12 +504,14 @@ class Issues extends Connect {
 
 		$year = $vfilters['year'];
 		$state = $vfilters['state'];
+		$type = $vfilters['type'];
 		$coordinator = $vfilters['coordinator'];
 		$rootcause = $vfilters['rootcause'];
 
 
 		unset($vfilters['year']);
 		unset($vfilters['state']);
+		unset($vfilters['type']);
 		unset($vfilters['coordinator']);
 		unset($vfilters['rootcause']);
 		
@@ -551,6 +558,13 @@ class Issues extends Connect {
 			$where[] = "$data_field >= ".mktime(0,0,0,1,1,$year);
 			$where[] = "$data_field < ".mktime(0,0,0,1,1,$year+1);
 		}
+		if ($type != '-all') {
+			if ($type == '-none') {
+				$where[] = "(issues.type = '' OR issues.type IS NULL)";
+			} else {
+				$where[] = "issues.type = '$type'";
+			}
+		}
 		if ($coordinator != '-all') {
 			if ($coordinator == '-none') 
 				$where[] = "(issues.coordinator = '-proposal' OR issues.coordinator = '-rejected')";
@@ -591,7 +605,7 @@ class Issues extends Connect {
 
 		$a = $this->fetch_assoc("
 			SELECT issues.id, issues.state, issuetypes.$lang as type,
-				issues.title, issues.coordinator, issues.date, issues.last_mod,
+				issues.title, issues.coordinator, issues.date, issues.last_mod, issues.last_activity,
 				(SELECT COUNT(tasks.id) FROM tasks WHERE tasks.state != 0 AND issues.id = tasks.issue)
 				AS tasks_closed,
 				(SELECT COUNT(tasks.id) FROM tasks WHERE issues.id = tasks.issue) AS tasks_all,
@@ -605,7 +619,6 @@ class Issues extends Connect {
 				$rootcause_group
 				$order
 			");
-			//var_dump($a);
 		foreach ($a as &$row) {
 			$row = $this->join($row);
 		}

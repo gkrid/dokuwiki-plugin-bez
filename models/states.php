@@ -50,10 +50,10 @@ class States {
 			return $bezlang['state_done'];
 		}
 		$a = $this->get_all($anytask);
-		
+				
 		if ($id == 1 && !$anytask)
 			return $bezlang['state_rejected'];
-		else if (strstr($coordinator, '-') === 0)
+		else if (strpos($coordinator, '-') === 0)
 			return $a[$coordinator];
 		else {
 			return $a[$id];

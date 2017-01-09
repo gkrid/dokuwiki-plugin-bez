@@ -446,3 +446,4 @@ $lang['refs'] = 'References';
 $lang['comment_last_activity'] = 'Last activity';
 $lang['comment_participants'] = 'Participants';
 
+$lang['issue_type_no_specified'] = 'type no specified';

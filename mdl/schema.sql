@@ -73,7 +73,7 @@ CREATE TABLE issues (
     "description" TEXT NOT NULL,
     "state" INTEGER NOT NULL,
     "opinion" TEXT,
-    "type" INTEGER NOT NULL,
+    "type" INTEGER NULL,
     "coordinator" TEXT NOT NULL,
     "reporter" TEXT NOT NULL,
     "date" INTEGER NOT NULL,
