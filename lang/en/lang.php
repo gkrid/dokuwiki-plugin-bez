@@ -254,11 +254,11 @@ $lang['open_date'] = "Open date";
 $lang['1d'] = "1D - Team";
 $lang['2d'] = "2D - Problem";
 $lang['3d'] = "3D - Correction";
-$lang['4d'] = "4D - Cause";
+$lang['4d'] = "4D - Real causes";
 $lang['5d'] = "5D - Corrective action";
-$lang['6d'] = "6D - Preventive action";
-$lang['7d'] = "7D - Effectiveness evaluation";
-$lang['8d'] = "8D - Conclusion";
+$lang['6d'] = "6D - Potential causes";
+$lang['7d'] = "7D - Preventive action";
+$lang['8d'] = "8D - Effectiveness evaluation";
 
 $lang['number'] = 'Quantity';
 $lang['true_date'] = "Date";

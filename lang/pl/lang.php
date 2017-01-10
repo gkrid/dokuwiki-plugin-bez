@@ -254,11 +254,11 @@ $lang['close_date'] = 'Data zamknięcia';
 $lang['1d'] = '1D - Zespół';
 $lang['2d'] = '2D - Problem';
 $lang['3d'] = '3D - Korekcja';
-$lang['4d'] = '4D - Przyczyna';
+$lang['4d'] = '4D - Przyczyny rzeczywiste';
 $lang['5d'] = '5D - Działania korygujące';
-$lang['6d'] = '6D - Działania zapobiegawcze';
-$lang['7d'] = '7D - Ocena skuteczności';
-$lang['8d'] = '8D - Zakończenie';
+$lang['6d'] = '6D - Przyczyny potencjalne';
+$lang['7d'] = '7D - Działania zapobiegawcze';
+$lang['8d'] = '8D - Ocena skuteczności';
 
 $lang['number'] = 'Ilość';
 $lang['true_date'] = 'Data';

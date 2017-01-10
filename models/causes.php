@@ -126,8 +126,11 @@ class Causes extends Event {
 		return $this->join_all($a);
 	}
 
-	public function get_by_rootcause($issue) {
-		return array();
+	public function get_real($issue) {
+		$issue = (int) $issue;
+
+		$a = $this->fetch_assoc("SELECT * FROM causes WHERE issue=$issue AND potential = 0");
+		return $this->join_all($a);
 	}
 	public function get_by_days($days=7) {
 		if (!$this->helper->user_viewer()) return false;

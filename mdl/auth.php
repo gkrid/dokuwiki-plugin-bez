@@ -31,7 +31,7 @@ class BEZ_mdl_Auth {
 		$this->user_nick = $user_nick;
 		
 		$userd = $this->dw_auth->getUserData($this->user_nick); 
-		if ($userd !== false) {
+		if ($userd !== false && is_array($userd['grps'])) {
 			$grps = $userd['grps'];
 			if (in_array('admin', $grps ) || in_array('bez_admin', $grps )) {
 				$this->update_level(20);

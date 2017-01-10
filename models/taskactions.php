@@ -29,7 +29,7 @@ class Taskactions {
 		switch ($name) {
 			case 0: return '3d';
 			case 1: return '5d';
-			case 2: return '6d';
+			case 2: return '7d';
 			default: return '';
 		}
 	}

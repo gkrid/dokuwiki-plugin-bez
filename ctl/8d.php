@@ -8,7 +8,7 @@ $toko = new Tokens();
 if (!isset($_GET['t']) || ! $toko->check(trim($_GET['t']), $ID))
 	header('Location: '.$uri.'?id='.$_GET['id'].'&t='.$toko->get($ID));
 
-$issue_id = $nparams[id];
+$issue_id = $nparams['id'];
 
 $isso = new Issues();
 $causo = new Causes();
@@ -17,7 +17,8 @@ $tasko = new Tasks();
 $template['issue'] = $isso->get($issue_id);
 $template['team'] = $isso->get_team($issue_id);
 
-$template['causes'] = $causo->get_by_rootcause($issue_id);
+$template['real_causes'] = $causo->get_real($issue_id);
+$template['potential_causes'] = $causo->get_potential($issue_id);
 
 
 $template['tasks'] = $tasko->get_by_8d($issue_id);
