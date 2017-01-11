@@ -135,7 +135,6 @@
 	<p><i><?php echo $bezlang['not_relevant'] ?></i></p>
 <?php endif ?>
 
-
 <table>
 <tr>
 	<td>

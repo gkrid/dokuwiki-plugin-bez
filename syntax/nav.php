@@ -271,6 +271,37 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 				$mon = 1;
 			}
 		}
+		
+		$data['bez:activity_report'] = array('id' => 'bez:activity_report', 'type' => 'd', 'level' => 2, 'title' => $this->getLang('activity_report'));
+		if ($this->value['bez'] == 'activity_report') {
+			$data['bez:activity_report']['open'] = true;
+
+			$oldest = $isso->get_oldest_close_date();
+			$year_old = (int)date('Y', $oldest);
+			$mon_old = (int)date('n', $oldest);
+
+			$mon = $mon_old;
+			for ($year = $year_old; $year <= $year_now; $year++) {
+
+				$y_key = 'bez:activity_report:year:'.$year;
+				$data[$y_key] = array('id' => $y_key, 'type' => 'd', 'level' => 3, 'title' => $year);
+
+				if (isset($this->value['year']) && (int)$this->value['year'] == $year) {
+					$data['bez:activity_report:year:'.$year]['open'] = true;
+
+					if ($year == $year_now)
+						$mon_max = $mon_now;
+					else
+						$mon_max = 12;
+					for ( ; $mon <= $mon_max; $mon++) {
+						$m_key = $y_key.':month:'.$mon;
+						$data[$m_key] = array('id' => $m_key, 'type' => 'f', 'level' => 4,
+						'title' => $mon < 10 ? '0'.$mon : $mon);
+					}	
+				}
+				$mon = 1;
+			}
+		}
 
 
 
@@ -312,7 +343,7 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 
 		//pola brane pod uwagę przy określaniu aktualnej strony
 		$fields = array('bez', 'tid', 'cid', 'tasktype', 'taskstate');
-		if ($item_value['bez'] == 'report' || $item_value['bez'] == 'report_open') {
+		if ($item_value['bez'] == 'report' || $item_value['bez'] == 'activity_report') {
 			$fields[] = 'month';
 			$fields[] = 'year';
 		}

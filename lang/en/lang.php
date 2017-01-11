@@ -447,3 +447,10 @@ $lang['comment_last_activity'] = 'Last activity';
 $lang['comment_participants'] = 'Participants';
 
 $lang['issue_type_no_specified'] = 'type no specified';
+
+$lang['involvement'] = 'Involvement';
+$lang['commentator'] = 'Commentator';
+
+$lang['activity_report'] = 'Activity report';
+
+$lang['user'] = 'User';

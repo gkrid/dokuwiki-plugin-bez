@@ -2,6 +2,7 @@
 include_once DOKU_PLUGIN."bez/models/connect.php";
 include_once DOKU_PLUGIN."bez/models/tasks.php";
 include_once DOKU_PLUGIN."bez/models/causes.php";
+include_once DOKU_PLUGIN."bez/models/users.php";
 
 class Report extends Connect {
 	public function __construct() {
@@ -241,6 +242,7 @@ class Report extends Connect {
 								  $where
 							GROUP BY tasks.tasktype");
 
+		
 		/*$a = $this->fetch_assoc("SELECT MAX(tasks.close_date - tasks.date) AS average
 									FROM causes JOIN tasks ON tasks.cause = causes.id
 									WHERE tasks.state == 1 $where");
@@ -251,6 +253,8 @@ class Report extends Connect {
 			//$cause['number'] = $cas[$cause['rootcause']]['number'];
 		}*/
 		$report['causes'] = $caso->join_all($report['causes']);
+				
+		
 
 		/*$where = $this->where($issues_date, $filters);
 		$report['priorities'] = $this->fetch_assoc("SELECT priority, COUNT(*) AS number, AVG(last_mod-date) AS average
@@ -276,6 +280,94 @@ class Report extends Connect {
 		$report['priorities_total'] = $a[0]['total'];
 		$report['priorities_average'] = $this->helper->days((int)$a[0]['average']);*/
 
+		return $report;
+	}
+	
+	public function activity_report($filters) {
+		$report = array();
+		
+		$issue_where = $this->where('issues.date', $filters);
+		
+		$report['involvement'] = array();
+		
+		$usro = new Users();
+		
+		$dw_users = $usro->get();
+		foreach ($dw_users as $nick => $name) {
+			$report['involvement'][$nick] =
+				array(	'name' => $name,
+						'reporter' => 0,
+						'coordinator' => 0,
+						'commentator' => 0,
+						'executor' => 0,
+						'total' => 0);
+		}
+		
+	
+		
+		//ilość zgłoszonych problemów
+		$result = $this->fetch_assoc("SELECT issues.reporter, COUNT(*) AS stat
+										FROM issues WHERE 1 $issue_where
+										GROUP BY issues.reporter");
+		
+		foreach ($result as $v) {
+			$report['involvement'][$v['reporter']]['reporter'] = $v['stat'];
+			$report['involvement'][$v['reporter']]['total'] += $v['stat'];
+		}
+		
+			
+		
+	//ilość zgłoszonych problemów
+		$result = $this->fetch_assoc("SELECT issues.coordinator, COUNT(*) AS stat
+										FROM issues WHERE
+										issues.coordinator != '-proposal' AND
+										issues.coordinator != '-rejected'
+										$issue_where
+										GROUP BY issues.coordinator");
+		
+		foreach ($result as $v) {
+			$report['involvement'][$v['coordinator']]['coordinator'] = $v['stat'];
+			$report['involvement'][$v['coordinator']]['total'] += $v['stat'];
+		}
+
+		foreach ($dw_users as $nick => $name) {
+			//ilość komentatorów problemów
+			$result = $this->fetch_assoc("SELECT COUNT(*) AS stat
+							FROM issues JOIN comments ON issues.id = comments.issue
+							WHERE 	
+									comments.reporter = '$nick'
+									$issue_where
+										");
+										
+			$count = (int)$result[0]['stat'];
+			$report['involvement'][$nick]['commentator'] = $count;
+			$report['involvement'][$nick]['total'] += $count;
+		}
+		
+		foreach ($dw_users as $nick => $name) {
+			//ilość wykonawców
+			$result = $this->fetch_assoc("SELECT COUNT(*) AS stat
+							FROM issues JOIN tasks ON issues.id = tasks.issue
+							WHERE 	
+									tasks.executor = '$nick'
+									$issue_where
+										");
+										
+			$count = (int)$result[0]['stat'];
+			$report['involvement'][$nick]['executor'] = $count;
+			$report['involvement'][$nick]['total'] += $count;
+		}
+		
+		uasort($report['involvement'], function ($a, $b) {
+			if ($a['total'] < $b['total']) {
+				return true;
+			} else if ($a['total'] > $b['total']) {
+				return false;
+			} else {
+				return $a['name'] > $b['name'];
+			}
+		});
+		
 		return $report;
 	}
 }

@@ -38,9 +38,9 @@ if (isset($value['year']))
 if (isset($value['month']))
 	$template['hidden']['month'] = $value['month'];
 
-$template['report'] = $repo->report($value);
+$template['report'] = $repo->activity_report($value);
 
-$subtitle = $bezlang['report'];
+$subtitle = $bezlang['activity_report'];
 
 
 $template['title'] = $subtitle.($value['year'] != '-all' ? ' '.$value['year'] : '').

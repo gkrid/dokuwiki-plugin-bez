@@ -466,3 +466,10 @@ $lang['comment_last_activity'] = 'Ostatnia aktywność';
 $lang['comment_participants'] = 'Osoby zaangażowane';
 
 $lang['issue_type_no_specified'] = 'typ nieokreślony';
+
+$lang['involvement'] = 'Zaangażowanie';
+$lang['commentator'] = 'Komentator';
+
+$lang['activity_report'] = 'Raport aktywności';
+
+$lang['user'] = 'Użytkownik';
