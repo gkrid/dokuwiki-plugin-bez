@@ -291,8 +291,9 @@ class Report extends Connect {
 		$report['involvement'] = array();
 		
 		$usro = new Users();
-		
 		$dw_users = $usro->get();
+		
+		
 		foreach ($dw_users as $nick => $name) {
 			$report['involvement'][$nick] =
 				array(	'name' => $name,
@@ -358,7 +359,7 @@ class Report extends Connect {
 			$report['involvement'][$nick]['total'] += $count;
 		}
 		
-		uasort($report['involvement'], function ($a, $b) {
+		$sort = function ($a, $b) {
 			if ($a['total'] < $b['total']) {
 				return true;
 			} else if ($a['total'] > $b['total']) {
@@ -366,7 +367,55 @@ class Report extends Connect {
 			} else {
 				return $a['name'] > $b['name'];
 			}
-		});
+		};
+		
+		uasort($report['involvement'], $sort);
+		
+		$report['tasks'] = array();
+		
+		foreach ($dw_users as $nick => $name) {
+			$report['tasks'][$nick] =
+				array(	'name' => $name,
+						'opened_tasks' => 0,
+						'closed_tasks' => 0,
+						'rejected_tasks' => 0,
+						'total' => 0);
+		}
+		
+		$tasks_where = $this->where('tasks.date', $filters);
+		
+		$result = $this->fetch_assoc("SELECT tasks.executor, COUNT(*) AS stat
+										FROM tasks
+										WHERE tasks.state = 0 $tasks_where
+										GROUP BY tasks.executor");
+		
+		foreach ($result as $v) {
+			$report['tasks'][$v['executor']]['opened_tasks'] = $v['stat'];
+			$report['tasks'][$v['executor']]['total'] += $v['stat'];
+		}
+		
+		$result = $this->fetch_assoc("SELECT tasks.executor, COUNT(*) AS stat
+										FROM tasks
+										WHERE tasks.state = 1 $tasks_where
+										GROUP BY tasks.executor");
+		
+		foreach ($result as $v) {
+			$report['tasks'][$v['executor']]['closed_tasks'] = $v['stat'];
+			$report['tasks'][$v['executor']]['total'] += $v['stat'];
+		}
+		
+		
+		$result = $this->fetch_assoc("SELECT tasks.executor, COUNT(*) AS stat
+										FROM tasks
+										WHERE tasks.state = 2 $tasks_where
+										GROUP BY tasks.executor");
+		
+		foreach ($result as $v) {
+			$report['tasks'][$v['executor']]['rejected_tasks'] = $v['stat'];
+			$report['tasks'][$v['executor']]['total'] += $v['stat'];
+		}
+		
+		uasort($report['tasks'], $sort);
 		
 		return $report;
 	}

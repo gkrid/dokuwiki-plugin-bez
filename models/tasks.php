@@ -621,7 +621,9 @@ class Tasks extends Event {
 
 
 		if (isset($filters['date_type'])) {
-			if ($filters['date_type'] == 'plan' || $filters['date_type'] == 'closed')
+			if ($filters['date_type'] == 'plan' ||
+				$filters['date_type'] == 'open' ||
+				$filters['date_type'] == 'closed')
 				$data['date_type'] = $filters['date_type'];
 		}
 
@@ -693,10 +695,13 @@ class Tasks extends Event {
 		}
 
 		if ($year != '-all') {
-			if ($date_type == 'plan')
+			if ($date_type == 'plan') {
 				$date_field = 'tasks.plan_date';
-			else
+			} else if ($date_type == 'open') {
+				$date_field = 'tasks.date';
+			} else {
 				$date_field = 'tasks.close_date';
+			}
 				
 			
 			if ($month != '-all') {

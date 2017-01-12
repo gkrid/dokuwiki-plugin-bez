@@ -1,3 +1,8 @@
+Wersja 2017-01-12:
+  - zmiana statusu problemu powoduje zmianę ostatniej aktywności
+  - dodano raport aktywności do bazy BEZ
+  
+
 Wersja 2017-01-09:
   - usunięto "przyczynę źródłową" z przyczyn;
   - typ problemu nie jest wymagany;

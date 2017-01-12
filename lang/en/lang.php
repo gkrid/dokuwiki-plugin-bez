@@ -454,3 +454,10 @@ $lang['commentator'] = 'Commentator';
 $lang['activity_report'] = 'Activity report';
 
 $lang['user'] = 'User';
+
+$lang['activity_in_issues'] = 'Activity in issues';
+
+$lang['activity_in_tasks'] = 'Activity in tasks';
+
+$lang['rejected_tasks'] = 'Rejected tasks';
+

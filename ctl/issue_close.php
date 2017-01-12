@@ -22,15 +22,20 @@ if (count($_POST) > 0) {
 	$updated = $isso->close($_POST, $issue_id);
 	if (count($errors) == 0 && !in_array($updated['coordinator'], $isso->coord_special)) {
 		$coord = $updated['coordinator'];
+		
+		$issue = $this->model->issues->get_one($issue_id);
+		$issue->update_last_activity();
+		$this->model->issues->save($issue);
 
 		$issto = new Issuetypes();
 		$types = $issto->get();
 		$type = $types[$updated['type']];
 		
-		if ($anytasks)
+		if ($anytasks) {
 			$action = $bezlang['issue_closed'];
-		else
+		} else {
 			$action = $bezlang['issue_rejected'];
+		}
 		
 		$to = $usro->name($coord).' <'.$usro->email($coord).'>';
 		$subject = '['.$helper->get_wiki_title()."] $action: #".$isso->lastid()." $type";
@@ -39,8 +44,9 @@ if (count($_POST) > 0) {
 	}
 	
 	$value = $_POST;
-	if (count($errors) == 0)
+	if (count($errors) == 0) {
 		header('Location: ?id='.$this->id('issue', 'id', $isso->lastid()));
+	}
 } else {
 	$value['opinion'] = $template['issue']['raw_opinion'];
 }

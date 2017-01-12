@@ -473,3 +473,9 @@ $lang['commentator'] = 'Komentator';
 $lang['activity_report'] = 'Raport aktywności';
 
 $lang['user'] = 'Użytkownik';
+
+$lang['activity_in_issues'] = 'Aktywność w problemach';
+
+$lang['activity_in_tasks'] = 'Aktywność w zadaniach';
+
+$lang['rejected_tasks'] = 'Zadania odrzucone';

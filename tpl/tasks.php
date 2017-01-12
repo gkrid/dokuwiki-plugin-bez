@@ -83,6 +83,8 @@
 		<select name="date_type">
 			<option <?php if ($value['date_type'] == 'plan') echo 'selected' ?>
 				value="plan"><?php echo $bezlang['plan_date'] ?></option>
+			<option <?php if ($value['date_type'] == 'open') echo 'selected' ?>
+				value="open"><?php echo $bezlang['open_date'] ?></option>
 			<option <?php if ($value['date_type'] == 'closed') echo 'selected' ?>
 				value="closed"><?php echo $bezlang['close_date'] ?></option>
 		</select>:
