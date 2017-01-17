@@ -510,11 +510,13 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 			$r = $proza->query("SELECT * FROM events");
 			while ($w = $r->fetchArray(SQLITE3_ASSOC)) {
 				
-				$meta = array('reporter' => $w['coordinator'] ,
-								'date' => time());
-								
-				if ($w['finish_date'] != '') {
-					$meta['close_date'] = strtotime($w['finish_date']);
+				$meta = array('reporter' => $w['coordinator']);
+				if ($w['finish_date'] == '') {
+					$meta['date'] =  time();
+				} else {
+					$unix = strtotime($w['finish_date']);
+					$meta['date'] = $unix;
+					$meta['close_date'] = $unix;
 				}
 				
 				$data = array(
@@ -527,7 +529,7 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 				);
 				
 				$state_data = array('state' => $w['state'],
-								'reson'=> $w['summary']);
+									'reson'=> $w['summary']);
 				
 				$tasktype = $z_prozy_do_bezu[$w['group_n']];
 				
