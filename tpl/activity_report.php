@@ -22,9 +22,9 @@
 			<td>
 				<?php if ($involvement['name'] != ''): ?>
 					<?php echo $involvement['name'] ?>
-				<? else: ?>
+				<?php else: ?>
 					<i><?php echo $nick ?></i>
-				<? endif ?>
+				<?php endif ?>
 			</td>
 			<td><?php echo $involvement['reporter'] ?></td>
 			<td><?php echo $involvement['coordinator'] ?></td>
@@ -64,9 +64,9 @@
 			<td>
 				<?php if ($involvement['name'] != ''): ?>
 					<?php echo $involvement['name'] ?>
-				<? else: ?>
+				<?php else: ?>
 					<i><?php echo $nick ?></i>
-				<? endif ?>
+				<?php endif ?>
 			</td>
 			<td><?php echo $involvement['opened_tasks'] ?></td>
 			<td><?php echo $involvement['closed_tasks'] ?></td>
