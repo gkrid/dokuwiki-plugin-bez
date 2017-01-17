@@ -529,11 +529,18 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 				);
 				
 				$state_data = array('state' => $w['state'],
-									'reson'=> $w['summary']);
+									'reason'=> $w['summary']);
 				
 				$tasktype = $z_prozy_do_bezu[$w['group_n']];
 				
 				$task = $this->model->tasks->create_object_program(array('tasktype' => $tasktype));
+				
+				//first change state - close_date update
+				$state = $task->set_state($state_data);
+				if ($state == false) {
+					throw new Exception(print_r($task->get_errors(), true));
+				}
+				
 				$state = $task->set_meta($meta);
 				if ($state == false) {
 					throw new Exception(print_r($task->get_errors(), true));
@@ -542,10 +549,7 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 				if ($state == false) {
 					throw new Exception(print_r($task->get_errors(), true));
 				}
-				$state = $task->set_state($state_data);
-				if ($state == false) {
-					throw new Exception(print_r($task->get_errors(), true));
-				}
+
 
 				$this->model->tasks->save($task);
 			}

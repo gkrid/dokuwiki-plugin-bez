@@ -13,15 +13,14 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 	//meta
 	protected $reporter, $date, $close_date;
 	
-	//acl
-	//coordinator is defined by issue or tasktype
+	//acl - set only on creation
 	protected $issue;
 	
 	//data
-	protected $cause, $executor, $task, $plan_date, $cost, $all_day_event, $start_time, $finish_time, $tasktype;
+	protected $cause, $executor, $task, $plan_date, $cost, $all_day_event, $start_time, $finish_time, $tasktype, $reason;
 	
 	//state
-	protected $state, $reason;
+	protected $state;
 	
 	//virtual
 	protected $coordinator, $action;
@@ -129,24 +128,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 		
 		return true;
 	}
-	
-	public function set_acl($data) {
-		if ($this->auth->get_level() < 20) {
-			return false;
-		}
 		
-		$val_data = $this->validator->validate($data, array('issue'));
-		if ($val_data === false) {
-			return false;
-		}
-		
-		foreach ($val_data as $k => $v) {
-			$this->$k = $v;
-		}
-		
-		return true;
-	}
-	
 	public function update_cache() {
 		if ($this->auth->get_level() < 20) {
 			return false;
@@ -159,13 +141,13 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 		if ($this->auth->get_level() >= 15) {
 			$val_data = $this->validator->validate($data, array('executor',
 				'cause', 'task', 'plan_date', 'cost', 'all_day_event',
-				'start_time', 'finish_time', 'tasktype'));
+				'start_time', 'finish_time', 'tasktype', 'reason'));
 		//reporters can modify their own records if there is no coordinator
 		} else if (	$this->coordinator === '-none' &&
 					$this->reporter === $this->auth->get_user()) {
 			$val_data = $this->validator->validate($data, array('executor',
 			'task', 'plan_date', 'cost', 'all_day_event',
-			'start_time', 'finish_time', 'tasktype'));
+			'start_time', 'finish_time', 'tasktype', 'reason'));
 			if ($val_data['executor'] !== $this->auth->get_user()) {
 				$this->validator->set_error('executor', 'not_equal');
 				return false;	
@@ -192,6 +174,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 		
 		//set parsed
 		$this->task_cache = $this->helper->wiki_parse($this->task);
+		$this->reason_cache = $this->helper->wiki_parse($this->reason);
 			
 		return true;
 	}
@@ -211,12 +194,16 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 		if ($val_data === false) {
 			return false;
 		}
+		
+		//if state is changed
+		if ($this->state != $data['state']) {
+			$this->close_date = time();
+		}
 
 		foreach ($val_data as $k => $v) {
 			$this->$k = $v;
 		}
 		$this->reason_cache = $this->helper->wiki_parse($this->reason);
-		$this->close_date = time();
 		
 		
 		return true;
