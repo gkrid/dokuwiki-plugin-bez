@@ -277,7 +277,7 @@ jQuery(document).ready(function () {
 		} else {
 			$this.css('outline', 'none');
 		}
-	}
+	};
 	var highlight_input = function() {
 		var $this = jQuery(this);
 		if ($this.val().length > 0) {
@@ -285,7 +285,7 @@ jQuery(document).ready(function () {
 		} else {
 			$this.css('outline', 'none');
 		}
-	}
+	};
 	jQuery(".bez_filter_form select").change(highlight).each(highlight);
 	jQuery(".bez_filter_form input:text").blur(highlight_input).each(highlight_input);
 });
