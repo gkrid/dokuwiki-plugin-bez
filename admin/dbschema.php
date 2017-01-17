@@ -573,7 +573,7 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 					WHERE tasks.plan_date = '' OR tasks.plan_date ISNULL;");
 
 		$createq = "
-				CREATE TABLE IF NOT EXISTS tasks (
+				CREATE TABLE tasks (
 				id INTEGER PRIMARY KEY,
 				task TEXT NOT NULL,
 				state INTEGER NOT NULL,
@@ -589,8 +589,9 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 				all_day_event INTEGET DEFAULT 0,
 				start_time TEXT NULL,
 				finish_time TEXT NULL,
-				issue INTEGER NULL
-				)";
+				issue INTEGER NULL,
+				task_cache TEXT NOT NULL DEFAULT '',
+				reason_cache TEXT NULL)";
 				
 		$q = "	BEGIN TRANSACTION;
 			DROP TABLE tasks_backup;
@@ -611,8 +612,9 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 				all_day_event INTEGET DEFAULT 0,
 				start_time TEXT NULL,
 				finish_time TEXT NULL,
-				issue INTEGER NULL
-				);
+				issue INTEGER NULL,
+				task_cache TEXT NOT NULL DEFAULT '',
+				reason_cache TEXT NULL);
 			INSERT INTO tasks_backup SELECT
 					id,
 					task,
@@ -629,7 +631,7 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 					all_day_event,
 					start_time,
 					finish_time,
-					issue
+					issue, task_cache, reason_cache
 				FROM tasks;
 			DROP TABLE tasks;
 			$createq;
@@ -649,7 +651,7 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 					all_day_event,
 					start_time,
 					finish_time,
-					issue
+					issue, task_cache, reason_cache
 				FROM tasks_backup;
 			DROP TABLE tasks_backup;
 			COMMIT;
@@ -844,7 +846,7 @@ function do_issues_remove_priority() {
 		}
 	}
 	
-		function check_issue_primary_key() {
+	function check_issue_primary_key() {
 		$q = "PRAGMA table_info(issues)";
 		$a = $this->connect->fetch_assoc($q);
 		$entity = false;
@@ -1138,16 +1140,14 @@ function do_issues_remove_priority() {
 				array('Dodanie typu dla zadań niezależnych w BEZie', 'check_add_type_to_tasks', 'do_add_type_to_tasks'),
 				array('Zmiana kolumny issue w zadaniach na NULL.',
 				'check_task_issue_null', 'do_task_issue_null'),
+				array('Dodaj cache do zadań',
+				'check_add_cache_to_tasks', 'do_add_cache_to_tasks'),
 				array('Zaimportuj zadania z PROZY.',
 				'check_proza_import', 'do_proza_import'),
 				array('Dodaj datę planowania zadań.',
 				'check_add_plan_date', 'do_add_plan_date'),
 				array('Usuń priorytet z tabeli problemów',
 				'check_issues_remove_priority', 'do_issues_remove_priority'),
-				array('Dodaj koordynatora do programów',
-				'check_add_coordinator_to_tasktypes', 'do_add_coordinator_to_tasktypes'),
-				array('Dodaj cache do zadań',
-				'check_add_cache_to_tasks', 'do_add_cache_to_tasks'),
 				array('Dodaj aktywność do problemów',
 				'check_add_activity_to_issue', 'do_add_activity_to_issue'),
 				array('Dodaj klucz główny do problemów',
