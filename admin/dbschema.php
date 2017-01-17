@@ -545,6 +545,7 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 				if ($state == false) {
 					throw new Exception(print_r($task->get_errors(), true));
 				}
+				
 				$state = $task->set_data($data);
 				if ($state == false) {
 					throw new Exception(print_r($task->get_errors(), true));

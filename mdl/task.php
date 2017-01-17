@@ -54,7 +54,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 			
 			'issue' => array(array('numeric'), 'NULL'),
 			
-			'task' => array(array('length', 1000), 'NOT NULL'),
+			'task' => array(array('length', 10000), 'NOT NULL'),
 			'plan_date' => array(array('iso_date'), 'NOT NULL'),
 			'cost' => array(array('numeric'), 'NULL'),
 			'all_day_event' => array(array('select', array('0', '1')), 'NOT NULL'), 
@@ -62,7 +62,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 			'finish_time' => array(array('time'), 'NULL'), 
 			
 			'state' => array(array('select', array('0', '1', '2')), 'NULL'),
-			'reason' => array(array('length', 1000), 'NULL'),
+			'reason' => array(array('length', 10000), 'NULL'),
 			
 			'coordinator' => array(array('dw_user', array('-none')), 'NOT NULL'),
 		));
@@ -186,7 +186,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 		//reason is required while changing state
 		if ($data['state'] == '1' || $data['state'] == '2') {
 			$this->validator->set_rules(array(
-				'reason' => array(array('length', 1000), 'NOT NULL')
+				'reason' => array(array('length', 10000), 'NOT NULL')
 			));
 		}
 		
