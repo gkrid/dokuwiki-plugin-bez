@@ -24,7 +24,6 @@ if (isset($nparams['tid'])) {
 				$_POST['all_day_event'] = '0';
 			}
 			$task->set_data($_POST);
-			$task->set_acl($_POST);
 			//for reason
 			$task->set_state($_POST);
 					
@@ -63,7 +62,6 @@ if (isset($nparams['tid'])) {
 			
 			$task->set_data($_POST);
 			//update tasktype for admins
-			$task->set_acl($_POST);
 			
 			if ($task->any_errors()) {
 				$errors = $task->get_errors();

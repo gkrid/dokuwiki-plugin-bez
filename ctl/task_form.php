@@ -45,7 +45,6 @@ if (isset($nparams['tid'])) {
 				$_POST['all_day_event'] = '0';
 			}
 			$task->set_data($_POST);
-			$task->set_acl($_POST);
 			//for reason
 			$task->set_state($_POST);
 			
