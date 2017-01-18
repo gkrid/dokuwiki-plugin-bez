@@ -155,7 +155,12 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 			foreach ($errors as $field => $error) {
 				echo '<div class="error">';
 				if ($field != '' && isset($bezlang[$field])) {
-					echo '<b>'.$bezlang[$field].':</b> '.$bezlang['validate_'.$error];
+					echo '<b>'.$bezlang[$field].':</b> ';
+					if (isset($bezlang['validate_'.$error])) {
+						echo $bezlang['validate_'.$error];
+					} else {
+						echo $error;
+					}
 				} else {
 					echo $error;
 				}

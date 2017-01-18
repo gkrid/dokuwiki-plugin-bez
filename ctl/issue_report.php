@@ -94,7 +94,7 @@ $template['uri'] = $uri;
 $template['issue_id'] = $issue_id;
 
 if ($issue_id != NULL) {
-	$state = $isso->get_state($value, $issue_id);
+	$state = $isso->get_state($clean);
 	$priority = $clean['priority'];
 	if ($priority == NULL) {
 		$priority = 'None';
@@ -106,5 +106,4 @@ if ($issue_id != NULL) {
 } else {
 	$template['priority'] = 'None';
 }
-
 

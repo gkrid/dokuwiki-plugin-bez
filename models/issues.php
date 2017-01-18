@@ -526,11 +526,12 @@ class Issues extends Connect {
 				$where[] = 'tasks_all > 0';
 				$where[] = 'tasks_all = tasks_closed';
 				$where[] = 'issues.state = 0';
-			/*-proposal or -rejected*/
-			} else if (strstr($state, '-')) 
+			/*-proposal*/
+			} else if ($state == '-proposal') {
 				$where[] = "issues.coordinator = '$state'";
+				$where[] = "issues.state != 1";
 			/*rejected*/
-			else if ($state == 2) {
+			} else if ($state == 2) {
 				$where[] = "issues.state = 1";
 				$where[] = "tasks_all == 0";
 			} else {
