@@ -40,18 +40,35 @@ class BEZ_mdl_Tasks extends BEZ_mdl_Factory {
 		return $task;
 	}
 	
-	public function get_all() {
+	private $filter_field_map = array(
+		'issue' 	=> 'tasks.issue',
+		'action' 	=> 'action',
+	);
+	
+	public function get_all($filters=array()) {
 		if ($this->auth->get_level() < 5) {
 			throw new Exception('BEZ_mdl_Tasks: no permission to get_all()');
 		}
-					
-		$sth = $this->model->db->prepare($this->select_query);
+		
+		$q = $this->select_query;
+		$execute = array();
+		$where_q = array();
+		foreach ($filters as $filter => $value) {
+			$where_q[] = $this->filter_field_map[$filter]." = :$filter";
+			$execute[":$filter"] = $value;
+		}
+		
+		if (count($where_q) > 0) {
+			$q .= ' WHERE '.implode(' AND ', $where_q);
+		}
+							
+		$sth = $this->model->db->prepare($q);
 		
 		$sth->setFetchMode(PDO::FETCH_CLASS, "BEZ_mdl_Task",
 				array($this->model));
 				
-		$sth->execute();
-					
+		$sth->execute($execute);
+						
 		return $sth;
 	}
 	

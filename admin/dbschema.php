@@ -1136,6 +1136,77 @@ function do_issues_remove_priority() {
 			$db->close();
 	}
 	
+	function check_create_commcauses() {
+		$q = "PRAGMA table_info(commcauses)";
+		$a = $this->connect->fetch_assoc($q);
+		if (count($a) === 0) {
+			return false;
+		}
+		return true;
+	}
+	
+	function do_create_commcauses() {
+		$con = new Connect();
+		$db = $con->open();
+		$db->query('
+		CREATE TABLE commcauses (
+				id INTEGER PRIMARY KEY NOT NULL,
+				issue INTEGER NOT NULL,
+				datetime TEXT NOT NULL,
+				reporter TEXT NOT NULL,
+				type INTEGER NOT NULL DEFAULT 0,
+				content TEXT NOT NULL,
+				content_cache TEXT NOT NULL);
+		');
+		$db->close();
+		
+		$comments = $this->connect->fetch_assoc("SELECT issue, date, reporter, comments.content, comments_cache.content as cache FROM comments JOIN comments_cache ON comments.id = comments_cache.id");
+		foreach($comments as $comment) {
+			$unix = (int) $comment['date'];
+			$this->connect->errinsert(array(
+				'issue' => $comment['issue'],
+				'datetime' => date('Y-m-d H:i:s', $unix),
+				'reporter' => $comment['reporter'],
+				'type' => 0,
+				'content' => $comment['content'],
+				'content_cache' => $comment['cache']
+			), 'commcauses');
+		}
+		
+		$causes = $this->connect->fetch_assoc("SELECT issue, date, reporter, cause, cause_cache, potential FROM causes");
+		foreach($causes as $cause) {
+			$unix = (int) $cause['date'];
+			$type = (int) $cause['potential'] + 1;
+			$reporter = $cause['reporter'];
+			if ($reporter == '') {
+				$reporter = 'rolewniczak';
+			}
+			$this->connect->errinsert(array(
+				'issue' => $cause['issue'],
+				'datetime' => date('Y-m-d H:i:s', $unix),
+				'reporter' => $reporter,
+				'type' => $type,
+				'content' => $cause['cause'],
+				'content_cache' => $cause['cause_cache']
+			), 'commcauses');
+		}
+		
+	}
+	function check_add_subscribents_to_issue() {
+		$q = "PRAGMA table_info(issues)";
+		$a = $this->connect->fetch_assoc($q);
+		$entity = false;
+		foreach ($a as $r) 
+			if ($r['name'] == 'subscribents')
+				return true;
+		return false;
+	}
+	
+	function do_add_subscribents_to_issue() {
+		$q = "ALTER TABLE issues ADD COLUMN subscribents TEXT NULL";
+		$this->connect->errquery($q);
+	}
+	
 	private $actions = array(
 				array('Słownik kategorii przyczyn', 'check_rootcause', 'do_rootcause'),
 				array('Słownik typów problemów', 'check_types', 'do_types'),
@@ -1164,7 +1235,11 @@ function do_issues_remove_priority() {
 				array('Nie wymagaj typu problemu przy propozycjach i dodaj pole cache do issue',
 				'check_issue_type_null', 'do_issue_type_null'),
 				array('Usuń przyczynę źródłową z przyczyn.',
-				'check_remove_root_cause', 'do_remove_root_cause')
+				'check_remove_root_cause', 'do_remove_root_cause'),
+				array('Połącz komentarze z przyczynami.',
+				'check_create_commcauses', 'do_create_commcauses'),
+				array('Dodaj subskrybentów do problemu.',
+				'check_add_subscribents_to_issue', 'do_add_subscribents_to_issue')
 		);
 
 	function _backup($sufix) {

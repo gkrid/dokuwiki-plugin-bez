@@ -5,32 +5,46 @@ include_once DOKU_PLUGIN."bez/models/tasks.php";
 
 
 $isso = new Issues();
-$como = new Comments();
+//~ $como = new Comments();
 $issue_id = (int)$params[1];
 
 $issue = $this->model->issues->get_one($issue_id);
 
 try {
-	if (isset($params[3])) {
-		$action = $params[3];
+	if (isset($nparams['action'])) {
+		$action = $nparams['action'];
 		$redirect = false;
-		if ($action == 'comment_add') {
-			$data = array('reporter' => $INFO['client'], 'date' => time(), 'issue' => $issue_id);
-			$data = $como->add($_POST, $data);
+		if ($action == 'commcause_add') {			
+			$commcause = $this->model->commcauses->create_object(array(
+				'issue' => $issue_id
+			));
+			
+			$commcause->set_data($_POST);
+			$this->model->commcauses->save($commcause);
 			
 			$issue->add_participant($INFO['client']);
 			$issue->update_last_activity();
 			$this->model->issues->save($issue);
 			
 			$redirect = true;
-		} else if ($action == 'comment_delete') {
-			$kid = (int)$params[5];
-			$como->delete($kid);
+		} else if ($action == 'subscribe') {
+			$issue->add_subscribent($INFO['client']);
+			$this->model->issues->save($issue);
+			
+		} else if ($action == 'unsubscribe') {
+			$issue->remove_subscribent($INFO['client']);
+			$this->model->issues->save($issue);
+			
+		} else if ($action == 'commcause_delete') {
+			$kid = (int)$nparams['kid'];
+			$commcause = $this->model->commcauses->get_one($kid);
+			
+			$this->model->commcauses->delete($commcause);
 			
 			$issue->update_last_activity();
 			$this->model->issues->save($issue);
 			
-			$redirect = true;
+			//~ $redirect = true;
 		} else if ($action == 'comment_edit') {
 			$kid = (int)$params[5];
 			$template['comment_button'] = $bezlang['change_comment_button'];
@@ -78,7 +92,14 @@ $template['opentasks'] = $tasko->any_open($issue_id);
 $template['cause_without_task'] = $isso->cause_without_task($issue_id);
 
 $template['issue'] = $isso->get($issue_id);
-$template['comments'] = $como->get($issue_id);
+//~ $template['comments'] = $como->get($issue_id);
 
+//new way
 $template['issue_object'] = $this->model->issues->get_one($issue_id);
+$template['commcauses'] = $this->model->commcauses->get_all($issue_id);
+$template['corrections'] = $this->model->tasks->get_all(array(
+	'issue' => $issue_id,
+	'action' => 0,
+));
+
 

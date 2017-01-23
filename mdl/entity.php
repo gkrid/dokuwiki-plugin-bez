@@ -34,6 +34,15 @@ class BEZ_mdl_Entity {
 		return $assoc;
 	}
 	
+	public function sqlite_date($time=NULL) {
+		//SQLITE format: https://www.sqlite.org/lang_datefunc.html
+		if ($time === NULL) {
+			return date('Y-m-d H:i:s');
+		} else {
+			return date('Y-m-d H:i:s', $time);
+		}
+	}
+	
 	public function __get($property) {
 		$columns = array_merge($this->get_columns(), $this->get_virtual_columns());
 		if (property_exists($this, $property) && in_array($property, $columns)) {

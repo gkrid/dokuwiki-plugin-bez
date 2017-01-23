@@ -461,3 +461,13 @@ $lang['activity_in_tasks'] = 'Activity in tasks';
 
 $lang['rejected_tasks'] = 'Rejected tasks';
 
+$lang['subscribe'] = 'Subscribe';
+
+$lang['unsubscribe'] = 'Unsubscribe';
+
+$lang['subscribed_info'] = "You're receiving notifications about changes in this problem.";
+
+$lang['not_subscribed_info'] = "You're not receiving notifications about changes in this problem.";
+
+$lang['show_comments'] = 'Show comments';
+$lang['hide_comments'] = 'Hide comments';

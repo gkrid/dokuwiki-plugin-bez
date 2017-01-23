@@ -7,11 +7,12 @@ require_once 'users.php';
 require_once 'issues.php';
 require_once 'tasks.php';
 require_once 'tasktypes.php';
+require_once 'commcauses.php';
 
 class BEZ_mdl_Model {
 	private $db;
 	
-	private $users, $cache, $issues, $tasks, $tasktypes;
+	private $users, $cache, $issues, $tasks, $tasktypes, $commcauses;
 	
 	private $dw_auth, $user_nick, $lang_code;
 	
@@ -49,6 +50,7 @@ class BEZ_mdl_Model {
 		$this->issues = new BEZ_mdl_Issues($this);
 		$this->tasks = new BEZ_mdl_Tasks($this);
 		$this->tasktypes = new BEZ_mdl_Tasktypes($this);
+		$this->commcauses = new BEZ_mdl_Commcauses($this);
 	}
 	
 	public function __destruct() {

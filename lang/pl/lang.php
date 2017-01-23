@@ -363,6 +363,7 @@ $lang['rr_eval'] = 'Ocena ryzyka';
 $lang['rr_suceval'] = 'Ocena skuteczności';
 
 $lang['correction_nav'] = 'Korekcje';
+$lang['correction_noun'] = 'Korekcja';
 $lang['reaction'] = 'Reakcja';
 
 $lang['closed_tasks'] = 'Zadania zamknięte';
@@ -479,3 +480,17 @@ $lang['activity_in_issues'] = 'Aktywność w problemach';
 $lang['activity_in_tasks'] = 'Aktywność w zadaniach';
 
 $lang['rejected_tasks'] = 'Zadania odrzucone';
+
+$lang['norifications'] = 'Powiadomienia';
+
+$lang['subscribe'] = 'Subskrybuj';
+
+$lang['unsubscribe'] = 'Wypisz';
+
+$lang['subscribed_info'] = 'Otrzymujesz powiadomienia o zmianach w tym problemie.';
+
+$lang['not_subscribed_info'] = 'Nie otrzymujesz powiadomień o zmianach w tym problemie.';
+
+$lang['show_comments'] = 'Pokaż komentarze';
+$lang['hide_comments'] = 'Ukryj komentarze';
+

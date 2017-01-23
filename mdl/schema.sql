@@ -83,3 +83,12 @@ CREATE TABLE issues (
     "last_activity" TEXT NOT NULL,
     "participants" TEXT NOT NULL
 );
+
+CREATE TABLE commcauses (
+				id INTEGER PRIMARY KEY,
+				issue INTEGER NOT NULL,
+				datetime TEXT NOT NULL,
+				reporter TEXT NOT NULL,
+				type INTEGER DEFAULT 0
+				content TEXT NOT NULL,
+				content_cache TEXT NOT NULL);

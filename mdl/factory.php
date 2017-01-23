@@ -44,4 +44,17 @@ class BEZ_mdl_Factory {
 		
 		return $this->model->db->lastInsertId();
 	}
+	
+	protected function delete_from_db($id) {
+		$q = 'DELETE FROM '.$this->get_table_name().' WHERE id = ?';
+		$sth = $this->model->db->prepare($q);
+		$sth->execute(array($id));
+	}
+	
+	public function delete($obj) {
+		if ($this->auth->get_level() < 20) {
+			return false;
+		}
+		$this->delete_from_db($obj->id);
+	}
 }

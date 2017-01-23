@@ -27,21 +27,6 @@ jQuery(document).ready(function () {
 		}
 	}
 	
-	//comment
-	if (jQuery('#content').length > 0) {
-		var $textarea = jQuery('#content');
-		var $header = $textarea.parents(".bez_comment").find(".bez_toolbar");
-		$header.append('<div id="toolbarcontent"></div>');
-		initToolbar('toolbarcontent', 'content', toolbar);
-		
-		jQuery(".bez_button_notify").on('click', function (e) {
-			e.preventDefault();
-			
-			var selection = DWgetSelection($textarea[0]);
-			pasteText(selection, '@', {nosel: true});
-		});
-	}
-	
 	var $conf = jQuery("#bez_removal_confirm");
 	$conf.find(".no").click(function(e) {
 		e.preventDefault();
@@ -288,4 +273,60 @@ jQuery(document).ready(function () {
 	};
 	jQuery(".bez_filter_form select").change(highlight).each(highlight);
 	jQuery(".bez_filter_form input:text").blur(highlight_input).each(highlight_input);
+	
+		
+	//comment
+	jQuery('.bez_textarea_content').each(function () {
+		var $textarea = jQuery(this);
+		var $header = $textarea.parents(".bez_comment").find(".bez_toolbar");
+		//clone
+		var tb = toolbar.filter(function (button) {
+			if (button.type === 'autohead' ||
+				button.class === 'pk_hl' ||
+				button.icon === 'sig.png' ||
+				button.icon === 'strike.png') {
+				return false;
+			}
+			return true;
+		});
+		initToolbar($header, $textarea.attr('id'), tb);
+		
+		jQuery(".bez_button_notify").on('click', function (e) {
+			e.preventDefault();
+			
+			var selection = DWgetSelection($textarea[0]);
+			pasteText(selection, '@', {nosel: true});
+		});
+	});
+	
+	//form tabs
+	
+	if (jQuery('#bez_tabs_issue_forms ul.bez_tabs').length > 0) {
+		// For each set of tabs, we want to keep track of
+		// which tab is active and its associated content
+		var $active, $content,
+			$links = jQuery('#bez_tabs_issue_forms ul.bez_tabs').first().find('a');
+			
+		$active = jQuery($links.filter('[href="'+location.hash+'"]')[0] || $links[0]);
+		$content = jQuery($active[0].hash);
+
+		// Hide the remaining content
+		$links.not($active).each(function () {
+			jQuery(this.hash).hide();
+		});
+		jQuery('#bez_tabs_issue_forms ul.bez_tabs').on('click', 'a', function(e){
+			// Make the old tab inactive.
+			$content.hide();
+
+			// Update the variables with the new link and content
+			$active = jQuery(this);
+			$content = jQuery(this.hash);
+
+			// Make the tab active.
+			$content.show();
+
+			// Prevent the anchor's default click action
+			e.preventDefault();
+		});
+	}
 });
