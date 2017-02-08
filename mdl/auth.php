@@ -56,7 +56,7 @@ class BEZ_mdl_Auth {
 		}
 	}
 	
-	//special coordinator all allows all user to edit 
+	//special coordinator - allows all user to edit 
 	public function set_coordinator($coordinator) {
 		$this->coordinator = $coordinator;
 		if ($this->coordinator === $this->user_nick) {

@@ -2,9 +2,11 @@
 
 require_once 'auth.php';
 require_once 'validator.php';
+require_once 'ValidationException.php';
 
 require_once 'users.php';
 require_once 'issues.php';
+require_once 'issuetypes.php';
 require_once 'tasks.php';
 require_once 'tasktypes.php';
 require_once 'commcauses.php';
@@ -14,7 +16,7 @@ class BEZ_mdl_Model {
 	
 	private $users, $cache, $issues, $tasks, $tasktypes, $commcauses;
 	
-	private $dw_auth, $user_nick, $lang_code;
+	private $dw_auth, $user_nick, $lang_code, $lang;
 	
 	public function __get($property) {
 		if (property_exists($this, $property)) {
@@ -22,7 +24,7 @@ class BEZ_mdl_Model {
 		}
 	}
 	
-	public function __construct($dw_auth, $user_nick, $lang_code='en') {
+	public function __construct($dw_auth, $user_nick, $lang_code='en', $lang=array()) {
 		$this->dw_auth = $dw_auth;
 		$this->user_nick = $user_nick;
 				
@@ -31,6 +33,8 @@ class BEZ_mdl_Model {
 		} else {
 			$this->lang_code = 'en';
 		}
+
+		$this->lang = $lang;
 		
 		$db_path = DOKU_INC . 'data/bez.sqlite';
 		//if database not exists
@@ -48,8 +52,11 @@ class BEZ_mdl_Model {
 		
 		$this->users = new BEZ_mdl_Users($this);
 		$this->issues = new BEZ_mdl_Issues($this);
+		$this->issuetypes = new BEZ_mdl_Issuetypes($this);
+		
 		$this->tasks = new BEZ_mdl_Tasks($this);
 		$this->tasktypes = new BEZ_mdl_Tasktypes($this);
+		
 		$this->commcauses = new BEZ_mdl_Commcauses($this);
 	}
 	
@@ -57,7 +64,4 @@ class BEZ_mdl_Model {
 		//http://stackoverflow.com/questions/18277233/pdo-closing-connection
 		$this->db = NULL;
 	}
-	
-	
-	
 }

@@ -57,7 +57,7 @@ class BEZ_mdl_Commcauses extends BEZ_mdl_Factory {
 	}
 	
 	public function delete($obj) {
-		if ($this->auth->get_level() >= 15 ||
+		if ($obj->get_level() >= 15 ||
 			$obj->reporter === $this->auth->get_user()) {
 			$this->delete_from_db($obj->id);
 		} else {

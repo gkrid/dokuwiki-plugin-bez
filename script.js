@@ -1,284 +1,30 @@
-var bds = {};
+var bez = {};
+bez.ctl = {};
 
-bds.gup = function (name) {
-    'use strict';
-    var regexS = "[\\?&]" + name + "=([^&#]*)",
-        regex = new RegExp(regexS),
-        results = regex.exec(window.location.href);
-    if (results === null) {
-        return "";
-    } else {
-        return results[1];
-    }
-};
+/* DOKUWIKI:include scripts/issue.js */
 
-jQuery(document).ready(function () {
+jQuery(function () {
     'use strict';
-	var ids = ['description', 'cause', 'task', 'reason', 'opinion'];
-    
-	for (var i = 0; i < ids.length; i++) {
-		var textarea = jQuery("textarea#" + ids[i]);
-		if (textarea.length > 0) {
-			textarea.before('<div id="toolbar'+ids[i]+'"></div>');
-			if (textarea.parents("form").find("input[name=id]").length === 0) {
-				textarea.before('<input type="hidden" name="id" value="'+bds.gup('id')+'" />');
-			}
-			initToolbar('toolbar'+ids[i], ids[i], toolbar);
+	var getUrlVars = function() {
+		var vars = {},
+			parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi,
+			function(m,key,value) {
+				vars[key] = value;
+		});
+		return vars;
+	};
+	var getNparams = function(value) {
+		var nparams = [],
+			params = value.split(':');
+		for (let i = 0; i < params.length; i += 2) {
+			let k = params[i],
+				v = params[i+1];
+			nparams[k] = v;
 		}
+		return nparams;
 	}
 	
-	var $conf = jQuery("#bez_removal_confirm");
-	$conf.find(".no").click(function(e) {
-		e.preventDefault();
-		$conf.hide();
-	});
-
-	//delete_button 
-	var $delete_buts = jQuery("#bez_comments, #bez_causes").find(".bez_delete_button");
-	jQuery("body").bind("click", function (e) {
-		var $target = jQuery(e.target);
-		if (!$target.is($delete_buts)) {
-			$conf.hide();
-        }
-	});
-	
-	jQuery('.bez_delete_prompt').click('on', function () {
-		return confirm('Are you sure you want to delete this item?');
-	});
-	
-	//cause in task
-	//~ jQuery('#cause').on('change', function () {
-			//~ var val = jQuery(this).val(),
-				//~ $tasktype_row = jQuery('#tasktype').parents('.row');
-			//~ console.log(val);
-			//~ if (val === '') {
-				//~ $tasktype_row.hide();
-			//~ } else { 
-				//~ $tasktype_row.show();
-			//~ }
-	//~ });
-
-	$delete_buts.each(function() {
-		jQuery(this).click(function(e) {
-			e.preventDefault();
-			var $click = jQuery(this);
-			var off = $click.offset();
-			$conf.appendTo("body");
-			$conf.css({
-					'position': 'absolute',
-					'left':		off.left-$conf.width()+$click.width(),
-					'top':	off.top+2,
-				});
-			$conf.find("input").unbind("click");
-			$conf.find("input").bind("click", function(e) {
-				e.preventDefault();
-				window.location = $click.attr("href");
-			});
-			$conf.show();
-		});
-	});
-
-	//entities sort
-	jQuery("#entities_form input[type=button]").click(function() {
-		var textarea = jQuery(this).parents("form").find("textarea");
-		var lines = jQuery.trim(textarea.val()).split("\n");
-		lines.sort();
-		textarea.val(lines.join("\n"));
-	});
-
-	jQuery("input[name=plan_date]").datepicker({
-		dateFormat: "yy-mm-dd"
-		});
-	if (jQuery("input[name=all_day_event]").is(":checked")) {
-		jQuery("input[name=start_time]").prop( "disabled", true );
-		jQuery("input[name=finish_time]").prop( "disabled", true );
-	}
-	jQuery("input[name=all_day_event]").on('change', function() {
-		if (jQuery(this).is(":checked")) {
-			jQuery("input[name=start_time]").prop( "disabled", true );
-			jQuery("input[name=finish_time]").prop( "disabled", true );
-		} else {
-			jQuery("input[name=start_time]").prop( "disabled", false );
-			jQuery("input[name=finish_time]").prop( "disabled", false );
-		}
-	});
-	//timepicker
-	
-	var hours = ["00:30", "1:00", "1:30", "2:00", "2:30", "3:00", "3:30", "4:00",
-			"4:30", "5:00", "5:30", "6:00", "6:30", "7:00", "7:30", "8:00", "8:30", "9:00", "9:30", "10:00", "10:30", "11:00", "11:30",
-			"12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30",
-			"16:00", "16:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30",
-			"20:00", "20:30", "21:00", "21:30", "22:00", "22:30", "23:00", "23:30",
-			"24:00" ];
-	
-	//ukrywanie niepotrzebnych godzin zależnie od godziny rozpoczęcia
-	var hide_unneeded_hours = function ($this) {
-		var hour = $this.val(),
-            index = hours.indexOf(hour),
-            $finish_time_li = jQuery("#bez_timepicker_finish_time li");
-		
-		$finish_time_li.show();
-		$finish_time_li.eq(index).prevAll().hide();
-		
-		if (jQuery("input[name=finish_time]").val() === '') {
-			jQuery("input[name=finish_time]").val(hour);
-        }
-	};
-	jQuery("input[name=start_time]").blur(function () {
-		hide_unneeded_hours(jQuery(this));
-	});
-
-	
-	var autoFill = function (hour) {
-		if (hour.indexOf(":") === -1) {
-			hour += ":00";
-        } else if (hour.match(/^[0-9]{1,2}:$/g)) {
-			hour += "00";
-		} else if (hour.match(/^[0-9]{1,2}:(0|3)$/g)) {
-			hour += "0";
-		} else if (hour.match(/^[0-9]{1,2}:(1|2)$/g)) {
-			hour = hour.slice(0,-1)+"00";
-		} else if (hour.match(/^[0-9]{1,2}:[4-9]$/g)) {
-			hour = hour.slice(0,-1)+"30";
-		} else if (hour.match(/^[0-9]{1,2}:(0|3)[1-9]$/g)) {
-			hour = hour.slice(0,-1)+"0";
-        }
-		return hour;
-	};
-	var listScrool = function($list, hour) {
-		hour = autoFill(hour);
-		var index = hours.indexOf(hour);
-		if (index === -1) { 
-            index = 0;
-        }
-		var $li = $list.find("li:first");
-		//hidden lis
-		var $hid_lis = $list.find("li:hidden");
-		$list.scrollTop((index - $hid_lis.length - 1) * $li.outerHeight());
-		$list.find("li").removeClass("selected");
-		$list.find("li").eq(index).addClass("selected");
-		
-	};
-
-	jQuery(".bez_timepicker").each(function() {
-		var $this = jQuery(this);
-
-		var id = "bez_timepicker_"+$this.attr("name"),
-		    $wrapper = jQuery(document.createElement('div'))
-                .css('position', 'absolute').addClass('bez_timepicker_wrapper')
-		        .hide().attr("id", id).appendTo("body");
-		
-		var offset = $this.offset();
-		offset.top += $this.outerHeight() + 1;
-		$wrapper.offset(offset);
-		
-		var $ul = jQuery(document.createElement("ul")).appendTo($wrapper);
-
-		
-		for (var h in hours) {
-			var hour = hours[h],
-			    $li = jQuery(document.createElement("li"));
-			$li.text(hour);
-			$ul.append($li);
-		}
-       $ul.on('mousedown', 'li', function(event) {
-				var id = jQuery(this).parents("div").attr("id"),
-				    name = id.replace("bez_timepicker_", '');
-				jQuery("input[name="+name+"]").val(jQuery(this).text());
-				
-				jQuery(this).siblings().removeClass("selected");
-				jQuery(this).addClass("selected");
-			});
-
-		$this.focus(function() {
-			var $this = jQuery(this);
-			var id = "bez_timepicker_"+$this.attr("name");
-			$wrapper = jQuery("#"+id);
-			$wrapper.show();
-			listScrool($wrapper, $this.val());
-			
-		});
-		$this.blur(function() {
-			var $this = jQuery(this);
-			var id = "bez_timepicker_"+$this.attr("name");
-			$wrapper = jQuery("#"+id);
-			$wrapper.hide();
-		});
-		$this.change(function() {
-			var $this = jQuery(this);
-			var id = "bez_timepicker_"+$this.attr("name");
-			$wrapper = jQuery("#"+id);
-			$this.val($wrapper.find("li.selected").text());
-			$wrapper.hide();
-		});
-		$this.on('keyup', function() {
-			var $this = jQuery(this);
-			var id = "bez_timepicker_"+$this.attr("name");
-			$wrapper = jQuery("#"+id);
-			listScrool($wrapper, $this.val());
-		});
-	});
-	hide_unneeded_hours(jQuery("input[name=start_time]"));
-	
-	jQuery("#bez_task_context").hide();
-	jQuery("#bez_task_context_show_button").show().click(function () {
-		jQuery("#bez_task_context").show();
-		jQuery(this).hide();
-	});
-	
-	//bez_show_desc
-	jQuery(".bez_desc_row").hide();
-	jQuery("#bez_show_desc").on('click', function(e) {
-		if (jQuery(this).find(".show").is(":visible")) {
-			jQuery(".bez_desc_row").show();
-			jQuery(this).find(".hide").show();
-			jQuery(this).find(".show").hide();
-		} else {
-			jQuery(".bez_desc_row").hide();
-			jQuery(this).find(".hide").hide();
-			jQuery(this).find(".show").show();
-		}
-		e.preventDefault();
-	});
-	
-	jQuery(".bez_show_single_desc").on('click', function(e) {
-		var $row = jQuery(this).parents('tr'),
-			row_id = $row.data('bez-row-id'),
-			$desc_rows = $row.parents('table').find('.task'+row_id);
-			
-		if ($desc_rows.is(":visible")) {
-			$desc_rows.hide();
-		} else {
-			$desc_rows.show();
-		}
-		e.preventDefault();
-	});
-	
-	//highlight filters
-	var highlight = function() {
-		var $this = jQuery(this);
-		if ($this.find('option:selected').index() !== 0) {
-			$this.css('outline', '2px solid #FB5A5A');
-		} else {
-			$this.css('outline', 'none');
-		}
-	};
-	var highlight_input = function() {
-		var $this = jQuery(this);
-		if ($this.val().length > 0) {
-			$this.css('outline', '2px solid #FB5A5A');
-		} else {
-			$this.css('outline', 'none');
-		}
-	};
-	jQuery(".bez_filter_form select").change(highlight).each(highlight);
-	jQuery(".bez_filter_form input:text").blur(highlight_input).each(highlight_input);
-	
-		
-	//comment
-	jQuery('.bez_textarea_content').each(function () {
-		var $textarea = jQuery(this);
-		var $header = $textarea.parents(".bez_comment").find(".bez_toolbar");
+	bez.rich_text_editor = function($textarea, $header) {
 		//clone
 		var tb = toolbar.filter(function (button) {
 			if (button.type === 'autohead' ||
@@ -290,43 +36,16 @@ jQuery(document).ready(function () {
 			return true;
 		});
 		initToolbar($header, $textarea.attr('id'), tb);
-		
-		jQuery(".bez_button_notify").on('click', function (e) {
-			e.preventDefault();
-			
-			var selection = DWgetSelection($textarea[0]);
-			pasteText(selection, '@', {nosel: true});
-		});
+	};
+	
+	jQuery.validate({
+		lang: 'pl'
 	});
 	
-	//form tabs
+	var nparams = getNparams(getUrlVars()['id']),
+		ctl = nparams['bez'];
 	
-	if (jQuery('#bez_tabs_issue_forms ul.bez_tabs').length > 0) {
-		// For each set of tabs, we want to keep track of
-		// which tab is active and its associated content
-		var $active, $content,
-			$links = jQuery('#bez_tabs_issue_forms ul.bez_tabs').first().find('a');
-			
-		$active = jQuery($links.filter('[href="'+location.hash+'"]')[0] || $links[0]);
-		$content = jQuery($active[0].hash);
-
-		// Hide the remaining content
-		$links.not($active).each(function () {
-			jQuery(this.hash).hide();
-		});
-		jQuery('#bez_tabs_issue_forms ul.bez_tabs').on('click', 'a', function(e){
-			// Make the old tab inactive.
-			$content.hide();
-
-			// Update the variables with the new link and content
-			$active = jQuery(this);
-			$content = jQuery(this.hash);
-
-			// Make the tab active.
-			$content.show();
-
-			// Prevent the anchor's default click action
-			e.preventDefault();
-		});
+	if (typeof bez.ctl[ctl] === 'function') {
+		bez.ctl[ctl].call(ctl);
 	}
 });

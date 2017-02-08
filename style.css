@@ -23,7 +23,7 @@
 table.bez .pr2, #bds_timeline dt.pr2 {
 	background-color: #EEF6F0;
 }
-#bds_issue_box.pr2 table, #bds_issue_box.pr2 td, #bds_issue_box.pr2 th,#bds_issue_box.pr2 h2 {
+#bds_issue_box.pr2 table, #bds_issue_box.pr2 td, #bds_issue_box.pr2 th,#bds_issue_box.pr2 h2, #bds_issue_box.pr2 h1#bez_issue_title {
 	border-color: #B0D2B6;
 }
 
@@ -34,7 +34,7 @@ table.bez .pr2, #bds_timeline dt.pr2 {
 table.bez .pr1 , #bds_timeline dt.pr1 {
 	background-color: #ffd;
 }
-#bds_issue_box.pr1 table, #bds_issue_box.pr1 td, #bds_issue_box.pr1 th,#bds_issue_box.pr1 h2 {
+#bds_issue_box.pr1 table, #bds_issue_box.pr1 td, #bds_issue_box.pr1 th,#bds_issue_box.pr1 h2, #bds_issue_box.pr1 h1#bez_issue_title {
 	border-color: #dd9;
 }
 
@@ -47,7 +47,7 @@ table.bez .pr0 , #bds_timeline dt.pr0 {
 }
 
 
-#bds_issue_box.pr0 table, #bds_issue_box.pr0 td, #bds_issue_box.pr0 th,#bds_issue_box.pr0 h2 {
+#bds_issue_box.pr0 table, #bds_issue_box.pr0 td, #bds_issue_box.pr0 th,#bds_issue_box.pr0 h2, #bds_issue_box.pr0 h1#bez_issue_title {
 	border-color: #F0AFAD;
 }
 
@@ -61,7 +61,7 @@ table.bez .prNone , #bds_timeline dt.prNone {
 }
 
 
-#bds_issue_box.prNone table, #bds_issue_box.prNone td, #bds_issue_box.prNone th,#bds_issue_box.prNone h2 {
+#bds_issue_box.prNone table, #bds_issue_box.prNone td, #bds_issue_box.prNone th,#bds_issue_box.prNone h2, #bds_issue_box.prNone h1#bez_issue_title {
 	border-color: #a3c8ff;
 }
 
@@ -78,7 +78,8 @@ table.bez .prNone , #bds_timeline dt.prNone {
 	padding-right: 0.5em;
 }
 
-#bds_issue_box a {
+#bds_issue_box h1#bez_issue_title {
+	border-bottom: 1px solid #000;
 }
 
 .bez_timebox {
@@ -183,7 +184,7 @@ table.bez .prNone , #bds_timeline dt.prNone {
 	background: #e4f4f4;
 	border: 1px solid #8bbcbc;
 	border-radius: 0.4em;
-	margin-top: 0.2em;
+	margin-bottom: 10px;
 	padding: 0.5em 1em;
 }
 
@@ -354,7 +355,9 @@ table.bez .prNone , #bds_timeline dt.prNone {
     /*box-shadow: 0.1em 0.1em 1em 0 #E7E7E7 inset;*/
     margin-bottom: 1em;
 	padding: 0.5em;
+/*
 	width:100%;
+*/
 	text-align: left;
 }
 
@@ -925,6 +928,10 @@ input.days {
 	display: table-row;
 }
 
+.bez_comments .bez_left_col {
+	width: 100%;
+}
+
 .bez_comments .bez_left_col, .bez_comments .bez_right_col {
 	display: table-cell;
 	margin: 0;
@@ -933,7 +940,7 @@ input.days {
 
 .bez_comments .bez_right_col {
 	padding-left: 10px;
-	width: 150px;
+	min-width: 150px;
 }
 
 .bez_comments .bez_right_col h2 {
@@ -995,8 +1002,12 @@ input.days {
     text-decoration: none !important;
 }
 
+.bez_second_lv_buttons {
+	display: flex;
+}
+
 .bez_second_lv_buttons .bez_subscribe_button {
-	float: left;
+	display: inline-block;
 	margin-right: 10px;
 }
 
@@ -1005,4 +1016,16 @@ input.days {
     color: #767676;
     line-height: 1.5;
     
+}
+
+#issue_participants {
+	list-style: none;
+	padding-left: 5px;
+	
+}
+#issue_participants li {
+	margin-left: 0;
+}
+#issue_participants a {
+	color: inherit;
 }

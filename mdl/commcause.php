@@ -32,10 +32,10 @@ class BEZ_mdl_Commcause extends BEZ_mdl_Entity {
 			'datetime'	=> array(array('sqlite_datetime'), 'NOT NULL'),
 			'reporter' => array(array('dw_user'), 'NOT NULL'),
 			'type' => array(array('select', array('0', '1', '2')), 'NOT NULL'),
-			'content' => array(array('length', 10000), 'NULL'),
-			'content_cache' => array(array('length', 10000), 'NULL'),
+			'content' => array(array('length', 10000), 'NOT NULL'),
+			'content_cache' => array(array('length', 10000), 'NOT NULL'),
 			
-			'coordinator' => array(array('dw_user'), 'NOT NULL')
+			'coordinator' => array(array('dw_user', array('-proposal')), 'NOT NULL')
 		));
 		
 		//new object
@@ -43,18 +43,19 @@ class BEZ_mdl_Commcause extends BEZ_mdl_Entity {
 			$val_data = $this->validator->validate($defaults,
 				array('issue', 'coordinator')); 
 			if ($val_data === false) {
-				throw new Exception('Invalid defaults.');
+				throw new ValidationException('commcauses',	$this->validator->get_errors());
 			}
 			
 			foreach ($val_data as $k => $v) {
 				$this->$k = $v;
 			}
 			
+			$this->type = '0';
 			$this->reporter = $this->auth->get_user();
 			$this->datetime = $this->sqlite_date();
 		}
 		
-		if ($this->coordinator == NULL) {
+		if ($this->coordinator === NULL) {
 			throw new Exception('commcause coordinator not specified.');
 		}
 		
@@ -62,18 +63,25 @@ class BEZ_mdl_Commcause extends BEZ_mdl_Entity {
 	}
 	
 	public function set_data($data) {
+		//only coordinator can add causes
+		$input = array('content');
+		if ($this->auth->get_level() >= 15) {
+			$input[] = 'type';
+		}
+
+		
+		//Możemy poprawiać tylko swoje komentarze i tylko jeżeli nie są przyczynami.
 		if (! (	$this->auth->get_level() >= 15 ||
-				$this->reporter === $this->auth->get_user())
+				($this->type === '0' && $this->reporter === $this->auth->get_user()))
 			) {
 			throw new Exception('no permission');
 		}
+
 			
-		$val_data = $this->validator->validate($data, array('type', 'content')); 
+		$val_data = $this->validator->validate($data, $input); 
 		if ($val_data === false) {
-			$this->errors = true;
-			return false;
+			throw new ValidationException('commcauses',	$this->validator->get_errors());
 		}
-		$this->errors = false;
 		
 		foreach ($val_data as $k => $v) {
 			$this->$k = $v;

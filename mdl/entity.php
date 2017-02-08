@@ -9,6 +9,8 @@ if(!defined('DOKU_INC')) die();
 class BEZ_mdl_Entity {	
 	protected $auth, $validator, $model, $helper;
 	
+	protected $parse_int = array();
+	
 	public function get_level() {
 		return $this->auth->get_level();
 	}
@@ -46,7 +48,11 @@ class BEZ_mdl_Entity {
 	public function __get($property) {
 		$columns = array_merge($this->get_columns(), $this->get_virtual_columns());
 		if (property_exists($this, $property) && in_array($property, $columns)) {
-			return $this->$property;
+			if (in_array($property, $this->parse_int)) {
+				return (int)$this->$property;
+			} else {
+				return $this->$property;
+			}
 		}
 	}
 	

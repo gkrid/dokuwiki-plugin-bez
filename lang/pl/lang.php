@@ -338,7 +338,6 @@ $lang['save_without_changing_date'] = 'Zapisz bez zmiany daty';
 
 $lang['sort_by_open_date'] = 'Sortuj wg daty otwarcia';
 
-$lang['issue_is_proposal'] = 'Nie można dodawać przyczyn ani zadań dopóki problem jest propozycją.';
 
 $lang['casue_cant_remove'] = 'Nie możesz usunąć przyczyny z dodanymi zadaniami.';
 
@@ -375,7 +374,7 @@ $lang['issues_juxtaposition'] = 'Zestawienie problemów';
 $lang['tasks_juxtaposition'] = 'Zestawienie zadań';
 
 $lang['issue_unclosed_tasks'] = 'Nie można zamknąć problemu, dopóki zawiera on nierozwiązane zadania.';
-$lang['issue_is_proposal'] = 'Nie można dodawać przyczny ani zadań, dopóki problem jest propozycją.';
+$lang['issue_is_proposal'] = 'Nie można dodawać zadań, dopóki problem jest propozycją.';
 $lang['issue_no_tasks'] = 'Nie można zamknąć problemu, dopóki nie posiada żadnego przypisanego zadania.';
 $lang['cause_without_task'] = 'Nie możesz zamknąć problemu jeżeli posiada on przycznyn bez przypisanych działań.';
 
@@ -485,6 +484,8 @@ $lang['norifications'] = 'Powiadomienia';
 
 $lang['subscribe'] = 'Subskrybuj';
 
+$lang['subscribent'] = 'Subskrbent';
+
 $lang['unsubscribe'] = 'Wypisz';
 
 $lang['subscribed_info'] = 'Otrzymujesz powiadomienia o zmianach w tym problemie.';
@@ -494,3 +495,7 @@ $lang['not_subscribed_info'] = 'Nie otrzymujesz powiadomień o zmianach w tym p
 $lang['show_comments'] = 'Pokaż komentarze';
 $lang['hide_comments'] = 'Ukryj komentarze';
 
+$lang['correct'] = 'Popraw';
+
+$lang['from_hour'] = 'od';
+$lang['to_hour'] = 'do';

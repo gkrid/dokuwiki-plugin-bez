@@ -23,6 +23,76 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 		$controller->register_hook('ACTION_ACT_PREPROCESS', 'BEFORE', $this, 'action_act_preprocess');
 		$controller->register_hook('TPL_ACT_RENDER', 'BEFORE', $this, 'tpl_act_render');
 		$controller->register_hook('TEMPLATE_PAGETOOLS_DISPLAY', 'BEFORE', $this, 'tpl_pagetools_display');
+		$controller->register_hook('TPL_METAHEADER_OUTPUT', 'BEFORE', $this, 'include_dependencies', array());
+	}
+	
+	public function include_dependencies(Doku_Event $event) {
+		// Adding a stylesheet 
+		$event->data["link"][] = array (
+		  "type" => "text/css",
+		  "rel" => "stylesheet", 
+		  "href" => DOKU_BASE.
+			"lib/plugins/bez/lib/jquery.timepicker-1.11.9-0/jquery.timepicker.css",
+		);
+		
+		// Adding a JavaScript File
+		$event->data["script"][] = array (
+		  "type" => "text/javascript",
+		  "src" => DOKU_BASE.
+			"lib/plugins/bez/lib/jquery.timepicker-1.11.9-0/jquery.timepicker.min.js",
+		  "_data" => "",
+		);
+		
+		// Adding a JavaScript File
+		$event->data["script"][] = array (
+		  "type" => "text/javascript",
+		  "src" => DOKU_BASE.
+			"lib/plugins/bez/lib/jquery.datepair/datepair.js",
+		  "_data" => "",
+		);
+		
+		// Adding a JavaScript File
+		$event->data["script"][] = array (
+		  "type" => "text/javascript",
+		  "src" => DOKU_BASE.
+			"lib/plugins/bez/lib/jquery.datepair/jquery.datepair.js",
+		  "_data" => "",
+		);
+		
+		//Validetta
+		
+		// Adding a stylesheet 
+		//~ $event->data["link"][] = array (
+		  //~ "type" => "text/css",
+		  //~ "rel" => "stylesheet", 
+		  //~ "href" => DOKU_BASE.
+			//~ "lib/plugins/bez/lib/validetta-v1.0.1-dist/validetta.min.css",
+		//~ );
+		
+		//~ // Adding a JavaScript File
+		//~ $event->data["script"][] = array (
+		  //~ "type" => "text/javascript",
+		  //~ "src" => DOKU_BASE.
+			//~ "lib/plugins/bez/lib/validetta-v1.0.1-dist/validetta.min.js",
+		  //~ "_data" => "",
+		//~ );
+		
+		$event->data["link"][] = array (
+		  "type" => "text/css",
+		  "rel" => "stylesheet", 
+		  "href" => DOKU_BASE.
+			"lib/plugins/bez/lib/jquery.form-validator/theme-default.min.css",
+		);
+		
+		
+		$event->data["script"][] = array (
+		  "type" => "text/javascript",
+		  "src" => DOKU_BASE.
+			"lib/plugins/bez/lib/jquery.form-validator/jquery.form-validator.min.js",
+		  "_data" => "",
+		);
+		
+		
 	}
 
 	public function __construct()
@@ -94,9 +164,10 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 	{
 		global $auth, $conf, $INFO, $ID;
 		global $template, $bezlang, $value, $errors;
-		
+
 		try {
-			$this->model = new BEZ_mdl_Model($auth, $INFO['client'], $conf['lang']);
+			$this->model =
+				new BEZ_mdl_Model($auth, $INFO['client'], $conf['lang'], $this->lang);
 
 			if ($this->action == '')
 				return false;

@@ -330,8 +330,6 @@ $lang['save_without_changing_date'] = 'Save without changing date';
 
 $lang['sort_by_open_date'] = 'Sort by open date';
 
-$lang['issue_is_proposal'] = 'You cannot add causes and tasks until this issue is porposal.';
-
 $lang['casue_cant_remove'] = 'You cannot remove cause with related tasks.';
 
 $lang['add_cause'] = 'Add cause';
@@ -364,7 +362,7 @@ $lang['issues_juxtaposition'] = 'Juxtaposition of issues';
 $lang['tasks_juxtaposition'] = 'Juxtaposition of tasks';
 
 $lang['issue_unclosed_tasks'] = 'You cannot close issues until some tasks are not closed.';
-$lang['issue_is_proposal'] = 'You cannot add causes and tasks until issue is proposal.';
+$lang['issue_is_proposal'] = 'You cannot add tasks until the issue is proposal.';
 $lang['issue_no_tasks'] = 'You cannot close the issue until it has no tasks.';
 $lang['cause_without_task'] = 'You cannot close the issue if you have some causes without tasks.';
 
@@ -463,6 +461,8 @@ $lang['rejected_tasks'] = 'Rejected tasks';
 
 $lang['subscribe'] = 'Subscribe';
 
+$lang['subscribent'] = 'Subscribent';
+
 $lang['unsubscribe'] = 'Unsubscribe';
 
 $lang['subscribed_info'] = "You're receiving notifications about changes in this problem.";
@@ -471,3 +471,8 @@ $lang['not_subscribed_info'] = "You're not receiving notifications about changes
 
 $lang['show_comments'] = 'Show comments';
 $lang['hide_comments'] = 'Hide comments';
+
+$lang['correct'] = 'Correct';
+
+$lang['from_hour'] = 'from';
+$lang['to_hour'] = 'to';

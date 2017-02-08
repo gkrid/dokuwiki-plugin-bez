@@ -119,7 +119,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 		
 		$val_data = $this->validator->validate($data, array('reporter', 'date', 'close_date'));
 		if ($val_data === false) {
-			return false;
+			throw new ValidationException('tasks', $this->validator->get_errors());
 		}
 		
 		foreach ($val_data as $k => $v) {
@@ -153,12 +153,11 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 				return false;	
 			}
 		} else {
-			$this->validator->set_error('', 'no permission');
-			return false;	
+			throw new Exception('no permission');
 		}
 						
 		if ($val_data === false) {
-			return false;
+			throw new ValidationException('tasks', $this->validator->get_errors());
 		}
 
 		foreach ($val_data as $k => $v) {
@@ -192,7 +191,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 		
 		$val_data = $this->validator->validate($data, array('state', 'reason'));
 		if ($val_data === false) {
-			return false;
+			throw new ValidationException('tasks', $this->validator->get_errors());
 		}
 		
 		//if state is changed

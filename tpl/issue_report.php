@@ -1,8 +1,13 @@
-<div class="bds_block <?php echo $template['action'] ?>">
-<form action="<?php echo $template['uri'] ?>?id=<?php echo $this->id('issue_report', 'id', $template['issue_id'], 'action', $template['action']) ?>" method="POST">
+<div class="bds_block">
+
+<?php $id = $this->id('issue_report', 'id', $template['issue_id'], 'action', $template['form_action']) ?>
+<form action="?id=<?php echo $id ?>" method="POST">
+
+<input type="hidden" name="id" value="<?php echo $id ?>">
+
 <fieldset id="bds_issue_box"  class="bds_form pr<?php echo $template['priority'] ?>">
 
-<?php if ($template['action'] == 'update'): ?>
+<?php if ($template['form_action'] === 'update'): ?>
 <div class="row">
 <label for="id"><?php echo $bezlang['id'] ?>:</label>
 <span><strong>#<?php echo $template['issue_id'] ?></strong></span>
@@ -10,16 +15,16 @@
 <?php endif ?>
 
 
-<?php if ($template['user_admin']): ?>
+<?php if ($template['user_level'] >= 20): ?>
 <div class="row">
 <label for="type"><?php echo $bezlang['type'] ?>:</label>
 <span>
 <select name="type" id="type">
 <option <?php if ($value['type'] == '') echo 'selected' ?>
 	value="">--- <?php echo $bezlang['issue_type_no_specified'] ?> ---</option>
-<?php foreach ($template['issue_types'] as $key => $name): ?>
-	<option <?php if ($value['type'] == $key) echo 'selected' ?>
-	 value="<?php echo $key ?>"><?php echo $name ?></option>
+<?php foreach ($template['issuetypes'] as $issuetype): ?>
+	<option <?php if ($value['type'] === $issuetype->id) echo 'selected' ?>
+	 value="<?php echo $issuetype->id ?>"><?php echo $issuetype->type ?></option>
 <?php endforeach ?>
 </select>
 </span>
@@ -33,7 +38,7 @@
 	value="-proposal">--- <?php echo $bezlang['state_proposal'] ?> ---</option>
 
 <?php foreach ($template['nicks'] as $nick => $name): ?>
-	<option <?php if ($value['coordinator'] == $nick) echo 'selected' ?>
+	<option <?php if ($value['coordinator'] === $nick) echo 'selected' ?>
 	 value="<?php echo $nick ?>"><?php echo $name ?></option>
 <?php endforeach ?>
 </select>
@@ -51,22 +56,21 @@
 <div class="row">
 <label for="description"><?php echo $bezlang['description'] ?>:</label>
 <span>
-<textarea name="description" id="description" class="edit">
-<?php echo $value['description'] ?>
-</textarea>
+	<div class="bez_toolbar"></div>
+	<textarea name="description" id="description" class="edit"><?php echo $value['description'] ?></textarea>
 </span>
 </div>
-<?php if ($template['action'] == 'update' && $template['user_coordinator']): ?>
+<?php if ($template['form_action'] === 'update'): ?>
 	<div class="row">
 	<label for="state"><?php echo $bezlang['state'] ?>:</label>
 	<span>
-		<strong><?php echo $template['state'] ?></strong>
+		<strong><?php echo $template['issue']->state_string ?></strong>
 	</span>
 	</div>
-	<?php if ($template['raw_state'] == 1) : ?>
+	<?php if ($template['issue']->state !== '0') : ?>
 		<div class="row">
 			<label for="opinion">
-				<?php if ($template['anytasks']): ?>
+				<?php if ($template['issue']->assigned_tasks_count > 0): ?>
 					<?php echo $bezlang['opinion'] ?>:
 				<?php else: ?>
 					<?php echo $bezlang['reason'] ?>:
@@ -77,12 +81,18 @@
 			</span>
 		</div>
 	<?php endif ?>
+	<div class="row">
+		<label></label>
+		<span style="padding-top:0px;">
+			<input type="submit" value="<?php echo $bezlang['save'] ?>">&nbsp;&nbsp;
+			<a href="?id=<?php echo $this->id('issue', 'id', $template['issue_id']) ?>" class="bez_delete_button bez_link_button">
+				<?php echo $bezlang['cancel'] ?>
+			</span>
+	</div>
 <?php endif ?>
 </fieldset>
 
-<input type="submit" value="<?php echo $bezlang['save'] ?>">
- <a href="<?php echo $template['uri'] ?>?id=<?php echo $this->id('issue', 'id', $template['issue_id']) ?>" class="bez_delete_button bez_link_button bez_cancel_button">
-	<?php echo $bezlang['cancel'] ?>
+
 </a>
 </form>
 </div>

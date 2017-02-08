@@ -4,7 +4,7 @@ if(!defined('DOKU_INC')) die();
 
 require_once 'entity.php';
 
-class BEZ_mdl_Tasktype extends BEZ_mdl_Entity {
+class BEZ_mdl_Issuetype extends BEZ_mdl_Entity {
 
 	protected $id, $pl, $en;
 	protected $refs, $type;
@@ -18,12 +18,13 @@ class BEZ_mdl_Tasktype extends BEZ_mdl_Entity {
 	}
 	
 	public function get_table_name() {
-		return 'tasktypes';
+		return 'issuetypes';
 	}
 		
 	private function set_type() {
 		$code = $this->model->lang_code;
 		$this->type = $this->$code;
+		
 	}
 	
 	public function __construct($model) {
