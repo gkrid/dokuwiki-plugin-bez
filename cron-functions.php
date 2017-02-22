@@ -7,7 +7,8 @@ function log_errors() {
 //	}
 }
 
-function send_message($URI, $http, $conf, $helper, $auth, $bezlang) {
+function send_message($URI, $http, $conf, $helper, $auth, $simulate=true) {
+    global $bezlang;
    //email => array('user' => array('issues' => array(), 'tasks' => array()))
     $msg = array();
     $output = array();
@@ -77,8 +78,8 @@ function send_message($URI, $http, $conf, $helper, $auth, $bezlang) {
         include "cron-message-tpl.php";
         $body = ob_get_clean();
 
-        $helper->mail($to, $subject, $body, $URI, "text/html");
-        $output[] = 'mail send to: '. $to;
+        $mail = $helper->mail($to, $subject, $body, $URI, "text/html", $simulate);
+        $output[] = $mail;
     } 
     
     return $output;

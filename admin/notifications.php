@@ -19,9 +19,9 @@ class admin_plugin_bez_notifications extends DokuWiki_Admin_Plugin {
     /**
      * handle user request
      */
-    private $output = array();
+    private $mails = array();
     function handle() {
-        global $auth, $conf;
+        global $auth, $conf, $bezlang;
         
         //inicialize lang array
         $this->getLang('bez');
@@ -32,12 +32,17 @@ class admin_plugin_bez_notifications extends DokuWiki_Admin_Plugin {
             return;
         //importuj
         if (isset($_POST['send'])) {
+            $simulate = false;
+            if (isset($_POST['simulate'])) {
+                $simulate = true;
+            }
             $http = 'http';
             if ($_SERVER['HTTPS'] === 'on') {
                 $http = 'https';
             }
             $helper = $this->loadHelper('bez');
-            $this->output = send_message($_SERVER['SERVER_NAME'], $http, $conf, $helper, $auth, $this->lang);
+            $bezlang = $this->lang;
+            $this->mails = send_message($_SERVER['SERVER_NAME'], $http, $conf, $helper, $auth, $simulate);
         }
     }
     /**
@@ -48,16 +53,19 @@ class admin_plugin_bez_notifications extends DokuWiki_Admin_Plugin {
         ptln('<form action="' . wl($ID) . '" method="post">');
         ptln('  <input type="hidden" name="do"   value="admin" />');
         ptln('  <input type="hidden" name="page" value="bez_notifications" />');
+        ptln('  <label><input type="checkbox" checked name="simulate" /> Symuluj (nie wysyłaj wiadomości, tylko wygeneruj raport)</label><br><br>');
         formSecurityToken();
         ptln('  <input type="submit" name="send"  value="Wyślij powiadomienia" />');
         ptln('</form>');
-        $log = array_reduce($this->output, function($carry, $item) {
-            $carry .= htmlspecialchars($item) . "\n";
+        $log = array_reduce($this->mails, function($carry, $mail) {
+            list($to, $subject, $body, $headers) = $mail;
+            $carry .= '<div class="bez-mail-info">';
+            $carry .= '<h1>Mail send to: ' . htmlspecialchars($to) . '</h1>';
+            $carry .= '<div class="content">' . $body . '</div>';
+            $carry .= '</div>';
             return $carry;
         }, '');
-        ptln('<pre style="margin-top: 10px;">');
         ptln($log);
-        ptln('</pre>');
     }
     
 }

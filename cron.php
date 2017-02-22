@@ -46,4 +46,4 @@ require_once 'cron-functions.php';
 $auth = new auth_plugin_authplain();
 
 
-send_message($URI, $http, $conf, $helper, $auth, $bezlang);
+send_message($URI, $http, $conf, $helper, $auth);

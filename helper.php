@@ -200,13 +200,6 @@ class helper_plugin_bez extends dokuwiki_plugin
 		return $array;
 	}
 	public function mail($to, $subject, $body, $URI='', $contentType = "text/plain", $debug = false) {
-		if ($debug) {
-			echo $to."\n";
-			echo $subject."\n";
-			echo $body;
-			echo "\n\n";
-			return;
-		}
 		$subject="=?UTF-8?B?".base64_encode($subject)."?="; 
 		if ($URI == '')
 			$URI = $_SERVER['SERVER_NAME'];
@@ -216,8 +209,11 @@ class helper_plugin_bez extends dokuwiki_plugin
 		if ($contentType != "text/plain")
 			$headers .= "MIME-Version: 1.0\r\n";
 		$headers .= "Content-Transfer-Encoding: 8bit\r\n";
-
-		mail($to, $subject, $body, $headers);
+        
+        if ($debug === false) {
+            mail($to, $subject, $body, $headers);
+        }
+        return array($to, $subject, $body, $headers);
 	}
 	public function get_wiki_title() {
 		global $conf;
