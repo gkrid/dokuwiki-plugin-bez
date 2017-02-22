@@ -7,6 +7,37 @@ require_once 'auth.php';
 class BEZ_mdl_Factory {
 	protected $model, $auth;
 	
+	protected $filter_field_map = array();
+	
+	protected function build_where($filters=array()) {
+		$execute = array();
+		$where_q = array();
+		foreach ($filters as $filter => $value) {
+			if (isset($this->filter_field_map[$filter])) {
+				$field = $this->filter_field_map[$filter];
+			} else {
+				$field = $filter;
+			}
+			
+			$operator = '=';
+			if (is_array($value)) {
+				if ($value[0] === '!=') {
+					$operator = '!=';
+					$value = $value[1];
+				}
+			}
+			
+			$where_q[] = $field." $operator :$filter";
+			$execute[":$filter"] = $value;
+		}
+		
+		$where = '';
+		if (count($where_q) > 0) {
+			$where = ' WHERE '.implode(' AND ', $where_q);
+		}	
+		return array($where, $execute);
+	}
+	
 	public function __construct($model) {
 		$this->model = $model;
 		$this->auth = new BEZ_mdl_Auth($this->model->dw_auth, $this->model->user_nick);

@@ -13,7 +13,7 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 	private $norender = false;
 	private $lang_code = '';
 	
-	private $model;
+	private $model_object = null;
 
 	/**
 	 * Register its handlers with the DokuWiki's event controller
@@ -24,6 +24,7 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 		$controller->register_hook('TPL_ACT_RENDER', 'BEFORE', $this, 'tpl_act_render');
 		$controller->register_hook('TEMPLATE_PAGETOOLS_DISPLAY', 'BEFORE', $this, 'tpl_pagetools_display');
 		$controller->register_hook('TPL_METAHEADER_OUTPUT', 'BEFORE', $this, 'include_dependencies', array());
+		$controller->register_hook('AJAX_CALL_UNKNOWN', 'BEFORE', $this,'_ajax_call');
 	}
 	
 	public function include_dependencies(Doku_Event $event) {
@@ -59,24 +60,6 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 		  "_data" => "",
 		);
 		
-		//Validetta
-		
-		// Adding a stylesheet 
-		//~ $event->data["link"][] = array (
-		  //~ "type" => "text/css",
-		  //~ "rel" => "stylesheet", 
-		  //~ "href" => DOKU_BASE.
-			//~ "lib/plugins/bez/lib/validetta-v1.0.1-dist/validetta.min.css",
-		//~ );
-		
-		//~ // Adding a JavaScript File
-		//~ $event->data["script"][] = array (
-		  //~ "type" => "text/javascript",
-		  //~ "src" => DOKU_BASE.
-			//~ "lib/plugins/bez/lib/validetta-v1.0.1-dist/validetta.min.js",
-		  //~ "_data" => "",
-		//~ );
-		
 		$event->data["link"][] = array (
 		  "type" => "text/css",
 		  "rel" => "stylesheet", 
@@ -94,9 +77,22 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 		
 		
 	}
+	
+	public function __get($name) {
+		global $auth, $conf, $INFO;
+		if ($name === 'model') {
+			if ($this->model_object === null) {
+				if ($INFO === null) {
+					$INFO = pageinfo();
+				}
+				$this->model_object =
+				new BEZ_mdl_Model($auth, $INFO['client'], $conf['lang'], $this->lang);
+			}
+			return $this->model_object;
+		}
+	}
 
-	public function __construct()
-	{
+	public function __construct() {
 		global $ACT;
 		$this->helper = $this->loadHelper('bez');
 		$this->setupLocale();
@@ -123,11 +119,13 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 		}
 		
 		//set default filters
-		if(!isset($_COOKIE[bez_tasks_filters]))
+		if(!isset($_COOKIE[bez_tasks_filters])) {
 			setcookie("bez_tasks_filters[year]", date("Y"));
-		if(!isset($_COOKIE[bez_issues_filters]))
+		}
+		if(!isset($_COOKIE[bez_issues_filters])) {
 			setcookie("bez_issues_filters[year]", date("Y"));
-			}
+		}
+	}
 
 	public function id() {
 		$args = func_get_args();
@@ -150,6 +148,45 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 		else
 			return '<a href="?id='.$this->id('issue_task', 'id', $issue, 'tid', $task).'">#'.$issue.' #z'.$task.'</a>';
 	}
+	
+	/**
+	 * handle ajax requests
+	 */
+	function _ajax_call(Doku_Event $event, $param) {
+		global $auth;
+		if ($event->data !== 'plugin_bez') {
+			return;
+		}
+		//no other ajax call handlers needed
+		$event->stopPropagation();
+		$event->preventDefault();
+	 
+		//data
+		$data = array();
+	 
+		//json library of DokuWiki
+		$json = new JSON();
+		
+		$action = $_POST['action'];
+		try {
+			if ($action === 'commcause_delete') {
+				$kid = $_POST['kid'];
+				
+				$commcause = $this->model->commcauses->get_one($kid);
+				$this->model->commcauses->delete($commcause);
+				
+				$data['state'] = 'ok';
+			}
+		} catch(Exception $e) {
+			$data['state'] = 'error';
+			$data['msg'] = strval($e);
+		}
+	 
+		//set content type
+		header('Content-Type: application/json');
+		echo $json->encode($data);
+	}
+	
 
 
 	public function tpl_pagetools_display($event, $param) {
@@ -162,13 +199,10 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 
 	public function action_act_preprocess($event, $param)
 	{
-		global $auth, $conf, $INFO, $ID;
+		global $INFO;
 		global $template, $bezlang, $value, $errors;
 
 		try {
-			$this->model =
-				new BEZ_mdl_Model($auth, $INFO['client'], $conf['lang'], $this->lang);
-
 			if ($this->action == '')
 				return false;
 
@@ -202,7 +236,7 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 
 	public function tpl_act_render($event, $param)
 	{
-		global $template, $bezlang, $value, $errors, $INFO;
+		global $template, $bezlang, $value, $errors;
 		try {
 			
 			if ($this->action == '')

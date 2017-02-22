@@ -1,17 +1,3 @@
-<?php if ($template['issue']->opened_tasks_count > 0): ?>
-	<div class="info"><?php echo $bezlang['issue_unclosed_tasks'] ?></div>
-<?php endif ?>
-<?php if ($template['issue']->coordinator === '-proposal'): ?>
-	<div class="info"><?php echo $bezlang['issue_is_proposal'] ?></div>
-<?php endif ?>
-<?php if ($template['issue']->causes_without_tasks_count() > 0): ?>
-	<div class="info"><?php echo $bezlang['cause_without_task'] ?></div>
-<?php endif ?>
-
-<?php if (	$template['issue']->assigned_tasks_count > 0 &&
-			$template['issue']->state === '0'): ?>
-	<div class="info"><?php echo $bezlang['issue_no_tasks'] ?></div>
-<?php endif ?>
 <div id="bds_issue_box" class="pr<?php echo $template['issue']->priority ?>">
 <h1>
 <?php echo $this->html_issue_link($template['issue']->id) ?>
@@ -80,8 +66,21 @@
 	</a>
 </form>
 <?php else: ?>
+	<?php if ($template['issue']->opened_tasks_count > 0): ?>
+		<div class="info"><?php echo $bezlang['issue_unclosed_tasks'] ?></div>
+	<?php endif ?>
+	<?php if ($template['issue']->coordinator === '-proposal'): ?>
+		<div class="info"><?php echo $bezlang['issue_is_proposal'] ?></div>
+	<?php endif ?>
+	<?php if ($template['issue']->causes_without_tasks_count() > 0): ?>
+		<div class="info"><?php echo $bezlang['cause_without_task'] ?></div>
+	<?php endif ?>
+	<?php if (	$template['issue']->assigned_tasks_count === 0 &&
+				$template['issue']->state === '0'): ?>
+		<div class="info"><?php echo $bezlang['issue_no_tasks'] ?></div>
+	<?php endif ?>
 <div class="bez_buttons">
-	<?php if ($template['issue']->get_level() >= 15): ?>
+	<?php if ((!isset($template['no_edit']) || $template['no_edit'] === false) &&                  $template['issue']->get_level() >= 15): ?> 
 		<?php if ($template['issue']->state !== '0'): ?>
 			<a href="?id=<?php echo $this->id('issue', 'id', $template['issue']->id, 'action', 'reopen') ?>" class="bds_inline_button">
 			 	↺ <?php echo $bezlang['issue_reopen'] ?>
@@ -99,7 +98,7 @@
 		<?php endif ?>
 	<?php endif ?> 	
 	
-	<?php if ($template['issue']->get_level() >= 15): ?> 
+	<?php if ((!isset($template['no_edit']) || $template['no_edit'] === false) &&                  $template['issue']->get_level() >= 15): ?> 
 		<a href="?id=<?php echo $this->id('issue_report', 'action', 'edit', 'id', $template['issue']->id) ?>" class="bds_inline_button">
 		 	✎ <?php echo $bezlang['edit'] ?>
 		</a>

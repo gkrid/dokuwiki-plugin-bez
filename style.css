@@ -145,22 +145,22 @@ table.bez .prNone , #bds_timeline dt.prNone {
 	padding-right: 0.4em;
 }
 
-#bez_tasks .task {
+.task {
 	position: relative;
 }
 
-#bez_tasks h2 {
+.task h2 {
 	font-size: 1.2em;
 	font-weight: bold;
 	color: black;
 	border: 0;
     box-shadow: none;
 }
-#bez_tasks h2 a {
+.task h2 a {
 	font-size: 1.3em;
 }
 
-#bez_tasks h3 {
+.task h3 {
     border-bottom: 1px dotted #8bbcbc;
     font-size: 90%;
 }
@@ -169,18 +169,18 @@ table.bez .prNone , #bds_timeline dt.prNone {
 	margin-bottom: 3em;
 }
 
-#bez_tasks table {
+.task table {
 	clear:both;
 	margin-top: 3em;
 }
 
-#bez_tasks table {
+.task table {
 	clear:both;
 	border-top-color: #8bbcbc;
 	margin-top: 3em;
 }
 
-#bez_tasks div.task {
+div.task {
 	background: #e4f4f4;
 	border: 1px solid #8bbcbc;
 	border-radius: 0.4em;
@@ -188,21 +188,21 @@ table.bez .prNone , #bds_timeline dt.prNone {
 	padding: 0.5em 1em;
 }
 
-#bez_tasks td, #bez_tasks th{
+.task td, .task th{
 	border-bottom-color: #8bbcbc;
 }
 
-#bez_tasks .bds_edit_button {
+.task .bds_edit_button {
 	position:absolute;
 	bottom: 0.5em;
 	right: 6em;
 }
-#bez_tasks .bds_send_button {
+.task .bds_send_button {
 	position:absolute;
 	bottom: 0.5em;
 	right: 0.5em;
 }
-
+bez_comment
 /*commets*/
 #bez_comments .bez_buttons {
 	bottom: -1.3em;
@@ -284,9 +284,7 @@ table.bez .prNone , #bds_timeline dt.prNone {
 /*end causes*/
 
 .bez_buttons {
-	position: absolute;
-	bottom: 0.4em;
-	right: 0.2em;
+	text-align: right;
 }
 
 .bez_buttons a {
@@ -769,7 +767,7 @@ input.days {
 	padding: 8px;
 }
 
-.bez_comments .bez_comment h2 {
+.bez_comments .bez_comment  .commcause_content h2 {
 	font-size: 15px;
 	font-weight: normal;
 	height:50px;
@@ -821,7 +819,7 @@ input.days {
 	display: inline-block;
 }
 
-.bez_comment.bez_my_comment h2 {
+.bez_comment.bez_my_comment .commcause_content h2 {
 	background: #f2f8fa;
 	border-color: #bfccd1;
 
@@ -864,7 +862,7 @@ input.days {
 	border-color: #ddb68d;
 }
 
-.bez_comment.bez_cause h2 {
+.bez_comment.bez_cause .commcause_content h2 {
 	background-color: #ffeedc;
 	border-color: #ddb68d;
 }
@@ -880,7 +878,7 @@ input.days {
 
 /*forms*/
 
-.bez_comments .bez_comment_form h2 {
+.bez_comments .bez_comment_form .commcause_content h2 {
 	display: flex;
 }
 

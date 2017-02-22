@@ -261,16 +261,20 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 			return true;
 		}
 	}
-		
+    
+    private $causes_without_tasks = -1;
 	public function causes_without_tasks_count() {
-		$sth = $this->model->db->prepare('SELECT COUNT(*) FROM
-		(SELECT commcauses.id, COUNT(*) as cnt 
-			FROM commcauses LEFT JOIN tasks ON commcauses.id = tasks.cause
-			WHERE commcauses.type > 0 AND commcauses.issue = ?
-			GROUP BY commcauses.id) WHERE cnt = 1');
-		$sth->execute(array($this->id));
-		$fetch = $sth->fetch();
-		
-		return $fetch[0];
+        if ($this->causes_without_tasks === -1) {
+            $sth = $this->model->db->prepare('SELECT COUNT(*) FROM
+            (SELECT commcauses.id, COUNT(*) as cnt 
+                FROM commcauses LEFT JOIN tasks ON commcauses.id = tasks.cause
+                WHERE commcauses.type > 0 AND commcauses.issue = ?
+                GROUP BY commcauses.id) WHERE cnt = 1');
+            $sth->execute(array($this->id));
+            $fetch = $sth->fetch();
+
+            $this->causes_without_tasks = (int)$fetch[0];
+        }
+        return $this->causes_without_tasks;
 	}
 }

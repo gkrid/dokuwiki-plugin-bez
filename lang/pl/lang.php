@@ -499,3 +499,8 @@ $lang['correct'] = 'Popraw';
 
 $lang['from_hour'] = 'od';
 $lang['to_hour'] = 'do';
+
+$lang['next_open'] = 'Następny otwarty';
+$lang['prev_open'] = 'Poprzedni otwarty';
+
+$lang['js']['remove_confirm'] = 'Czy na pewno chcesz usunąć ten element?';

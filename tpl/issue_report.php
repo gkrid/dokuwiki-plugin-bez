@@ -56,7 +56,7 @@
 <div class="row">
 <label for="description"><?php echo $bezlang['description'] ?>:</label>
 <span>
-	<div class="bez_toolbar"></div>
+	<div class="bez_description_toolbar"></div>
 	<textarea name="description" id="description" class="edit"><?php echo $value['description'] ?></textarea>
 </span>
 </div>
@@ -77,22 +77,22 @@
 				<?php endif ?>
 			</label>
 			<span>
+				<div class="bez_opinion_toolbar"></div>
 				<textarea name="opinion" id="opinion" class="edit"><?php echo $value['opinion'] ?></textarea>
 			</span>
 		</div>
 	<?php endif ?>
-	<div class="row">
-		<label></label>
-		<span style="padding-top:0px;">
-			<input type="submit" value="<?php echo $bezlang['save'] ?>">&nbsp;&nbsp;
-			<a href="?id=<?php echo $this->id('issue', 'id', $template['issue_id']) ?>" class="bez_delete_button bez_link_button">
-				<?php echo $bezlang['cancel'] ?>
-			</span>
-	</div>
 <?php endif ?>
+<div class="row">
+    <label></label>
+    <span style="padding-top:0px;">
+        <input type="submit" value="<?php echo $bezlang['save'] ?>">&nbsp;&nbsp;
+        <a href="?id=<?php echo $this->id('issue', 'id', $template['issue_id']) ?>" class="bez_delete_button bez_link_button">
+            <?php echo $bezlang['cancel'] ?>
+        </a>
+    </span>
+</div>
 </fieldset>
 
-
-</a>
 </form>
 </div>

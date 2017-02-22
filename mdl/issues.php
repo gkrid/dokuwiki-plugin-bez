@@ -67,7 +67,11 @@ class BEZ_mdl_Issues extends BEZ_mdl_Factory {
 		
 		$issue = $sth->fetchObject("BEZ_mdl_Issue",
 					array($this->model));
-		
+        
+        if ($issue === false) {
+            throw new Exception('there is no issue with id: '.$id);
+        }
+        
 		return $issue;
 	}
 	

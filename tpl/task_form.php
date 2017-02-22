@@ -1,19 +1,20 @@
 <?php
 if (isset($template['issue'])) {
-	$id = $this->id('issue', 'id', $template['issue']->id, 'action', $template['task_action'], 'tid', $template['task_id']);
+	$id = $this->id('issue', 'id', $template['issue']->id, 'action', $template['action'], 'tid', $template['tid'], 'kid', $template['kid']);
 } else {
-	
+	$id = $this->id('task_form', 'action', $template['action'], 'tid', $template['tid']);
 }	
 ?>
 <a name="z_"></a>
 <form 	class="bez_form bez_task_form"
 		action="?id=<?php echo $id ?>" method="POST">
 		<input type="hidden" name="id" value="<?php echo $id ?>">
+
 		<fieldset class="bds_form">
-			<?php if ($template['action'] === 'task_correction_update'): ?>
+			<?php if ($template['tid'] !== '-1'): ?>
 				<div class="row">
 				<label for="id"><?php echo $bezlang['id'] ?>:</label>
-				<span><strong>#z<?php echo $nparams['tid'] ?></strong></span>
+				<span><strong>#z<?php echo $template['task']->id ?></strong></span>
 				</div>
 				
 				<?php if ($template['auth_level'] >= 15 && isset($template['issue'])): ?>
@@ -25,7 +26,7 @@ if (isset($template['issue'])) {
 								value="">--- <?php echo $bezlang['correction'] ?> ---</option>
 
 							<?php foreach ($template['causes'] as $cause): ?>
-								<option <?php if ($value['cause'] == $cause->id) echo 'selected' ?>
+								<option <?php if ($value['cause'] === $cause->id) echo 'selected' ?>
 								 value="<?php echo $cause->id ?>">#p<?php echo $cause->id ?></option>
 							<?php endforeach ?>
 						</select>
@@ -52,45 +53,6 @@ if (isset($template['issue'])) {
 			<?php endif ?>
 			
 			
-			</span>
-			</div>
-			
-			<div class="row">
-			<label for="tasktype"><?php echo $bezlang['task_type'] ?>:</label>
-			<span>
-				<?php if ($template['auth_level'] < 15): ?>
-					<input type="hidden" name="tasktype" value="<?php echo $nparams['tasktype'] ?>">
-					<strong>
-					<?php echo $template['tasktype_name'] ?>
-					</strong>
-				<?php else: ?>
-					<select id="tasktype" name="tasktype">
-						<option <?php if ($value['tasktype'] == '') echo 'selected' ?> value=""><?php echo $bezlang['tasks_no_type'] ?></option>
-						<?php foreach ($template['tasktypes'] as $tasktype): ?>
-							<option <?php if ($value['tasktype'] == $tasktype->id) echo 'selected' ?> value="<?php echo $tasktype->id ?>"><?php echo $tasktype->type ?></option>
-						<?php endforeach ?>
-					</select>
-				<?php endif ?>
-			</span>
-			</div>
-					
-			<div class="row">
-			<label for="action"><?php echo $bezlang['class'] ?>:</label>
-			<span>
-				<strong>
-					<?php if (!isset($template['issue'])): ?>
-						<?php echo $bezlang['programme'] ?>
-					<?php elseif (!isset($template['cause'])): ?>
-						<?php echo $bezlang['correction'] ?>
-						<input type="hidden" name="action" value="0" />
-					<?php elseif ($template['cause']['potential'] == 0): ?>
-						<?php echo $bezlang['corrective_action'] ?>
-						<input type="hidden" name="action" value="1" />
-					<?php else: ?>
-						<?php echo $bezlang['preventive_action'] ?>
-						<input type="hidden" name="action" value="2" />
-					<?php endif ?>
-				</strong>
 			</span>
 			</div>
 
@@ -132,6 +94,24 @@ if (isset($template['issue'])) {
 				<?php endif ?> /> <?php echo $bezlang['all_day_event'] ?></label></span>
 			</div>
 			
+			<div class="row">
+			<label for="tasktype"><?php echo $bezlang['task_type'] ?>:</label>
+			<span>
+				<?php if ($template['auth_level'] < 15): ?>
+					<input type="hidden" name="tasktype" value="<?php echo $nparams['tasktype'] ?>">
+					<strong>
+					<?php echo $template['tasktype_name'] ?>
+					</strong>
+				<?php else: ?>
+					<select id="tasktype" name="tasktype">
+						<option <?php if ($value['tasktype'] == '') echo 'selected' ?> value=""><?php echo $bezlang['tasks_no_type'] ?></option>
+						<?php foreach ($template['tasktypes'] as $tasktype): ?>
+							<option <?php if ($value['tasktype'] == $tasktype->id) echo 'selected' ?> value="<?php echo $tasktype->id ?>"><?php echo $tasktype->type ?></option>
+						<?php endforeach ?>
+					</select>
+				<?php endif ?>
+			</span>
+			</div>
 
 			<div class="row">
 				<label for="cost"><?php echo $bezlang['cost'] ?>:</label>
@@ -139,45 +119,44 @@ if (isset($template['issue'])) {
 								min="0" max="100000" step="50"
 								value="<?php echo $value['cost'] ?>"></span>
 			</div>
-			<?php if (isset($nparams['tid']) && $nparams['tid'] !== '-1'): ?>
+			<?php if ($template['tid'] !== '-1'): ?>
 				<div class="row">
 				<label for="task_state"><?php echo $bezlang['task_state'] ?>:</label>
 				<span>
-					<strong><?php echo $bezlang[$template['state_string']] ?></strong>
+					<strong><?php echo $bezlang[$template['task']->state_string()] ?></strong>
 				</span>
 				</div>
 				
-				<?php if ($template['state_string'] != 'task_opened'): ?>
-				<div class="row">
-					<label for="reason">
-						<?php if ($template['state_string'] == 'task_done'): ?>
-							<?php echo $bezlang['evaluation'] ?>:
-						<?php else: ?>
-							<?php echo $bezlang['reason'] ?>:
-						<?php endif ?>
-					</label>
-					<span><textarea name="reason" id="reason"><?php echo $value['reason'] ?></textarea></span>
-				</div>
+				<?php if (	$template['tid'] !== '-1' &&
+							$template['task']->state === '1'): ?>
+					<div class="row">
+						<label for="reason">
+							<?php if ($template['task']->state === '1'): ?>
+								<?php echo $bezlang['evaluation'] ?>:
+							<?php elseif ($template['task']->state === '2'): ?>
+								<?php echo $bezlang['reason'] ?>:
+							<?php endif ?>
+						</label>
+						<span><textarea name="reason" id="reason"><?php echo $value['reason'] ?></textarea></span>
+					</div>
 				<?php endif ?>
+
 			<?php endif ?>
 			<div class="row">
 				<label></label>
 				<span style="padding-top:10px;">
-					<input type="submit" value="<?php echo isset($template['button']) ? $template['button'] : $bezlang['add'] ?>">
+					<input type="submit" value="<?php echo $template['tid'] === '-1' ? $bezlang['add'] : $bezlang['correct'] ?>">
 					<a href="?id=<?php
 				if (isset($template['issue'])) {
 					echo $this->id('issue', 'id', $template['issue']->id);
 				} else {
-					echo $this->id('show_task', 'tid', $nparams['tid']);
+					echo $this->id('task', 'tid', $template['task']->id);
 				}
-				?>"
+				?><?php if ($template['tid'] !== '-1') echo '#z'.$template['tid'] ?>"
 				class="bez_delete_button bez_link_button">
 					<?php echo $bezlang['cancel'] ?>
 				</a>
 			</span>
-		</fieldset>
-		
-
-	</form>
-
-
+        </div>
+    </fieldset>
+</form>

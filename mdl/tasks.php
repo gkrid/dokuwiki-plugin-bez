@@ -36,13 +36,18 @@ class BEZ_mdl_Tasks extends BEZ_mdl_Factory {
 			
 		$task = $sth->fetchObject("BEZ_mdl_Task",
 					array($this->model));
+        
+        if ($task === false) {
+            throw new Exception('there is no task with id: '.$id);
+        }
 				
 		return $task;
 	}
 	
-	private $filter_field_map = array(
+	protected $filter_field_map = array(
 		'issue' 	=> 'tasks.issue',
 		'action' 	=> 'action',
+		'cause'		=> 'tasks.cause'
 	);
 	
 	public function get_all($filters=array()) {
@@ -50,18 +55,10 @@ class BEZ_mdl_Tasks extends BEZ_mdl_Factory {
 			throw new Exception('BEZ_mdl_Tasks: no permission to get_all()');
 		}
 		
-		$q = $this->select_query;
-		$execute = array();
-		$where_q = array();
-		foreach ($filters as $filter => $value) {
-			$where_q[] = $this->filter_field_map[$filter]." = :$filter";
-			$execute[":$filter"] = $value;
-		}
+		list($where_q, $execute) = $this->build_where($filters);
 		
-		if (count($where_q) > 0) {
-			$q .= ' WHERE '.implode(' AND ', $where_q);
-		}
-							
+		$q = $this->select_query . $where_q;
+			
 		$sth = $this->model->db->prepare($q);
 		
 		$sth->setFetchMode(PDO::FETCH_CLASS, "BEZ_mdl_Task",

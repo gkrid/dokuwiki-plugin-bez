@@ -476,3 +476,8 @@ $lang['correct'] = 'Correct';
 
 $lang['from_hour'] = 'from';
 $lang['to_hour'] = 'to';
+
+$lang['next_open'] = 'Next open';
+$lang['prev_open'] = 'Previous open';
+
+$lang['js']['remove_confirm'] = 'Do you realy want to delete this item?';

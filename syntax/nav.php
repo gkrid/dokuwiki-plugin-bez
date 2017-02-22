@@ -122,7 +122,7 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 			|| $this->value['bez'] == 'task_form_plan'
 			|| $this->value['bez'] == 'issue_task'
 			|| $this->value['bez'] == 'task_form'
-			|| $this->value['bez'] == 'task_report'
+			|| $this->value['bez'] == 'task_form'
 			|| $this->value['bez'] == 'issue_cause_task') {
 			$data['bez:tasks']['open'] = true;
 
@@ -158,7 +158,7 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 					$data[$page_id] = array('id' => $page_id, 'type' => 'd', 'level' => 3, 'title' => $tasktype->type, 'open' => true);
 	
 					//~ if ($tasktype->get_level() >= 15) {
-					$report_id = "bez:task_report:tasktype:".$tasktype->id;
+					$report_id = "bez:task_form:tasktype:".$tasktype->id;
 					$data[$report_id] = array('id' => $report_id, 'type' => 'f', 'level' => 4, 'title' => $this->getLang('bds_task_report'));
 					//~ }
 					if (isset($this->value['tid'])) {
@@ -282,8 +282,8 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 			$fields[] = 'month';
 			$fields[] = 'year';
 		}
-		if ($this->value[bez] == 'task_form' && isset($this->value[cid]))
-			unset($fields[0]);
+//		if ($this->value[bez] == 'task_form' && isset($this->value[cid]))
+//			unset($fields[0]);
 		
 		$actual_page = true;
 		foreach ($fields as $field)

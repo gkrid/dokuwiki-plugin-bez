@@ -10,14 +10,15 @@ class BEZ_mdl_Commcause extends BEZ_mdl_Entity {
 	protected $id, $issue, $datetime, $reporter, $type, $content, $content_cache;
 	
 	//virtual
-	protected $coordinator;
+	protected $coordinator, $tasks_count;
 	
+    protected $parse_int = array('tasks_count');
 	public function get_columns() {
 		return array('id', 'issue', 'datetime', 'reporter', 'type', 'content', 'content_cache');
 	}
 	
 	public function get_virtual_columns() {
-		return array('coordinator');
+		return array('coordinator', 'tasks_count');
 	}
 	
 	public function get_table_name() {
@@ -65,8 +66,13 @@ class BEZ_mdl_Commcause extends BEZ_mdl_Entity {
 	public function set_data($data) {
 		//only coordinator can add causes
 		$input = array('content');
+        //only coordinator chang change type and only 
 		if ($this->auth->get_level() >= 15) {
 			$input[] = 'type';
+            if (isset($data['type']) && $data['type'] === '0'
+                    && $this->tasks_count > 0) {
+                throw new Exception('cannot change commcause to comment when it have any tasks assigned');
+            }
 		}
 
 		
@@ -88,5 +94,5 @@ class BEZ_mdl_Commcause extends BEZ_mdl_Entity {
 		}
 		
 		$this->content_cache = $this->helper->wiki_parse($this->content);
-	}
+	}    
 }

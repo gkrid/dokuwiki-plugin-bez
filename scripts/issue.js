@@ -1,8 +1,34 @@
 
 bez.ctl.issue = function() {
 
-	jQuery('.bez_delete_prompt').click('on', function () {
-		return confirm('Czy na pewno chcesz usunąć ten element?');
+	jQuery('.bez_commcause_delete_prompt').click('on', function (event) {
+		event.preventDefault();
+
+		if (window.confirm(LANG.plugins.bez.remove_confirm)) {
+			var kid = jQuery(this).data('kid'),
+				$block = jQuery(this).parents('.bez_comment');
+			
+			
+			
+			jQuery.post(
+				DOKU_BASE + 'lib/exe/ajax.php?time='+Date.now(),
+				{
+					call: 'plugin_bez', 
+					action: 'commcause_delete',
+					kid:	kid
+				},
+				function(data) {
+					// data is array you returned with action.php
+					if (data.state === 'ok') {
+						$block.hide('slow', function(){ $block.remove(); });
+					}
+				},
+				'json'
+			)
+			.fail(function(d) {
+				console.log(d.responseText);
+			});
+		}
 	});
 		
 	var $bez_comment_form = jQuery('.bez_comment_form'),
@@ -126,6 +152,10 @@ bez.ctl.issue = function() {
 	
 	if (jQuery('#opinion').length > 0) {
 		bez.rich_text_editor(jQuery('#opinion'), jQuery('.bez_opinion_toolbar'));
+	}
+	
+	if (jQuery('#reason').length > 0) {
+		bez.rich_text_editor(jQuery('#reason'), jQuery('.bez_reason_toolbar'));
 	}
 	
 	//tooltips

@@ -5,12 +5,17 @@
 <!-- Comments -->
 <div class="bez_comments">
 	<div class="bez_left_col">
-		
 		<!-- Correction -->
-		<div class="bds_block" id="bez_tasks" style="margin-top: 10px">
+		<div style="margin-top: 10px">
 			<?php foreach ($template['corrections'] as $task): ?>
 				<?php $template['task'] = $task ?>
-				<?php include "task.php" ?>
+				<?php if (	$template['action'] === 'task_edit' &&
+							$template['tid'] === $template['task']->id): ?>
+					<?php include 'task_form.php' ?>
+				<?php else: ?>
+					<?php include 'task_box.php' ?>
+				<?php endif ?>
+				
 			<?php endforeach ?>
 			<?php if ($template['action'] === 'task_correction_add'): ?>
 				<?php include 'task_form.php' ?>
@@ -18,7 +23,8 @@
 		</div>
 		
 		<div class="bez_second_lv_buttons" style="margin-top: 10px">
-			<?php if ($template['issue']->get_level() >= 15): ?>
+			<?php if (	$template['issue']->get_level() >= 15 &&
+						$template['issue']->state === '0'): ?>
 				<a href="?id=<?php echo $this->id('issue', 'id', $template['issue']->id, 'action', 'task_correction_add') ?>#z_" class="bez_subscribe_button">
 					<span class="bez_awesome">&#xf0fe;</span>&nbsp;&nbsp;<?php echo $bezlang['correction_add'] ?>
 				</a>
@@ -33,8 +39,8 @@
 		
 		<?php foreach ($template['commcauses'] as $commcause): ?>
 			<?php $template['commcause'] = $commcause ?>
-			<?php if ($template['commcause_id'] === $template['commcause']->id): ?>
-				<?php $template['button'] = $bezlang['correct'] ?>
+			<?php if (	$template['action'] === 'commcause_edit' &&
+						$template['kid'] === $template['commcause']->id): ?>
 				<?php include 'commcause_form.php' ?>
 			<?php else: ?>
 				<?php include 'commcause_box.php' ?>
@@ -44,7 +50,7 @@
 <?php if (	$template['issue']->state === '0' &&
 			!(strpos($template['action'], 'task') === 0) &&
 			$template['action'] !== 'issue_close' &&
-			$template['commcause_id'] === '-1'): ?> 
+			$template['kid'] === '-1'): ?> 
 
 <?php include 'commcause_form.php' ?>
 	
@@ -74,7 +80,9 @@
 <h2><?php echo $bezlang['comment_participants'] ?></h2>
 <ul id="issue_participants">
 <?php foreach ($template['issue']->get_participants() as $nick => $participant): ?>
-	<li><a href="mailto:mongo@imz.re"  title="<?php echo $nick ?>">
+	<li><a href="<?php echo $helper->mailto($this->model->users->get_user_email($nick),
+		$bezlang['issue'].': #'.$template['issue']->id.' '.$template['issue']->title,
+		DOKU_URL . 'doku.php?id='.$this->id('issue', 'id', $template['issue']->id)) ?>"  title="<?php echo $nick ?>">
 		<span class="bez_name"><?php echo $participant ?></span>
 		<span class="bez_icons">
 		<?php if($template['issue']->reporter === $nick): ?>

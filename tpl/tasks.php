@@ -144,7 +144,11 @@
 </tr>
 <?php foreach ($template['tasks'] as $task): ?>
 	<tr class="pr<?php echo $task['priority'] ?>" data-bez-row-id="<?php echo $task['id'] ?>">
-		<td><?php echo $this->html_task_link($task['issue'], $task['id']) ?>
+		<td>
+            <a href="?id=<?php echo $this->id('task', 'tid', $task['id']) ?>">
+               <?php if (!empty($task['issue'])) echo '#'.$task['issue'] ?>
+		       #z<?php echo $task['id'] ?>
+	       </a>
 		</td>
 		<td>
 			<?php echo lcfirst($task['state']) ?>
@@ -229,10 +233,6 @@
 	</tr>
 </table>
 
-
-[ <a class="" href="<?php echo $template['ical_link'] ?>">
-	<span class="bez_awesome">&#xf073;</span> <?php echo $bezlang['download_in_icalendar'] ?>
-</a> ]
 [ <a class="" href="
 	<?php echo $helper->mailto('',
 	'[BEZ] '.$bezlang['tasks_juxtaposition'],

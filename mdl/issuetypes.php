@@ -19,6 +19,10 @@ class BEZ_mdl_Issuetypes extends BEZ_mdl_Factory {
 		
 		$tasktype = $sth->fetchObject("BEZ_mdl_Issuetype",
 					array($this->model));
+        
+        if ($tasktype === false) {
+            throw new Exception('there is no tasktype with id: '.$id);
+        }
 		
 		return $tasktype;
 	}

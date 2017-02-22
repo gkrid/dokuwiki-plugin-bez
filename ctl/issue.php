@@ -8,12 +8,14 @@
 //~ $como = new Comments();
 $issue_id = (int)$nparams['id'];
 $issue = $this->model->issues->get_one($issue_id);
-$template['commcause_action'] = 'commcause_add';
+//~ $template['commcause_action'] = 'commcause_add';
 //placeholder for adding new records
-$template['commcause_id'] = '-1';
+//~ $template['commcause_id'] = '-1';
 
-$template['task_action'] = 'task_correction_add';
-$template['task_id'] = '-1';
+//~ $template['task_action'] = 'task_correction_add';
+$template['tid'] = isset($nparams['tid']) ? $nparams['tid'] : '-1';
+$template['kid'] = isset($nparams['kid']) ? $nparams['kid'] : '-1';
+$template['state'] = isset($nparams['state']) ? $nparams['state'] : '-1';
 $template['auth_level'] = $issue->get_level();
 
 try {
@@ -21,6 +23,7 @@ try {
 	if (isset($nparams['action'])) {
 		$action = $nparams['action'];
 		$redirect = false;
+		$anchor = '';
 		
 		if ($action === 'commcause_add') {			
 			$commcause = $this->model->commcauses->create_object(array(
@@ -28,7 +31,7 @@ try {
 			));
 
 			$commcause->set_data($_POST);
-			$this->model->commcauses->save($commcause);
+			$id = $this->model->commcauses->save($commcause);
 			
 			$issue->add_participant($INFO['client']);
 			$issue->add_subscribent($INFO['client']);
@@ -36,6 +39,7 @@ try {
 			$issue->update_last_activity();
 			$this->model->issues->save($issue);
 			
+			$anchor = 'k'.$id;
 			$redirect = true;
 		} elseif ($action === 'subscribe') {
 			$issue->add_subscribent($INFO['client']);
@@ -48,8 +52,7 @@ try {
 			
 			$redirect = true;
 		} elseif ($action === 'commcause_delete') {
-			$kid = (int)$nparams['kid'];
-			$commcause = $this->model->commcauses->get_one($kid);
+			$commcause = $this->model->commcauses->get_one($template['kid']);
 			
 			$this->model->commcauses->delete($commcause);
 			
@@ -58,24 +61,21 @@ try {
 			
 			$redirect = true;
 		} elseif ($action === 'commcause_edit') {
-			$kid = (int)$nparams['kid'];
-			$template['commcause_action'] = 'commcause_update';
-			
-			
-			$commcause = $this->model->commcauses->get_one($kid);
-			$template['commcause_id'] = $commcause->id;
-			$value = $commcause->get_assoc();
-			
-		} elseif ($action === 'commcause_update') {
-			$kid = (int)$nparams['kid'];
-			$commcause = $this->model->commcauses->get_one($kid);
-			$commcause->set_data($_POST);
-			$this->model->commcauses->save($commcause);
-			
-			$issue->update_last_activity();
-			$this->model->issues->save($issue);
-
-			$redirect = true;
+			if (count($_POST) === 0) {
+				$commcause = $this->model->commcauses->get_one($template['kid']);
+				$template['kid'] = $commcause->id;
+				$value = $commcause->get_assoc();
+			} else {
+				$commcause = $this->model->commcauses->get_one($template['kid']);
+				$commcause->set_data($_POST);
+				$this->model->commcauses->save($commcause);
+				
+				$issue->update_last_activity();
+				$this->model->issues->save($issue);
+				
+				$anchor = 'k'.$commcause->id;
+				$redirect = true;
+			}			
 		} elseif ($action === 'issue_close') {
 			$value['opinion'] = $template['issue']['raw_opinion'];
 		} elseif ($action == 'issue_close_confirm') {
@@ -94,19 +94,41 @@ try {
 					$_POST['all_day_event'] = '0';
 				}
 			}
+						
+			if ($action === 'task_reopen') {
+				$task = $this->model->tasks->get_one($nparams['tid']);
+				$task->set_state(array('state' => '0'));
+				$this->model->tasks->save($task);
+				
+				$issue->update_last_activity();
+				$this->model->issues->save($issue);
+					
+				$redirect = true;
+				$anchor = 'z'.$task->id;
+				
+			} elseif ($action === 'task_edit') {
+				$template['tid'] = $nparams['tid'];
+				
+				$template['causes'] = $this->model->commcauses->get_all(array(
+					'issue' => $issue_id,
+					'type' => array('!=', '0'),
+				));
+				
+				$task = $this->model->tasks->get_one($template['tid']);
+				$value = $task->get_assoc();
+			}
 			
-			if ($action === 'task_correction_add') {
-				$template['task_action'] = $action;
-				//~ $template['causes'] = $this->model->commcauses->get_all(array(
-					//~ 'issue' => $issue_id,
-					//~ 'type' => array('!=', '0'),
-				//~ ));
-				if (count($_POST) > 0) {
-					$task = $this->model->tasks->create_object_issue(array(
-						'issue' => $issue_id
-					));
+			if (count($_POST) > 0) {				
+				//ends with
+				if (substr($action, -strlen('add')) === 'add') {
+					$defaults = array('issue' => $issue_id);
+					if ($template['kid'] !== '-1') {
+						$defaults['cause'] = $template['kid'];
+					}
+					$task = $this->model->tasks->create_object_issue($defaults);
+					
 					$task->set_data($_POST);
-					$this->model->tasks->save($task);
+					$id = $this->model->tasks->save($task);
 					
 					$issue->add_participant($task->executor);
 					$issue->add_subscribent($task->executor);
@@ -114,24 +136,50 @@ try {
 					$issue->update_last_activity();
 					$this->model->issues->save($issue);
 					
+					$anchor = 'z'.$id;
+					$redirect = true;
+				} elseif ($action === 'task_change_state') {
+					$task = $this->model->tasks->get_one($template['tid']);
+					
+					$task->set_state(array(
+								'state' => $nparams['state'],
+								'reason' => $_POST['reason'])
+							);
+					$this->model->tasks->save($task);
+					
+					$issue->update_last_activity();
+					$this->model->issues->save($issue);
+					
+					$anchor = 'z'.$task->id;
+					$redirect = true;
+				} elseif ($action === 'task_edit') {
+					$task = $this->model->tasks->get_one($template['tid']);
+					$task->set_data($_POST);
+					$this->model->tasks->save($task);
+					
+					$issue->add_participant($task->executor);
+					$issue->add_subscribent($task->executor);
+					
+					//don't upgrade last activity!!!
+					$anchor = 'z'.$task->id;
 					$redirect = true;
 				}
-			} elseif ($action === 'task_commcause_add') {
-				$template['task_action'] = $action;
-				$template['kid'] = $nparams['kid'];
-			}
+			}	
 		}
 		
 		if ($redirect) {
-			header("Location: ?id=bez:issue:id:$issue_id");
+			if ($anchor !== '') {
+				$anchor = '#'.$anchor;
+			}
+			header("Location: ?id=bez:issue:id:$issue_id$anchor");
 		}
 	}
 } catch (ValidationException $e) {
 	$errors = $e->get_errors();
 	$value = $_POST;
 } catch (Exception $e) {
-	echo nl2br($e);
-	//~ header("Location: ?id=bez:issue:id:$issue_id");
+//	echo nl2br($e);
+	header("Location: ?id=bez:issue:id:$issue_id");
 }
 
 //~ if (!isset($template[comment_action])) {
@@ -156,4 +204,11 @@ $template['corrections'] = $this->model->tasks->get_all(array(
 	'issue' => $issue_id,
 	'action' => 0,
 ));
+
+$template['commcauses_tasks'] = array();
+foreach ($this->model->commcauses->get_causes_ids($issue_id) as $kid) {
+	$template['commcauses_tasks'][$kid] = $this->model->tasks->get_all(array(
+		'cause' => $kid,
+	));
+}
 
