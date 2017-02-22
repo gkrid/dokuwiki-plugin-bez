@@ -23,6 +23,9 @@ class admin_plugin_bez_notifications extends DokuWiki_Admin_Plugin {
     function handle() {
         global $auth, $conf;
         
+        //inicialize lang array
+        $this->getLang('bez');
+        
         if (count($_POST) === 0)
             return; // first time - nothing to do
         if (!checkSecurityToken())
@@ -34,7 +37,7 @@ class admin_plugin_bez_notifications extends DokuWiki_Admin_Plugin {
                 $http = 'https';
             }
             $helper = $this->loadHelper('bez');
-            $this->output = send_message($_SERVER['SERVER_NAME'], $http, $conf, $helper, $auth);
+            $this->output = send_message($_SERVER['SERVER_NAME'], $http, $conf, $helper, $auth, $this->lang);
         }
     }
     /**

@@ -7,7 +7,7 @@ function log_errors() {
 //	}
 }
 
-function send_message($URI, $http, $conf, $helper, $auth) {
+function send_message($URI, $http, $conf, $helper, $auth, $bezlang) {
    //email => array('user' => array('issues' => array(), 'tasks' => array()))
     $msg = array();
     $output = array();

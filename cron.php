@@ -15,6 +15,7 @@ else
 	$http = 'https';
 
 $errors = array();
+
 require_once DOKU_PLUGIN.'bez/lang/pl/lang.php';
 $bezlang = $lang;
 
@@ -43,4 +44,6 @@ $helper = new helper_plugin_bez();
 require_once 'cron-functions.php';
 
 $auth = new auth_plugin_authplain();
-send_message($URI, $http, $conf, $helper, $auth);
+
+
+send_message($URI, $http, $conf, $helper, $auth, $bezlang);
