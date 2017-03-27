@@ -40,7 +40,14 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 					'assigned_tasks_count',	'opened_tasks_count',
 					'priority');
 	}
-
+    
+    public function full_state() {
+        if (strpos($this->coordinator, '-') === 0) {
+            return $this->coordinator;
+        } else {
+            return $this->state;
+        }
+    }
 	
 	public function __construct($model, $defaults=array()) {
 		parent::__construct($model);
@@ -277,4 +284,66 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
         }
         return $this->causes_without_tasks;
 	}
+    
+    //http://data.agaric.com/capture-all-sent-mail-locally-postfix
+    //https://askubuntu.com/questions/192572/how-do-i-read-local-email-in-thunderbird
+    public function mail_notify($replacements=array()) {
+        $plain = io_readFile($this->model->action->localFN('issue-notification'));
+        $html = io_readFile($this->model->action->localFN('issue-notification', 'html'));
+                
+        $issue_link =  DOKU_URL . 'doku.php?id='.$this->model->action->id('issue', 'id', $this->id);
+        $issue_unsubscribe = DOKU_URL . 'doku.php?id='.$this->model->action->id('issue', 'id', $this->id, 'action', 'unsubscribe');
+        
+        $wiki_name = $this->model->conf['title'];
+        $issue_reps = array(    'wiki_name' => $wiki_name,
+                                'issue_id' => $this->id,
+                                'issue_link' => $issue_link,
+                                'issue_unsubscribe' => $issue_unsubscribe,
+                                'custom_content' => false
+                           );
+        
+        //$replacements can override $issue_reps
+        $rep = array_merge($issue_reps, $replacements);
+        //auto title
+        if (!isset($rep['subject'])) {
+            if (isset($rep['content'])) {
+                $rep['subject'] =  array_shift(explode('.', $rep['content'], 2));
+            }
+        }
+        if (!isset($rep['content_html'])) {
+            $rep['content_html'] = $rep['content'];
+        }
+        if (!isset($rep['who_full_name'])) {
+            $rep['who_full_name'] =
+                $this->model->users->get_user_full_name($rep['who']);
+        }
+        
+        //format when
+        $rep['when'] =  $this->date_format($rep['when']);
+        
+        if ($rep['custom_content'] === false) {
+            $html = str_replace('@CONTENT_HTML@', '
+                <div style="margin: 5px 0;">
+                    <strong>@WHO_FULL_NAME@</strong> <br>
+                    <span style="color: #888">@WHEN@</span>
+                </div>
+                @CONTENT_HTML@
+            ', $html);
+        }
+        //we must do it manually becouse Mailer uses htmlspecialchars()
+        $html = str_replace('@CONTENT_HTML@', $rep['content_html'], $html);
+        
+        $mailer = new Mailer();
+        $mailer->setBody($plain, $rep, $rep, $html, false);
+        $emails = array_map(function($user) {
+            return $this->model->users->get_user_email($user);
+        }, $this->subscribents_array);
+        $mailer->to($emails);
+        $mailer->subject('[' . $wiki_name . ']' . $rep['subject']);
+
+        $send = $mailer->send();
+        if ($send === false) {
+            throw new Exception("can't send email");
+        }
+    }
 }

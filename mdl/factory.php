@@ -72,8 +72,11 @@ class BEZ_mdl_Factory {
 									
 		$sth = $this->model->db->prepare($query);
 		$sth->execute($execute);
-		
-		return $this->model->db->lastInsertId();
+        
+        $id = $this->model->db->lastInsertId();
+		$obj->id = $id;
+        
+		return $id;
 	}
 	
 	protected function delete_from_db($id) {

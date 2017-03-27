@@ -12,7 +12,7 @@ class BEZ_mdl_Issuetypes extends BEZ_mdl_Factory {
 			return false;
 		}
 		
-		$sth = $this->model->db->prepare('SELECT *, '.$this->model->lang_code.' as type
+		$sth = $this->model->db->prepare('SELECT *, '.$this->model->conf['lang'].' as type
 					(SELECT COUNT(*) FROM issues WHERE issues.type=issuetypes.id) AS refs
 					FROM issuetypes WHERE id = ?');
 		$sth->execute(array($id));
@@ -33,11 +33,11 @@ class BEZ_mdl_Issuetypes extends BEZ_mdl_Factory {
 		}
 		
 		if (in_array('refs', $additional_fields)) {
-			$q = 'SELECT *, '.$this->model->lang_code.' as type,
+			$q = 'SELECT *, '.$this->model->conf['lang'].' as type,
 					(SELECT COUNT(*) FROM issues WHERE issues.type=issuetypes.id) AS refs
 					FROM issuetypes';
 		} else {
-			$q = 'SELECT *, '.$this->model->lang_code.' AS type FROM issuetypes';
+			$q = 'SELECT *, '.$this->model->conf['lang'].' AS type FROM issuetypes';
 		}
 		
 		$sth = $this->model->db->prepare($q);

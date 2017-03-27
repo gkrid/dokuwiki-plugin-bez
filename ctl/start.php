@@ -38,5 +38,5 @@ $template['client'] = $INFO['client'];
 
 /*pobieranie wersji beza na podstawie pliku plugin.info.txt*/
 $info = $this->getInfo();
-$template[version] = $info[date];
+$template['version'] = $info['date'];
 

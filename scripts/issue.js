@@ -77,12 +77,13 @@ bez.ctl.issue = function() {
 		
 		$tabs.on('click', 'a[href="#comment"]', activateComment);
 		$tabs.on('click', 'a[href="#cause"]', activateCause);
-		
+	}
+    if ($bez_comment_form.length > 0) {
 		//textareas
 		var $textarea = $bez_comment_form.find("textarea");
 		var $header = $bez_comment_form.find(".bez_toolbar");
 		bez.rich_text_editor($textarea, $header);
-	}
+    }
 
 	//show/hide comments
 	var $show_comments = jQuery(".bez_show_comments"),

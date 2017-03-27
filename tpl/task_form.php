@@ -1,9 +1,11 @@
 <?php
-if (isset($template['issue'])) {
+if ($nparams['bez'] === 'issue') {
 	$id = $this->id('issue', 'id', $template['issue']->id, 'action', $template['action'], 'tid', $template['tid'], 'kid', $template['kid']);
-} else {
+} elseif ($nparams['bez'] === 'task_form') {
 	$id = $this->id('task_form', 'action', $template['action'], 'tid', $template['tid']);
-}	
+} else {
+	$id = $this->id('task', 'action', $template['action'], 'tid', $template['tid']);
+}
 ?>
 <a name="z_"></a>
 <form 	class="bez_form bez_task_form"
@@ -48,7 +50,7 @@ if (isset($template['issue'])) {
 			<?php else: ?>
 				<input type="hidden" name="executor" value="<?php echo $template['user'] ?>">
 				<strong>
-				<?php echo $template['user_name'] ?>
+				<?php echo $this->model->users->get_user_full_name($template['user']) ?>
 				</strong>
 			<?php endif ?>
 			
@@ -100,7 +102,11 @@ if (isset($template['issue'])) {
 				<?php if ($template['auth_level'] < 15): ?>
 					<input type="hidden" name="tasktype" value="<?php echo $nparams['tasktype'] ?>">
 					<strong>
-					<?php echo $template['tasktype_name'] ?>
+                        <?php foreach ($template['tasktypes'] as $tasktype): ?>
+							<?php if ($value['tasktype'] == $tasktype->id): ?>
+                                <?php echo $tasktype->type ?>
+                            <?php endif ?>
+						<?php endforeach ?>
 					</strong>
 				<?php else: ?>
 					<select id="tasktype" name="tasktype">
@@ -137,7 +143,10 @@ if (isset($template['issue'])) {
 								<?php echo $bezlang['reason'] ?>:
 							<?php endif ?>
 						</label>
-						<span><textarea name="reason" id="reason"><?php echo $value['reason'] ?></textarea></span>
+						<span>
+                            <div class="bez_reason_toolbar"></div>
+                            <textarea name="reason" id="reason"><?php echo $value['reason'] ?></textarea>
+                        </span>
 					</div>
 				<?php endif ?>
 

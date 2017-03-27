@@ -75,7 +75,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 			
 			$this->state = '0';
 			$this->all_day_event = '1';
-		
+            		
 			$val_data = $this->validator->validate($defaults, array('cause', 'issue', 'coordinator'));
 			
 			if ($val_data === false) {
@@ -234,4 +234,80 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 			case '3': return 'programme'; break;
 		}
 	}
+    
+    public function mail_notify_add($issue_obj) {
+        if ($issue_obj->id !== $this->issue) {
+            throw new Exception('issue object id and task->issue does not match');
+        }
+        
+       $top_row = array(
+            '<strong>'.$this->model->action->getLang('executor').': </strong>' . 
+            $this->model->users->get_user_full_name($this->executor),
+
+            '<strong>'.$this->model->action->getLang('reporter').': </strong>' . 
+            $this->model->users->get_user_full_name($this->reporter)
+        );
+
+        if ($this->tasktype_string != '') {
+            $top_row[] =
+                '<strong>'.$this->model->action->getLang('task_type').': </strong>' . 
+                $this->tasktype_string;
+        }
+
+        if ($this->cost != '') {
+            $top_row[] =
+                '<strong>'.$this->model->action->getLang('cost').': </strong>' . 
+                $this->cost;
+        }
+
+        //BOTTOM ROW
+        $bottom_row = array(
+            '<strong>'.$this->model->action->getLang('plan_date').': </strong>' . 
+            $this->plan_date
+        );			
+
+        if ($this->all_day_event == '0') {
+            $bottom_row[] =
+                '<strong>'.$this->model->action->getLang('start_time').': </strong>' . 
+                $this->start_time;
+            $bottom_row[] =
+                '<strong>'.$this->model->action->getLang('finish_time').': </strong>' . 
+                $this->finish_time;
+        }
+        
+        $rep = array(
+            'content' => $this->task,
+            'content_html' =>
+                '<h2 style="font-size: 1.2em;">'.
+	               '<a href="?id='.$this->model->action->id('task', 'tid', $this->id).'">' .
+		              '#z'.$this->id . 
+	               '</a> ' . 
+	lcfirst($this->model->action->getLang($this->action_string($this->action))) . ' ' .
+    '(' . 
+        lcfirst($this->model->action->getLang($this->state_string($this->state))) .
+    ')' .      
+                '</h2>' . 
+                bez_html_irrtable(array(
+                    'table' => array(
+                        'border-collapse' => 'collapse',
+                        'font-size' => '0.8em',
+                        'width' => '100%'
+                    ),
+                    'td' => array(
+                        'border-top' => '1px solid #8bbcbc',
+                        'border-bottom' => '1px solid #8bbcbc',
+                        'padding' => '.3em .5em'
+                    )
+                ), $top_row, $bottom_row) . $this->task_cache,
+            'who' => $this->reporter,
+            'when' => date('c', (int)$this->date),
+            'custom_content' => true
+        );
+        
+        $rep['action'] = $this->model->action->getLang('mail_task_added');
+        $rep['action_color'] = '#e4f4f4';
+        $rep['action_border_color'] = '#8bbcbc';
+        
+        $issue_obj->mail_notify($rep);
+    }
 }

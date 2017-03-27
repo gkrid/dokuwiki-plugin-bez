@@ -6,6 +6,10 @@
 
 //~ $isso = new Issues();
 //~ $como = new Comments();
+if (!isset($nparams['id'])) {
+    header('Location: ?id=bez:issues');
+}
+
 $issue_id = (int)$nparams['id'];
 $issue = $this->model->issues->get_one($issue_id);
 //~ $template['commcause_action'] = 'commcause_add';
@@ -16,6 +20,7 @@ $issue = $this->model->issues->get_one($issue_id);
 $template['tid'] = isset($nparams['tid']) ? $nparams['tid'] : '-1';
 $template['kid'] = isset($nparams['kid']) ? $nparams['kid'] : '-1';
 $template['state'] = isset($nparams['state']) ? $nparams['state'] : '-1';
+$template['action'] = isset($nparams['action']) ? $nparams['action'] : '-default';
 $template['auth_level'] = $issue->get_level();
 
 try {
@@ -38,7 +43,9 @@ try {
 			
 			$issue->update_last_activity();
 			$this->model->issues->save($issue);
-			
+            
+            $commcause->mail_notify_add($issue);
+            
 			$anchor = 'k'.$id;
 			$redirect = true;
 		} elseif ($action === 'subscribe') {
@@ -50,7 +57,6 @@ try {
 			$issue->remove_subscribent($INFO['client']);
 			$this->model->issues->save($issue);
 			
-			$redirect = true;
 		} elseif ($action === 'commcause_delete') {
 			$commcause = $this->model->commcauses->get_one($template['kid']);
 			
@@ -135,6 +141,8 @@ try {
 			
 					$issue->update_last_activity();
 					$this->model->issues->save($issue);
+                    
+                    $task->mail_notify_add($issue);
 					
 					$anchor = 'z'.$id;
 					$redirect = true;
@@ -178,8 +186,8 @@ try {
 	$errors = $e->get_errors();
 	$value = $_POST;
 } catch (Exception $e) {
-//	echo nl2br($e);
-	header("Location: ?id=bez:issue:id:$issue_id");
+	echo nl2br($e);
+//	header("Location: ?id=bez:issue:id:$issue_id");
 }
 
 //~ if (!isset($template[comment_action])) {
@@ -197,7 +205,6 @@ try {
 //~ $template['comments'] = $como->get($issue_id);
 
 //new way
-$template['action'] = $action;
 $template['issue'] = $this->model->issues->get_one($issue_id);
 $template['commcauses'] = $this->model->commcauses->get_all($issue_id);
 $template['corrections'] = $this->model->tasks->get_all(array(

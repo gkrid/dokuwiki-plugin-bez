@@ -84,7 +84,9 @@
 	<?php foreach ($template['issues'] as $issue): ?>
 		<tr class="pr<?php echo $issue['priority'] ?>">
 			<td>
-				<?php echo $this->html_issue_link($issue['id']) ?>
+				<a href="?id=<?php echo $this->id('issue', 'id', $issue['id']) ?>">
+                    #<?php echo $issue['id'] ?>
+                </a>
 			</td>
 			<td>
 			<?php echo $issue['state'] ?>

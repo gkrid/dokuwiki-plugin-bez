@@ -25,9 +25,9 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 	}
 	
 	function __construct() {
-		global $auth, $INFO;
+		global $auth, $conf, $INFO;
 		$this->connect = new Connect();
-		$this->model = new BEZ_mdl_Model($auth, $INFO['client'], $conf['lang']);
+		$this->model = new BEZ_mdl_Model($auth, $INFO['client'], $this, $conf);
 	}
 	
 	function check_remove_action_from_tasks() {

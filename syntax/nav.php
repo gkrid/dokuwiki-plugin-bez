@@ -64,7 +64,7 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 		for ($i = 0; $i < count($ex); $i += 2)
 			$this->value[urldecode($ex[$i])] = urldecode($ex[$i+1]);
 			
-		$this->model = new BEZ_mdl_Model($auth, $INFO['client'], $this->lang_code);
+		$this->model = new BEZ_mdl_Model($auth, $INFO['client'], $this, $conf);
 	}
 
     function handle($match, $state, $pos, Doku_Handler $handler)

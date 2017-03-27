@@ -19,16 +19,16 @@ class BEZ_mdl_Issues extends BEZ_mdl_Factory {
 		$this->select_query = "SELECT *,
 					(CASE
 						WHEN coordinator = '-proposal'
-							THEN '".$this->model->lang['state_proposal']."'
+							THEN '".$this->model->action->getLang('state_proposal')."'
 						WHEN state = 0 	AND assigned_tasks_count > 0
 										AND opened_tasks_count = 0
-							THEN '".$this->model->lang['state_done']."'
+							THEN '".$this->model->action->getLang('state_done')."'
 						WHEN state = 0
-							THEN '".$this->model->lang['state_opened']."'
+							THEN '".$this->model->action->getLang('state_opened')."'
 						WHEN state = 1
-							THEN '".$this->model->lang['state_closed']."'
+							THEN '".$this->model->action->getLang('state_closed')."'
 						WHEN state = 2
-							THEN '".$this->model->lang['state_rejected']."'
+							THEN '".$this->model->action->getLang('state_rejected')."'
 					END) AS state_string,
 					(CASE	WHEN  state = 0 AND assigned_tasks_count > 0
 								AND opened_tasks_count = 0 THEN '1'
@@ -50,7 +50,7 @@ class BEZ_mdl_Issues extends BEZ_mdl_Factory {
 								WHEN tasks.plan_date >= date('now') THEN '1'
 								ELSE '0' END)) FROM tasks WHERE tasks.issue = issues.id)
 							AS task_priority,
-					issuetypes.".$this->model->lang_code." AS type_string
+					issuetypes.".$this->model->conf['lang']." AS type_string
 					FROM issues
 						LEFT JOIN issuetypes ON issues.type = issuetypes.id)";
 	}

@@ -16,7 +16,7 @@ class BEZ_mdl_Model {
 	
 	private $users, $cache, $issues, $tasks, $tasktypes, $commcauses;
 	
-	private $dw_auth, $user_nick, $lang_code, $lang;
+	private $dw_auth, $user_nick, $action, $conf;
 	
 	public function __get($property) {
 		if (property_exists($this, $property)) {
@@ -24,18 +24,12 @@ class BEZ_mdl_Model {
 		}
 	}
 	
-	public function __construct($dw_auth, $user_nick, $lang_code='en', $lang=array()) {
+	public function __construct($dw_auth, $user_nick, $action, $conf) {
 		$this->dw_auth = $dw_auth;
 		$this->user_nick = $user_nick;
-				
-		if ($lang_code === 'pl') {
-			$this->lang_code = $lang_code;
-		} else {
-			$this->lang_code = 'en';
-		}
-
-		$this->lang = $lang;
-		
+		$this->action = $action;
+        $this->conf = $conf;
+        		
 		$db_path = DOKU_INC . 'data/bez.sqlite';
 		//if database not exists
 		if (!file_exists($db_path)) {

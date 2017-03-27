@@ -24,76 +24,44 @@
 	<?php echo lcfirst($bezlang[$template['task']->action_string($template['task']->action)]) ?>
 	(<?php echo lcfirst($bezlang[$template['task']->state_string($template['task']->state)]) ?>)
 </h2>
-
+    
 <?php
-	$cost_colspan = 1;
-	$task_type_colspan = 1;
-	$plan_date_colspan = 1;
-	$finish_time_colspan = 1;
+    $top_row = array(
+        '<strong>'.$bezlang['executor'].': </strong>' . 
+        $this->model->users->get_user_full_name($template['task']->executor),
+        
+        '<strong>'.$bezlang['reporter'].': </strong>' . 
+        $this->model->users->get_user_full_name($template['task']->reporter)
+    );
+
+    if ($template['task']->tasktype_string != '') {
+        $top_row[] =
+            '<strong>'.$bezlang['task_type'].': </strong>' . 
+            $template['task']->tasktype_string;
+    }
+		
+	if ($template['task']->cost != '') {
+        $top_row[] =
+            '<strong>'.$bezlang['cost'].': </strong>' . 
+            $template['task']->cost;
+    }
 	
-	if ($template['task']->cost == '' && $template['task']->all_day_event == '1') {
-		$plan_date_colspan = 3;
-	} elseif ($template['task']->cost == '' && $template['task']->all_day_event == '0') {
-		/*leave default*/
-	} elseif ($template['task']->cost != '' && $template['task']->all_day_event == '1') {
-		$plan_date_colspan = 4;
-	} elseif ($template['task']->cost != '' && $template['task']->all_day_event == '0') {
-		$finish_time_colspan = 2;
+    //BOTTOM ROW
+    $bottom_row = array(
+        '<strong>'.$bezlang['plan_date'].': </strong>' . 
+        $template['task']->plan_date
+    );			
+
+	if ($template['task']->all_day_event == '0') {
+        $bottom_row[] =
+            '<strong>'.$bezlang['start_time'].': </strong>' . 
+            $template['task']->start_time;
+        $bottom_row[] =
+            '<strong>'.$bezlang['finish_time'].': </strong>' . 
+            $template['task']->finish_time;
 	}
-	
-	$td_with_colspan = function($colspan) {
-		if ($colspan === 1) {
-			echo '<td>';
-		} else {
-			echo '<td colspan="'.$colspan.'">';
-		}
-	}
+    echo bez_html_irrtable(array(), $top_row, $bottom_row);
 ?>
-
-<table>	
-<tr>
-		<td>
-			<strong><?php echo $bezlang['executor'] ?>:</strong>
-			<?php echo $this->model->users->get_user_full_name($template['task']->executor) ?>
-		</td>
-		
-		<td>
-			<strong><?php echo $bezlang['reporter'] ?>:</strong>
-			<?php echo $this->model->users->get_user_full_name($template['task']->reporter) ?>
-		</td>
-
-		<?php if ($template['task']->tasktype_string != ''): ?>
-			<?php echo $td_with_colspan($task_type_colspan) ?>
-				<strong><?php echo $bezlang['task_type'] ?>:</strong>
-				<?php echo $template['task']->tasktype_string ?>
-			</td>
-		<?php endif ?>
-		
-		<?php if ($template['task']->cost != ''): ?>
-			<?php echo $td_with_colspan($cost_colspan) ?>
-				<strong><?php echo $bezlang['cost'] ?>:</strong>
-				<?php echo $template['task']->cost ?>
-			</td>
-		<?php endif ?>
-</tr>
-
-<tr>
-	<?php echo $td_with_colspan($plan_date_colspan) ?>
-		<strong><?php echo $bezlang['plan_date'] ?>:</strong>
-		<?php echo $template['task']->plan_date ?>
-	</td>
-	
-	<?php if ($template['task']->all_day_event == '0'): ?>
-		<td><strong><?php echo $bezlang['start_time'] ?>:</strong>
-		<?php echo $template['task']->start_time ?></td>
-		<?php echo $td_with_colspan($finish_time_colspan) ?>
-		<strong><?php echo $bezlang['finish_time'] ?>:</strong>
-		<?php echo $template['task']->finish_time ?></td>
-	<?php endif ?>
-	
-</tr>
-
-</table>
 
 <?php echo $template['task']->task_cache ?>
 
@@ -105,7 +73,13 @@
 	<?php else: ?>
 		<h3><?php echo $bezlang['evaluation'] ?></h3>
 	<?php endif ?>
-	<?php $id = $this->id('issue', 'id', $template['issue']->id, 'action', $template['action'], 'tid', $template['tid'], 'state', $template['state']) ?>
+    <?php
+        if ($nparams['bez'] === 'issue') {
+            $id = $this->id('issue', 'id', $template['issue']->id, 'action', $template['action'], 'tid', $template['tid'], 'state', $template['state']);
+        } else {
+             $id = $this->id('task', 'tid', $template['tid'], 'action', $template['action'], 'state', $template['state']);
+        }
+    ?>
 	<form class="bez_form" action="?id=<?php echo $id ?>" method="POST">
 		<input type="hidden" name="id" value="<?php echo $id ?>">
 		<div class="bez_reason_toolbar"></div>
@@ -134,20 +108,20 @@
 					$template['task']->get_level() >= 10): ?>
 			<a class="bds_inline_button"
 				href="?id=<?php
-					if (isset($template['issue'])) {
+					if ($nparams['bez'] === 'issue') {
 						echo $helper->id('issue', 'id', $template['issue']->id, 'tid', $template['task']->id, 'action', 'task_change_state', 'state', '1');
 					} else {
-						echo $helper->id('task', 'tid', $template['task']->id, 'state', '1');
+						echo $helper->id('task', 'tid', $template['task']->id, 'action', 'task_change_state', 'state', '1');
 					}
 				?>#z<?php echo $template['task']->id ?>">
 				↬ <?php echo $bezlang['task_do'] ?>
 			</a>
 			<a class="bds_inline_button"
 				href="?id=<?php
-					if (isset($template['issue'])) {
+					if ($nparams['bez'] === 'issue') {
 						echo $helper->id('issue', 'id', $template['issue']->id, 'tid', $template['task']->id, 'action', 'task_change_state', 'state', '2');
 					} else {
-						echo $helper->id('task', 'tid', $template['task']->id, 'state', '2');
+						echo $helper->id('task', 'tid', $template['task']->id, 'action', 'task_change_state', 'state', '2');
 					}
 				?>#z<?php echo $template['task']->id ?>">
 				↛ <?php echo $bezlang['task_reject'] ?>
@@ -155,10 +129,10 @@
 		<?php elseif ($template['task']->get_level() >= 10): ?>
 			<a class="bds_inline_button"
 					href="?id=<?php
-						if (isset($template['issue'])) {
+						if ($nparams['bez'] === 'issue') {
 							echo $helper->id('issue', 'id', $template['issue']->id, 'tid', $template['task']->id, 'action', 'task_reopen');
 						} else {
-							echo $helper->id('task', 'tid', $template['task']->id, 'action', 'reopen');
+							echo $helper->id('task', 'tid', $template['task']->id, 'action', 'task_reopen');
 						}
 					?>">
 					↻ <?php echo $bezlang['task_reopen'] ?>
@@ -168,10 +142,10 @@
 		<?php if($template['task']->get_level() >= 15 || $template['task']->reporter === $template['task']->get_user()): ?>
 				<a class="bds_inline_button"
 					href="?id=<?php
-						if (isset($template['issue'])) {
+						if ($nparams['bez'] === 'issue') {
 							echo $helper->id('issue', 'id', $template['issue']->id, 'tid', $template['task']->id, 'action', 'task_edit');
 						} else {
-							echo $helper->id('task_form', 'tid', $template['task']->id, 'action', 'edit');
+							echo $helper->id('task', 'tid', $template['task']->id, 'action', 'task_edit');
 						}
 					?>#z_">
 					✎ <?php echo $bezlang['edit'] ?>
@@ -181,9 +155,7 @@
 		<a class="bds_inline_button" href="
 		<?php echo $helper->mailto($this->model->users->get_user_email($template['task']->executor),
 		$bezlang['task'].': #z'.$template['task']->id.' '.lcfirst($bezlang[$template['task']->action_string($template['task']->action)]),
-		$template['task']->issue != '' ? 
-			DOKU_URL . 'doku.php?id='.$this->id('issue_task', 'id', $template['task']->issue, 'tid', $template['task']->id)
-			: DOKU_URL . 'doku.php?id='.$this->id('show_task', 'tid', $template['task']->id)) ?>">
+        DOKU_URL . 'doku.php?id='.$this->id('task', 'tid', $template['task']->id)) ?>">
 			✉ <?php echo $bezlang['send_mail'] ?>
 		</a>
 

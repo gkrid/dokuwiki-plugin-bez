@@ -1,6 +1,10 @@
+<?php if ($template['action'] === 'unsubscribe'): ?>
+    <div class="info">
+        <?php echo $bezlang['unsubscribed_com'] ?>
+    </div>
+<?php endif ?>
 
 <?php include "issue_box.php" ?>
-
 
 <!-- Comments -->
 <div class="bez_comments">
@@ -21,10 +25,10 @@
 				<?php include 'task_form.php' ?>
 			<?php endif ?>
 		</div>
-		
+
 		<div class="bez_second_lv_buttons" style="margin-top: 10px">
 			<?php if (	$template['issue']->get_level() >= 15 &&
-						$template['issue']->state === '0'): ?>
+						$template['issue']->full_state() === '0'): ?>
 				<a href="?id=<?php echo $this->id('issue', 'id', $template['issue']->id, 'action', 'task_correction_add') ?>#z_" class="bez_subscribe_button">
 					<span class="bez_awesome">&#xf0fe;</span>&nbsp;&nbsp;<?php echo $bezlang['correction_add'] ?>
 				</a>

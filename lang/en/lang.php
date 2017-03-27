@@ -170,10 +170,10 @@ $lang['task_changed'] = "Task has been changed";
 $lang['task_rejected_header'] = "Task has been rejected";
 $lang['task_closed'] = "Task has been completed";
 $lang['task_reopened'] = "Task has been reopend";
-$lang['comment_added'] = "Comment has been added";
+$lang['comment_added'] = "commented";
 $lang['comment_changed'] = "Comment has been changed";
 
-$lang['cause_added'] = "Cause added";
+$lang['cause_added'] = 'added cause';
 $lang['cause_noun'] = "Cause";
 $lang['change_cause_button'] = "Correct the cause";
 $lang['added'] = 'Added';
@@ -417,6 +417,21 @@ $lang['oct'] = 'October';
 $lang['nov'] = 'November';
 $lang['dec'] = 'December';
 
+$lang['mon1_a'] = 'January';
+$lang['mon2_a'] = 'February';
+$lang['mon3_a'] = 'March';
+$lang['mon4_a'] = 'April';
+$lang['mon5_a'] = 'May';
+$lang['mon6_a'] = 'June';
+$lang['mon7_a'] = 'July';
+$lang['mon8_a'] = 'August';
+$lang['mon9_a'] = 'September';
+$lang['mon10_a'] = 'October';
+$lang['mon11_a'] = 'November';
+$lang['mon12_a'] = 'December';
+
+$lang['at_hour'] = 'at';
+
 $lang['hours_no'] = 'Number of hours';
 
 $lang['show_desc'] = 'Show descriptions';
@@ -481,3 +496,5 @@ $lang['next_open'] = 'Next open';
 $lang['prev_open'] = 'Previous open';
 
 $lang['js']['remove_confirm'] = 'Do you realy want to delete this item?';
+
+$lang['unsubscribed_com'] = 'You’ve been unsubscribed from this problem.';

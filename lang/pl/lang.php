@@ -171,8 +171,10 @@ $lang['task_changed'] = 'Zadanie zmienione';
 $lang['task_rejected_header'] = 'Zadanie odrzucone';
 $lang['task_closed'] = 'Zadanie zakończone';
 $lang['task_reopened'] = 'Zadanie ponownie otwarte';
-$lang['comment_added'] = 'dodał komentarz';
+$lang['comment_added'] = 'dodał(a) komentarz';
 $lang['comment_changed'] = 'Komentarz zmieniony';
+
+$lang['cause_added'] = 'dodał(a) przyczynę';
 
 $lang['replay_by_task'] = 'Odpowiedz, dodając zadanie';
 $lang['change_made'] = 'Zmiana wprowadzona';
@@ -298,7 +300,7 @@ $lang['comments'] = 'Komentarze';
 $lang['causes'] = 'Przyczyny';
 $lang['action'] = 'Akcja';
 
-$lang['cause_added'] = "Przyczyna dodana";
+
 $lang['cause_noun'] = "Przyczyna";
 $lang['change_cause_button'] = "Popraw przyczynę";
 $lang['added'] = 'Dodana';
@@ -435,6 +437,21 @@ $lang['oct'] = 'październik';
 $lang['nov'] = 'listopad';
 $lang['dec'] = 'grudzień';
 
+$lang['mon1_a'] = 'stycznia';
+$lang['mon2_a'] = 'lutego';
+$lang['mon3_a'] = 'marca';
+$lang['mon4_a'] = 'kwietnia';
+$lang['mon5_a'] = 'maja';
+$lang['mon6_a'] = 'czerwca';
+$lang['mon7_a'] = 'lipca';
+$lang['mon8_a'] = 'sierpnia';
+$lang['mon9_a'] = 'września';
+$lang['mon10_a'] = 'października';
+$lang['mon11_a'] = 'listopada';
+$lang['mon12_a'] = 'grudnia';
+
+$lang['at_hour'] = 'o';
+
 $lang['hours_no'] = 'Godziny';
 
 $lang['show_desc'] = 'Pokaż opisy';
@@ -504,3 +521,9 @@ $lang['next_open'] = 'Następny otwarty';
 $lang['prev_open'] = 'Poprzedni otwarty';
 
 $lang['js']['remove_confirm'] = 'Czy na pewno chcesz usunąć ten element?';
+
+$lang['unsubscribed_com'] = 'Zostałeś wypisany z tego problemu.';
+
+$lang['mail_comment_added'] = 'dodał(a) komentarz';
+$lang['mail_cause_added'] = 'dodał(a) przyczynę';
+$lang['mail_task_added'] = 'dodał(a) zadanie';

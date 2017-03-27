@@ -1,5 +1,5 @@
 <?php $id = $this->id('issue', 'id', $template['issue']->id, 'action',
-	$template['action'] === '' ? 'commcause_add' : $template['action'],
+	$template['action'] === 'commcause_edit' ? 'commcause_edit' : 'commcause_add',
 'kid', $template['kid']) ?>
 <a id="k_"></a>
 <form action="?id=<?php echo $id ?>" method="POST">
@@ -47,19 +47,19 @@
 							<?php echo $bezlang['cause_type'] ?>:
 						</label>
                         <label>
-						<input type="radio" name="type" value="1"
-							<?php if(!isset($value['type']) || $value['type'] === '0' || $value['type'] === '1') echo 'checked' ?>/>
-							<?php echo $bezlang['cause_type_default'] ?>
+                            <input type="radio" name="type" value="1"
+                                <?php if(!isset($value['type']) || $value['type'] === '0' || $value['type'] === '1') echo 'checked' ?>/>
+                                <?php echo $bezlang['cause_type_default'] ?>
 						</label>
 						&nbsp;&nbsp;
                         <label>
-						<input type="radio" name="type" value="2"
-							<?php if($value['type'] === '2') echo 'checked' ?>/>
-							<?php echo $bezlang['cause_type_potential'] ?>
+                            <input type="radio" name="type" value="2"
+                                <?php if($value['type'] === '2') echo 'checked' ?>/>
+                                <?php echo $bezlang['cause_type_potential'] ?>
                         </label>
-					</div>
+					   </div>
+                    </div>
 				<?php endif ?>
-                </div>
 				<input type="submit" value="<?php echo $template['kid'] !== '-1' ? $bezlang['correct'] : $bezlang['add'] ?>">
 				 <a href="?id=<?php echo $this->id('issue', 'id', $template['issue']->id) ?><?php if ($template['kid'] !== '-1') echo '#k'.$template['kid'] ?>" class="bez_delete_button bez_link_button bez_cancel_button">
 					<?php echo $bezlang['cancel'] ?>

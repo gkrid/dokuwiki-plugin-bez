@@ -60,7 +60,8 @@ class BEZ_mdl_Validator {
 			if ($result === false) {
 				$this->errors[$key] = $code;
 			} else {
-				$val_data[$key] = $value;
+                /*by convention all values as passed as strings*/
+				$val_data[$key] = (string)$value;
 			}
 		}
 		if (count($this->errors) > 0) {

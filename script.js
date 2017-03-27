@@ -2,6 +2,11 @@ var bez = {};
 bez.ctl = {};
 
 /* DOKUWIKI:include scripts/issue.js */
+/* DOKUWIKI:include scripts/issue_report.js */
+/* DOKUWIKI:include scripts/issues.js */
+/* DOKUWIKI:include scripts/task_form.js */
+/* DOKUWIKI:include scripts/task.js */
+/* DOKUWIKI:include scripts/tasks.js */
 
 jQuery(function () {
     'use strict';

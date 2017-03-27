@@ -7,7 +7,7 @@ if(!defined('DOKU_INC')) die();
  */
 
 class BEZ_mdl_Entity {	
-	protected $auth, $validator, $model, $helper;
+	protected $auth, $validator, $model;
 	
 	protected $parse_int = array();
 	
@@ -44,6 +44,14 @@ class BEZ_mdl_Entity {
 			return date('Y-m-d H:i:s', $time);
 		}
 	}
+    
+    public function date_format($datetime) {
+        $dt = new DateTime($datetime);
+        return $dt->format('j') . ' ' .
+                $this->model->action->getLang('mon'.$dt->format('n').'_a') . ' ' .
+                $this->model->action->getLang('at_hour') . ' ' .
+                $dt->format('G:i');
+    }
 	
 	public function __get($property) {
 		$columns = array_merge($this->get_columns(), $this->get_virtual_columns());
@@ -55,7 +63,7 @@ class BEZ_mdl_Entity {
 			}
 		}
 	}
-	
+    	
 	public function any_errors() {
 		return count($this->validator->get_errors()) > 0;
 	}

@@ -1,5 +1,9 @@
-<?php $task = $template['task'] ?>
-<?php include 'task_box.php' ?>
+<?php if (	$template['action'] === 'task_edit' &&
+            $template['tid'] === $template['task']->id): ?>
+    <?php include 'task_form.php' ?>
+<?php else: ?>
+    <?php include 'task_box.php' ?>
+<?php endif ?>
 
 <?php $template['no_edit'] = true ?>
 

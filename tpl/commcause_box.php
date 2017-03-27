@@ -24,8 +24,12 @@
 		<div class="commcause_content">
 			<h2>
 				<strong><?php echo $this->model->users->get_user_full_name($template['commcause']->reporter) ?></strong>
-				<?php echo $bezlang['comment_added'] ?>
-				<?php echo $template['commcause']->datetime ?>
+                <?php if ($template['commcause']->type > 0): ?>
+				    <?php echo $bezlang['cause_added'] ?>
+                <?php else: ?>
+                    <?php echo $bezlang['comment_added'] ?>
+                <?php endif ?>
+				<?php echo $template['commcause']->date_format($template['commcause']->datetime) ?>
 			
 			<div class="bez_comment_buttons">
 			<?php if (
@@ -56,7 +60,7 @@
 			</div>
 		</div>
 		
-		<?php if (is_array($template['commcauses_tasks'][$template['commcause']->id])): ?>
+		<?php if (isset($template['commcauses_tasks'][$template['commcause']->id])): ?>
 		<div style="margin-top: 10px; margin-left: 40px">
 			<?php foreach ($template['commcauses_tasks'][$template['commcause']->id] as $task): ?>
 				<?php $template['task'] = $task ?>
@@ -71,9 +75,10 @@
 				<?php if (	$template['action'] === 'task_commcause_add' &&
 							$template['kid'] === $template['commcause']->id): ?>
 					<?php include 'task_form.php' ?>
-				<?php elseif (	(!isset($template['no_edit']) || $template['no_edit'] === false) &&
+				<?php elseif (	(!isset($template['no_edit']) ||
+                                    $template['no_edit'] === false) &&
                                 $template['commcause']->type !== '0' &&
-                              	$template['issue']->state === '0' &&
+                              	$template['issue']->full_state() === '0' &&
 								$template['action'] !== 'task_edit'): ?>
 						<div class="bez_second_lv_buttons">
 							<a href="?id=<?php echo $this->id('issue', 'id', $template['issue']->id, 'kid', $template['commcause']->id, 'action', 'task_commcause_add') ?>#z_" class="bez_subscribe_button">

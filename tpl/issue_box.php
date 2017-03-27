@@ -1,6 +1,9 @@
 <div id="bds_issue_box" class="pr<?php echo $template['issue']->priority ?>">
 <h1>
-<?php echo $this->html_issue_link($template['issue']->id) ?>
+
+<a href="?id=<?php echo $this->id('issue', 'id', $template['issue']->id) ?>">
+    #<?php echo $template['issue']->id ?>
+</a>
 
 <?php if ($template['issue']->type_string !== NULL): ?>
 	<?php echo $template['issue']->type_string ?>

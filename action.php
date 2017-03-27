@@ -3,7 +3,7 @@
 if(!defined('DOKU_INC')) die();
 
 require_once DOKU_PLUGIN.'bez/mdl/model.php';
-
+require_once DOKU_PLUGIN.'bez/html.php';
 
 class action_plugin_bez extends DokuWiki_Action_Plugin {
 
@@ -78,6 +78,8 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 		
 	}
 	
+    //to powinno powędrować do __construct(!), ale nie może z powdu potoku dokuwiki,
+    //dlatego decyduję się na leniwą konkretyzację
 	public function __get($name) {
 		global $auth, $conf, $INFO;
 		if ($name === 'model') {
@@ -86,7 +88,7 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 					$INFO = pageinfo();
 				}
 				$this->model_object =
-				new BEZ_mdl_Model($auth, $INFO['client'], $conf['lang'], $this->lang);
+				new BEZ_mdl_Model($auth, $INFO['client'], $this, $conf);
 			}
 			return $this->model_object;
 		}
@@ -101,7 +103,7 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 		$ex = explode(':', $id);
 		if ($ex[0] == 'bez' && $ACT == 'show') {
 			$this->action = $ex[1];
-			$this->params = array_slice($ex, 2);
+			$this->params = $ex;
 		/*BEZ w innym języku*/
 		} else if ($ex[1] == 'bez' && $ACT == 'show') {
 			$l = $ex[0];
@@ -115,7 +117,7 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 			$this->lang = $lang;
 
 			$this->action = $ex[2];
-			$this->params = array_slice($ex, 3);
+			$this->params = array_slice($ex, 1);
 		}
 		
 		//set default filters
@@ -133,22 +135,22 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 		if ($this->lang_code != '')
 			array_unshift($args, $this->lang_code);
 		return implode(':', $args);
-	}
+    }
 
-	public function issue_uri($id) {
-		return '?id='.$this->id('issue', 'id', $id);
-	}
-
-	public function html_issue_link($id) {
-		return '<a href="'.$this->issue_uri($id).'">#'.$id.'</a>';
-	}
-	public function html_task_link($issue, $task) {
-		if ($issue == NULL)
-			return '<a href="?id='.$this->id('show_task','tid', $task).'">#z'.$task.'</a>';
-		else
-			return '<a href="?id='.$this->id('issue_task', 'id', $issue, 'tid', $task).'">#'.$issue.' #z'.$task.'</a>';
-	}
-	
+//	public function issue_uri($id) {
+//		return '?id='.$this->id('issue', 'id', $id);
+//	}
+//
+//	public function html_issue_link($id) {
+//		return '<a href="'.$this->issue_uri($id).'">#'.$id.'</a>';
+//	}
+//	public function html_task_link($issue, $task) {
+//		if ($issue == NULL)
+//			return '<a href="?id='.$this->id('show_task','tid', $task).'">#z'.$task.'</a>';
+//		else
+//			return '<a href="?id='.$this->id('issue_task', 'id', $issue, 'tid', $task).'">#'.$issue.' #z'.$task.'</a>';
+//	}
+//	
 	/**
 	 * handle ajax requests
 	 */
@@ -209,8 +211,8 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 			$event->preventDefault();
 
 
-			if	( ! ($this->helper->token_viewer() || $this->helper->user_viewer()))
-				return false;
+//			if	( ! ($this->helper->token_viewer() || $this->helper->user_viewer()))
+//				return false;
 
 			$ctl= DOKU_PLUGIN."bez/ctl/".str_replace('/', '', $this->action).".php";
 			if (file_exists($ctl)) {
@@ -248,10 +250,10 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 			if ($this->norender)
 				return false;
 
-			if	( ! ($this->helper->token_viewer() || $this->helper->user_viewer())) {
-				html_denied();
-				return false;
-			}
+//			if	( ! ($this->helper->token_viewer() || $this->helper->user_viewer())) {
+//				html_denied();
+//				return false;
+//			}
 
 			if (!isset($errors)) {
 				$errors= array();

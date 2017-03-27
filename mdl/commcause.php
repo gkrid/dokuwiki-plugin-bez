@@ -94,5 +94,30 @@ class BEZ_mdl_Commcause extends BEZ_mdl_Entity {
 		}
 		
 		$this->content_cache = $this->helper->wiki_parse($this->content);
-	}    
+    }
+    
+    public function mail_notify_add($issue_obj) {
+        if ($issue_obj->id !== $this->issue) {
+            throw new Exception('issue object id and commcause->issue does not match');
+        }
+        
+        $rep = array(
+            'content' => $this->content,
+            'content_html' => $this->content_cache,
+            'who' => $this->reporter,
+            'when' => $this->datetime
+        );
+        
+        if ($this->type > 0) {
+            $rep['action'] = $this->model->action->getLang('mail_cause_added');
+            $rep['action_color'] = '#ffeedc';
+            $rep['action_border_color'] = '#ddb68d';
+        } else {
+            $rep['action'] = $this->model->action->getLang('mail_comment_added');
+            $rep['action_color'] = 'transparent';
+            $rep['action_border_color'] = '#E5E5E5';
+        }
+        
+        $issue_obj->mail_notify($rep);
+    }
 }

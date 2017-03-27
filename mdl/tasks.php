@@ -11,7 +11,7 @@ class BEZ_mdl_Tasks extends BEZ_mdl_Factory {
 	public function __construct($model) {
 		parent::__construct($model);
 		$this->select_query = "SELECT tasks.*,
-						tasktypes.".$this->model->lang_code." AS tasktype_string,
+						tasktypes.".$this->model->conf['lang']." AS tasktype_string,
 						(CASE	WHEN tasks.issue IS NULL THEN '3'
 								WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
 								WHEN causes.potential = 0 THEN '1'
