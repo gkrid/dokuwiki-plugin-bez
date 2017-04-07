@@ -208,7 +208,9 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 	
 	public function get_participants() {
 		$full_names = [];
-		foreach ($this->participants_array as $par) {
+       
+        $involved = array_merge($this->subscribents_array, $this->participants_array);
+		foreach ($involved as $par) {
 			$name = $this->model->users->get_user_full_name($par);
 			if ($name == '') {
 				$full_names[$par] = $par;

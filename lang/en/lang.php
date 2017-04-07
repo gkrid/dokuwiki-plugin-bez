@@ -498,3 +498,11 @@ $lang['prev_open'] = 'Previous open';
 $lang['js']['remove_confirm'] = 'Do you realy want to delete this item?';
 
 $lang['unsubscribed_com'] = 'You’ve been unsubscribed from this problem.';
+
+$lang['issue_added'] = 'Issue added';
+
+$lang['timeline_cause_added'] = 'Cause added';
+$lang['timeline_comment_added'] = 'Comment added';
+
+$lang['issue_invite_header'] = 'Invite user';
+$lang['issue_invite_button'] = 'Invite';

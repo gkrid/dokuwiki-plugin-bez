@@ -29,4 +29,11 @@ bez.ctl.task = function() {
     if (jQuery('#reason').length > 0) {
 		bez.rich_text_editor(jQuery('#reason'), jQuery('.bez_reason_toolbar'));
 	}
+    
+    jQuery('#bez_hidden_issue').hide();
+    jQuery('#bez_show_issue').on('click', function (e) {
+        e.preventDefault();
+        jQuery('#bez_hidden_issue').slideDown();
+        jQuery(this).hide();
+    });
 };

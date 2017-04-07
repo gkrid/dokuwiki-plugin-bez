@@ -35,6 +35,11 @@ class BEZ_mdl_Entity {
 		}
 		return $assoc;
 	}
+    
+    //set id when object is saved in database
+    public function set_id($id) {
+        $this->id = $id;
+    }
 	
 	public function sqlite_date($time=NULL) {
 		//SQLITE format: https://www.sqlite.org/lang_datefunc.html

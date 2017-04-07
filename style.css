@@ -1028,3 +1028,30 @@ input.days {
 	color: inherit;
 }
 
+
+.custom-combobox {
+    display: flex;
+    margin-right: 5px;
+}
+
+.custom-combobox-toggle {
+    margin-left: -1px;
+}
+
+.custom-combobox-input {
+    margin: 0;
+    padding: 6px 10px;
+    max-width: 90px;
+}
+
+#bez_invite_users_form select {
+     max-width: 90px;
+}
+
+#bez_invite_users_form {
+    display: flex;
+}
+
+#bez_invite_users button {
+    display: block;
+}

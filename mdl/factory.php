@@ -74,7 +74,7 @@ class BEZ_mdl_Factory {
 		$sth->execute($execute);
         
         $id = $this->model->db->lastInsertId();
-		$obj->id = $id;
+		$obj->set_id($id);
         
 		return $id;
 	}

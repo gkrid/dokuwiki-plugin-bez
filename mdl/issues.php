@@ -57,7 +57,7 @@ class BEZ_mdl_Issues extends BEZ_mdl_Factory {
 	
 	public function get_one($id) {
 		if ($this->auth->get_level() < 5) {
-			return false;
+			throw new Exception('no permission');
 		}
 	
 		$q = $this->select_query.' WHERE id = ?';

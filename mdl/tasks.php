@@ -47,7 +47,9 @@ class BEZ_mdl_Tasks extends BEZ_mdl_Factory {
 	protected $filter_field_map = array(
 		'issue' 	=> 'tasks.issue',
 		'action' 	=> 'action',
-		'cause'		=> 'tasks.cause'
+		'cause'		=> 'tasks.cause',
+        'executor'  => 'tasks.executor',
+        'state'     => 'tasks.state'
 	);
 	
 	public function get_all($filters=array()) {
@@ -68,6 +70,25 @@ class BEZ_mdl_Tasks extends BEZ_mdl_Factory {
 						
 		return $sth;
 	}
+    
+    public function count($filters=array()) {
+        if ($this->auth->get_level() < 5) {
+			throw new Exception('BEZ_mdl_Tasks: no permission to get_all()');
+		}
+        
+        if (in_array('action', $filters)) {
+            throw new Exception('BEZ_mdl_Tasks: action filter not implemented in method count()');
+        }
+        
+        list($where_q, $execute) = $this->build_where($filters);
+        
+        $q = 'SELECT COUNT(*) FROM tasks' . $where_q;
+        $sth = $this->model->db->prepare($q);
+        $sth->execute($execute);
+        
+        $count = $sth->fetchColumn();
+        return $count;
+    }
 	
 	public function create_object($defaults) {
 		echo "<b>Warngin: </b> function create_object depraced";

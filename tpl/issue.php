@@ -124,6 +124,20 @@
 <?php endforeach ?>
 </ul>
 
+<h2><?php echo $bezlang['issue_invite_header'] ?></h2>
+<form action="?id=<?php echo $this->id('issue', 'id', $template['issue']->id, 'action', 'invite') ?>" method="post" id="bez_invite_users_form">
+<div id="bez_invite_users" class="ui-widget">
+    <select name="client">
+        <option value="">--- <?php echo $bezlang['select'] ?> ---</option>
+        <?php foreach ($template['users'] as $nick => $name): ?>
+            <option name="<?php echo $nick ?>"><?php echo $name ?></option>
+        <?php endforeach ?>
+    </select>
+</div>
+<button class="bez_subscribe_button"><?php echo $bezlang['issue_invite_button'] ?></button>
+</form>
+
+
 </div>
 
 

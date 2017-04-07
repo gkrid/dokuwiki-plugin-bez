@@ -10,20 +10,21 @@ if (!isset($nparams['id'])) {
     header('Location: ?id=bez:issues');
 }
 
-$issue_id = (int)$nparams['id'];
-$issue = $this->model->issues->get_one($issue_id);
-//~ $template['commcause_action'] = 'commcause_add';
-//placeholder for adding new records
-//~ $template['commcause_id'] = '-1';
-
-//~ $template['task_action'] = 'task_correction_add';
-$template['tid'] = isset($nparams['tid']) ? $nparams['tid'] : '-1';
-$template['kid'] = isset($nparams['kid']) ? $nparams['kid'] : '-1';
-$template['state'] = isset($nparams['state']) ? $nparams['state'] : '-1';
-$template['action'] = isset($nparams['action']) ? $nparams['action'] : '-default';
-$template['auth_level'] = $issue->get_level();
-
 try {
+    $issue_id = (int)$nparams['id'];
+    $issue = $this->model->issues->get_one($issue_id);
+    //~ $template['commcause_action'] = 'commcause_add';
+    //placeholder for adding new records
+    //~ $template['commcause_id'] = '-1';
+
+    //~ $template['task_action'] = 'task_correction_add';
+    $template['tid'] = isset($nparams['tid']) ? $nparams['tid'] : '-1';
+    $template['kid'] = isset($nparams['kid']) ? $nparams['kid'] : '-1';
+    $template['state'] = isset($nparams['state']) ? $nparams['state'] : '-1';
+    $template['action'] = isset($nparams['action']) ? $nparams['action'] : '-default';
+    $template['auth_level'] = $issue->get_level();
+
+
 	$action = '';
 	if (isset($nparams['action'])) {
 		$action = $nparams['action'];
@@ -55,6 +56,11 @@ try {
 			$redirect = true;
 		} elseif ($action === 'unsubscribe') {
 			$issue->remove_subscribent($INFO['client']);
+			$this->model->issues->save($issue);
+            
+        } elseif ($action === 'invite') {
+            $client = $this->model->users->get_user_nick($_POST['client']);
+			$issue->add_subscribent($client);
 			$this->model->issues->save($issue);
 			
 		} elseif ($action === 'commcause_delete') {
@@ -218,4 +224,6 @@ foreach ($this->model->commcauses->get_causes_ids($issue_id) as $kid) {
 		'cause' => $kid,
 	));
 }
+
+$template['users'] = $this->model->users->get_all();
 

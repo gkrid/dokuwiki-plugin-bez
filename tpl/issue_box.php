@@ -12,6 +12,17 @@
 <?php endif ?>
 
 (<?php echo $template['issue']->state_string ?>)
+
+<span style="color: #777; font-weight: normal; font-size: 90%;">
+    <?php echo $bezlang['coordinator'] ?>:
+    <span style="font-weight: bold;">
+        <?php if ($template['issue']->coordinator === '-proposal'): ?>
+            <i style="font-weight: normal;"><?php echo $bezlang['proposal'] ?></i>
+        <?php else: ?>
+            <?php echo $this->model->users->get_user_full_name($template['issue']->coordinator) ?>
+        <?php endif?>
+    </span>
+</span>
 </h1>
 
 <h1 id="bez_issue_title"><?php echo $template['issue']->title ?></h1>

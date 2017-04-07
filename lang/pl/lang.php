@@ -527,3 +527,11 @@ $lang['unsubscribed_com'] = 'Zostałeś wypisany z tego problemu.';
 $lang['mail_comment_added'] = 'dodał(a) komentarz';
 $lang['mail_cause_added'] = 'dodał(a) przyczynę';
 $lang['mail_task_added'] = 'dodał(a) zadanie';
+
+$lang['issue_added'] = 'Problem dodany';
+
+$lang['timeline_cause_added'] = 'Przyczyna dodana';
+$lang['timeline_comment_added'] = 'Komentarz dodany';
+
+$lang['issue_invite_header'] = 'Zaproś użytkownika';
+$lang['issue_invite_button'] = 'Zaproś';
