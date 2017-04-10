@@ -28,7 +28,7 @@
 	</a>
 	</td>
 	<td>
-	<a onclick="return confirm('Czy na pewno chcesz usunąć ten program?')"
+	<a onclick="return confirm('<?php echo $bezlang['js']['remove_confirm'] ?>')"
 		href="<?php echo $template['uri'] ?>?id=<?php echo $this->id('task_types', 'action', 'remove', 'id', $type->id) ?>">
 		<?php echo $bezlang['delete'] ?>
 	</a>

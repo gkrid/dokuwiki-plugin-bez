@@ -1,15 +1,10 @@
 <a id="k<?php echo $template['commcause']->id ?>"></a>
 <div class="bez_comment
+	<?php echo $template['commcause']->type === '0' ? 'bez_type_0' : 'bez_cause' ?>
 	<?php
-		if ($template['commcause']->type > 0) {
-			echo "bez_cause";
-		} else {
-			echo 'bez_type_0';
-		}
-	?>
-	<?php
-		if ($template['commcause']->reporter == $this->model->users->get_user_full_name($INFO['client'])) {
-			echo "bez_my_comment";
+		if ($template['commcause']->reporter ==
+                $this->model->users->get_user_full_name($INFO['client'])) {
+			echo 'bez_my_comment';
 		}
 	?>">
 	<div class="bez_avatar">
@@ -30,6 +25,16 @@
                     <?php echo $bezlang['comment_added'] ?>
                 <?php endif ?>
 				<?php echo $template['commcause']->date_format($template['commcause']->datetime) ?>
+                
+                <?php if ($template['commcause']->type === '1'): ?>
+                    <span style="color: #000;">
+                        (<?php echo lcfirst($bezlang['cause_type_default']) ?>)
+                    </span>
+                <?php elseif ($template['commcause']->type === '2'): ?>
+                    <span style="color: #000;">
+                        (<?php echo lcfirst($bezlang['cause_type_potential']) ?>)
+                    </span>
+                <?php endif ?>
 			
 			<div class="bez_comment_buttons">
 			<?php if (

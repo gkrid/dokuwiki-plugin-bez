@@ -231,7 +231,7 @@ bez.ctl.issue = function() {
  
         jQuery( "<a>" )
           .attr( "tabIndex", -1 )
-          .attr( "title", "Show All Items" )
+          .attr( "title", LANG.plugins.bez.combobox_show_all_items )
           .tooltip()
           .appendTo( this.wrapper )
           .button({
@@ -299,7 +299,7 @@ bez.ctl.issue = function() {
         // Remove invalid value
         this.input
           .val( "" )
-          .attr( "title", value + " didn't match any item" )
+          .attr( "title", value + " " + LANG.plugins.bez.combobox_did_not_match )
           .tooltip( "open" );
         this.element.val( "" );
         this._delay(function() {

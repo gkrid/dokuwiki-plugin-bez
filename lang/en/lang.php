@@ -506,3 +506,16 @@ $lang['timeline_comment_added'] = 'Comment added';
 
 $lang['issue_invite_header'] = 'Invite user';
 $lang['issue_invite_button'] = 'Invite';
+
+$lang['mail_mail_notify_invite_action'] = 'invited you to take part in the discussion';
+$lang['mail_mail_notify_invite_subject'] = 'Problem invitation';
+
+$lang['mail_mail_inform_coordinator_action'] = 'has assigned you as coordinator';
+$lang['mail_mail_inform_coordinator_subject'] = 'Assignment to the problem';
+
+$lang['mail_mail_notify_change_state_action'] = 'has changed state';
+$lang['mail_mail_notify_change_state_subject'] = 'State change in the problem';
+
+$lang['js']['combobox_show_all_items'] = 'Show All Items';
+$lang['js']['combobox_did_not_match'] = "didn't match any item";
+

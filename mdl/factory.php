@@ -53,7 +53,7 @@ class BEZ_mdl_Factory {
 		$table = lcfirst($exp[2]);
 		return $table;
 	}
-	
+    
 	public function save($obj) {
 		if ($obj->any_errors()) {
 			return false;

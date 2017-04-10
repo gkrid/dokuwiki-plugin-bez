@@ -34,7 +34,30 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 	}
 	
 	public function get_virtual_columns() {
-		return array('coordinator', 'action');
+		return array('coordinator', 'action', 'state_string', 'action_string');
+	}
+    
+    private function state_string() {
+		switch($this->state) {
+            case '0':         return 'task_opened';
+            case '-outdated': return 'task_outdated';
+            case '1':         return 'task_done';
+            case '2':         return 'task_rejected';
+        }
+	}
+	
+	private function action_string() {
+		switch($this->action) {
+			case '0': return 'correction';
+			case '1': return 'corrective_action';
+			case '2': return 'preventive_action';
+			case '3': return 'programme';
+		}
+	}
+    
+    private function update_virtual_columns() {
+		$this->state_string = $this->model->action->getLang($this->state_string());
+        $this->action_string = $this->model->action->getLang($this->action_string());
 	}
 		
 	//by defaults you can set: cause, tasktype and issue
@@ -174,6 +197,9 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 		//set parsed
 		$this->task_cache = $this->helper->wiki_parse($this->task);
 		$this->reason_cache = $this->helper->wiki_parse($this->reason);
+        
+        //update virtuals
+        $this->update_virtual_columns();
 			
 		return true;
 	}
@@ -204,36 +230,38 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 		}
 		$this->reason_cache = $this->helper->wiki_parse($this->reason);
 		
+        //update virtuals
+        $this->update_virtual_columns();
 		
 		return true;
 	}
 	
-	public function get_states() {
-		return array(	
-				'0' => 'task_opened',
-				'-outdated' => 'task_outdated',
-				'1' => 'task_done',
-				'2' => 'task_rejected'
-			);
-	}
-	
-	public function state_string($state='') {
-		if ($state === '') {
-			$state = $this->state;
-		}
-		
-		$states = $this->get_states();
-		return $states[$state];
-	}
-	
-	public function action_string($action) {
-		switch($action) {
-			case '0': return 'correction'; break;
-			case '1': return 'corrective_action'; break;
-			case '2': return 'preventive_action'; break;
-			case '3': return 'programme'; break;
-		}
-	}
+//	public function get_states() {
+//		return array(	
+//				'0' => 'task_opened',
+//				'-outdated' => 'task_outdated',
+//				'1' => 'task_done',
+//				'2' => 'task_rejected'
+//			);
+//	}
+//	
+//	public function state_string($state='') {
+//		if ($state === '') {
+//			$state = $this->state;
+//		}
+//		
+//		$states = $this->get_states();
+//		return $states[$state];
+//	}
+//	
+//	public function action_string($action) {
+//		switch($action) {
+//			case '0': return 'correction'; break;
+//			case '1': return 'corrective_action'; break;
+//			case '2': return 'preventive_action'; break;
+//			case '3': return 'programme'; break;
+//		}
+//	}
     
     public function mail_notify_add($issue_obj) {
         if ($issue_obj->id !== $this->issue) {
@@ -282,9 +310,9 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 	               '<a href="?id='.$this->model->action->id('task', 'tid', $this->id).'">' .
 		              '#z'.$this->id . 
 	               '</a> ' . 
-	lcfirst($this->model->action->getLang($this->action_string($this->action))) . ' ' .
+	lcfirst($this->action_string) . ' ' .
     '(' . 
-        lcfirst($this->model->action->getLang($this->state_string($this->state))) .
+        lcfirst($this->state_string) .
     ')' .      
                 '</h2>' . 
                 bez_html_irrtable(array(

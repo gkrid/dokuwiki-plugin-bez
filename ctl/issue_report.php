@@ -46,10 +46,27 @@ try {
 		$value = $issue->get_assoc();
 	} elseif ($action === 'update') {
 		$template['form_action'] = 'update';
-				
+        
+        $prev_coordiantor = $issue->coordinator;
+        
 		$issue->set_data($_POST);
+        
 		$issue->add_participant($issue->coordinator);
-		$this->model->issues->save($issue);
+        
+        //save to get ID!!!
+        $this->model->issues->save($issue);
+
+        if ($issue->coordinator !== '-proposal' &&
+            $INFO['client'] !== $issue->coordinator &&
+            $issue->coordinator != $prev_coordiantor) {
+            //coordinator becomes subscribent automaticly
+            $issue->add_subscribent($issue->coordinator);
+            $this->model->issues->save($issue);
+            
+            $issue->mail_inform_coordinator();
+        }
+        
+        
 
 		header('Location: ?id='.$this->id('issue', 'id', $issue->id));
 
@@ -98,8 +115,21 @@ try {
 		//~ }
 		$issue = $this->model->issues->create_object($_POST);
 		//update tasktype for admins
-		$id = $this->model->issues->save($issue);
-		header('Location: ?id='.$this->id('issue', 'id', $id));
+		
+        //save to get ID!!!
+        $this->model->issues->save($issue);
+        
+        if ($issue->coordinator !== '-proposal' &&
+            $INFO['client'] !== $issue->coordinator) {
+            //coordinator becomes subscribent automaticly
+            $issue->add_subscribent($issue->coordinator);
+            $this->model->issues->save($issue);
+            
+            $issue->mail_inform_coordinator();
+        }
+        
+        
+		header('Location: ?id='.$this->id('issue', 'id', $issue->id));
 
 	} else {
 		$template['form_action'] = 'add';

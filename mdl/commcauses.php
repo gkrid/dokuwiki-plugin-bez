@@ -40,7 +40,8 @@ class BEZ_mdl_Commcauses extends BEZ_mdl_Factory {
 	}
 	
 	protected $filter_field_map = array(
-		'type' 		=> 'commcauses.type'
+		'type' 		=> 'commcauses.type',
+        'issue'     => 'commcauses.issue'
 	);
 	
 	public function get_all($filters) {

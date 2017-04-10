@@ -1,13 +1,13 @@
 <a name="z<?php echo $template['task']->id ?>"></a>
 <div id="z<?php echo $template['task']->id ?>"
-	class="bds_block task <?php $template['task']->state_string($template['task']->state)	?>">
+	class="bds_block task <?php $template['task']->state_string	?>">
 
 <div class="bez_timebox">
 	<span><strong><?php echo $bezlang['open'] ?>:</strong> <?php echo $helper->time2date($template['task']->date) ?></span>
 	
 	<?php if ($template['task']->state !== '0'): ?>
 		<span>
-			<strong><?php echo $bezlang[$template['task']->state_string()] ?>:</strong>
+			<strong><?php echo $template['task']->state_string ?>:</strong>
 			<?php echo $helper->time2date($template['task']->close_date) ?>
 		</span>
 		<span>
@@ -21,8 +21,8 @@
 	<a href="?id=<?php echo $this->id('task', 'tid', $template['task']->id) ?>">
 		#z<?php echo $template['task']->id ?>
 	</a>
-	<?php echo lcfirst($bezlang[$template['task']->action_string($template['task']->action)]) ?>
-	(<?php echo lcfirst($bezlang[$template['task']->state_string($template['task']->state)]) ?>)
+	<?php echo lcfirst($template['task']->action_string) ?>
+	(<?php echo lcfirst($template['task']->state_string) ?>)
 </h2>
     
 <?php
@@ -154,7 +154,7 @@
 
 		<a class="bds_inline_button" href="
 		<?php echo $helper->mailto($this->model->users->get_user_email($template['task']->executor),
-		$bezlang['task'].': #z'.$template['task']->id.' '.lcfirst($bezlang[$template['task']->action_string($template['task']->action)]),
+		$bezlang['task'].': #z'.$template['task']->id.' '.lcfirst($template['task']->action_string),
         DOKU_URL . 'doku.php?id='.$this->id('task', 'tid', $template['task']->id)) ?>">
 			✉ <?php echo $bezlang['send_mail'] ?>
 		</a>

@@ -535,3 +535,15 @@ $lang['timeline_comment_added'] = 'Komentarz dodany';
 
 $lang['issue_invite_header'] = 'Zaproś użytkownika';
 $lang['issue_invite_button'] = 'Zaproś';
+
+$lang['mail_mail_notify_invite_action'] = 'zaprosił cię do wzięcia udziału w dyskusji';
+$lang['mail_mail_notify_invite_subject'] = 'Zaproszenie do problemu';
+
+$lang['mail_mail_inform_coordinator_action'] = 'przypisał cię jako koordynatora';
+$lang['mail_mail_inform_coordinator_subject'] = 'Przypisanie do problemu';
+
+$lang['mail_mail_notify_change_state_action'] = 'zmienił status';
+$lang['mail_mail_notify_change_state_subject'] = 'Zmiana statusu problemu';
+
+$lang['js']['combobox_show_all_items'] = 'Pokaż wszystkie';
+$lang['js']['combobox_did_not_match'] = 'nie pasuje do żadnego elementu';

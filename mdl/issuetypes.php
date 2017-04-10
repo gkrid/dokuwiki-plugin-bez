@@ -12,19 +12,20 @@ class BEZ_mdl_Issuetypes extends BEZ_mdl_Factory {
 			return false;
 		}
 		
-		$sth = $this->model->db->prepare('SELECT *, '.$this->model->conf['lang'].' as type
-					(SELECT COUNT(*) FROM issues WHERE issues.type=issuetypes.id) AS refs
-					FROM issuetypes WHERE id = ?');
+		$sth = $this->model->db->prepare('SELECT *,
+            '.$this->model->conf['lang'].' as type,
+            (SELECT COUNT(*) FROM issues WHERE issues.type=issuetypes.id) AS refs
+            FROM issuetypes WHERE id = ?');
 		$sth->execute(array($id));
 		
-		$tasktype = $sth->fetchObject("BEZ_mdl_Issuetype",
+		$issuetype = $sth->fetchObject("BEZ_mdl_Issuetype",
 					array($this->model));
         
-        if ($tasktype === false) {
-            throw new Exception('there is no tasktype with id: '.$id);
+        if ($issuetype === false) {
+            throw new Exception('there is no issuetype with id: '.$id);
         }
 		
-		return $tasktype;
+		return $issuetype;
 	}
 	
 	public function get_all($additional_fields=array()) {
@@ -49,8 +50,8 @@ class BEZ_mdl_Issuetypes extends BEZ_mdl_Factory {
 	}
 	
 	public function create_object() {
-		$tasktype = new BEZ_mdl_Tasktype($this->model);
-		return $tasktype;
+		$issuetype = new BEZ_mdl_Issuetype($this->model);
+		return $issuetype;
 	}
 	
 }

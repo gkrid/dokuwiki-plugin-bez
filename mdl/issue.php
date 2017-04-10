@@ -230,6 +230,15 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 		
 		return $full_names;
 	}
+    
+    public function total_cost() {
+        $sth = $this->model->db->prepare('SELECT SUM(cost) FROM tasks
+										WHERE issue=:issue AND state=1');
+		$sth->execute(array(':issue' => $this->id));
+		$cost = $sth->fetchColumn();
+        
+        return $cost;
+    }
 	
 	public function is_subscribent($user=NULL) {
 		if ($user === NULL) {
@@ -275,21 +284,22 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 	public function causes_without_tasks_count() {
         if ($this->causes_without_tasks === -1) {
             $sth = $this->model->db->prepare('SELECT COUNT(*) FROM
-            (SELECT commcauses.id, COUNT(*) as cnt 
-                FROM commcauses LEFT JOIN tasks ON commcauses.id = tasks.cause
-                WHERE commcauses.type > 0 AND commcauses.issue = ?
-                GROUP BY commcauses.id) WHERE cnt = 1');
+                (SELECT tasks.id
+                    FROM commcauses LEFT JOIN tasks ON commcauses.id = tasks.cause
+                    WHERE commcauses.type > 0 AND commcauses.issue = ?
+                    GROUP BY commcauses.id)
+                WHERE id IS NULL');
             $sth->execute(array($this->id));
-            $fetch = $sth->fetch();
+            $count = $sth->fetchColumn();
 
-            $this->causes_without_tasks = (int)$fetch[0];
+            $this->causes_without_tasks = (int)$count;
         }
         return $this->causes_without_tasks;
 	}
     
     //http://data.agaric.com/capture-all-sent-mail-locally-postfix
     //https://askubuntu.com/questions/192572/how-do-i-read-local-email-in-thunderbird
-    public function mail_notify($replacements=array()) {
+    public function mail_notify($replacements=array(), $emails=false) {
         $plain = io_readFile($this->model->action->localFN('issue-notification'));
         $html = io_readFile($this->model->action->localFN('issue-notification', 'html'));
                 
@@ -337,15 +347,51 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
         
         $mailer = new Mailer();
         $mailer->setBody($plain, $rep, $rep, $html, false);
-        $emails = array_map(function($user) {
-            return $this->model->users->get_user_email($user);
-        }, $this->subscribents_array);
+        if ($emails === FALSE) {
+            $emails = array_map(function($user) {
+                return $this->model->users->get_user_email($user);
+            }, $this->subscribents_array);
+        }
         $mailer->to($emails);
-        $mailer->subject('[' . $wiki_name . ']' . $rep['subject']);
+        $mailer->subject('[' . $wiki_name . '][BEZ] ' . $rep['subject']);
 
         $send = $mailer->send();
         if ($send === false) {
             throw new Exception("can't send email");
         }
+    }
+    
+    public function mail_notify_change_state() {
+        $this->mail_notify(array(
+            'who' => $this->auth->get_user(),
+            'action' => $this->model->action->getLang('mail_mail_notify_change_state_action'),
+            'subject' => $this->model->action->getLang('mail_mail_notify_change_state_subject') . ' #'.$this->id,
+            'custom_content' => true,
+            'content_html' => ''
+        ));
+    }
+    
+    public function mail_notify_invite($client) {
+        $email = $this->model->users->get_user_email($client);
+        
+        $this->mail_notify(array(
+            'who' => $this->auth->get_user(),
+            'action' => $this->model->action->getLang('mail_mail_notify_invite_action'),
+            'subject' => $this->model->action->getLang('mail_mail_notify_invite_subject') . ' #'.$this->id,
+            'custom_content' => true,
+            'content_html' => ''
+        ), array($email));
+    }
+    
+    public function mail_inform_coordinator() {
+        $email = $this->model->users->get_user_email($this->coordinator);
+        
+        $this->mail_notify(array(
+            'who' => $this->auth->get_user(),
+            'action' => $this->model->action->getLang('mail_mail_inform_coordinator_action'),
+            'subject' => $this->model->action->getLang('mail_mail_inform_coordinator_subject') . ' #'.$this->id,
+            'custom_content' => true,
+            'content_html' => ''
+        ), array($email));
     }
 }

@@ -129,7 +129,7 @@ if ($nparams['bez'] === 'issue') {
 				<div class="row">
 				<label for="task_state"><?php echo $bezlang['task_state'] ?>:</label>
 				<span>
-					<strong><?php echo $bezlang[$template['task']->state_string()] ?></strong>
+					<strong><?php echo $template['task']->state_string ?></strong>
 				</span>
 				</div>
 				

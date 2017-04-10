@@ -21,10 +21,9 @@ class BEZ_mdl_Issuetype extends BEZ_mdl_Entity {
 		return 'issuetypes';
 	}
 		
-	private function set_type() {
-		$code = $this->model->lang_code;
+	private function update_virtual_columns() {
+		$code = $this->model->conf['lang'];
 		$this->type = $this->$code;
-		
 	}
 	
 	public function __construct($model) {
@@ -35,7 +34,10 @@ class BEZ_mdl_Issuetype extends BEZ_mdl_Entity {
 			'en' => array(array('length', 100), 'NOT NULL')
 		));
 		
-		$this->set_type();
+		//we've created empty object
+		if ($this->id === NULL) {
+            $this->update_virtual_columns();   
+        }
 	}
 	
 	public function set($data) {
@@ -52,7 +54,7 @@ class BEZ_mdl_Issuetype extends BEZ_mdl_Entity {
 		foreach ($val_data as $k => $v) {
 			$this->$k = $v;
 		}
-		$this->set_type();
+		$this->update_virtual_columns();
 	}
 	
 	public function remove() {

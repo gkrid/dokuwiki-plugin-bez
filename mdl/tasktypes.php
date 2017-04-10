@@ -13,6 +13,7 @@ class BEZ_mdl_Tasktypes extends BEZ_mdl_Factory {
 		}
 		
 		$sth = $this->model->db->prepare('SELECT *,
+                    '.$this->model->conf['lang'].' as type,
 					(SELECT COUNT(*) FROM tasks WHERE tasktype=tasktypes.id) AS refs
 					FROM tasktypes WHERE id = ?');
 		$sth->execute(array($id));
@@ -29,11 +30,11 @@ class BEZ_mdl_Tasktypes extends BEZ_mdl_Factory {
 		}
 		
 		if (in_array('refs', $additional_fields)) {
-			$q = 'SELECT *,
+			$q = 'SELECT *, '.$this->model->conf['lang'].' as type,
 					(SELECT COUNT(*) FROM tasks WHERE tasktype=tasktypes.id) AS refs
 					FROM tasktypes';
 		} else {
-			$q = 'SELECT * FROM tasktypes';
+			$q = 'SELECT *, '.$this->model->conf['lang'].' as type FROM tasktypes';
 		}
 		
 		$sth = $this->model->db->prepare($q);

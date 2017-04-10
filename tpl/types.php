@@ -1,21 +1,14 @@
-<div class="info">
-Aby usunąć wybrany rekord, nadpisz jego pola pustymi wartościami.
-</div>
-<a href="<?php echo $template['uri'] ?>?id=<?php echo $this->id('types', 'action', 'clean') ?>">
-	Wyczyść typy bez referencji.
-</a>
 <table>
 <tr>
 	<th>Polski</th>
 	<th>English</th>
-	<th colspan="2">References</th>
-</tr>
+	<th colspan="3">References</th>
 </tr>
 <?php foreach ($template['types'] as $type): ?>
 <tr>
-	<?php if (isset($template['edit']) && $template['edit'] == $type['id']): ?>
+	<?php if (isset($template['edit']) && $template['edit'] == $type->id): ?>
 	<form action="<?php echo $template['uri'] ?>
-				?id=<?php echo $this->id('types', 'action', 'update', $type['id']) ?>" method="POST">
+				?id=<?php echo $this->id('types', 'action', 'update', 'id', $type->id) ?>" method="POST">
 		<td><input name="pl" value="<?php echo $value['pl'] ?>" /></td>
 		<td><input name="en" value="<?php echo $value['en'] ?>" /></td>
 		<td>
@@ -26,27 +19,33 @@ Aby usunąć wybrany rekord, nadpisz jego pola pustymi wartościami.
 		</td>
 	</form>
 	<?php else: ?>
-	<td><?php echo $type['pl'] ?></td>
-	<td><?php echo $type['en'] ?></td>
-	<td>
-	<a href="<?php echo $template['uri'] ?>?id=<?php echo $this->id('types', 'action', 'edit', $type['id']) ?>">
-		<?php echo $bezlang['edit'] ?>
-	</a>
-	<?php endif ?>
-	</td>
-	<td>
-	<a href="<?php echo $template['uri'] ?>?id=<?php echo $this->id('issues', 'type', $type['id']) ?>">
-		<?php echo $type['refs'] ?>
-	</a>
-</td>
+        <td><?php echo $type->pl ?></td>
+        <td><?php echo $type->en ?></td>
+        <td>
+        <a href="<?php echo $template['uri'] ?>?id=<?php echo $this->id('types', 'action', 'edit', 'id', $type->id) ?>">
+            <?php echo $bezlang['edit'] ?>
+        </a>
+        <?php endif ?>
+        </td>
+        <td>
+        <a onclick="return confirm('<?php echo $bezlang['js']['remove_confirm'] ?>')"
+            href="<?php echo $template['uri'] ?>?id=<?php echo $this->id('types', 'action', 'remove', 'id', $type->id) ?>">
+            <?php echo $bezlang['delete'] ?>
+        </a>
+        </td>
+        <td>
+        <a href="<?php echo $template['uri'] ?>?id=<?php echo $this->id('issues', 'type', $type->id) ?>">
+            <?php echo $type->refs ?>
+        </a>
+    </td>
 </tr>
 <?php endforeach ?>
-<?php if ( ! isset($template['edit'])): ?>
+<?php if ($template['edit'] == -1): ?>
 <form action="<?php echo $template['uri'] ?>?id=<?php echo $this->id('types', 'action', 'add') ?>" method="POST">
 <tr>
 	<td><input name="pl" value="<?php echo $value['pl'] ?>" /></td>
 	<td><input name="en" value="<?php echo $value['en'] ?>" /></td>
-	<td colspan="2"><input type="submit" value="<?php echo $bezlang['save'] ?>" /></td>
+	<td colspan="3"><input type="submit" value="<?php echo $bezlang['save'] ?>" /></td>
 </tr>
 <?php endif ?>
 </form>

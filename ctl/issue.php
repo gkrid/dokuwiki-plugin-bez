@@ -62,6 +62,8 @@ try {
             $client = $this->model->users->get_user_nick($_POST['client']);
 			$issue->add_subscribent($client);
 			$this->model->issues->save($issue);
+            
+            $issue->mail_notify_invite($client);
 			
 		} elseif ($action === 'commcause_delete') {
 			$commcause = $this->model->commcauses->get_one($template['kid']);
@@ -93,10 +95,17 @@ try {
 		} elseif ($action == 'issue_close_confirm') {
 			$issue->set_state($_POST);
 			$this->model->issues->save($issue);
+            
+            $issue->mail_notify_change_state();
+            
 			$redirect = true;
 		} elseif ($action === 'reopen') {
 			$issue->set_state(array('state' => '0'));
 			$this->model->issues->save($issue);
+            
+            $issue->mail_notify_change_state();
+            
+            $redirect = true;
  		} elseif (strpos($action, 'task') === 0) {
 			$template['users'] = $this->model->users->get_all();
 			$template['tasktypes'] = $this->model->tasktypes->get_all();
