@@ -145,6 +145,14 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 		$this->description_cache = $this->helper->wiki_parse($this->description);
 		$this->opinion_cache = $this->helper->wiki_parse($this->opinion);
 	}
+    
+    public function update_cache() {
+		if ($this->auth->get_level() < 20) {
+			return false;
+		}
+		$this->description_cache = $this->helper->wiki_parse($this->description);
+		$this->opinion_cache = $this->helper->wiki_parse($this->opinion);
+	}
 	
 	public function set_state($data) {
 		if ($this->auth->get_level() < 15) {
@@ -190,10 +198,13 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 			) {
 			throw new Exception('no permission');
 		}
-		if ($this->model->users->exists($subscribent)) {
+		if ($this->model->users->exists($subscribent) &&
+            !in_array($subscribent, $this->subscribents_array)) {
 			$this->subscribents_array[$subscribent] = $subscribent;
 			$this->subscribents = implode(',', $this->subscribents_array);
+            return true;
 		}
+        return false;
 	}
 	
 	public function remove_subscribent($subscribent) {
@@ -205,6 +216,10 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 		unset($this->subscribents_array[$subscribent]);
 		$this->subscribents = implode(',', $this->subscribents_array);
 	}
+    
+    public function get_subscribents() {
+        return $this->subscribents_array;
+    }
 	
 	public function get_participants() {
 		$full_names = [];

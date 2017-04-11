@@ -74,6 +74,30 @@ class BEZ_mdl_Issues extends BEZ_mdl_Factory {
         
 		return $issue;
 	}
+    
+    protected $filter_field_map = array(
+
+	);
+	
+	public function get_all($filters=array()) {
+		if ($this->auth->get_level() < 5) {
+			throw new Exception('BEZ_mdl_Tasks: no permission to get_all()');
+		}
+		
+		list($where_q, $execute) = $this->build_where($filters);
+		
+		$q = $this->select_query . $where_q;
+			
+		$sth = $this->model->db->prepare($q);
+		
+		$sth->setFetchMode(PDO::FETCH_CLASS, "BEZ_mdl_Issue",
+				array($this->model));
+				
+		$sth->execute($execute);
+						
+		return $sth;
+	}
+    
 	
 	public function create_object($defaults=array()) {
 		$issue = new BEZ_mdl_Issue($this->model, $defaults);

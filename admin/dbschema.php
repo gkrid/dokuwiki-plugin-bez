@@ -1173,7 +1173,8 @@ function do_issues_remove_priority() {
 			), 'commcauses');
 		}
 		
-		$causes = $this->connect->fetch_assoc("SELECT issue, date, reporter, cause, cause_cache, potential FROM causes");
+		$causes = $this->connect->fetch_assoc("SELECT id, issue, date, reporter, cause, cause_cache, potential FROM causes");
+        $queries = array();
 		foreach($causes as $cause) {
 			$unix = (int) $cause['date'];
 			$type = (int) $cause['potential'] + 1;
@@ -1189,7 +1190,18 @@ function do_issues_remove_priority() {
 				'content' => $cause['cause'],
 				'content_cache' => $cause['cause_cache']
 			), 'commcauses');
+            
+            $lastid = $this->connect->lastid();
+            $tasks = $this->connect->fetch_assoc("SELECT id FROM tasks WHERE cause=".$cause['id']);
+            
+            foreach ($tasks as $task) {
+                $queries[] = array(array('cause' => $lastid), 'tasks', $task['id']);
+            }
 		}
+                    
+        foreach ($queries as $q) {
+                $this->connect->errupdate($q[0], $q[1], $q[2]);
+        }
 		
 	}
 	function check_add_subscribents_to_issue() {

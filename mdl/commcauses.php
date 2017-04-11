@@ -44,15 +44,15 @@ class BEZ_mdl_Commcauses extends BEZ_mdl_Factory {
         'issue'     => 'commcauses.issue'
 	);
 	
-	public function get_all($filters) {
+	public function get_all($filters=array()) {
 		if ($this->auth->get_level() < 5) {
 			throw new Exception('no permission');
 		}
 		
 		//filters is issue
-		if (!is_array($filters)) {
-			$filters = array('issue' => $filters);
-		}
+//		if (!is_array($filters)) {
+//			$filters = array('issue' => $filters);
+//		}
 		
 		list($where_q, $execute) = $this->build_where($filters);
 		

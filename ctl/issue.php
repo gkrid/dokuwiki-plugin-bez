@@ -60,10 +60,13 @@ try {
             
         } elseif ($action === 'invite') {
             $client = $this->model->users->get_user_nick($_POST['client']);
-			$issue->add_subscribent($client);
-			$this->model->issues->save($issue);
-            
-            $issue->mail_notify_invite($client);
+			$state = $issue->add_subscribent($client);
+            //user wasn't subscribent
+            if ($state === true) {
+                $this->model->issues->save($issue);
+                $issue->mail_notify_invite($client);
+                $template['invited_email'] = $this->model->users->get_user_email($client);
+            } 
 			
 		} elseif ($action === 'commcause_delete') {
 			$commcause = $this->model->commcauses->get_one($template['kid']);
@@ -221,7 +224,9 @@ try {
 
 //new way
 $template['issue'] = $this->model->issues->get_one($issue_id);
-$template['commcauses'] = $this->model->commcauses->get_all($issue_id);
+$template['commcauses'] = $this->model->commcauses->get_all(
+    array('issue' => $issue_id)
+);
 $template['corrections'] = $this->model->tasks->get_all(array(
 	'issue' => $issue_id,
 	'action' => 0,
@@ -234,5 +239,8 @@ foreach ($this->model->commcauses->get_causes_ids($issue_id) as $kid) {
 	));
 }
 
+
 $template['users'] = $this->model->users->get_all();
 
+//remove userts that are subscribents already
+$template['users_to_invite'] = array_diff_key($template['users'], $issue->get_subscribents());

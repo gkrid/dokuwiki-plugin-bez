@@ -15,7 +15,7 @@
 <?php endif ?>
 
 
-<?php if ($template['user_level'] >= 20): ?>
+<?php if ($template['user_level'] >= 15): ?>
 <div class="row">
 <label for="type"><?php echo $bezlang['type'] ?>:</label>
 <span>
@@ -29,7 +29,9 @@
 </select>
 </span>
 </div>
-
+<?php endif ?>
+    
+<?php if ($template['user_level'] >= 20): ?>
 <div class="row">
 <label for="coordinator"><?php echo $bezlang['coordinator'] ?>:</label>
 <span>

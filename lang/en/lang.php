@@ -519,3 +519,5 @@ $lang['mail_mail_notify_change_state_subject'] = 'State change in the problem';
 $lang['js']['combobox_show_all_items'] = 'Show All Items';
 $lang['js']['combobox_did_not_match'] = "didn't match any item";
 
+$lang['invitation_has_been_send'] = 'Invitation has been sent to';
+

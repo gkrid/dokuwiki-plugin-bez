@@ -1,20 +1,22 @@
 <?php $template['no_edit'] = true ?>
 
-<div id="bez_hidden_issue">
-    <?php if (isset($template['issue'])): ?>
-        <?php include 'issue_box.php' ?>
-    <?php endif ?>
-
-    <?php if (isset($template['commcause'])): ?>
-    <div class="bez_comments" style="display: block; margin-bottom: 10px">
-        <?php include 'commcause_box.php' ?>
+<?php if (isset($template['issue'])): ?>
+    <div id="bez_hidden_issue">
+            <?php include 'issue_box.php' ?>
+        <?php if (isset($template['commcause'])): ?>
+        <div class="bez_comments" style="display: block; margin-bottom: 10px">
+            <?php include 'commcause_box.php' ?>
+        </div>
+        <?php else: ?>
+            <br />
+        <?php endif ?>
     </div>
-    <?php endif ?>
-</div>
 
-<a href="#" id="bez_show_issue">
-    <?php echo $bezlang['show_issue'] ?>
-</a>
+    <a href="#" id="bez_show_issue">
+        <?php echo $bezlang['show_issue'] ?>
+    </a>
+
+<?php endif ?>
 
 <?php $template['no_edit'] = false ?>
 

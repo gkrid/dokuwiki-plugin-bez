@@ -74,7 +74,7 @@
                                 $template['tid'] === $template['task']->id): ?>
                         <?php include 'task_form.php' ?>
                     <?php else: ?>
-                        <?php include 'task.php' ?>
+                        <?php include 'task_box.php' ?>
                     <?php endif ?>
                 <?php endforeach ?>
             </div>

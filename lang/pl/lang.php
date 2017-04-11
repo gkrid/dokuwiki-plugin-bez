@@ -547,3 +547,5 @@ $lang['mail_mail_notify_change_state_subject'] = 'Zmiana statusu problemu';
 
 $lang['js']['combobox_show_all_items'] = 'Pokaż wszystkie';
 $lang['js']['combobox_did_not_match'] = 'nie pasuje do żadnego elementu';
+
+$lang['invitation_has_been_send'] = 'Zaproszenie zostało wysłane na adres';

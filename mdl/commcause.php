@@ -62,6 +62,13 @@ class BEZ_mdl_Commcause extends BEZ_mdl_Entity {
 		
 		$this->auth->set_coordinator($this->coordinator);
 	}
+    
+    public function update_cache() {
+		if ($this->auth->get_level() < 20) {
+			return false;
+		}
+		$this->content_cache = $this->helper->wiki_parse($this->content);
+	}
 	
 	public function set_data($data) {
 		//only coordinator can add causes

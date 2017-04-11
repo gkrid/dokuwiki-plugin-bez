@@ -4,6 +4,13 @@
     </div>
 <?php endif ?>
 
+<?php if (isset($template['invited_email'])): ?>
+    <div class="info">
+        <?php echo $bezlang['invitation_has_been_send'] ?>:
+        <strong><?php echo $template['invited_email'] ?></strong>
+    </div>
+<?php endif ?>
+
 <?php include "issue_box.php" ?>
 
 <!-- Comments -->
@@ -131,7 +138,7 @@
     <div id="bez_invite_users" class="ui-widget">
         <select name="client">
             <option value="">--- <?php echo $bezlang['select'] ?> ---</option>
-            <?php foreach ($template['users'] as $nick => $name): ?>
+            <?php foreach ($template['users_to_invite'] as $nick => $name): ?>
                 <option name="<?php echo $nick ?>"><?php echo $name ?></option>
             <?php endforeach ?>
         </select>

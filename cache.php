@@ -1,6 +1,6 @@
 <?php
 function usage() {
-	echo "usage: cache.php -u username [-r]\n";
+	echo "usage: cache.php -u username [-ric]\n";
 	exit(1);
 }
 
@@ -40,7 +40,7 @@ require_once DOKU_PLUGIN.'bez/mdl/model.php';
 
 require_once DOKU_PLUGIN.'bez/helper.php';
 
-$options = getopt("u:r");
+$options = getopt("u:ric");
 if (!array_key_exists('u', $options)) {
 	usage();
 }
@@ -48,15 +48,14 @@ $user = $options['u'];
 
 $auth = new auth_plugin_authplain();
 
-
-$model = new BEZ_mdl_Model($auth, $user);
-$bezcache = new Bezcache();
 $helper = new helper_plugin_bez();
+$model = new BEZ_mdl_Model($auth, $user, $helper, $conf);
+$bezcache = new Bezcache();
 
 
 if (array_key_exists('r', $options)) {
 	foreach ($model->tasks->get_all() as $task) {
-		echo "Updating cache of #".$task->id."\n";
+		echo "Updating cache of #z".$task->id."\n";
 		$task->update_cache();
 		$model->tasks->save($task);
 		
@@ -70,6 +69,18 @@ if (array_key_exists('r', $options)) {
 						':id' => $task->id
 						));
 
+	}
+} elseif (array_key_exists('i', $options)) {
+    foreach ($model->issues->get_all() as $issue) {
+		echo "Updating cache of #".$issue->id."\n";
+		$issue->update_cache();
+		$model->issues->save($issue);
+	}
+} elseif (array_key_exists('c', $options)) {
+    foreach ($model->commcauses->get_all() as $commcause) {
+		echo "Updating cache of #c".$commcause->id."\n";
+		$commcause->update_cache();
+		$model->commcauses->save($commcause);
 	}
 } else {
 	usage();
