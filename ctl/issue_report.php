@@ -6,6 +6,11 @@
 //~ include_once DOKU_PLUGIN."bez/models/tasks.php";
 
 
+if	(!$helper->user_viewer()) {
+//	$errors[] = $bezlang['error_issues'];
+//	$controller->preventDefault();
+    throw new PermissionDeniedException();
+} 
 
 //~ if	(!$helper->user_editor() ||
 	//~ ($issue_id != NULL && !$helper->user_coordinator($issue_id))) {
@@ -141,7 +146,7 @@ try {
 } catch (ValidationException $e) {
 	$errors = $e->get_errors();
 	$value = $_POST;
-} catch (Exception $e) {
+} catch (DBException $e) {
 	echo nl2br($e);
 }
 

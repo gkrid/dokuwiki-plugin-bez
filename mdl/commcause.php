@@ -87,7 +87,7 @@ class BEZ_mdl_Commcause extends BEZ_mdl_Entity {
 		if (! (	$this->auth->get_level() >= 15 ||
 				($this->type === '0' && $this->reporter === $this->auth->get_user()))
 			) {
-			throw new Exception('no permission');
+			throw new PermissionDeniedException();
 		}
 
 			

@@ -48,7 +48,7 @@ class BEZ_mdl_Tasks extends BEZ_mdl_Factory {
 						
 	public function get_one($id) {
 		if ($this->auth->get_level() < 5) {
-			throw new Exception('BEZ_mdl_Tasks: no permission to get_one()');
+			throw new PermissionDeniedException('BEZ_mdl_Tasks: no permission to get_one()');
 		}
 		
 		$q = $this->select_query.' WHERE tasks.id = ?';
@@ -76,7 +76,7 @@ class BEZ_mdl_Tasks extends BEZ_mdl_Factory {
 	
 	public function get_all($filters=array()) {
 		if ($this->auth->get_level() < 5) {
-			throw new Exception('BEZ_mdl_Tasks: no permission to get_all()');
+			throw new PermissionDeniedException('BEZ_mdl_Tasks: no permission to get_all()');
 		}
 		
 		list($where_q, $execute) = $this->build_where($filters);
@@ -95,7 +95,7 @@ class BEZ_mdl_Tasks extends BEZ_mdl_Factory {
     
     public function count($filters=array()) {
         if ($this->auth->get_level() < 5) {
-			throw new Exception('BEZ_mdl_Tasks: no permission to get_all()');
+			throw new PermissionDeniedException('BEZ_mdl_Tasks: no permission to get_all()');
 		}
         
         if (in_array('action', $filters)) {

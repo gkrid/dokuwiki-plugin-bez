@@ -4,6 +4,7 @@ if(!defined('DOKU_INC')) die();
 
 require_once DOKU_PLUGIN.'bez/mdl/model.php';
 require_once DOKU_PLUGIN.'bez/html.php';
+require_once DOKU_PLUGIN.'bez/exceptions.php';
 
 class action_plugin_bez extends DokuWiki_Action_Plugin {
 
@@ -229,8 +230,9 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 				$controller = $this;
 				include_once $ctl;
 			}
+        } catch(PermissionDeniedException $e) {
+			header('Location: ' . DOKU_URL . 'doku.php?id=' . $_GET['id'] . '&do=login');
 		} catch(Exception $e) {
-			echo $e;
 			/*preventDefault*/
 			$this->norender = true;
 		}
@@ -287,8 +289,10 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 
 				include_once $tpl;
 			}
+        } catch(PermissionDeniedException $e) {
+			header('Location: ' . DOKU_URL . 'doku.php?id=' . $_GET['id'] . '&do=login');
 		} catch(Exception $e) {
-			echo $e;
+			/*exception*/
 		}
 	}
 }

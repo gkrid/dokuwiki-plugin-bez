@@ -176,7 +176,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 				return false;	
 			}
 		} else {
-			throw new Exception('no permission');
+			throw new PermissionDeniedException();
 		}
 						
 		if ($val_data === false) {

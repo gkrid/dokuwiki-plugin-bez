@@ -7,8 +7,9 @@ include_once DOKU_PLUGIN."bez/models/users.php";
 include_once DOKU_PLUGIN."bez/models/rootcauses.php";
 
 if	(!$helper->user_viewer()) {
-	$errors[] = $bezlang['error_issues'];
-	$controller->preventDefault();
+//	$errors[] = $bezlang['error_issues'];
+//	$controller->preventDefault();
+    throw new PermissionDeniedException();
 } 
 
 $isso = new Issues();

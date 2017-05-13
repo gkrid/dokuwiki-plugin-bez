@@ -83,8 +83,7 @@ try {
         header("Location: ?id=bez:task:tid:".$template['tid']);
     }
     
-} catch (Exception $e) {
-    echo $e;
-//    header('Location: ?id=bez:tasks');
+} catch (DBException $e) {
+    echo nl2br($e);
 }
 

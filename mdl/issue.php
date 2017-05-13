@@ -124,7 +124,7 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 	
 	public function set_data($data) {
 		if ($this->auth->get_level() < 15) {
-			throw new Exception('no permission');
+			throw new PermissionDeniedException();
 		}
 
 		$input = array('title', 'description', 'opinion', 'type');
@@ -156,7 +156,7 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 	
 	public function set_state($data) {
 		if ($this->auth->get_level() < 15) {
-			throw new Exception('no permission');
+			throw new PermissionDeniedException();
 		}
 
 		$input = array('opinion', 'state');
@@ -184,7 +184,7 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 		if (! (	$this->auth->get_level() >= 15 ||
 				$participant === $this->auth->get_user())
 			) {
-			throw new Exception('no permission');
+			throw new PermissionDeniedException();
 		}
 		if ($this->model->users->exists($participant)) {
 			$this->participants_array[$participant] = $participant;
@@ -196,7 +196,7 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 		if (! (	$this->auth->get_level() >= 15 ||
 				$subscribent === $this->auth->get_user())
 			) {
-			throw new Exception('no permission');
+			throw new PermissionDeniedException();
 		}
 		if ($this->model->users->exists($subscribent) &&
             !in_array($subscribent, $this->subscribents_array)) {
@@ -211,7 +211,7 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 		if (! (	$this->auth->get_level() >= 15 ||
 				$subscribent === $this->auth->get_user())
 			) {
-			throw new Exception('no permission');
+			throw new PermissionDeniedException();
 		}
 		unset($this->subscribents_array[$subscribent]);
 		$this->subscribents = implode(',', $this->subscribents_array);

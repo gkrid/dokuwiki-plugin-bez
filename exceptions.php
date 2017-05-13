@@ -17,3 +17,12 @@ class ValidationException extends Exception
 		return $this->validaion_errors;
 	}
 }
+
+
+class PermissionDeniedException extends Exception {
+    
+}
+
+class DBException extends Exception {
+    
+}

@@ -22,7 +22,7 @@ class BEZ_mdl_Commcauses extends BEZ_mdl_Factory {
 	
 	public function get_one($id) {
 		if ($this->auth->get_level() < 5) {
-			throw new Exception('no permission');
+			throw new PermissionDeniedException();
 		}
 		
 		$q = $this->select_query . ' WHERE commcauses.id = ?';
@@ -46,7 +46,7 @@ class BEZ_mdl_Commcauses extends BEZ_mdl_Factory {
 	
 	public function get_all($filters=array()) {
 		if ($this->auth->get_level() < 5) {
-			throw new Exception('no permission');
+			throw new PermissionDeniedException();
 		}
 		
 		//filters is issue
@@ -68,7 +68,7 @@ class BEZ_mdl_Commcauses extends BEZ_mdl_Factory {
 	
 	public function get_causes_ids($issue) {
 		if ($this->auth->get_level() < 5) {
-			throw new Exception('no permission');
+			throw new PermissionDeniedException();
 		}
 		
 		$q = "SELECT commcauses.id
@@ -103,7 +103,7 @@ class BEZ_mdl_Commcauses extends BEZ_mdl_Factory {
             }
 			$this->delete_from_db($obj->id);
 		} else {
-			throw new Exception('no permission');
+			throw new PermissionDeniedException();
 		}
 		
 	}

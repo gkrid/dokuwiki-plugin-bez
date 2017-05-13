@@ -1,8 +1,9 @@
 <?php
 
+require_once DOKU_PLUGIN.'bez/exceptions.php';
+
 require_once 'auth.php';
 require_once 'validator.php';
-require_once 'ValidationException.php';
 
 require_once 'users.php';
 require_once 'issues.php';

@@ -52,8 +52,8 @@ try {
 } catch (ValidationException $e) {
 	$errors = $e->get_errors();
 	$value = $_POST;
-} catch (Exception $e) {
-    echo $e;
+} catch (DBException $e) {
+    echo nl2br($e);
 //	header("Location: ?id=bez:tasks");
 }
 
