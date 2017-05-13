@@ -233,6 +233,7 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
         } catch(PermissionDeniedException $e) {
 			header('Location: ' . DOKU_URL . 'doku.php?id=' . $_GET['id'] . '&do=login');
 		} catch(Exception $e) {
+            echo nl2br($e);
 			/*preventDefault*/
 			$this->norender = true;
 		}

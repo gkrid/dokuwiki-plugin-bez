@@ -24,7 +24,7 @@ class BEZ_mdl_Tasks extends BEZ_mdl_Factory {
 
                 (CASE	WHEN tasks.issue IS NULL THEN '3'
                         WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
-                        WHEN causes.potential = 0 THEN '1'
+                        WHEN commcauses.type = '1' THEN '1'
                         ELSE '2' END) AS action,
 
                 (CASE
@@ -32,7 +32,7 @@ class BEZ_mdl_Tasks extends BEZ_mdl_Factory {
                         THEN '".$this->model->action->getLang('programme')."'
                     WHEN tasks.cause IS NULL OR tasks.cause = ''
                         THEN '".$this->model->action->getLang('correction')."'
-                     WHEN causes.potential = 0
+                     WHEN commcauses.type = 1
                         THEN '".$this->model->action->getLang('corrective_action')."'
                     ELSE
                         '".$this->model->action->getLang('preventive_action')."'
@@ -42,7 +42,7 @@ class BEZ_mdl_Tasks extends BEZ_mdl_Factory {
                       ELSE issues.coordinator END) AS coordinator
                 FROM tasks
                     LEFT JOIN tasktypes ON tasks.tasktype = tasktypes.id
-                    LEFT JOIN causes ON tasks.cause = causes.id
+                    LEFT JOIN commcauses ON tasks.cause = commcauses.id
                     LEFT JOIN issues ON tasks.issue = issues.id";
 	}
 						
