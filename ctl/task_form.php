@@ -4,18 +4,21 @@
 $template['tid'] = isset($nparams['tid']) ? $nparams['tid'] : '-1';
 $template['action'] = isset($nparams['action']) ? $nparams['action'] : '-default';
 
+if (isset($_POST['tasktype'])) {
+    $tasktype = $_POST['tasktype'];
+} else {
+    $tasktype = $nparams['tasktype'];
+}
+$template['tasktype'] = $tasktype;
+
 try {
-    if (isset($_POST['tasktype'])) {
-        $tasktype = $_POST['tasktype'];
-    } else {
-        $tasktype = $nparams['tasktype'];
-    }
+
     $task = $this->model->tasks->create_object_program(
                             array('tasktype' => $tasktype));
 
     $template['auth_level'] = $task->get_level();
     $template['user'] = $task->get_user();
-    $value['tasktype'] = $nparams['tasktype'];
+    $value['tasktype'] = $tasktype;
 
     if (count($_POST) > 0) {
         //checkboxes 
@@ -33,8 +36,12 @@ try {
 //            $to = $this->model->users->get_user_full_name($exec).' <'.$this->model->users->get_user_email($exec).'>';
 //            $body = "$uri?id=".$this->id('show_task', 'tid', $tid);
 //            $this->helper->mail($to, $subject, $body);
-
-            header("Location: ?id=bez:task:tid:$tid");
+        
+        //don't send notification when user binds himself to the task.
+        if ($task->reporter !== $task->executor) {
+            $task->mail_notify_add();
+        }
+        header("Location: ?id=bez:task:tid:$tid");
     } else {
         if (isset($nparams['duplicate'])) {
             $tid = (int)$nparams['duplicate'];

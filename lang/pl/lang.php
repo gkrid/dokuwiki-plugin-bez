@@ -527,6 +527,8 @@ $lang['unsubscribed_com'] = 'Zostałeś wypisany z tego problemu.';
 $lang['mail_comment_added'] = 'dodał(a) komentarz';
 $lang['mail_cause_added'] = 'dodał(a) przyczynę';
 $lang['mail_task_added'] = 'dodał(a) zadanie';
+$lang['mail_task_added_programme'] = 'przypisał(a) ci zadanie';
+
 
 $lang['issue_added'] = 'Problem dodany';
 

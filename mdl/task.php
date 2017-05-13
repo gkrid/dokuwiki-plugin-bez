@@ -263,8 +263,51 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 //		}
 //	}
     
-    public function mail_notify_add($issue_obj) {
-        if ($issue_obj->id !== $this->issue) {
+    private function mail_notify($replacements=array(), $emails=false) {
+        $plain = io_readFile($this->model->action->localFN('task-notification'));
+        $html = io_readFile($this->model->action->localFN('task-notification', 'html'));
+                
+        $wiki_name = $this->model->conf['title'];
+        $reps = array(  'wiki_name' => $wiki_name,
+                        'who' => $this->reporter
+                     );
+        
+        //$replacements can override $reps
+        $rep = array_merge($reps, $replacements);
+
+        if (!isset($rep['who_full_name'])) {
+            $rep['who_full_name'] =
+                $this->model->users->get_user_full_name($rep['who']);
+        }
+        
+        //auto title
+        if (!isset($rep['subject'])) {
+            if (isset($rep['content'])) {
+                $rep['subject'] =  $rep['who_full_name'].' '.$rep['action'];
+            }
+        }
+       
+        //we must do it manually becouse Mailer uses htmlspecialchars()
+        $html = str_replace('@TASK_TABLE@', $rep['task_table'], $html);
+        
+        $mailer = new Mailer();
+        $mailer->setBody($plain, $rep, $rep, $html, false);
+        if ($emails === FALSE) {
+            $emails = array_map(function($user) {
+                return $this->model->users->get_user_email($user);
+            }, array($this->executor));
+        }
+        $mailer->to($emails);
+        $mailer->subject('[' . $wiki_name . '][BEZ] ' . $rep['subject']);
+
+        $send = $mailer->send();
+        if ($send === false) {
+            throw new Exception("can't send email");
+        }
+    }
+    
+    public function mail_notify_add($issue_obj=NULL) {
+        if ($issue_obj !== NULL && $issue_obj->id !== $this->issue) {
             throw new Exception('issue object id and task->issue does not match');
         }
         
@@ -307,7 +350,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
             'content' => $this->task,
             'content_html' =>
                 '<h2 style="font-size: 1.2em;">'.
-	               '<a href="?id='.$this->model->action->id('task', 'tid', $this->id).'">' .
+	               '<a href="'.DOKU_URL.'doku.php?id='.$this->model->action->id('task', 'tid', $this->id).'">' .
 		              '#z'.$this->id . 
 	               '</a> ' . 
 	lcfirst($this->action_string) . ' ' .
@@ -336,6 +379,11 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
         $rep['action_color'] = '#e4f4f4';
         $rep['action_border_color'] = '#8bbcbc';
         
-        $issue_obj->mail_notify($rep);
+        if ($issue_obj === NULL) {
+            $rep['action'] = $this->model->action->getLang('mail_task_added_programme');
+            $this->mail_notify($rep);
+        } else {
+            $issue_obj->mail_notify($rep);
+        }
     }
 }

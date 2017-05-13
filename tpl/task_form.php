@@ -158,9 +158,13 @@ if ($nparams['bez'] === 'issue') {
 					<a href="?id=<?php
 				if (isset($template['issue'])) {
 					echo $this->id('issue', 'id', $template['issue']->id);
-				} else {
+				} else if ($template['task']->id != '') {
 					echo $this->id('task', 'tid', $template['task']->id);
-				}
+				} else if ($template['tasktype'] != '') {
+                    echo $this->id('tasks', 'tasktype', $template['tasktype']);
+                } else {
+                    echo $this->id('tasks');
+                }
 				?><?php if ($template['tid'] !== '-1') echo '#z'.$template['tid'] ?>"
 				class="bez_delete_button bez_link_button">
 					<?php echo $bezlang['cancel'] ?>
