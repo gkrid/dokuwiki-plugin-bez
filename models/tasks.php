@@ -739,7 +739,7 @@ class Tasks extends Event {
 		$a = $this->fetch_assoc("SELECT tasks.id,tasks.state, tasks.task_cache, tasks.reason_cache,
 									(CASE	WHEN tasks.issue IS NULL THEN '3'
 											WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
-											WHEN causes.potential = 0 THEN '1'
+											WHEN commcauses.type = 1 THEN '1'
 											ELSE '2' END)AS naction,
 									(CASE	WHEN tasks.state > 0 THEN '3'
 											WHEN tasks.plan_date >= date('now', '+1 month') THEN '2'
@@ -749,7 +749,7 @@ class Tasks extends Event {
 		tasks.tasktype, tasks.task, tasks.reason, tasks.plan_date, tasks.all_day_event,
 		tasks.start_time, tasks.finish_time
 		FROM tasks LEFT JOIN issues ON tasks.issue = issues.id 
-		LEFT JOIN causes ON tasks.cause = causes.id
+		LEFT JOIN commcauses ON tasks.cause = commcauses.id
 		$where_q ORDER BY priority, tasks.plan_date, tasks.start_time");
 		foreach ($a as &$row)
 			$row = $this->join($row, $keep);
@@ -762,14 +762,14 @@ class Tasks extends Event {
 		$a = $this->fetch_assoc("SELECT tasks.id, tasks.task_cache, tasks.reason_cache, tasks.issue, tasks.executor, tasks.date, tasks.plan_date, tasks.start_time, tasks.finish_time, tasktypes.pl as tasktype, all_day_event,
 									(CASE	WHEN tasks.issue IS NULL THEN '3'
 											WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
-											WHEN causes.potential = 0 THEN '1'
+											WHEN commcauses.type = 1 THEN '1'
 											ELSE '2' END) AS naction,
 									(CASE	WHEN tasks.state > 0 THEN '3'
 											WHEN tasks.plan_date >= date('now', '+1 month') THEN '2'
 											WHEN tasks.plan_date >= date('now') THEN '1'
 											ELSE '0' END) AS priority
 								FROM tasks LEFT JOIN issues ON tasks.issue = issues.id 
-								LEFT JOIN causes ON tasks.cause = causes.id
+								LEFT JOIN commcauses ON tasks.cause = commcauses.id
 								LEFT JOIN tasktypes ON tasks.tasktype = tasktypes.id
 								WHERE priority = '0'");
 		foreach ($a as &$row)						
@@ -788,14 +788,14 @@ class Tasks extends Event {
 		$a = $this->fetch_assoc("SELECT tasks.id, tasks.task_cache, tasks.reason_cache, tasks.issue, tasks.executor, tasks.date, tasks.plan_date, tasks.start_time, tasks.finish_time, tasktypes.pl as tasktype, all_day_event,
 									(CASE	WHEN tasks.issue IS NULL THEN '3'
 											WHEN tasks.cause IS NULL OR tasks.cause = '' THEN '0'
-											WHEN causes.potential = 0 THEN '1'
+											WHEN commcauses.type = 1 THEN '1'
 											ELSE '2' END) AS naction,
 									(CASE	WHEN tasks.state > 0 THEN '3'
 											WHEN tasks.plan_date >= date('now', '+1 month') THEN '2'
 											WHEN tasks.plan_date >= date('now') THEN '1'
 											ELSE '0' END) AS priority
 								FROM tasks LEFT JOIN issues ON tasks.issue = issues.id 
-								LEFT JOIN causes ON tasks.cause = causes.id
+								LEFT JOIN commcauses ON tasks.cause = commcauses.id
 								LEFT JOIN tasktypes ON tasks.tasktype = tasktypes.id
 								WHERE priority = '1'");
 		foreach ($a as &$row)						
