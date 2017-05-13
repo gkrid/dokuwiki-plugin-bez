@@ -130,11 +130,11 @@ class Report extends Connect {
 		$tasks_open = $this->fetch_assoc("SELECT 
 							(CASE	WHEN tasks.issue IS NULL THEN '3'
 									WHEN tasks.cause IS NULL OR tasks.cause = '' THEN 0
-									WHEN causes.potential = 0 THEN 1
+									WHEN commcauses.type = 1 THEN 1
 									ELSE 2 END) AS naction,
 									COUNT(*) AS number_of_open, SUM(cost) AS cost_of_open
 										FROM tasks LEFT JOIN issues ON tasks.issue = issues.id
-										LEFT JOIN causes ON tasks.cause = causes.id
+										LEFT JOIN commcauses ON tasks.cause = commcauses.id
 										WHERE 1 == 1 $where
 										GROUP BY naction
 										ORDER BY naction");
@@ -142,11 +142,11 @@ class Report extends Connect {
 		$tasks = $this->fetch_assoc("SELECT 
 							(CASE	WHEN tasks.issue IS NULL THEN '3'
 									WHEN tasks.cause IS NULL OR tasks.cause = '' THEN 0
-									WHEN causes.potential = 0 THEN 1
+									WHEN commcauses.type = 1  THEN 1
 									ELSE 2 END) AS naction,
 									COUNT(*) AS number_of_closed_on_time
 										FROM tasks LEFT JOIN issues ON tasks.issue = issues.id
-										LEFT JOIN causes ON tasks.cause = causes.id
+										LEFT JOIN commcauses ON tasks.cause = commcauses.id
 										WHERE tasks.state = 1 AND date(tasks.close_date, 'unixepoch') <= tasks.plan_date $where
 										GROUP BY naction
 										ORDER BY naction");
@@ -160,11 +160,11 @@ class Report extends Connect {
 		$tasks = $this->fetch_assoc("SELECT 
 							(CASE	WHEN tasks.issue IS NULL THEN '3'
 									WHEN tasks.cause IS NULL OR tasks.cause = '' THEN 0
-									WHEN causes.potential = 0 THEN 1
+									WHEN commcauses.type = 1  THEN 1
 									ELSE 2 END) AS naction,
 									COUNT(*) AS number_of_closed_off_time
 										FROM tasks LEFT JOIN issues ON tasks.issue = issues.id
-										LEFT JOIN causes ON tasks.cause = causes.id
+										LEFT JOIN commcauses ON tasks.cause = commcauses.id
 										WHERE tasks.state = 1 AND date(tasks.close_date, 'unixepoch') > tasks.plan_date $where
 										GROUP BY naction
 										ORDER BY naction");
@@ -178,12 +178,12 @@ class Report extends Connect {
 		$tasks = $this->fetch_assoc("SELECT 
 							(CASE	WHEN tasks.issue IS NULL THEN '3'
 									WHEN tasks.cause IS NULL OR tasks.cause = '' THEN 0
-									WHEN causes.potential = 0 THEN 1
+									WHEN commcauses.type = 1 THEN 1
 									ELSE 2 END) AS naction,
 									SUM(cost) AS cost_of_close,
 									AVG(tasks.close_date - tasks.date) AS average
 										FROM tasks LEFT JOIN issues ON tasks.issue = issues.id
-										LEFT JOIN causes ON tasks.cause = causes.id
+										LEFT JOIN commcauses ON tasks.cause = commcauses.id
 										WHERE tasks.state = 1 $where
 										GROUP BY naction
 										ORDER BY naction");
@@ -252,7 +252,7 @@ class Report extends Connect {
 			$cause['average'] = $this->helper->days((int)$cause['average']);
 			//$cause['number'] = $cas[$cause['rootcause']]['number'];
 		}*/
-		$report['causes'] = $caso->join_all($report['causes']);
+		//$report['causes'] = $report['causes'];//$caso->join_all($report['causes']);
 				
 		
 
