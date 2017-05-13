@@ -263,7 +263,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 //		}
 //	}
     
-    private function mail_notify($replacements=array(), $emails=false) {
+    private function mail_notify($replacements=array(), $users=array()) {        
         $plain = io_readFile($this->model->action->localFN('task-notification'));
         $html = io_readFile($this->model->action->localFN('task-notification', 'html'));
                 
@@ -283,7 +283,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
         //auto title
         if (!isset($rep['subject'])) {
             if (isset($rep['content'])) {
-                $rep['subject'] =  $rep['who_full_name'].' '.$rep['action'];
+                $rep['subject'] =  array_shift(explode('.', $rep['content'], 2));
             }
         }
        
@@ -292,21 +292,22 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
         
         $mailer = new Mailer();
         $mailer->setBody($plain, $rep, $rep, $html, false);
-        if ($emails === FALSE) {
-            $emails = array_map(function($user) {
-                return $this->model->users->get_user_email($user);
-            }, array($this->executor));
-        }
+
+        $emails = array_map(function($user) {
+            return $this->model->users->get_user_email($user);
+        }, $users);
+
         $mailer->to($emails);
         $mailer->subject('[' . $wiki_name . '][BEZ] ' . $rep['subject']);
 
         $send = $mailer->send();
         if ($send === false) {
-            throw new Exception("can't send email");
+            //this may mean empty $emails
+            //throw new Exception("can't send email");
         }
     }
     
-    public function mail_notify_add($issue_obj=NULL) {
+    public function mail_notify_add($issue_obj=NULL, $users=false, $replacements=array()) {
         if ($issue_obj !== NULL && $issue_obj->id !== $this->issue) {
             throw new Exception('issue object id and task->issue does not match');
         }
@@ -370,7 +371,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
                         'padding' => '.3em .5em'
                     )
                 ), $top_row, $bottom_row) . $this->task_cache,
-            'who' => $this->reporter,
+            'who' => $this->model->user_nick,
             'when' => date('c', (int)$this->date),
             'custom_content' => true
         );
@@ -379,9 +380,14 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
         $rep['action_color'] = '#e4f4f4';
         $rep['action_border_color'] = '#8bbcbc';
         
+        //$replacements can override $reps
+        $rep = array_merge($rep, $replacements);
+        
         if ($issue_obj === NULL) {
-            $rep['action'] = $this->model->action->getLang('mail_task_added_programme');
-            $this->mail_notify($rep);
+            if ($users === false) {
+                $users = array($this->reporter, $this->executor);
+            }
+            $this->mail_notify($rep, $users);
         } else {
             $issue_obj->mail_notify($rep);
         }

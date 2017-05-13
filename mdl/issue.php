@@ -367,12 +367,14 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
                 return $this->model->users->get_user_email($user);
             }, $this->subscribents_array);
         }
+
         $mailer->to($emails);
         $mailer->subject('[' . $wiki_name . '][BEZ] ' . $rep['subject']);
 
         $send = $mailer->send();
         if ($send === false) {
-            throw new Exception("can't send email");
+            //this may mean empty $emails
+            //throw new Exception("can't send email");
         }
     }
     

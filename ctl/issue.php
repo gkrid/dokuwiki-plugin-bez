@@ -97,7 +97,7 @@ try {
 			$value['opinion'] = $template['issue']['raw_opinion'];
 		} elseif ($action == 'issue_close_confirm') {
 			$issue->set_state($_POST);
-			$this->model->issues->save($issue);
+			$this->model->issues->save(C);
             
             $issue->mail_notify_change_state();
             
@@ -126,6 +126,9 @@ try {
 				
 				$issue->update_last_activity();
 				$this->model->issues->save($issue);
+                
+                $task->mail_notify_add($issue, false,
+                                array('action' => $bezlang['mail_task_reopened']));
 					
 				$redirect = true;
 				$anchor = 'z'.$task->id;

@@ -528,6 +528,7 @@ $lang['mail_comment_added'] = 'dodał(a) komentarz';
 $lang['mail_cause_added'] = 'dodał(a) przyczynę';
 $lang['mail_task_added'] = 'dodał(a) zadanie';
 $lang['mail_task_added_programme'] = 'przypisał(a) ci zadanie';
+$lang['mail_task_reopened'] = 'otworzył(a) ponownie zadanie';
 
 
 $lang['issue_added'] = 'Problem dodany';

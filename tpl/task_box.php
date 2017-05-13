@@ -90,7 +90,13 @@
 		<?php else: ?>
 			<input type="submit" value="<?php echo $bezlang['task_do'] ?>">
 		<?php endif ?>	
-		<a href="?id=<?php echo $this->id('issue', 'id', $template['issue']->id) ?>#z<?php echo $template['task']->id ?>"
+		<a href="?id=<?php
+            if ($template['action'] === 'issue') {
+                echo $this->id('issue', 'id', $template['issue']->id).'#z'.$template['task']->id;
+            } else {
+                echo $this->id('task', 'tid', $template['task']->id);
+            }
+        ?>"
 			 class="bez_delete_button bez_link_button">
 				<?php echo $bezlang['cancel'] ?>
 		</a>

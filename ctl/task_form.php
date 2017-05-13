@@ -39,7 +39,8 @@ try {
         
         //don't send notification when user binds himself to the task.
         if ($task->reporter !== $task->executor) {
-            $task->mail_notify_add();
+            $task->mail_notify_add(NULL, array($task->executor),
+                       array('action' => $bezlang['mail_task_added_programme']));
         }
         header("Location: ?id=bez:task:tid:$tid");
     } else {

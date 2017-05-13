@@ -46,6 +46,19 @@ try {
             $this->model->issues->save($template['issue']);
         }
         
+        $notify_users = array();
+        if ($task->reporter !== $this->model->user_nick) {
+            //prevent duplicates
+            $notify_users[$task->reporter] = $task->reporter;
+        }
+        if ($task->executor !== $this->model->user_nick) {
+            //prevent duplicates
+            $notify_users[$task->executor] = $task->executor;
+        }
+        
+        $task->mail_notify_add($template['issue'], $notify_users,
+                                array('action' => $bezlang['mail_task_reopened']));
+        
         $redirect = true;
     } elseif($template['action'] === 'task_edit') {
         $template['auth_level'] = $task->get_level();
