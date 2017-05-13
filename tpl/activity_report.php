@@ -14,7 +14,7 @@
 	</tr>
 	<?php $reporter = 0 ?>
 	<?php $total_total = 0 ?>
-	
+	<?php $commentator = 0 ?>
 	<?php $coordinator = 0 ?>
 	<?php $executor = 0 ?>
 	<?php foreach ($template['report']['involvement'] as $nick => $involvement): ?>
@@ -34,14 +34,17 @@
 		</tr>
 		<?php $reporter += (int)$involvement['reporter'] ?>
 		<?php $coordinator += (int)$involvement['coordinator'] ?>
+        <?php $commentator += (int)$involvement['commentator'] ?>
 		<?php $executor += (int)$involvement['executor'] ?>
 		<?php $total_total += (int)$involvement['total'] ?>
 	<?php endforeach ?>
 	<tr>
 		<th><?php echo $bezlang['report_total'] ?></th>
 		<td><?php echo $reporter ?></td>
-		<td colspan="2"><?php echo $coordinator ?></td>
-		<td colspan="2"><?php echo $executor ?></td>
+		<td><?php echo $coordinator ?></td>
+        <td><?php echo $commentator ?></td>
+		<td><?php echo $executor ?></td>
+        <td><?php echo $total_total ?></td>
 	</tr>
 </table>
 <p style="font-weight: bold">KPI = <?php echo sprintf("%.2f", $total_total/$reporter) ?></p>
