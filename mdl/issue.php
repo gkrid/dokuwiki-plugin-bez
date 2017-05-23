@@ -198,6 +198,7 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 			) {
 			throw new PermissionDeniedException();
 		}
+        //var_dump($subscribent, $this->model->users->exists($subscribent));
 		if ($this->model->users->exists($subscribent) &&
             !in_array($subscribent, $this->subscribents_array)) {
 			$this->subscribents_array[$subscribent] = $subscribent;

@@ -17,6 +17,7 @@ class BEZ_mdl_Users {
 		}
 		
 		$wikiusers = $this->model->dw_auth->retrieveUsers();
+
 		$a = array();
 		foreach ($wikiusers as $nick => $data) {
 			$a[$nick] = $data['name'];

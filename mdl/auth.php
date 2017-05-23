@@ -55,7 +55,7 @@ class BEZ_mdl_Auth {
 	}
 	
 	public function get_user() {
-		return $this->user_nick;
+		return $_SERVER['REMOTE_USER'];
 	}
 	
 	public function set_executor($executor) {
