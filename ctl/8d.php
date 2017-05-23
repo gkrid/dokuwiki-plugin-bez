@@ -5,8 +5,8 @@ include_once DOKU_PLUGIN."bez/models/tokens.php";
 
 /*jeżeli nie mamy tokenu generujemy nowy i przekierowujemy*/
 $toko = new Tokens();
-if (!isset($_GET['t']) || ! $toko->check(trim($_GET['t']), $ID))
-	header('Location: '.$uri.'?id='.$_GET['id'].'&t='.$toko->get($ID));
+if (!isset($_GET['t']) || ! $toko->check(trim($_GET['t']), $this->page_id()))
+	header('Location: '.$uri.'?id='.$_GET['id'].'&t='.$toko->get($this->page_id()));
 
 $issue_id = $nparams['id'];
 

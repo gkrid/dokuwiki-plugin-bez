@@ -5,6 +5,8 @@ if(!defined('DOKU_INC')) die();
 require_once 'issue.php';
 require_once 'task.php';
 
+include_once DOKU_PLUGIN."bez/models/tokens.php";
+
 /*
  * 12:bez7:start#macierz_przypadkow_uzycia
  */
@@ -16,7 +18,7 @@ class BEZ_mdl_Auth {
 	 * 15 - koordynator (coordinaotr)
 	 * 20 - administrator
 	 */
-	private $dw_auth, $user_nick, $level = 0;
+	private $model, $level = 0;
 	
 	private $coordinator, $program_coordinator, $executor;
 	
@@ -26,11 +28,10 @@ class BEZ_mdl_Auth {
 		}
 	}
 		
-	public function __construct($dw_auth, $user_nick) {
-		$this->dw_auth = $dw_auth;
-		$this->user_nick = $user_nick;
-		
-		$userd = $this->dw_auth->getUserData($this->user_nick); 
+	public function __construct($model) {
+        $this->model = $model;
+        
+		$userd = $this->model->dw_auth->getUserData($this->model->user_nick); 
 		if ($userd !== false && is_array($userd['grps'])) {
 			$grps = $userd['grps'];
 			if (in_array('admin', $grps ) || in_array('bez_admin', $grps )) {
@@ -38,7 +39,15 @@ class BEZ_mdl_Auth {
 			} else {
 				$this->update_level(5);
 			}
-		}
+		} elseif (isset($_GET['t'])) {
+            $page_id = $this->model->action->page_id();
+            $toko = new Tokens();
+            //var_dump(trim($_GET['t']), $page_id);die();
+            if ($toko->check(trim($_GET['t']), $page_id)) {
+                $this->update_level(5);
+            }
+        }
+        
 	}
 	
 	public function get_level() {

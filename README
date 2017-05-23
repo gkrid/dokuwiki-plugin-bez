@@ -6,6 +6,7 @@ Wersja 2017-05-23:
     - "Ocena" zadania stała się opcjonalna
     - Anulowanie zmiany statusu zadania działa poprawnie
     - Wstępe prace nad mechanizmem raportów wiki
+    - Poprawiono mechanizm tokenów
 
 Wersja 2017-01-17:
 	- poprawienie błędów importu

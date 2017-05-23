@@ -94,6 +94,11 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 			return $this->model_object;
 		}
 	}
+    
+    public function page_id() {
+        global $ID;
+        return $ID;
+    }
 
 	public function __construct() {
 		global $ACT;

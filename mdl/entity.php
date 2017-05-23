@@ -97,7 +97,7 @@ class BEZ_mdl_Entity {
 	
 	public function __construct($model) {
 		$this->model = $model;
-		$this->auth = new BEZ_mdl_Auth($model->dw_auth, $model->user_nick);
+		$this->auth = new BEZ_mdl_Auth($this->model);
 		$this->validator = new BEZ_mdl_Validator($this->model);
 		$this->helper = plugin_load('helper', 'bez');
 	}

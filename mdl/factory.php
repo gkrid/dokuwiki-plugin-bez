@@ -40,7 +40,7 @@ class BEZ_mdl_Factory {
 	
 	public function __construct($model) {
 		$this->model = $model;
-		$this->auth = new BEZ_mdl_Auth($this->model->dw_auth, $this->model->user_nick);
+		$this->auth = new BEZ_mdl_Auth($this->model);
 	}
 	
 	public function get_level() {
