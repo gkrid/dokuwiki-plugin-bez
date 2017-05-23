@@ -334,9 +334,9 @@ class Report extends Connect {
 		foreach ($dw_users as $nick => $name) {
 			//ilość komentatorów problemów
 			$result = $this->fetch_assoc("SELECT COUNT(*) AS stat
-							FROM issues JOIN comments ON issues.id = comments.issue
+							FROM issues JOIN commcauses ON issues.id = commcauses.issue
 							WHERE 	
-									comments.reporter = '$nick'
+									commcauses.reporter = '$nick'
 									$issue_where
 										");
 										

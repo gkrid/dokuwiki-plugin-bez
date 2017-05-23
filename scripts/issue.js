@@ -156,6 +156,16 @@ bez.ctl.issue = function() {
 	}
 	
 	if (jQuery('#reason').length > 0) {
+        jQuery('#no_evaluation').on('change', function() {
+            if (jQuery(this).prop('checked') === true) {
+                jQuery('#reason').prop('disabled', true);
+                jQuery('.bez_reason_toolbar').hide();
+            } else {
+                jQuery('#reason').prop('disabled', false);
+                jQuery('.bez_reason_toolbar').show();
+            }
+            
+        });
 		bez.rich_text_editor(jQuery('#reason'), jQuery('.bez_reason_toolbar'));
 	}
 	

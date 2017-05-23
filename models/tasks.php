@@ -650,14 +650,16 @@ class Tasks extends Event {
 		$task = $vfilters['task'];
 		unset($vfilters['task']);
 		if ($task != '') {
-			$where[] = "tasks.task GLOB '*".$this->escape($task)."*'";
+            $task = preg_replace('/\s/', '%', $task);
+			$where[] = "tasks.task LIKE '%".$this->escape($task)."%'";
 		}
 		
 		
 		$reason = $vfilters['reason'];
 		unset($vfilters['reason']);
 		if ($reason != '') {
-			$where[] = "tasks.reason GLOB '*".$this->escape($reason)."*'";
+            $reason = preg_replace('/\s/', '%', $reason);
+			$where[] = "tasks.reason LIKE '%".$this->escape($reason)."%'";
 		}
 		
 		if ($vfilters['executor'][0] == '@') {

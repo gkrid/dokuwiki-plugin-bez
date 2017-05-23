@@ -36,6 +36,9 @@
 //
 //$template['client'] = $INFO['client'];
 
+//create database
+$this->model;
+
 include_once DOKU_PLUGIN."bez/models/issues.php";
 $isso = new Issues();
 $no = count($isso->get_filtered(array('state' => '0', 'coordinator' => $INFO['client'])));

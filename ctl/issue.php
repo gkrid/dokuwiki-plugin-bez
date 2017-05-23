@@ -97,7 +97,7 @@ try {
 			$value['opinion'] = $template['issue']['raw_opinion'];
 		} elseif ($action == 'issue_close_confirm') {
 			$issue->set_state($_POST);
-			$this->model->issues->save(C);
+			$this->model->issues->save($issue);
             
             $issue->mail_notify_change_state();
             
@@ -143,6 +143,11 @@ try {
 				
 				$task = $this->model->tasks->get_one($template['tid']);
 				$value = $task->get_assoc();
+                
+            } elseif ($action === 'task_change_state') {
+                $template['tid'] = $nparams['tid'];				
+				$task = $this->model->tasks->get_one($template['tid']);
+				$value = array('reason' => $task->reason);
 			}
 			
 			if (count($_POST) > 0) {				
@@ -169,6 +174,10 @@ try {
 					$redirect = true;
 				} elseif ($action === 'task_change_state') {
 					$task = $this->model->tasks->get_one($template['tid']);
+                    
+                    if (isset($_POST['no_evaluation'])) {
+                        $_POST['reason'] = '';
+                    }
 					
 					$task->set_state(array(
 								'state' => $nparams['state'],

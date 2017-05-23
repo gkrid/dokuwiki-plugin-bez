@@ -82,6 +82,11 @@
     ?>
 	<form class="bez_form" action="?id=<?php echo $id ?>" method="POST">
 		<input type="hidden" name="id" value="<?php echo $id ?>">
+        
+        <?php if ($template['state'] === '1'): ?>
+            <label style="display:block;margin-bottom:5px;"><input type="checkbox" name="no_evaluation" id="no_evaluation" /> <?php echo $bezlang['no_evaluation'] ?></label>
+        <?php endif ?>
+        
 		<div class="bez_reason_toolbar"></div>
 		<textarea name="reason" id="reason" data-validation="required"><?php echo $value['reason'] ?></textarea>
 		<br>
@@ -91,7 +96,7 @@
 			<input type="submit" value="<?php echo $bezlang['task_do'] ?>">
 		<?php endif ?>	
 		<a href="?id=<?php
-            if ($template['action'] === 'issue') {
+            if ($nparams['bez'] === 'issue') {
                 echo $this->id('issue', 'id', $template['issue']->id).'#z'.$template['task']->id;
             } else {
                 echo $this->id('task', 'tid', $template['task']->id);
@@ -105,7 +110,7 @@
 	<?php if ($template['task']->state === '2'): ?>
 		<h3><?php echo $bezlang['reason'] ?></h3>
 		<?php echo $template['task']->reason_cache ?>
-	<?php elseif ($template['task']->state === '1'): ?>
+	<?php elseif ($template['task']->state === '1' && $template['task']->reason != ''): ?>
 		<h3><?php echo $bezlang['evaluation'] ?></h3>
 		<?php echo $template['task']->reason_cache ?>
 	<?php endif ?>
@@ -132,7 +137,8 @@
 				?>#z<?php echo $template['task']->id ?>">
 				↛ <?php echo $bezlang['task_reject'] ?>
 			</a>
-		<?php elseif ($template['task']->get_level() >= 10): ?>
+		<?php elseif ((!isset($template['issue']) || $template['issue']->state === '0') &&
+                      $template['task']->get_level() >= 10): ?>
 			<a class="bds_inline_button"
 					href="?id=<?php
 						if ($nparams['bez'] === 'issue') {
@@ -144,8 +150,10 @@
 					↻ <?php echo $bezlang['task_reopen'] ?>
 				</a>
 		<?php endif ?>
-
-		<?php if($template['task']->get_level() >= 15 || $template['task']->reporter === $template['task']->get_user()): ?>
+        
+		<?php if ( (!isset($template['issue']) || $template['issue']->state === '0') &&
+                  ($template['task']->get_level() >= 15 ||
+                   $template['task']->reporter === $template['task']->get_user())): ?>
 				<a class="bds_inline_button"
 					href="?id=<?php
 						if ($nparams['bez'] === 'issue') {

@@ -22,6 +22,10 @@ try {
 
     if ($template['action'] === 'task_change_state') {
         if (count($_POST) > 0) {
+            if (isset($_POST['no_evaluation'])) {
+                $_POST['reason'] = '';
+            }
+            
             $task->set_state(array(
                         'state' => $nparams['state'],
                         'reason' => $_POST['reason'])

@@ -23,7 +23,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 	protected $state;
 	
 	//virtual
-	protected $coordinator, $action;
+	protected $coordinator, $action, $issue_state;
 	
 	public function get_columns() {
 		return array('id', 'reporter', 'date', 'close_date', 'cause',
@@ -112,6 +112,11 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 
 		//takstype required	
 		if ($this->issue != NULL) {
+            //set issue state
+            if ($this->model->issues->get_one($this->issue)->state != '0') {
+                $this->allow_edit = false;
+            }
+            
 			$this->validator->set_rules(array(
 				'tasktype' => array(array('numeric'), 'NULL')
 			));
@@ -137,7 +142,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 	
 	public function set_meta($data) {
 		if ($this->auth->get_level() < 20) {
-			return false;
+			throw new PermissionDeniedException('admin');
 		}
 		
 		$val_data = $this->validator->validate($data, array('reporter', 'date', 'close_date'));
@@ -145,16 +150,14 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 			throw new ValidationException('tasks', $this->validator->get_errors());
 		}
 		
-		foreach ($val_data as $k => $v) {
-			$this->$k = $v;
-		}
+		$this->set_property_array($val_data);
 		
 		return true;
 	}
 		
 	public function update_cache() {
 		if ($this->auth->get_level() < 20) {
-			return false;
+			throw new PermissionDeniedException('admin');
 		}
 		$this->task_cache = $this->helper->wiki_parse($this->task);
 		$this->reason_cache = $this->helper->wiki_parse($this->reason);
@@ -176,27 +179,25 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 				return false;	
 			}
 		} else {
-			throw new PermissionDeniedException();
+			throw new PermissionDeniedException('coordinator');
 		}
 						
 		if ($val_data === false) {
 			throw new ValidationException('tasks', $this->validator->get_errors());
 		}
 
-		foreach ($val_data as $k => $v) {
-				$this->$k = $v;
-		}
+		$this->set_property_array($val_data);
 		
 		//specjalne reguły
 		if ($this->issue == NULL) {
-			$this->cause = NULL;
+			$this->set_property('cause', NULL);
 		}
 		
 		$this->auth->set_executor($this->executor);
 		
 		//set parsed
-		$this->task_cache = $this->helper->wiki_parse($this->task);
-		$this->reason_cache = $this->helper->wiki_parse($this->reason);
+		$this->set_property('task_cache', $this->helper->wiki_parse($this->task));
+		$this->set_property('reason_cache', $this->helper->wiki_parse($this->reason));
         
         //update virtuals
         $this->update_virtual_columns();
@@ -206,10 +207,10 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 	
 	public function set_state($data) {
 		if ($this->auth->get_level() < 10) {
-			return false;
+			throw new PermissionDeniedException();
 		}
 		//reason is required while changing state
-		if ($data['state'] == '1' || $data['state'] == '2') {
+		if ($data['state'] === '2') {
 			$this->validator->set_rules(array(
 				'reason' => array(array('length', 10000), 'NOT NULL')
 			));
@@ -224,11 +225,9 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 		if ($this->state != $data['state']) {
 			$this->close_date = time();
 		}
-
-		foreach ($val_data as $k => $v) {
-			$this->$k = $v;
-		}
-		$this->reason_cache = $this->helper->wiki_parse($this->reason);
+        
+        $this->set_property_array($val_data);
+		$this->set_property('reason_cache', $this->helper->wiki_parse($this->reason));
 		
         //update virtuals
         $this->update_virtual_columns();

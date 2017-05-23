@@ -134,7 +134,8 @@ if ($nparams['bez'] === 'issue') {
 				</div>
 				
 				<?php if (	$template['tid'] !== '-1' &&
-							$template['task']->state === '1'): ?>
+							($template['task']->state === '1' ||
+                             $template['task']->state === '2')): ?>
 					<div class="row">
 						<label for="reason">
 							<?php if ($template['task']->state === '1'): ?>
@@ -156,9 +157,9 @@ if ($nparams['bez'] === 'issue') {
 				<span style="padding-top:10px;">
 					<input type="submit" value="<?php echo $template['tid'] === '-1' ? $bezlang['add'] : $bezlang['correct'] ?>">
 					<a href="?id=<?php
-				if (isset($template['issue'])) {
+				if ($nparams['bez'] === 'issue') {
 					echo $this->id('issue', 'id', $template['issue']->id);
-				} else if ($template['task']->id != '') {
+				} else if ($nparams['bez'] === 'task' && $template['task']->id != '') {
 					echo $this->id('task', 'tid', $template['task']->id);
 				} else if ($template['tasktype'] != '') {
                     echo $this->id('tasks', 'tasktype', $template['tasktype']);

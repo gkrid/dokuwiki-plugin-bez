@@ -47,7 +47,14 @@
         <td><?php echo $total_total ?></td>
 	</tr>
 </table>
-<p style="font-weight: bold">KPI = <?php echo sprintf("%.2f", $total_total/$reporter) ?></p>
+<?php
+    if ($reporter !== 0) {
+        $kpi = $total_total/$reporter;
+    } else {
+        $kpi = 0;
+    }
+?>
+<p style="font-weight: bold">KPI = <?php echo sprintf("%.2f", $kpi) ?></p>
 
 
 <h2><?php echo $bezlang['activity_in_tasks'] ?></h2>

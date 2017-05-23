@@ -521,3 +521,4 @@ $lang['js']['combobox_did_not_match'] = "didn't match any item";
 
 $lang['invitation_has_been_send'] = 'Invitation has been sent to';
 
+$lang['no_evaluation'] = 'No evaluation';

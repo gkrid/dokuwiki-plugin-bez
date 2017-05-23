@@ -10,6 +10,8 @@ class BEZ_mdl_Entity {
 	protected $auth, $validator, $model;
 	
 	protected $parse_int = array();
+    
+    protected $allow_edit = true;
 	
 	public function get_level() {
 		return $this->auth->get_level();
@@ -68,6 +70,22 @@ class BEZ_mdl_Entity {
 			}
 		}
 	}
+    
+    protected function set_property($property, $value) {
+        if (!in_array($property, $this->get_columns())) {
+            throw new Exception('trying to set existing column');
+        }
+        if ($this->allow_edit === false) {
+            throw new Exception('cannot change this object. allow_edit = false');
+        }
+        $this->$property = $value;
+    }
+    
+    protected function set_property_array($array) {
+        foreach ($array as $k => $v) {
+            $this->set_property($k, $v);
+        }
+    }
     	
 	public function any_errors() {
 		return count($this->validator->get_errors()) > 0;

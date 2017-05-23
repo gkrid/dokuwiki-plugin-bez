@@ -513,7 +513,8 @@ class Issues extends Connect {
 		unset($vfilters['sort_open']);
 		if ($title != '') {
 			//$where[] = "issues.title LIKE '%".str_replace('_', '\\_', $title)."%' ESCAPE '\\'";
-			$where[] = "issues.title GLOB '*$title*'";
+            $title = preg_replace('/\s/', '%', $title);
+			$where[] = "issues.title LIKE '%$title%'";
 		}
 		
 

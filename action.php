@@ -122,10 +122,10 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 		}
 		
 		//set default filters
-		if(!isset($_COOKIE[bez_tasks_filters])) {
+		if(!isset($_COOKIE['bez_tasks_filters'])) {
 			setcookie("bez_tasks_filters[year]", date("Y"));
 		}
-		if(!isset($_COOKIE[bez_issues_filters])) {
+		if(!isset($_COOKIE['bez_issues_filters'])) {
 			setcookie("bez_issues_filters[year]", date("Y"));
 		}
 	}
@@ -133,8 +133,11 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 	public function id() {
 		$args = func_get_args();
 		array_unshift($args, 'bez');
-		if ($this->lang_code != '')
+        
+		if ($this->lang_code != '') {
 			array_unshift($args, $this->lang_code);
+        }
+        
 		return implode(':', $args);
     }
 
