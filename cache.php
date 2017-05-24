@@ -52,8 +52,9 @@ $helper = new helper_plugin_bez();
 $model = new BEZ_mdl_Model($auth, $user, $helper, $conf);
 $bezcache = new Bezcache();
 
-
+$usage = true;
 if (array_key_exists('r', $options)) {
+    $usage = false;
 	foreach ($model->tasks->get_all() as $task) {
 		echo "Updating cache of #z".$task->id."\n";
 		$task->update_cache();
@@ -70,18 +71,24 @@ if (array_key_exists('r', $options)) {
 						));
 
 	}
-} elseif (array_key_exists('i', $options)) {
+}
+if (array_key_exists('i', $options)) {
+    $usage = false;
     foreach ($model->issues->get_all() as $issue) {
 		echo "Updating cache of #".$issue->id."\n";
 		$issue->update_cache();
 		$model->issues->save($issue);
 	}
-} elseif (array_key_exists('c', $options)) {
+}
+if (array_key_exists('c', $options)) {
+    $usage = false;
     foreach ($model->commcauses->get_all() as $commcause) {
 		echo "Updating cache of #c".$commcause->id."\n";
 		$commcause->update_cache();
 		$model->commcauses->save($commcause);
 	}
-} else {
+}
+
+if ($usage) {
 	usage();
 }

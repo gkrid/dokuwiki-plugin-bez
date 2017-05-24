@@ -9,11 +9,6 @@ CREATE TABLE issuetypes (
 				pl VARCHAR(100) NOT NULL,
 				en VARCHAR(100) NOT NULL);
 
-CREATE TABLE rootcauses (
-				id INTEGER PRIMARY KEY,
-				pl VARCHAR(100) NOT NULL,
-				en VARCHAR(100) NOT NULL);
-
 CREATE TABLE tasks (
 				id INTEGER PRIMARY KEY,
 				task TEXT NOT NULL,
