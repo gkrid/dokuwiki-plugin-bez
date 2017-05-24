@@ -8,7 +8,6 @@ bez.ctl = {};
 /* DOKUWIKI:include scripts/task.js */
 /* DOKUWIKI:include scripts/tasks.js */
 
-
 jQuery(function () {
     'use strict';
 	var getUrlVars = function() {
@@ -28,7 +27,7 @@ jQuery(function () {
 			nparams[k] = v;
 		}
 		return nparams;
-	}
+	};
 	
 	bez.rich_text_editor = function($textarea, $header) {
 		//clone

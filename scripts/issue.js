@@ -43,7 +43,7 @@ bez.ctl.issue = function() {
 		var setActive = function($a) {
 			$tabs.find('.active').removeClass('active');
 			$a.parent().addClass('active');
-		}
+		};
 		
 		var activateComment = function () {		
 			$comment_type_input.removeAttr("disabled");
