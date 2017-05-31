@@ -27,9 +27,19 @@ bez.ctl.task = function() {
     }
     
     if (jQuery('#reason').length > 0) {
+        jQuery('#no_evaluation').on('change', function() {
+            if (jQuery(this).prop('checked') === true) {
+                jQuery('#reason').prop('disabled', true).hide();
+                jQuery('.bez_reason_toolbar').hide();
+            } else {
+                jQuery('#reason').prop('disabled', false).show();
+                jQuery('.bez_reason_toolbar').show();
+            }
+            
+        });
 		bez.rich_text_editor(jQuery('#reason'), jQuery('.bez_reason_toolbar'));
 	}
-    
+
     jQuery('#bez_hidden_issue').hide();
     jQuery('#bez_show_issue').on('click', function (e) {
         e.preventDefault();

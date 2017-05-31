@@ -1,3 +1,9 @@
+Wersja 2017-05-31:
+    - poprawiono #86 ptk. 1
+    - raport 8d nie wyświetla już odrzuconych zadań
+    - w powiadomieniach mejlowych nagłówkiem jest tytuł problemu, a nie pierwsze zdanie w problemie
+    
+
 Wersja 2017-05-23:
     - poprawiono błąd przy pierwszym uruchomieniu świerzej instalacji
     - poprawiono błąd uniemożliwiający zamykanie zadań

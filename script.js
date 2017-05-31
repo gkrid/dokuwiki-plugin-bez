@@ -8,6 +8,7 @@ bez.ctl = {};
 /* DOKUWIKI:include scripts/task.js */
 /* DOKUWIKI:include scripts/tasks.js */
 
+
 jQuery(function () {
     'use strict';
 	var getUrlVars = function() {

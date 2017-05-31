@@ -40,17 +40,20 @@ $template['potential_causes'] = $this->model->commcauses->get_all(array(
 $template['tasks'] = array();
 $template['tasks']['3d'] =  $this->model->tasks->get_all(array(
     'action'  => '0',
+    'state' => '1',
     'issue' => $issue_id
 ))->fetchAll(); //fetchAll becouse we need to count rows before displaying them
 
 $template['tasks']['5d'] =  $this->model->tasks->get_all(array(
     'action'  => '1',
+    'state' => '1',
     'issue' => $issue_id
 ))->fetchAll(); //fetchAll becouse we need to count rows before displaying them
 
 
 $template['tasks']['7d'] =  $this->model->tasks->get_all(array(
     'action'  => '2',
+    'state' => '1',
     'issue' => $issue_id
 ))->fetchAll(); //fetchAll becouse we need to count rows before displaying them
 

@@ -158,10 +158,10 @@ bez.ctl.issue = function() {
 	if (jQuery('#reason').length > 0) {
         jQuery('#no_evaluation').on('change', function() {
             if (jQuery(this).prop('checked') === true) {
-                jQuery('#reason').prop('disabled', true);
+                jQuery('#reason').prop('disabled', true).hide();
                 jQuery('.bez_reason_toolbar').hide();
             } else {
-                jQuery('#reason').prop('disabled', false);
+                jQuery('#reason').prop('disabled', false).show();
                 jQuery('.bez_reason_toolbar').show();
             }
             

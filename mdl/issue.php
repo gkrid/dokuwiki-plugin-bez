@@ -74,7 +74,7 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 			
 			$this->state = '0';
 			
-			$input = array('title', 'description');
+			$input = array('title', 'description', 'type');
 			if ($this->auth->get_level() >= 20) {
 				$input[] = 'coordinator';
 			}
@@ -85,8 +85,8 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 				throw new ValidationException('issues', $this->validator->get_errors());
 			}
 			
-			$this->title = $val_data['title'];
-			$this->description = $val_data['description'];
+			$this->set_property_array($val_data);
+            
 			$this->description_cache = $this->helper->wiki_parse($this->description);
 			
 			$this->add_participant($this->reporter);
@@ -132,13 +132,12 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 			$input[] = 'coordinator';
 		}
 		$val_data = $this->validator->validate($data, $input); 
+        
 		if ($val_data === false) {
 			throw new ValidationException('issues',	$this->validator->get_errors());
 		}
 		
-		foreach ($val_data as $k => $v) {
-			$this->$k = $v;
-		}
+		$this->set_property_array($val_data);
 		
 		//!!! don't update activity on issue update
 		
@@ -166,9 +165,7 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 		}
 
 		
-		foreach ($val_data as $k => $v) {
-			$this->$k = $v;
-		}
+		$this->set_property_array($val_data);
 		
 		//update activity on state update
 		$this->last_mod = time();
@@ -334,9 +331,7 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
         $rep = array_merge($issue_reps, $replacements);
         //auto title
         if (!isset($rep['subject'])) {
-            if (isset($rep['content'])) {
-                $rep['subject'] =  array_shift(explode('.', $rep['content'], 2));
-            }
+            $rep['subject'] =  '#'.$this->id. ' ' .$this->title;
         }
         if (!isset($rep['content_html'])) {
             $rep['content_html'] = $rep['content'];
@@ -383,7 +378,7 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
         $this->mail_notify(array(
             'who' => $this->auth->get_user(),
             'action' => $this->model->action->getLang('mail_mail_notify_change_state_action'),
-            'subject' => $this->model->action->getLang('mail_mail_notify_change_state_subject') . ' #'.$this->id,
+            //'subject' => $this->model->action->getLang('mail_mail_notify_change_state_subject') . ' #'.$this->id,
             'custom_content' => true,
             'content_html' => ''
         ));
@@ -395,7 +390,7 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
         $this->mail_notify(array(
             'who' => $this->auth->get_user(),
             'action' => $this->model->action->getLang('mail_mail_notify_invite_action'),
-            'subject' => $this->model->action->getLang('mail_mail_notify_invite_subject') . ' #'.$this->id,
+            //'subject' => $this->model->action->getLang('mail_mail_notify_invite_subject') . ' #'.$this->id,
             'custom_content' => true,
             'content_html' => ''
         ), array($email));
@@ -407,7 +402,7 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
         $this->mail_notify(array(
             'who' => $this->auth->get_user(),
             'action' => $this->model->action->getLang('mail_mail_inform_coordinator_action'),
-            'subject' => $this->model->action->getLang('mail_mail_inform_coordinator_subject') . ' #'.$this->id,
+            //'subject' => $this->model->action->getLang('mail_mail_inform_coordinator_subject') . ' #'.$this->id,
             'custom_content' => true,
             'content_html' => ''
         ), array($email));

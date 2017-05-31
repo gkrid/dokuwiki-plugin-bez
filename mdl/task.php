@@ -23,7 +23,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 	protected $state;
 	
 	//virtual
-	protected $coordinator, $action, $issue_state;
+	protected $coordinator, $action, $issue_state, $state_string, $action_string, $tasktype_string;
 	
 	public function get_columns() {
 		return array('id', 'reporter', 'date', 'close_date', 'cause',
@@ -34,7 +34,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 	}
 	
 	public function get_virtual_columns() {
-		return array('coordinator', 'action', 'state_string', 'action_string');
+		return array('coordinator', 'action', 'issue_state', 'state_string', 'action_string', 'tasktype_string');
 	}
     
     private function state_string() {
@@ -58,6 +58,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
     private function update_virtual_columns() {
 		$this->state_string = $this->model->action->getLang($this->state_string());
         $this->action_string = $this->model->action->getLang($this->action_string());
+        $this->tasktype_string = $this->model->tasktypes->get_one($this->tasktype)->type;
 	}
 		
 	//by defaults you can set: cause, tasktype and issue
@@ -281,9 +282,10 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
         
         //auto title
         if (!isset($rep['subject'])) {
-            if (isset($rep['content'])) {
-                $rep['subject'] =  array_shift(explode('.', $rep['content'], 2));
-            }
+//            if (isset($rep['content'])) {
+//                $rep['subject'] =  array_shift(explode('.', $rep['content'], 2));
+//            }
+            $rep['subject'] = '#z'.$this->id.' '.$this->tasktype_string;
         }
        
         //we must do it manually becouse Mailer uses htmlspecialchars()

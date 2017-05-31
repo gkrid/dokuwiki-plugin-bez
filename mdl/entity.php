@@ -73,7 +73,7 @@ class BEZ_mdl_Entity {
     
     protected function set_property($property, $value) {
         if (!in_array($property, $this->get_columns())) {
-            throw new Exception('trying to set existing column');
+            throw new Exception('trying to set unexisting column');
         }
         if ($this->allow_edit === false) {
             throw new Exception('cannot change this object. allow_edit = false');
