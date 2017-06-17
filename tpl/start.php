@@ -4,7 +4,7 @@
 	</div>
 </div>
 <div id="bez_info">
-	<?php if ($this->model->issues->get_level() >= 5): ?>
+	<?php if ($this->model->acl->get_level() >= BEZ_AUTH_USER): ?>
 		<a href="?id=<?php echo $this->id('issue_report') ?>" class="bez_start_button" id="bez_report_issue_button">
 			<?php echo $bezlang['report_issue'] ?>
 		</a>
@@ -17,7 +17,7 @@
 		<?php echo $bezlang['close_tasks'] ?>:
 		<strong><?php echo $template['my_tasks'] ?></strong>
 	</a>
-	<?php if ($this->model->issues->get_level() >= 20): ?>
+	<?php if ($this->model->acl->get_level() >= BEZ_AUTH_LEADER): ?>
 		<a href="?id=<?php echo $this->id('issues:state:-proposal') ?>" class="bez_start_button" id="bez_info_proposals">
 			<?php echo $bezlang['proposals'] ?>:
 			<strong><?php echo $template['proposals'] ?></strong>

@@ -89,7 +89,7 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 					$INFO = pageinfo();
 				}
 				$this->model_object =
-				new BEZ_mdl_Model($auth, $INFO['client'], $this, $conf);
+				    new BEZ_mdl_Model($auth, $INFO['client'], $this, $conf);
 			}
 			return $this->model_object;
 		}
@@ -239,7 +239,13 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 				include_once $ctl;
 			}
         } catch(PermissionDeniedException $e) {
-			header('Location: ' . DOKU_URL . 'doku.php?id=' . $_GET['id'] . '&do=login');
+            if ($this->getConf('debug') === '0') {
+                header('Location: ' . DOKU_URL . 'doku.php?id=' . $_GET['id'] . '&do=login');
+            } else {
+                echo nl2br($e);
+                /*preventDefault*/
+			    $this->norender = true;
+            }
 		} catch(Exception $e) {
             echo nl2br($e);
 			/*preventDefault*/
@@ -252,7 +258,7 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 		global $template, $bezlang, $value, $errors;
 		try {
 			
-			if ($this->action == '')
+			if ($this->action === '')
 				return false;
 
 			$event->preventDefault();
@@ -299,7 +305,12 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 				include_once $tpl;
 			}
         } catch(PermissionDeniedException $e) {
-			header('Location: ' . DOKU_URL . 'doku.php?id=' . $_GET['id'] . '&do=login');
+            if ($this->getConf('debug') === '0') {
+                header('Location: ' . DOKU_URL . 'doku.php?id=' . $_GET['id'] . '&do=login');
+            } else {
+                echo nl2br($e);
+            }
+            			
 		} catch(Exception $e) {
 			/*exception*/
 		}

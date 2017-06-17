@@ -94,7 +94,7 @@
 		<div class="info"><?php echo $bezlang['issue_no_tasks'] ?></div>
 	<?php endif ?>
 <div class="bez_buttons">
-	<?php if ((!isset($template['no_edit']) || $template['no_edit'] === false) &&                  $template['issue']->get_level() >= 15): ?> 
+	<?php if ((!isset($template['no_edit']) || $template['no_edit'] === false) &&                  $template['issue']->acl_of('state') >= BEZ_PERMISSION_CHANGE): ?> 
 		<?php if ($template['issue']->state !== '0'): ?>
 			<a href="?id=<?php echo $this->id('issue', 'id', $template['issue']->id, 'action', 'reopen') ?>" class="bds_inline_button">
 			 	↺ <?php echo $bezlang['issue_reopen'] ?>
@@ -112,7 +112,7 @@
 		<?php endif ?>
 	<?php endif ?> 	
 	
-	<?php if ((!isset($template['no_edit']) || $template['no_edit'] === false) &&                  $template['issue']->get_level() >= 15): ?> 
+	<?php if ((!isset($template['no_edit']) || $template['no_edit'] === false) &&                  count($template['issue']->changable_fields()) > 0): ?> 
 		<a href="?id=<?php echo $this->id('issue_report', 'action', 'edit', 'id', $template['issue']->id) ?>" class="bds_inline_button">
 		 	✎ <?php echo $bezlang['edit'] ?>
 		</a>

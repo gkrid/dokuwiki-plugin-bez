@@ -4,15 +4,19 @@ if(!defined('DOKU_INC')) die();
 
 require_once 'entity.php';
 
+
+class BEZ_mdl_Dummy_Issue extends BEZ_mdl_Dummy_Entity  {
+    function get_table_name() {
+        return 'issues';
+    }
+}
+
 class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 	
 	//meta
 	protected $reporter, $date, $last_mod, $last_activity,
-				$participants, $subscribents;
+				$participants, $subscribents, $coordinator;
 	
-	//acl
-	//coordinator is defined by issue or tasktype
-	protected $coordinator;
 	
 	//data
 	protected $title, $description, $type;
@@ -24,6 +28,11 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 	protected $participants_array, $subscribents_array,
 				$assigned_tasks_count, $opened_tasks_count,
 				$priority;
+    
+    
+    public function get_table_name() {
+        return 'issues';
+    }
 	
 	protected $parse_int = array('assigned_tasks_count', 'opened_tasks_count');
 	
@@ -48,6 +57,13 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
             return $this->state;
         }
     }
+    
+    public function user_is_coordinator() {
+        if ($this->coordinator === $this->model->user_nick ||
+           $this->model->acl->get_level() >= BEZ_AUTH_ADMIN) {
+            return true;
+        }
+    }
 	
 	public function __construct($model, $defaults=array()) {
 		parent::__construct($model);
@@ -58,52 +74,77 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 			'state' => array(array('select', array('0', '1', '2')), 'NULL'),
 			'opinion' => array(array('length', 10000), 'NOT NULL'),
 			'type' => array(array('numeric'), 'NULL'),
-			'coordinator' => array(array('dw_user', array('-proposal')), 'NOT NULL'),
+			'coordinator' => array(array('dw_user'), 'NOT NULL'),
 			'reporter' => array(array('dw_user'), 'NOT NULL'),
 			'date' => array(array('unix_timestamp'), 'NOT NULL'),
 			'last_mod' => array(array('unix_timestamp'), 'NULL'),
 			'last_activity' => array(array('sqlite_datetime'), 'NOT NULL')
 		));
 		
-		//we've created empty object
+		//we've created empty object (new record)
 		if ($this->id === NULL) {
-			$this->reporter = $this->auth->get_user();
+			$this->reporter = $this->model->user_nick;
 			$this->date = time();
 			
-			$this->last_activity = $this->sqlite_date();
+			$this->update_last_activity();
 			
 			$this->state = '0';
-			
-			$input = array('title', 'description', 'type');
-			if ($this->auth->get_level() >= 20) {
+            
+            $input = array('title', 'description', 'type');
+            if ($this->model->acl->get_level() >= BEZ_AUTH_LEADER) {
 				$input[] = 'coordinator';
 			}
+            
+            $val_data = $this->validator->validate($defaults, $input);
+            if ($val_data === false)  {
+                throw new ValidationException('issues',	$this->validator->get_errors());
+            }
+            
+            $this->set_property_array($val_data);
+            
+            if (!isset($val_data['coordinator'])) {
+                $this->coordinator = '-proposal';
+            }
+            
+
+
 			
-			$val_data = $this->validator->validate($defaults, $input);
-			
-			if ($val_data === false) {
-				throw new ValidationException('issues', $this->validator->get_errors());
-			}
-			
-			$this->set_property_array($val_data);
+//			$input = array('title', 'description', 'type');
+//			if ($this->auth->get_level() >= 20) {
+//				$input[] = 'coordinator';
+//			}
+//			
+//			$val_data = $this->validator->validate($defaults, $input);
+//			
+//			if ($val_data === false) {
+//				throw new ValidationException('issues', $this->validator->get_errors());
+//			}
+//			
+//			$this->set_property_array($val_data);
+            
+            
             
 			$this->description_cache = $this->helper->wiki_parse($this->description);
 			
 			$this->add_participant($this->reporter);
 			$this->add_subscribent($this->reporter);
+            if ($this->coordinator !== '-proposal') {
+                $this->add_participant($this->coordinator);
+                $this->add_subscribent($this->coordinator);
+            }
 			
-			if ($this->auth->get_level() >= 20) {
-				$this->coordinator = $val_data['coordinator'];
-				if ($val_data['coordinator'] !== '-proposal') {
-					$this->add_participant($val_data['coordinator']);
-					$this->add_subscribent($val_data['coordinator']);
-				}
-			} else {
-				$this->coordinator = '-proposal';
-			}
+//			if ($this->auth->get_level() >= 20) {
+//				$this->coordinator = $val_data['coordinator'];
+//				if ($val_data['coordinator'] !== '-proposal') {
+//					$this->add_participant($val_data['coordinator']);
+//					$this->add_subscribent($val_data['coordinator']);
+//				}
+//			} else {
+//				$this->coordinator = '-proposal';
+//			}
 		}
 		
-		$this->auth->set_coordinator($this->coordinator);
+		//$this->auth->set_coordinator($this->coordinator);
 		
 		$this->participants_array = array();
 		if ($this->participants !== NULL) {
@@ -123,21 +164,40 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 	}
 	
 	public function set_data($data) {
-		if ($this->auth->get_level() < 15) {
-			throw new PermissionDeniedException();
-		}
-
-		$input = array('title', 'description', 'opinion', 'type');
-		if ($this->auth->get_level() >= 20) {
-			$input[] = 'coordinator';
-		}
-		$val_data = $this->validator->validate($data, $input); 
+//		if ($this->auth->get_level() < 15) {
+//			throw new PermissionDeniedException();
+//		}
+//
+//		$input = array('title', 'description', 'opinion', 'type');
+//		if ($this->auth->get_level() >= 20) {
+//			$input[] = 'coordinator';
+//		}
+//		$val_data = $this->validator->validate($data, $input); 
+//        
+//		if ($val_data === false) {
+//			throw new ValidationException('issues',	$this->validator->get_errors());
+//		}
+//		
+//		
+        
+        $input = array('title', 'description', 'opinion', 'type', 'coordinator');
+        $val_data = $this->validator->validate($data, $input); 
         
 		if ($val_data === false) {
 			throw new ValidationException('issues',	$this->validator->get_errors());
 		}
-		
-		$this->set_property_array($val_data);
+        
+        //change coordinator at the end
+        $val_coordiantor = $val_data['coordinator'];
+        unset($val_data['coordinator']);
+        
+        $this->set_property_array($val_data);    
+        $this->set_property('coordinator', $val_coordiantor);
+        
+        
+//        if (count($this->validator->get_errors()) > 0)  {
+//			throw new ValidationException('issues',	$this->validator->get_errors());
+//		}
 		
 		//!!! don't update activity on issue update
 		
@@ -145,41 +205,52 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 		$this->opinion_cache = $this->helper->wiki_parse($this->opinion);
 	}
     
-    public function update_cache() {
-		if ($this->auth->get_level() < 20) {
-			return false;
-		}
-		$this->description_cache = $this->helper->wiki_parse($this->description);
-		$this->opinion_cache = $this->helper->wiki_parse($this->opinion);
-	}
+//    public function update_cache() {
+//		$this->description_cache = $this->helper->wiki_parse($this->description);
+//		$this->opinion_cache = $this->helper->wiki_parse($this->opinion);
+//	}
 	
 	public function set_state($data) {
-		if ($this->auth->get_level() < 15) {
-			throw new PermissionDeniedException();
-		}
-
-		$input = array('opinion', 'state');
-		$val_data = $this->validator->validate($data, $input); 
+//		if ($this->auth->get_level() < 15) {
+//			throw new PermissionDeniedException();
+//		}
+//
+//		$input = array('opinion', 'state');
+//		$val_data = $this->validator->validate($data, $input); 
+//		if ($val_data === false) {
+//			throw new ValidationException('issues', $this->validator->get_errors());
+//		}
+//
+//		
+//		$this->set_property_array($val_data);
+        
+        $input = array('state', 'opinion');
+        $val_data = $this->validator->validate($data, $input); 
+        
 		if ($val_data === false) {
-			throw new ValidationException('issues', $this->validator->get_errors());
+			throw new ValidationException('issues',	$this->validator->get_errors());
 		}
-
-		
-		$this->set_property_array($val_data);
+        
+        $this->set_property_array($val_data);
+        
+        if (count($this->validator->get_errors()) > 0)  {
+			throw new ValidationException('issues',	$this->validator->get_errors());
+		}
 		
 		//update activity on state update
 		$this->last_mod = time();
 		$this->update_last_activity();
 		$this->opinion_cache = $this->helper->wiki_parse($this->opinion);
 	}
-	
-	public function update_last_activity() {
-		$this->last_activity = $this->sqlite_date();
-	}
-	
+    
+    public function update_last_activity() {
+        $this->last_activity = $this->sqlite_date();
+    }
+		
 	public function add_participant($participant) {
-		if (! (	$this->auth->get_level() >= 15 ||
-				$participant === $this->auth->get_user())
+		if (! (	$this->user_is_coordinator() ||
+				$participant === $this->model->user_nick || 
+                $participant === $this->coordinator) //dodajemy nowego koordynatora
 			) {
 			throw new PermissionDeniedException();
 		}
@@ -190,8 +261,9 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 	}
 	
 	public function add_subscribent($subscribent) {
-		if (! (	$this->auth->get_level() >= 15 ||
-				$subscribent === $this->auth->get_user())
+		if (! (	$this->user_is_coordinator() ||
+				$subscribent === $this->model->user_nick ||
+                $subscribent === $this->coordinator) //dodajemy nowego koordynatora)
 			) {
 			throw new PermissionDeniedException();
 		}
@@ -206,8 +278,8 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 	}
 	
 	public function remove_subscribent($subscribent) {
-		if (! (	$this->auth->get_level() >= 15 ||
-				$subscribent === $this->auth->get_user())
+		if (! (	$this->user_is_coordinator() ||
+				$subscribent === $this->model->user_nick)
 			) {
 			throw new PermissionDeniedException();
 		}
@@ -255,7 +327,7 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 	
 	public function is_subscribent($user=NULL) {
 		if ($user === NULL) {
-			$user = $this->auth->get_user();
+			$user = $this->model->user_nick;
 		}
 		if (in_array($user, $this->subscribents_array)) {
 			return true;
@@ -265,7 +337,7 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 	
 	public function is_task_executor($user=NULL) {
 		if ($user === NULL) {
-			$user = $this->auth->get_user();
+			$user = $this->model->user_nick;
 		}
 		$sth = $this->model->db->prepare('SELECT COUNT(*) FROM tasks
 										WHERE issue=:issue AND executor=:executor');
@@ -280,7 +352,7 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 	
 	public function is_commentator($user=NULL) {
 		if ($user === NULL) {
-			$user = $this->auth->get_user();
+			$user = $this->model->user_nick;
 		}
 		$sth = $this->model->db->prepare('SELECT COUNT(*) FROM commcauses
 										WHERE issue=:issue AND reporter=:reporter');
@@ -376,7 +448,7 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
     
     public function mail_notify_change_state() {
         $this->mail_notify(array(
-            'who' => $this->auth->get_user(),
+            'who' => $this->model->user_nick,
             'action' => $this->model->action->getLang('mail_mail_notify_change_state_action'),
             //'subject' => $this->model->action->getLang('mail_mail_notify_change_state_subject') . ' #'.$this->id,
             'custom_content' => true,
@@ -388,7 +460,7 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
         $email = $this->model->users->get_user_email($client);
         
         $this->mail_notify(array(
-            'who' => $this->auth->get_user(),
+            'who' => $this->model->user_nick,
             'action' => $this->model->action->getLang('mail_mail_notify_invite_action'),
             //'subject' => $this->model->action->getLang('mail_mail_notify_invite_subject') . ' #'.$this->id,
             'custom_content' => true,
@@ -400,7 +472,7 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
         $email = $this->model->users->get_user_email($this->coordinator);
         
         $this->mail_notify(array(
-            'who' => $this->auth->get_user(),
+            'who' => $this->model->user_nick,
             'action' => $this->model->action->getLang('mail_mail_inform_coordinator_action'),
             //'subject' => $this->model->action->getLang('mail_mail_inform_coordinator_subject') . ' #'.$this->id,
             'custom_content' => true,

@@ -25,7 +25,7 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 	private $lang_code = '';
 	private $default_lang = 'pl';
 
-	private $auth, $model, $validator;
+	private $model;
 	
     function getPType() { return 'block'; }
     function getType() { return 'substition'; }
@@ -37,7 +37,7 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
     }
 
 	function __construct() {
-		global $conf, $INFO, $auth;
+		global $conf, $INFO;
 
 		$id = $_GET['id'];
 
@@ -64,7 +64,7 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 		for ($i = 0; $i < count($ex); $i += 2)
 			$this->value[urldecode($ex[$i])] = urldecode($ex[$i+1]);
 			
-		$this->model = new BEZ_mdl_Model($auth, $INFO['client'], $this, $conf);
+		
 	}
 
     function handle($match, $state, $pos, Doku_Handler $handler)
@@ -73,8 +73,10 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
     }
 
     function render($mode, Doku_Renderer $R, $pass) {
-		global $INFO, $auth;
-
+		global $INFO, $auth, $conf;
+        
+        $this->model = new BEZ_mdl_Model($auth, $INFO['client'], $this, $conf);
+        
 		$helper = $this->loadHelper('bez');
 		if ($mode != 'xhtml' || !$helper->user_viewer()) return false;
 

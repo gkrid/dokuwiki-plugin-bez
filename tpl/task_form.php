@@ -19,7 +19,8 @@ if ($nparams['bez'] === 'issue') {
 				<span><strong>#z<?php echo $template['task']->id ?></strong></span>
 				</div>
 				
-				<?php if ($template['auth_level'] >= 15 && isset($template['issue'])): ?>
+				<?php if (isset($template['issue']) &&
+                          $template['issue']->user_is_coordinator()): ?>
 				<div class="row">
 					<label for="cause"><?php echo ucfirst($bezlang['cause']) ?>:</label>
 					<span>
@@ -39,7 +40,14 @@ if ($nparams['bez'] === 'issue') {
 			<div class="row">
 			<label for="executor"><?php echo $bezlang['executor'] ?>:</label>
 			<span>
-			<?php if ($template['auth_level'] >= 15): ?>	
+			<?php
+                //implication -> !$p || $q $p => $q
+                if (
+                    ( isset($template['issue']) &&
+                            $template['issue']->user_is_coordinator()) ||
+                    ( !isset($template['issue']) &&
+                            $this->model->acl->get_level() >= BEZ_AUTH_LEADER)
+                    ): ?>	
 				<select name="executor" id="executor" data-validation="required">
 					<option value="">--- <?php echo $bezlang['select'] ?>---</option>
 				<?php foreach ($template['users'] as $nick => $name): ?>
@@ -99,7 +107,7 @@ if ($nparams['bez'] === 'issue') {
 			<div class="row">
 			<label for="tasktype"><?php echo $bezlang['task_type'] ?>:</label>
 			<span>
-				<?php if ($template['auth_level'] < 15): ?>
+				<?php if ($this->model->acl->get_level() < BEZ_AUTH_LEADER): ?>
 					<input type="hidden" name="tasktype" value="<?php echo $nparams['tasktype'] ?>">
 					<strong>
                         <?php foreach ($template['tasktypes'] as $tasktype): ?>

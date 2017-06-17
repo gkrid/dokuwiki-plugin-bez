@@ -16,7 +16,7 @@
 			</span>
 			<div class="commcause_content">
 			<h2>
-				<?php if ($template['issue']->get_level() >= 15): ?> 
+				<?php if ($template['issue']->user_is_coordinator()): ?> 
 				<ul class="bez_tabs">
 					<li
                         <?php if (!isset($value['type']) ||
@@ -40,7 +40,7 @@
 				<textarea data-validation="required" name="content" class="bez_textarea_content" id="content1"><?php echo $value['content'] ?></textarea>
 				
 				<input class="bez_comment_type" type="hidden" name="type" value="0" />
-				<?php if ($template['issue']->get_level() >= 15): ?> 
+				<?php if ($template['issue']->user_is_coordinator()): ?> 
 					<div class="bez_cause_type">
 						<div style="margin-bottom: 10px;">
 						<label for="potential">

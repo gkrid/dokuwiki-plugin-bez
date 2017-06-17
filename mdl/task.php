@@ -7,6 +7,12 @@ if(!defined('DOKU_INC')) die();
  */
 require_once 'entity.php';
 
+class BEZ_mdl_Dummy_Task extends BEZ_mdl_Dummy_Entity  {
+    function get_table_name() {
+        return 'tasks';
+    }
+}
+
 class BEZ_mdl_Task extends BEZ_mdl_Entity {
 	//if errors = true we cannot save task
 	
@@ -24,6 +30,10 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 	
 	//virtual
 	protected $coordinator, $action, $issue_state, $state_string, $action_string, $tasktype_string;
+    
+    public function get_table_name() {
+        return 'tasks';
+    }
 	
 	public function get_columns() {
 		return array('id', 'reporter', 'date', 'close_date', 'cause',
@@ -94,27 +104,34 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 		//we've created empty object
 		if ($this->id === NULL) {
 			//meta
-			$this->reporter = $this->auth->get_user();
+			$this->reporter = $this->model->user_nick;
 			$this->date = time();
 			
 			$this->state = '0';
 			$this->all_day_event = '1';
+            
+            //throws ValidationException
+			$this->validator->validate_field('issue', $defaults['issue']);
+
+            $this->issue = $defaults['issue'];
+            if ($this->issue !== '') {
+                $issue = $this->model->issues->get_one($defaults['issue']);
+			    $this->coordinator = $issue->coordinator;
+            } else {
+                $this->coordinator = '';
+            }
             		
-			$val_data = $this->validator->validate($defaults, array('cause', 'issue', 'coordinator'));
-			
-			if ($val_data === false) {
-				throw new Exception('error: $defaults invalid: '.print_r($this->validator->get_errors(), true));
-			}
-			
-			$this->cause = $val_data['cause'];
-			$this->issue = $val_data['issue'];
-			$this->coordinator = $val_data['coordinator'];	
+			//throws ValidationException
+			$this->validator->validate_field('cause', $defaults['cause']);
+			$this->cause = $defaults['cause'];
+            
+				
 		}
 
 		//takstype required	
-		if ($this->issue != NULL) {
+		if ($this->issue !== '') {
             //set issue state
-            if ($this->model->issues->get_one($this->issue)->state != '0') {
+            if ($issue->state !== '0') {
                 $this->allow_edit = false;
             }
             
@@ -129,16 +146,13 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 		
 		//we've created empty object
 		if ($this->id === NULL) {
-			$val_data = $this->validator->validate($defaults, array('tasktype'));
-			if ($val_data === false) {
-				throw new Exception('tasktype invalid: '.print_r($this->validator->get_errors(), true));
-			}
-			
-			$this->tasktype = $val_data['tasktype'];
+            //throws ValidationException
+			$this->validator->validate_field('tasktype', $defaults['tasktype']);
+			$this->tasktype = $defaults['tasktype'];
 		}
 		
-		$this->auth->set_coordinator($this->coordinator);
-		$this->auth->set_executor($this->executor);
+//		$this->auth->set_coordinator($this->coordinator);
+//		$this->auth->set_executor($this->executor);
 	}
 	
 	public function set_meta($data) {
@@ -156,33 +170,37 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 		return true;
 	}
 		
-	public function update_cache() {
-		if ($this->auth->get_level() < 20) {
-			throw new PermissionDeniedException('admin');
-		}
-		$this->task_cache = $this->helper->wiki_parse($this->task);
-		$this->reason_cache = $this->helper->wiki_parse($this->reason);
-	}
+//	public function update_cache() {
+//		if ($this->auth->get_level() < 20) {
+//			throw new PermissionDeniedException('admin');
+//		}
+//		$this->task_cache = $this->helper->wiki_parse($this->task);
+//		$this->reason_cache = $this->helper->wiki_parse($this->reason);
+//	}
 	
 	public function set_data($data) {
-		if ($this->auth->get_level() >= 15) {
-			$val_data = $this->validator->validate($data, array('executor',
-				'cause', 'task', 'plan_date', 'cost', 'all_day_event',
-				'start_time', 'finish_time', 'tasktype', 'reason'));
-		//reporters can modify their own records if there is no coordinator
-		} else if (	$this->coordinator === '-none' &&
-					$this->reporter === $this->auth->get_user()) {
-			$val_data = $this->validator->validate($data, array('executor',
-			'task', 'plan_date', 'cost', 'all_day_event',
-			'start_time', 'finish_time', 'tasktype', 'reason'));
-			if ($val_data['executor'] !== $this->auth->get_user()) {
-				$this->validator->set_error('executor', 'not_equal');
-				return false;	
-			}
-		} else {
-			throw new PermissionDeniedException('coordinator');
-		}
-						
+//		if ($this->auth->get_level() >= 15) {
+//			$val_data = $this->validator->validate($data, array('executor',
+//				'cause', 'task', 'plan_date', 'cost', 'all_day_event',
+//				'start_time', 'finish_time', 'tasktype', 'reason'));
+//		//reporters can modify their own records if there is no coordinator
+//		} else if (	$this->coordinator === '-none' &&
+//					$this->reporter === $this->auth->get_user()) {
+//			$val_data = $this->validator->validate($data, array('executor',
+//			'task', 'plan_date', 'cost', 'all_day_event',
+//			'start_time', 'finish_time', 'tasktype', 'reason'));
+//			if ($val_data['executor'] !== $this->auth->get_user()) {
+//				$this->validator->set_error('executor', 'not_equal');
+//				return false;	
+//			}
+//		} else {
+//			throw new PermissionDeniedException('coordinator');
+//		}
+        
+        $input = array('executor', 'task', 'plan_date', 'cost', 'all_day_event',
+			'start_time', 'finish_time', 'tasktype', 'reason');
+        
+        $val_data = $this->validator->validate($data, $input);
 		if ($val_data === false) {
 			throw new ValidationException('tasks', $this->validator->get_errors());
 		}
@@ -190,15 +208,15 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 		$this->set_property_array($val_data);
 		
 		//specjalne reguły
-		if ($this->issue == NULL) {
-			$this->set_property('cause', NULL);
+		if ($this->issue === '') {
+			$this->set_property('cause', '');
 		}
 		
-		$this->auth->set_executor($this->executor);
+		//$this->auth->set_executor($this->executor);
 		
 		//set parsed
-		$this->set_property('task_cache', $this->helper->wiki_parse($this->task));
-		$this->set_property('reason_cache', $this->helper->wiki_parse($this->reason));
+		$this->task_cache = $this->helper->wiki_parse($this->task);
+		$this->reason_cache = $this->helper->wiki_parse($this->reason);
         
         //update virtuals
         $this->update_virtual_columns();

@@ -3,6 +3,7 @@
 require_once DOKU_PLUGIN.'bez/exceptions.php';
 
 require_once 'auth.php';
+require_once 'acl.php';
 require_once 'validator.php';
 
 require_once 'users.php';
@@ -14,14 +15,16 @@ require_once 'commcauses.php';
 require_once 'timeline.php';
 
 class BEZ_mdl_Model {
-	private $db;
+	private $db, $acl;
 	
-	private $users, $cache, $issues, $tasks, $tasktypes, $commcauses, $timeline;
+    private $models = array('users', 'issues', 'tasks', 'tasktypes', 'commcauses', 'timeline');
+	private $users, $issues, $tasks, $tasktypes, $commcauses, $timeline;
 	
 	private $dw_auth, $user_nick, $action, $conf;
 	
 	public function __get($property) {
-		if (property_exists($this, $property)) {
+		if (in_array($property, $this->models) ||
+            in_array($property, array('db', 'acl', 'dw_auth', 'user_nick', 'action', 'conf'))) {
 			return $this->$property;
 		}
 	}
@@ -45,12 +48,16 @@ class BEZ_mdl_Model {
 			$this->db = new PDO('sqlite:/' . $db_path);
 		}
 		$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		
+        
+        $this->acl = new BEZ_mdl_Acl($this);
+        
+        $this->issues = new BEZ_mdl_Issues($this);
+        $this->tasks = new BEZ_mdl_Tasks($this);
+        
 		$this->users = new BEZ_mdl_Users($this);
-		$this->issues = new BEZ_mdl_Issues($this);
+        
 		$this->issuetypes = new BEZ_mdl_Issuetypes($this);
 		
-		$this->tasks = new BEZ_mdl_Tasks($this);
 		$this->tasktypes = new BEZ_mdl_Tasktypes($this);
 		
 		$this->commcauses = new BEZ_mdl_Commcauses($this);

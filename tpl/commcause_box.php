@@ -3,7 +3,7 @@
 	<?php echo $template['commcause']->type === '0' ? 'bez_type_0' : 'bez_cause' ?>
 	<?php
 		if ($template['commcause']->reporter ==
-                $this->model->users->get_user_full_name($INFO['client'])) {
+                $this->model->users->get_user_full_name($this->model->user_nick)) {
 			echo 'bez_my_comment';
 		}
 	?>">
@@ -41,8 +41,8 @@
                 (!isset($template['no_edit']) || $template['no_edit'] === false) &&
                 $template['issue']->state === '0' &&
                 (   ($template['commcause']->type === '0' &&
-                     $template['commcause']->reporter == $INFO['client']) ||
-						$template['issue']->get_level() >= 15)
+                     $template['commcause']->reporter == $this->model->user_nick) ||
+						$template['issue']->user_is_coordinator())
 				): ?> 
 				
 				<a class="bez_comment_button"
@@ -76,7 +76,7 @@
 					<?php include 'task_box.php' ?>
 				<?php endif ?>
 			<?php endforeach ?>
-			<?php if ($template['issue']->get_level() >= 15): ?>
+			<?php if ($template['issue']->user_is_coordinator()): ?>
 				<?php if (	$template['action'] === 'task_commcause_add' &&
 							$template['kid'] === $template['commcause']->id): ?>
 					<?php include 'task_form.php' ?>

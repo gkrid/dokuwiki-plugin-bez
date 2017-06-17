@@ -22,7 +22,7 @@ try {
     $template['kid'] = isset($nparams['kid']) ? $nparams['kid'] : '-1';
     $template['state'] = isset($nparams['state']) ? $nparams['state'] : '-1';
     $template['action'] = isset($nparams['action']) ? $nparams['action'] : '-default';
-    $template['auth_level'] = $issue->get_level();
+    //$template['auth_level'] = $issue->get_level();
 
 
 	$action = '';
@@ -31,12 +31,18 @@ try {
 		$redirect = false;
 		$anchor = '';
 		
-		if ($action === 'commcause_add') {			
-			$commcause = $this->model->commcauses->create_object(array(
-				'issue' => $issue_id
-			));
-
-			$commcause->set_data($_POST);
+		if ($action === 'commcause_add') {
+            
+            $defaults = array('issue' => (string)$issue_id);
+            if ($issue->user_is_coordinator()) {
+                $defaults['type'] = $_POST['type'];
+            }
+             
+			$commcause = $this->model->commcauses->create_object($defaults);
+            
+            $data = array('content' => $_POST['content']);
+			$commcause->set_data($data);
+            
 			$id = $this->model->commcauses->save($commcause);
 			
 			$issue->add_participant($INFO['client']);
@@ -84,7 +90,13 @@ try {
 				$value = $commcause->get_assoc();
 			} else {
 				$commcause = $this->model->commcauses->get_one($template['kid']);
-				$commcause->set_data($_POST);
+                
+                $data = array('content' => $_POST['content']);
+                if ($issue->user_is_coordinator()) {
+                    $data['type'] = $_POST['type'];
+                }
+                
+				$commcause->set_data($data);
 				$this->model->commcauses->save($commcause);
 				
 				$issue->update_last_activity();

@@ -6,25 +6,28 @@
 //~ include_once DOKU_PLUGIN."bez/models/tasks.php";
 
 
-if	(!$helper->user_viewer()) {
+//if	(!$helper->user_viewer()) {
 //	$errors[] = $bezlang['error_issues'];
 //	$controller->preventDefault();
+//    throw new PermissionDeniedException();
+//}
+
+if ($this->model->acl->get_level() < BEZ_AUTH_USER) {
     throw new PermissionDeniedException();
-} 
+}
+
 
 if (isset($nparams['id']) && is_numeric($nparams['id'])) {
 	$issue_id = (int)$nparams['id'];
 	$issue = $this->model->issues->get_one($issue_id);
 	
 	$template['issue'] = $issue;
-	$template['issue_id'] = $issue->id;
+//	$template['issue_id'] = $issue->id;
 	$template['priority'] = $issue->priority;
-	$template['user_level'] = $issue->get_level();
 } else {
-	$template['issue'] = NULL;
-	$template['issue_id'] = '';
+	$template['issue'] = $this->model->issues->create_dummy_object();
+//	$template['issue_id'] = '';
 	$template['priority'] = 'None';
-	$template['user_level'] = $this->model->issues->get_level();
 }
 
 $action = '';
@@ -90,8 +93,6 @@ try {
 } catch (ValidationException $e) {
 	$errors = $e->get_errors();
 	$value = $_POST;
-} catch (DBException $e) {
-	echo nl2br($e);
 }
 
 $template['issuetypes'] = $this->model->issuetypes->get_all();

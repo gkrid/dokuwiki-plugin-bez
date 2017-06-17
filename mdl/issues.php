@@ -103,4 +103,9 @@ class BEZ_mdl_Issues extends BEZ_mdl_Factory {
 		$issue = new BEZ_mdl_Issue($this->model, $defaults);
 		return $issue;
 	}
+    
+    public function create_dummy_object() {
+		$issue = new BEZ_mdl_Dummy_Issue($this->model);
+		return $issue;
+	}
 }

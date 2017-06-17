@@ -2,32 +2,49 @@
  
 if(!defined('DOKU_INC')) die();
 
-/*
- * Task coordinator is taken from tasktypes
- */
 
-class BEZ_mdl_Entity {	
-	protected $auth, $validator, $model;
+abstract class BEZ_mdl_Dummy_Entity {
+    
+    protected $model;
+    
+    protected $id = '';
+    
+    public function __get($property) {
+		if ($property === 'id') {
+            return '';
+        }
+	}
+    
+    abstract public function get_table_name();
+    
+    public function acl_of($field) {
+        return $this->model->acl->check_field($this->get_table_name(), NULL, $field);
+    }
+    
+    public function __construct($model, $defaults=array()) {
+		$this->model = $model;
+	}
+}
+
+abstract class BEZ_mdl_Entity {	
+	
+    protected $model, $validator, $helper;
 	
 	protected $parse_int = array();
     
     protected $allow_edit = true;
 	
-	public function get_level() {
-		return $this->auth->get_level();
-	}
+//	public function get_level() {
+//		return $this->auth->get_level();
+//	}
+//	
+//	public function get_user() {
+//		return $this->auth->get_user();
+//	}
 	
-	public function get_user() {
-		return $this->auth->get_user();
-	}
-	
-	public function get_columns() {
-		return array();
-	}
-	
-	public function get_virtual_columns() {
-		return array();
-	}
+    
+	abstract public function get_columns();
+	abstract public function get_virtual_columns();
 	
 	public function get_assoc() {
 		$assoc = array();
@@ -40,7 +57,11 @@ class BEZ_mdl_Entity {
     
     //set id when object is saved in database
     public function set_id($id) {
-        $this->id = $id;
+        if ($this->id === NULL) {
+            $this->id = $id;
+        } else {
+            throw new Exception('id already set for issue #'.$this->id);   
+        }
     }
 	
 	public function sqlite_date($time=NULL) {
@@ -78,7 +99,19 @@ class BEZ_mdl_Entity {
         if ($this->allow_edit === false) {
             throw new Exception('cannot change this object. allow_edit = false');
         }
+        
+        //throws ValidationException
+        $this->validator->validate_field($property, $value);
+        
+        //throws PermissionDeniedException
+        $this->model->acl->can_change($this->get_table_name(), $this->id, $property);
+        
         $this->$property = $value;
+        
+        //update ACL if we changed saved object
+        if ($this->id !== NULL) {
+            $this->model->acl->replace_acl_record($this->get_table_name(), $this);
+        }
     }
     
     protected function set_property_array($array) {
@@ -86,25 +119,45 @@ class BEZ_mdl_Entity {
             $this->set_property($k, $v);
         }
     }
-    	
-	public function any_errors() {
-		return count($this->validator->get_errors()) > 0;
-	}
-	
-	public function get_errors() {	
-		return $this->validator->get_errors();
-	}
-	
-	public function __construct($model) {
+    
+    public function changable_fields() {
+       $fields = $this->model->acl->check($this->get_table_name(), $this->id);
+       return array_keys(array_filter($fields, function ($var) {
+           return $var >= BEZ_PERMISSION_CHANGE;
+       }));
+    }
+    
+    public function acl_of($field) {
+        return $this->model->acl->check_field($this->get_table_name(), $this->id, $field);
+    }
+    
+    public function __construct($model, $defaults=array()) {
+        //by convention all defaults must be strings
+        foreach ($defaults as $val) {
+            if (!is_string($val)) {
+                throw new Exception('all defaults must be strings');
+            }
+        }
 		$this->model = $model;
-		$this->auth = new BEZ_mdl_Auth($this->model);
 		$this->validator = new BEZ_mdl_Validator($this->model);
 		$this->helper = plugin_load('helper', 'bez');
 	}
+    
+
+    	
+//	public function any_errors() {
+//		return count($this->validator->get_errors()) > 0;
+//	}
+//	
+//	public function get_errors() {	
+//		return $this->validator->get_errors();
+//	}
+	
+
 	
 	/*Function protected to prevent accidential calling on child class */
-	protected function remove() {
-		$sth = $this->model->db->prepare('DELETE FROM '.$this->get_table_name().' WHERE id = ?');
-		$sth->execute(array($this->id));
-	}
+//	protected function remove() {
+//		$sth = $this->model->db->prepare('DELETE FROM '.$this->get_table_name().' WHERE id = ?');
+//		$sth->execute(array($this->id));
+//	}
 }

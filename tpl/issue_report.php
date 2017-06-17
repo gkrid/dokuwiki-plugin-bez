@@ -1,6 +1,6 @@
 <div class="bds_block">
 
-<?php $id = $this->id('issue_report', 'id', $template['issue_id'], 'action', $template['form_action']) ?>
+<?php $id = $this->id('issue_report', 'id', $template['issue']->id, 'action', $template['form_action']) ?>
 <form action="?id=<?php echo $id ?>" method="POST">
 
 <input type="hidden" name="id" value="<?php echo $id ?>">
@@ -10,12 +10,12 @@
 <?php if ($template['form_action'] === 'update'): ?>
 <div class="row">
 <label for="id"><?php echo $bezlang['id'] ?>:</label>
-<span><strong>#<?php echo $template['issue_id'] ?></strong></span>
+<span><strong>#<?php echo $template['issue']->id ?></strong></span>
 </div>
 <?php endif ?>
 
 
-<?php if ($template['user_level'] >= 15): ?>
+<?php if ($template['issue']->acl_of('type') === BEZ_PERMISSION_CHANGE): ?>
 <div class="row">
 <label for="type"><?php echo $bezlang['type'] ?>:</label>
 <span>
@@ -31,14 +31,12 @@
 </div>
 <?php endif ?>
     
-<?php if ($template['user_level'] >= 20): ?>
+<?php if ($template['issue']->acl_of('coordinator') >= BEZ_PERMISSION_CHANGE): ?>
 <div class="row">
 <label for="coordinator"><?php echo $bezlang['coordinator'] ?>:</label>
 <span>
 <select name="coordinator" id="coordinator">
-<option <?php if ($value['coordinator'] == '-proposal') echo 'selected' ?>
-	value="-proposal">--- <?php echo $bezlang['state_proposal'] ?> ---</option>
-
+    <option value="">--- <?php echo $bezlang['select'] ?>---</option>
 <?php foreach ($template['nicks'] as $nick => $name): ?>
 	<option <?php if ($value['coordinator'] === $nick) echo 'selected' ?>
 	 value="<?php echo $nick ?>"><?php echo $name ?></option>
@@ -89,7 +87,7 @@
     <label></label>
     <span style="padding-top:0px;">
         <input type="submit" value="<?php echo $bezlang['save'] ?>">&nbsp;&nbsp;
-        <a href="?id=<?php echo $this->id('issue', 'id', $template['issue_id']) ?>" class="bez_delete_button bez_link_button">
+        <a href="?id=<?php echo $this->id('issue', 'id', $template['issue']->id) ?>" class="bez_delete_button bez_link_button">
             <?php echo $bezlang['cancel'] ?>
         </a>
     </span>

@@ -95,16 +95,16 @@ class BEZ_mdl_Commcauses extends BEZ_mdl_Factory {
 		return $commcause;
 	}
 	
-	public function delete($obj) {
-		if ($obj->get_level() >= 15 ||
-			$obj->reporter === $this->auth->get_user()) {
-            if ($obj->tasks_count > 0) {
-                throw new Exception('cannot remove commcause with assigned tasks');
-            }
-			$this->delete_from_db($obj->id);
-		} else {
-			throw new PermissionDeniedException();
-		}
-		
-	}
+//	public function delete($obj) {
+//		if ($obj->get_level() >= 15 ||
+//			$obj->reporter === $this->auth->get_user()) {
+//            if ($obj->tasks_count > 0) {
+//                throw new Exception('cannot remove commcause with assigned tasks');
+//            }
+//			$this->delete_from_db($obj->id);
+//		} else {
+//			throw new PermissionDeniedException();
+//		}
+//		
+//	}
 }

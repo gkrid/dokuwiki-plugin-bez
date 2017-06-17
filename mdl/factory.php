@@ -4,8 +4,9 @@ if(!defined('DOKU_INC')) die();
 
 require_once 'auth.php';
 
-class BEZ_mdl_Factory {
-	protected $model, $auth;
+abstract class BEZ_mdl_Factory {
+	protected $model;
+    //$auth;
 	
 	protected $filter_field_map = array();
 	
@@ -43,9 +44,9 @@ class BEZ_mdl_Factory {
 		$this->auth = new BEZ_mdl_Auth($this->model);
 	}
 	
-	public function get_level() {
-		return $this->auth->get_level();
-	}
+//	public function get_level() {
+//		return $this->auth->get_level();
+//	}
 		
 	public function get_table_name() {
 		$class = get_class($this);
@@ -55,9 +56,9 @@ class BEZ_mdl_Factory {
 	}
     
 	public function save($obj) {
-		if ($obj->any_errors()) {
-			return false;
-		}
+//		if ($obj->any_errors()) {
+//			return false;
+//		}
 		
 		$set = array();
 		$execute = array();
@@ -72,9 +73,14 @@ class BEZ_mdl_Factory {
 									
 		$sth = $this->model->db->prepare($query);
 		$sth->execute($execute);
+
+        //new object is created
+        if ($obj->id === NULL) {
+            $id = $this->model->db->lastInsertId();
+            $obj->set_id($id);
+        }
         
-        $id = $this->model->db->lastInsertId();
-		$obj->set_id($id);
+        $this->model->acl->replace_acl_record($this->get_table_name(), $obj);
         
 		return $id;
 	}
@@ -86,9 +92,12 @@ class BEZ_mdl_Factory {
 	}
 	
 	public function delete($obj) {
-		if ($this->auth->get_level() < 20) {
-			return false;
-		}
+//		if ($this->auth->get_level() < 20) {
+//			return false;
+//		}
+        
+        //if user can change id, he can delete record
+        $this->model->acl->can_change($this->get_table_name(), $obj->id, 'id');
 		$this->delete_from_db($obj->id);
 	}
 }

@@ -33,35 +33,44 @@ class BEZ_mdl_Validator {
 		return array($result, $method);
 	}
 	
-	public function validate_one($value, $method, $args, $null) {
+	protected function validate_one($value, $method, $args, $null) {
 			if ($null === 'NOT NULL' && $value == '') {
 				return array(false, 'is_null');
 			} else if ($null === 'NULL' && $value == '') {
-				$val_data[$key] = $value;
-				return true;
+				return array(true, 'is_null');
 			}
 
 			return $this->check_against_val_method($value, $method, $args);
 	}
+    
+    public function validate_field($field, $value) {
+        if (!isset($this->rules[$field])) {
+            throw new Exception('no validation rule for '.$field);
+        }
+            
+        $args = $this->rules[$field][0];
+        $null = $this->rules[$field][1];
+
+        $method = array_shift($args);
+        list($result, $code) = $this->validate_one($value, $method, $args, $null);
+        if ($result === false) {
+            throw new ValidationException('-unknown', array($field => $code));
+        }
+    }
 	
 	public function validate($data, $fields) {
 		$val_data = array();
 
 		foreach ($data as $key => $value) {
-			if (!isset($this->rules[$key]) || !in_array($key, $fields)) {
+			if (!in_array($key, $fields)) {
 				continue;
 			}
-			$args = $this->rules[$key][0];
-			$null = $this->rules[$key][1];
-			
-			$method = array_shift($args);
-			list($result, $code) = $this->validate_one($value, $method, $args, $null);
-			
-			if ($result === false) {
-				$this->errors[$key] = $code;
-			} else {
+			try {
+                $this->validate_field($key, $value);
                 /*by convention all values as passed as strings*/
 				$val_data[$key] = (string)$value;
+            } catch (ValidationException $e) {
+				$this->errors[$key] = $e->get_errors()[$key];
 			}
 		}
 		if (count($this->errors) > 0) {
@@ -132,6 +141,10 @@ class BEZ_mdl_Validator {
 			return false;
 		}
 		return false;
+	}
+    
+    public function validate_sqlite_datetime($date) {
+		return true;
 	}
 	
 	public function validate_time($time) {
