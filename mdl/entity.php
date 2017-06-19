@@ -18,10 +18,10 @@ abstract class BEZ_mdl_Dummy_Entity {
     abstract public function get_table_name();
     
     public function acl_of($field) {
-        return $this->model->acl->check_field($this->get_table_name(), NULL, $field);
+        return $this->model->acl->check_field($this, $field);
     }
     
-    public function __construct($model, $defaults=array()) {
+    public function __construct($model) {
 		$this->model = $model;
 	}
 }
@@ -32,7 +32,7 @@ abstract class BEZ_mdl_Entity {
 	
 	protected $parse_int = array();
     
-    protected $allow_edit = true;
+//    protected $allow_edit = true;
 	
 //	public function get_level() {
 //		return $this->auth->get_level();
@@ -96,22 +96,22 @@ abstract class BEZ_mdl_Entity {
         if (!in_array($property, $this->get_columns())) {
             throw new Exception('trying to set unexisting column');
         }
-        if ($this->allow_edit === false) {
-            throw new Exception('cannot change this object. allow_edit = false');
-        }
+        //~ if ($this->allow_edit === false) {
+            //~ throw new Exception('cannot change this object. allow_edit = false');
+        //~ }
         
         //throws ValidationException
         $this->validator->validate_field($property, $value);
         
         //throws PermissionDeniedException
-        $this->model->acl->can_change($this->get_table_name(), $this->id, $property);
+        $this->model->acl->can_change($this, $property);
         
         $this->$property = $value;
         
         //update ACL if we changed saved object
-        if ($this->id !== NULL) {
-            $this->model->acl->replace_acl_record($this->get_table_name(), $this);
-        }
+//        if ($this->id !== NULL) {
+//            $this->model->acl->replace_acl_record($this->get_table_name(), $this);
+//        }
     }
     
     protected function set_property_array($array) {
@@ -121,14 +121,14 @@ abstract class BEZ_mdl_Entity {
     }
     
     public function changable_fields() {
-       $fields = $this->model->acl->check($this->get_table_name(), $this->id);
+       $fields = $this->model->acl->check($this);
        return array_keys(array_filter($fields, function ($var) {
            return $var >= BEZ_PERMISSION_CHANGE;
        }));
     }
     
     public function acl_of($field) {
-        return $this->model->acl->check_field($this->get_table_name(), $this->id, $field);
+        return $this->model->acl->check_field($this, $field);
     }
     
     public function __construct($model, $defaults=array()) {

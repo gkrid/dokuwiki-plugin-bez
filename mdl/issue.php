@@ -90,21 +90,29 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 			
 			$this->state = '0';
             
-            $input = array('title', 'description', 'type');
             if ($this->model->acl->get_level() >= BEZ_AUTH_LEADER) {
-				$input[] = 'coordinator';
-			}
-            
-            $val_data = $this->validator->validate($defaults, $input);
-            if ($val_data === false)  {
-                throw new ValidationException('issues',	$this->validator->get_errors());
-            }
-            
-            $this->set_property_array($val_data);
-            
-            if (!isset($val_data['coordinator'])) {
+                 //throws ValidationException
+			     $this->coordinator = $this->validator->validate_field('coordinator', 
+                                    $defaults['coordinator']);
+            } else {
                 $this->coordinator = '-proposal';
             }
+            
+//            $input = array('title', 'description', 'type');
+//            if ($this->model->acl->get_level() >= BEZ_AUTH_LEADER) {
+//				$input[] = 'coordinator';
+//			}
+//            
+//            $val_data = $this->validator->validate($defaults, $input);
+//            if ($val_data === false)  {
+//                throw new ValidationException('issues',	$this->validator->get_errors());
+//            }
+//            
+//            $this->set_property_array($val_data);
+//            
+//            if (!isset($val_data['coordinator'])) {
+//                $this->coordinator = '-proposal';
+//            }
             
 
 
@@ -124,7 +132,7 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
             
             
             
-			$this->description_cache = $this->helper->wiki_parse($this->description);
+//			$this->description_cache = $this->helper->wiki_parse($this->description);
 			
 			$this->add_participant($this->reporter);
 			$this->add_subscribent($this->reporter);
@@ -180,19 +188,26 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 //		
 //		
         
+        
         $input = array('title', 'description', 'opinion', 'type', 'coordinator');
         $val_data = $this->validator->validate($data, $input); 
-        
+                
 		if ($val_data === false) {
 			throw new ValidationException('issues',	$this->validator->get_errors());
-		}
+        }
         
-        //change coordinator at the end
-        $val_coordiantor = $val_data['coordinator'];
-        unset($val_data['coordinator']);
         
-        $this->set_property_array($val_data);    
-        $this->set_property('coordinator', $val_coordiantor);
+        //change coordinator at the end(!)
+        if (isset($val_data['coordinator'])) {
+            $val_coordinator = $val_data['coordinator'];
+            unset($val_data['coordinator']);
+        }
+        
+        $this->set_property_array($val_data); 
+        
+        if (isset($val_coordinator)) {
+           $this->set_property('coordinator', $val_coordinator); 
+        }
         
         
 //        if (count($this->validator->get_errors()) > 0)  {

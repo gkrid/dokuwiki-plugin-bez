@@ -44,9 +44,9 @@ class BEZ_mdl_Commcause extends BEZ_mdl_Entity {
 		if ($this->id === NULL) {
             
             //throws ValidationException
-			$this->validator->validate_field('issue', $defaults['issue']);
+			$this->issue = 
+                $this->validator->validate_field('issue', $defaults['issue']);
 
-            $this->issue = $defaults['issue'];
             $issue = $this->model->issues->get_one($defaults['issue']);
 
             $this->coordinator = $issue->coordinator;
@@ -54,8 +54,8 @@ class BEZ_mdl_Commcause extends BEZ_mdl_Entity {
             //we are coordinator of newly created object
             if ($issue->user_is_coordinator()) {
                 //throws ValidationException
-                $this->validator->validate_field('type', $defaults['type']);
-                $this->type = $defaults['type'];
+                $this->type = 
+                    $this->validator->validate_field('type', $defaults['type']);
             } else {
                 $this->type = '0';
             }

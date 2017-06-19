@@ -56,6 +56,9 @@ class BEZ_mdl_Validator {
         if ($result === false) {
             throw new ValidationException('-unknown', array($field => $code));
         }
+        
+        /*by convention all values as passed as strings*/
+        return (string) $value;
     }
 	
 	public function validate($data, $fields) {
@@ -66,9 +69,8 @@ class BEZ_mdl_Validator {
 				continue;
 			}
 			try {
-                $this->validate_field($key, $value);
-                /*by convention all values as passed as strings*/
-				$val_data[$key] = (string)$value;
+                $val_data[$key] = $this->validate_field($key, $value);
+                
             } catch (ValidationException $e) {
 				$this->errors[$key] = $e->get_errors()[$key];
 			}

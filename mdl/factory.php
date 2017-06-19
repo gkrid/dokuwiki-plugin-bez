@@ -80,7 +80,7 @@ abstract class BEZ_mdl_Factory {
             $obj->set_id($id);
         }
         
-        $this->model->acl->replace_acl_record($this->get_table_name(), $obj);
+        //$this->model->acl->replace_acl_record($this->get_table_name(), $obj);
         
 		return $id;
 	}
@@ -97,7 +97,7 @@ abstract class BEZ_mdl_Factory {
 //		}
         
         //if user can change id, he can delete record
-        $this->model->acl->can_change($this->get_table_name(), $obj->id, 'id');
+        $this->model->acl->can_change($obj, 'id');
 		$this->delete_from_db($obj->id);
 	}
 }

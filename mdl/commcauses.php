@@ -21,9 +21,9 @@ class BEZ_mdl_Commcauses extends BEZ_mdl_Factory {
 
 	
 	public function get_one($id) {
-		if ($this->auth->get_level() < 5) {
-			throw new PermissionDeniedException();
-		}
+//		if ($this->auth->get_level() < 5) {
+//			throw new PermissionDeniedException();
+//		}
 		
 		$q = $this->select_query . ' WHERE commcauses.id = ?';
 		$sth = $this->model->db->prepare($q);
@@ -45,9 +45,9 @@ class BEZ_mdl_Commcauses extends BEZ_mdl_Factory {
 	);
 	
 	public function get_all($filters=array()) {
-		if ($this->auth->get_level() < 5) {
-			throw new PermissionDeniedException();
-		}
+//		if ($this->auth->get_level() < 5) {
+//			throw new PermissionDeniedException();
+//		}
 		
 		//filters is issue
 //		if (!is_array($filters)) {
@@ -85,11 +85,11 @@ class BEZ_mdl_Commcauses extends BEZ_mdl_Factory {
 	}
 	
 	public function create_object($defaults) {
-		$issue_id = $defaults['issue'];
-		$issue = $this->model->issues->get_one($issue_id);
-		
-		$coordinator = $issue->coordinator;
-		$defaults['coordinator'] = $coordinator;
+//		$issue_id = $defaults['issue'];
+//		$issue = $this->model->issues->get_one($issue_id);
+//		
+//		$coordinator = $issue->coordinator;
+//		$defaults['coordinator'] = $coordinator;
 
 		$commcause = new BEZ_mdl_Commcause($this->model, $defaults);
 		return $commcause;

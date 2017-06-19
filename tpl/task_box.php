@@ -116,7 +116,7 @@
 	<?php endif ?>
 	<div class="bez_buttons">
 		<?php if (	$template['task']->state === '0' &&
-					$template['task']->get_level() >= 10): ?>
+					$template['task']->user_is_executor()): ?>
 			<a class="bds_inline_button"
 				href="?id=<?php
 					if ($nparams['bez'] === 'issue') {
@@ -137,8 +137,7 @@
 				?>#z<?php echo $template['task']->id ?>">
 				↛ <?php echo $bezlang['task_reject'] ?>
 			</a>
-		<?php elseif ((!isset($template['issue']) || $template['issue']->state === '0') &&
-                      $template['task']->get_level() >= 10): ?>
+		<?php elseif ((isset($template['issue']) && $template['issue']->state !== '0')                && $template['task']->user_is_executor()): ?>
 			<a class="bds_inline_button"
 					href="?id=<?php
 						if ($nparams['bez'] === 'issue') {
@@ -151,9 +150,7 @@
 				</a>
 		<?php endif ?>
         
-		<?php if ( (!isset($template['issue']) || $template['issue']->state === '0') &&
-                  ($template['task']->get_level() >= 15 ||
-                   $template['task']->reporter === $template['task']->get_user())): ?>
+		<?php if (count($template['task']->changable_fields()) > 0): ?>
 				<a class="bds_inline_button"
 					href="?id=<?php
 						if ($nparams['bez'] === 'issue') {
@@ -173,7 +170,8 @@
 			✉ <?php echo $bezlang['send_mail'] ?>
 		</a>
 
-		<?php if ($template['task']->tasktype != NULL && $template['task']->get_level() >= 5): ?>
+		<?php if ($template['task']->tasktype !== '' &&
+                  $this->model->acl->get_level() >= BEZ_AUTH_USER): ?>
 			<a class="bds_inline_button"
 					href="?id=<?php echo $this->id('task_form', 'duplicate', $template['task']->id, 'tasktype', $template['task']->tasktype) ?>">
 					⇲ <?php echo $bezlang['duplicate'] ?>

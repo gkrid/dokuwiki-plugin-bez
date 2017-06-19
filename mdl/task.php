@@ -7,12 +7,6 @@ if(!defined('DOKU_INC')) die();
  */
 require_once 'entity.php';
 
-class BEZ_mdl_Dummy_Task extends BEZ_mdl_Dummy_Entity  {
-    function get_table_name() {
-        return 'tasks';
-    }
-}
-
 class BEZ_mdl_Task extends BEZ_mdl_Entity {
 	//if errors = true we cannot save task
 	
@@ -70,11 +64,18 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
         $this->action_string = $this->model->action->getLang($this->action_string());
         $this->tasktype_string = $this->model->tasktypes->get_one($this->tasktype)->type;
 	}
+    
+    public function user_is_executor() {
+        if ($this->executor === $this->model->user_nick ||
+           $this->model->acl->get_level() >= BEZ_AUTH_ADMIN) {
+            return true;
+        }
+    }
 		
 	//by defaults you can set: cause, tasktype and issue
 	//tasktype is required
 	public function __construct($model, $defaults=array()) {
-		parent::__construct($model);
+		parent::__construct($model, $defaults);
 
 				
 		//array(filter, NULL)
@@ -111,9 +112,8 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 			$this->all_day_event = '1';
             
             //throws ValidationException
-			$this->validator->validate_field('issue', $defaults['issue']);
+			$this->issue = $this->validator->validate_field('issue', $defaults['issue']);
 
-            $this->issue = $defaults['issue'];
             if ($this->issue !== '') {
                 $issue = $this->model->issues->get_one($defaults['issue']);
 			    $this->coordinator = $issue->coordinator;
@@ -131,9 +131,10 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 		//takstype required	
 		if ($this->issue !== '') {
             //set issue state
-            if ($issue->state !== '0') {
-                $this->allow_edit = false;
-            }
+            //var_dump($issue->state);
+            //if ($issue->state !== '0') {
+            //    $this->allow_edit = false;
+            //}
             
 			$this->validator->set_rules(array(
 				'tasktype' => array(array('numeric'), 'NULL')
@@ -156,9 +157,9 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 	}
 	
 	public function set_meta($data) {
-		if ($this->auth->get_level() < 20) {
-			throw new PermissionDeniedException('admin');
-		}
+//		if ($this->auth->get_level() < 20) {
+//			throw new PermissionDeniedException('admin');
+//		}
 		
 		$val_data = $this->validator->validate($data, array('reporter', 'date', 'close_date'));
 		if ($val_data === false) {
@@ -225,9 +226,9 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 	}
 	
 	public function set_state($data) {
-		if ($this->auth->get_level() < 10) {
-			throw new PermissionDeniedException();
-		}
+//		if ($this->auth->get_level() < 10) {
+//			throw new PermissionDeniedException();
+//		}
 		//reason is required while changing state
 		if ($data['state'] === '2') {
 			$this->validator->set_rules(array(
@@ -246,7 +247,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 		}
         
         $this->set_property_array($val_data);
-		$this->set_property('reason_cache', $this->helper->wiki_parse($this->reason));
+		$this->reason_cache = $this->helper->wiki_parse($this->reason);
 		
         //update virtuals
         $this->update_virtual_columns();

@@ -68,8 +68,18 @@ try {
 	} elseif ($action === 'add') {
 		$template['form_action'] = 'add';
 		
-		$issue = $this->model->issues->create_object($_POST);
-		//update tasktype for admins
+        $defaults = array();
+        if ($this->model->acl->get_level() >= BEZ_AUTH_LEADER) {
+            $defaults['coordinator'] = $_POST['coordinator'];
+        }
+		$issue = $this->model->issues->create_object($defaults);
+		
+        $data = array(
+            'type' => $_POST['type'],
+            'title' => $_POST['title'],
+            'description' => $_POST['description']
+        );
+        $issue->set_data($data);
 		
         //save to get ID!!!
         $this->model->issues->save($issue);

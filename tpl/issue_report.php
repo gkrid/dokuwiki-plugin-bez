@@ -13,9 +13,8 @@
 <span><strong>#<?php echo $template['issue']->id ?></strong></span>
 </div>
 <?php endif ?>
-
-
-<?php if ($template['issue']->acl_of('type') === BEZ_PERMISSION_CHANGE): ?>
+    
+<?php if ($template['issue']->acl_of('type') >= BEZ_PERMISSION_CHANGE): ?>
 <div class="row">
 <label for="type"><?php echo $bezlang['type'] ?>:</label>
 <span>

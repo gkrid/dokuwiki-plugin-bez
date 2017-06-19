@@ -16,8 +16,8 @@ try {
     $task = $this->model->tasks->create_object_program(
                             array('tasktype' => $tasktype));
 
-    $template['auth_level'] = $task->get_level();
-    $template['user'] = $task->get_user();
+    //$template['auth_level'] = $task->get_level();
+    //$template['user'] = $task->get_user();
     $value['tasktype'] = $tasktype;
 
     if (count($_POST) > 0) {

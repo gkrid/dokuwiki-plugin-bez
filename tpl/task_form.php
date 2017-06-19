@@ -107,23 +107,12 @@ if ($nparams['bez'] === 'issue') {
 			<div class="row">
 			<label for="tasktype"><?php echo $bezlang['task_type'] ?>:</label>
 			<span>
-				<?php if ($this->model->acl->get_level() < BEZ_AUTH_LEADER): ?>
-					<input type="hidden" name="tasktype" value="<?php echo $nparams['tasktype'] ?>">
-					<strong>
-                        <?php foreach ($template['tasktypes'] as $tasktype): ?>
-							<?php if ($value['tasktype'] == $tasktype->id): ?>
-                                <?php echo $tasktype->type ?>
-                            <?php endif ?>
-						<?php endforeach ?>
-					</strong>
-				<?php else: ?>
-					<select id="tasktype" name="tasktype">
-						<option <?php if ($value['tasktype'] == '') echo 'selected' ?> value=""><?php echo $bezlang['tasks_no_type'] ?></option>
-						<?php foreach ($template['tasktypes'] as $tasktype): ?>
-							<option <?php if ($value['tasktype'] == $tasktype->id) echo 'selected' ?> value="<?php echo $tasktype->id ?>"><?php echo $tasktype->type ?></option>
-						<?php endforeach ?>
-					</select>
-				<?php endif ?>
+                <select id="tasktype" name="tasktype">
+                    <option <?php if ($value['tasktype'] == '') echo 'selected' ?> value=""><?php echo $bezlang['tasks_no_type'] ?></option>
+                    <?php foreach ($template['tasktypes'] as $tasktype): ?>
+                        <option <?php if ($value['tasktype'] == $tasktype->id) echo 'selected' ?> value="<?php echo $tasktype->id ?>"><?php echo $tasktype->type ?></option>
+                    <?php endforeach ?>
+                </select>
 			</span>
 			</div>
 

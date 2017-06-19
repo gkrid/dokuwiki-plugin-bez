@@ -165,7 +165,7 @@ try {
 			if (count($_POST) > 0) {				
 				//ends with
 				if (substr($action, -strlen('add')) === 'add') {
-					$defaults = array('issue' => $issue_id);
+					$defaults = array('issue' => (string)$issue_id);
 					if ($template['kid'] !== '-1') {
 						$defaults['cause'] = $template['kid'];
 					}
