@@ -21,10 +21,6 @@ class BEZ_mdl_Commcauses extends BEZ_mdl_Factory {
 
 	
 	public function get_one($id) {
-//		if ($this->auth->get_level() < 5) {
-//			throw new PermissionDeniedException();
-//		}
-		
 		$q = $this->select_query . ' WHERE commcauses.id = ?';
 		$sth = $this->model->db->prepare($q);
 		$sth->execute(array($id));
@@ -45,15 +41,6 @@ class BEZ_mdl_Commcauses extends BEZ_mdl_Factory {
 	);
 	
 	public function get_all($filters=array()) {
-//		if ($this->auth->get_level() < 5) {
-//			throw new PermissionDeniedException();
-//		}
-		
-		//filters is issue
-//		if (!is_array($filters)) {
-//			$filters = array('issue' => $filters);
-//		}
-		
 		list($where_q, $execute) = $this->build_where($filters);
 		
 		$q = $this->select_query . ' ' . $where_q;
@@ -85,12 +72,6 @@ class BEZ_mdl_Commcauses extends BEZ_mdl_Factory {
 	}
 	
 	public function create_object($defaults) {
-//		$issue_id = $defaults['issue'];
-//		$issue = $this->model->issues->get_one($issue_id);
-//		
-//		$coordinator = $issue->coordinator;
-//		$defaults['coordinator'] = $coordinator;
-
 		$commcause = new BEZ_mdl_Commcause($this->model, $defaults);
 		return $commcause;
 	}
@@ -99,17 +80,4 @@ class BEZ_mdl_Commcauses extends BEZ_mdl_Factory {
 		$commcause = new BEZ_mdl_Dummy_Commcause($this->model, $defaults);
 		return $commcause;
 	}
-	
-//	public function delete($obj) {
-//		if ($obj->get_level() >= 15 ||
-//			$obj->reporter === $this->auth->get_user()) {
-//            if ($obj->tasks_count > 0) {
-//                throw new Exception('cannot remove commcause with assigned tasks');
-//            }
-//			$this->delete_from_db($obj->id);
-//		} else {
-//			throw new PermissionDeniedException();
-//		}
-//		
-//	}
 }

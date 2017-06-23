@@ -92,47 +92,16 @@ class BEZ_mdl_Commcause extends BEZ_mdl_Entity {
 			$this->reporter = $this->model->user_nick;
 			$this->datetime = $this->sqlite_date();
 		}
-				
-//		$this->auth->set_coordinator($this->coordinator);
 	}
     
-//    public function update_cache() {
-//		if ($this->auth->get_level() < 20) {
-//			return false;
-//		}
-//		$this->content_cache = $this->helper->wiki_parse($this->content);
-//	}
+    public function update_cache() {
+		if ($this->model->acl->get_level() < BEZ_AUTH_ADMIN) {
+			return false;
+		}
+		$this->content_cache = $this->helper->wiki_parse($this->content);
+	}
 	
-	public function set_data($data) {
-		//only coordinator can add causes
-//		$input = array('content');
-//        //only coordinator chang change type and only 
-//		if ($this->auth->get_level() >= 15) {
-//			$input[] = 'type';
-//            if (isset($data['type']) && $data['type'] === '0'
-//                    && $this->tasks_count > 0) {
-//                throw new Exception('cannot change commcause to comment when it have any tasks assigned');
-//            }
-//		}
-//
-//		
-//		//Możemy poprawiać tylko swoje komentarze i tylko jeżeli nie są przyczynami.
-//		if (! (	$this->auth->get_level() >= 15 ||
-//				($this->type === '0' && $this->reporter === $this->auth->get_user()))
-//			) {
-//			throw new PermissionDeniedException();
-//		}
-//
-//			
-//		$val_data = $this->validator->validate($data, $input); 
-//		if ($val_data === false) {
-//			throw new ValidationException('commcauses',	$this->validator->get_errors());
-//		}
-//		
-//		foreach ($val_data as $k => $v) {
-//			$this->$k = $v;
-//		}
-        
+	public function set_data($data) {        
         $input = array('content', 'type');
         $val_data = $this->validator->validate($data, $input); 
         

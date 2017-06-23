@@ -1,11 +1,5 @@
 <?php
-//~ include_once DOKU_PLUGIN."bez/models/issues.php";
-//~ include_once DOKU_PLUGIN."bez/models/comments.php";
-//~ include_once DOKU_PLUGIN."bez/models/tasks.php";
 
-
-//~ $isso = new Issues();
-//~ $como = new Comments();
 if (!isset($nparams['id'])) {
     header('Location: ?id=bez:issues');
 }
@@ -51,7 +45,6 @@ try {
     $template['kid'] = isset($nparams['kid']) ? $nparams['kid'] : '-1';
     $template['state'] = isset($nparams['state']) ? $nparams['state'] : '-1';
     $template['action'] = isset($nparams['action']) ? $nparams['action'] : '-default';
-    //$template['auth_level'] = $issue->get_level();
 
 
 	$action = '';
@@ -263,17 +256,4 @@ try {
 //	header("Location: ?id=bez:issue:id:$issue_id");
 }
 
-//~ if (!isset($template[comment_action])) {
-	//~ $template['comment_button'] = $bezlang['add'];
-	//~ $template['comment_action'] = 'comment_add';
-//~ }
-
-
-//~ $tasko = new Tasks();
-//~ $template['anytasks'] = $tasko->any_task($issue_id);
-//~ $template['opentasks'] = $tasko->any_open($issue_id);
-//~ $template['cause_without_task'] = $isso->cause_without_task($issue_id);
-
-//~ $template['issue'] = $isso->get($issue_id);
-//~ $template['comments'] = $como->get($issue_id);
 

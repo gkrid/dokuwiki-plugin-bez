@@ -45,74 +45,9 @@ class BEZ_mdl_Acl {
 				$this->update_level(BEZ_AUTH_USER);
 			}
 		}
+    }
         
-        //get metadata of fields
-        //issues
-//        $sth = $this->model->db->prepare("SELECT id, coordinator, reporter FROM issues");
-//        $sth->execute();
-//        while ($issue = $sth->fetch(PDO::FETCH_ASSOC)) {
-//            $this->issues[$issue['id']] = $issue;
-//        }
-//        
-//        //tasks
-//        $sth = $this->model->db->prepare("
-//                        SELECT tasks.id, tasks.executor, issues.coordinator
-//                        FROM tasks LEFT JOIN issues ON tasks.issue = issues.id");
-//        $sth->execute();
-//        while ($task = $sth->fetch(PDO::FETCH_ASSOC)) {
-//            $this->tasks[$task['id']] = $task;
-//        }
-//        
-//        
-//        //commcauses
-//        $sth = $this->model->db->prepare("SELECT
-//                        commcauses.id, issues.coordinator, commcauses.reporter,
-//                        (SELECT COUNT(*) FROM tasks
-//                                WHERE tasks.cause = commcauses.id) AS tasks_count
-//                    FROM commcauses JOIN issues ON commcauses.issue = issues.id");
-//        $sth->execute();
-//        while ($commcause = $sth->fetch(PDO::FETCH_ASSOC)) {
-//            $this->commcauses[$commcause['id']] = $commcause;
-//        }
 
-	}
-    
-//    public function update_acl_record($table, $obj) {
-//        switch ($table) {
-//            case 'issues':
-//                if ($field !== 'coordinator' || $field !== 'reporter') {
-//                     throw new Exception('field '.$field. ' is not acl field in table issues');
-//                }
-//                $this->issues[$id][$field] = $value;
-//            case 'tasks':
-//                $this->tasks[$id][$field] = $value;
-//            default:
-//                throw new Exception('no acl rules set for table: '.$table);
-//        }
-//    }
-//    
-//    public function replace_acl_record($table, $obj) {
-//        if ($obj->id === NULL) {
-//            throw new Exception('cannot create ACL record for table '.$table.' object not saved');
-//        }
-//        switch ($table) {
-//            case 'issues':
-//                $this->issues[$obj->id]['coordinator'] = $obj->coordinator;
-//                $this->issues[$obj->id]['reporter'] = $obj->reporter;
-//                break;
-//            case 'tasks':
-//                $this->tasks[$obj->id]['coordinator'] = $obj->coordinator;
-//                $this->tasks[$obj->id]['executor'] = $obj->executor;
-//                break;
-//            case 'commcauses':
-//                $this->commcauses[$obj->id]['coordinator'] = $obj->coordinator;
-//                $this->commcauses[$obj->id]['reporter'] = $obj->reporter;
-//                break;
-//            default:
-//                throw new Exception('no acl rules set for table '.$table);
-//        }
-//    }
-    
     private function check_issue($issue) {
         $acl = array(
                 'id'            => BEZ_PERMISSION_NONE,
@@ -131,6 +66,13 @@ class BEZ_mdl_Acl {
                 'description_cache' => BEZ_PERMISSION_NONE,
                 'opinion_cache' => BEZ_PERMISSION_NONE
         );
+        
+        if ($this->level >= BEZ_AUTH_USER) {
+            //user can display everythig
+            $acl = array_map(function($value) {
+                return BEZ_PERMISSION_VIEW;
+            }, $acl);
+        }
         
         if ($this->level >= BEZ_AUTH_ADMIN) {
             //user can edit everythig
@@ -154,16 +96,6 @@ class BEZ_mdl_Acl {
             }
             
             return $acl;
-        }
-        
-       // $issue = $this->issues[$id];
-        
-        if ($this->level >= BEZ_AUTH_USER) {
-            //user can display everythig
-            $acl = array_map(function($value) {
-                return BEZ_PERMISSION_VIEW;
-            }, $acl);
-            
         }
         
         if ($issue->coordinator === '-proposal' &&
@@ -211,6 +143,13 @@ class BEZ_mdl_Acl {
                 'reason_cache'   => BEZ_PERMISSION_NONE
         );
         
+        if ($this->level >= BEZ_AUTH_USER) {
+            //user can display everythig
+            $acl = array_map(function($value) {
+                return BEZ_PERMISSION_VIEW;
+            }, $acl);
+        }
+        
         if ($this->level >= BEZ_AUTH_ADMIN) {
             //admin can edit everythig
             $acl = array_map(function($value) {
@@ -250,14 +189,6 @@ class BEZ_mdl_Acl {
             return $acl;
         }
         
-        //$task = $this->tasks[$id];
-        if ($this->level >= BEZ_AUTH_USER) {
-            //user can display everythig
-            $acl = array_map(function($value) {
-                return BEZ_PERMISSION_VIEW;
-            }, $acl);
-        }
-        
         //user can change state
         if ($task->executor === $this->model->user_nick) {
             $acl['reason'] = BEZ_PERMISSION_CHANGE;
@@ -268,7 +199,10 @@ class BEZ_mdl_Acl {
             ($task->issue === '' && $this->level >= BEZ_AUTH_LEADER)) {
                 
             $acl['reason'] = BEZ_PERMISSION_CHANGE;
-            $acl['state'] = BEZ_PERMISSION_CHANGE;  
+            $acl['state'] = BEZ_PERMISSION_CHANGE; 
+            
+            //we can chante cause
+            $acl['cause'] =  BEZ_PERMISSION_CHANGE;
             
             $acl['task'] = BEZ_PERMISSION_CHANGE;
             $acl['tasktype'] = BEZ_PERMISSION_CHANGE;
@@ -314,6 +248,13 @@ class BEZ_mdl_Acl {
             'content_cache'   => BEZ_PERMISSION_NONE
         );
         
+        if ($this->level >= BEZ_AUTH_USER) {
+            //user can display everythig
+            $acl = array_map(function($value) {
+                return BEZ_PERMISSION_VIEW;
+            }, $acl);
+        }
+        
         if ($this->level >= BEZ_AUTH_ADMIN) {
             //admin can edit everythig
             $acl = array_map(function($value) {
@@ -335,15 +276,7 @@ class BEZ_mdl_Acl {
             
             return $acl;
         }
-        
-        //$commcause = $this->commcauses[$id];
-        
-        if ($this->level >= BEZ_AUTH_USER) {
-            //user can display everythig
-            $acl = array_map(function($value) {
-                return BEZ_PERMISSION_VIEW;
-            }, $acl);
-        }
+
 
         if ($commcause->coordinator === $this->model->user_nick) {
             $acl['type'] = BEZ_PERMISSION_CHANGE;

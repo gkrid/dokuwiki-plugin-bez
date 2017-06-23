@@ -86,8 +86,6 @@ try {
             //$task->set_state($_POST);
 
             $this->model->tasks->save($task);
-                //~ $bezcache = new Bezcache();	
-                //~ $bezcache->task_toupdate($task->id);
 
             header("Location: ?id=bez:task:tid:".$task->id);
         } else {

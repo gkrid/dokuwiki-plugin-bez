@@ -8,10 +8,6 @@ require_once 'tasktype.php';
 class BEZ_mdl_Tasktypes extends BEZ_mdl_Factory {
 	
 	public function get_one($id) {
-		if ($this->auth->get_level() < 5) {
-			return false;
-		}
-		
 		$sth = $this->model->db->prepare('SELECT *,
                     '.$this->model->conf['lang'].' as type,
 					(SELECT COUNT(*) FROM tasks WHERE tasktype=tasktypes.id) AS refs
@@ -25,10 +21,6 @@ class BEZ_mdl_Tasktypes extends BEZ_mdl_Factory {
 	}
 	
 	public function get_all($additional_fields=array()) {
-		if ($this->auth->get_level() < 5) {
-			return false;
-		}
-		
 		if (in_array('refs', $additional_fields)) {
 			$q = 'SELECT *, '.$this->model->conf['lang'].' as type,
 					(SELECT COUNT(*) FROM tasks WHERE tasktype=tasktypes.id) AS refs

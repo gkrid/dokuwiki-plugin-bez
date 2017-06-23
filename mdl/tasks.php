@@ -47,10 +47,6 @@ class BEZ_mdl_Tasks extends BEZ_mdl_Factory {
 	}
 						
 	public function get_one($id) {
-		if ($this->auth->get_level() < 5) {
-			throw new PermissionDeniedException('BEZ_mdl_Tasks: no permission to get_one()');
-		}
-		
 		$q = $this->select_query.' WHERE tasks.id = ?';
 			
 		$sth = $this->model->db->prepare($q);
@@ -113,39 +109,10 @@ class BEZ_mdl_Tasks extends BEZ_mdl_Factory {
     }
 	
 	public function create_object($defaults) {
-//		echo "<b>Warngin: </b> function create_object depraced";
-//		
-//		if (isset($defaults['issue'])) {
-//			$defaults['coordinator'] =
-//				$this->model->issues->get_one($defaults['issue'])->coordinator;
-//		} elseif (isset($defaults['tasktype'])) {
-//			$defaults['coordinator'] = '-all';
-//		} else {
-//			throw new Exception('cannot create object with no issue or tasktype');
-//		}
-
 		$task = new BEZ_mdl_Task($this->model, $defaults);
 		return $task;
 	}
 	
-	public function create_object_program($defaults) {
-//		$defaults['coordinator'] = '-none';
-		
-		$task = new BEZ_mdl_Task($this->model, $defaults);
-		return $task;
-	}
-	
-	public function create_object_issue($defaults) {
-//		$issue_id = $defaults['issue'];
-//		$issue = $this->model->issues->get_one($issue_id);
-//		
-//		$coordinator = $issue->coordinator;
-//		$defaults['coordinator'] = $coordinator;
-		
-		$task = new BEZ_mdl_Task($this->model, $defaults);
-		return $task;
-	}
-    
     public function create_dummy_object($defaults) {
 		$issue = new BEZ_mdl_Dummy_Task($this->model, $defaults);
 		return $issue;

@@ -39,9 +39,4 @@ class BEZ_mdl_Issuetype extends BEZ_mdl_Entity {
             $this->update_virtual_columns();   
         }
 	}
-	
-	public function set($post) {
-		parent::set_data($post);
-		$this->update_virtual_columns();
-	}
 }

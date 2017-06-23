@@ -17,7 +17,7 @@ try {
 	}
     
     if (count($_POST) > 0) {
-		$tasktype->set($_POST);
+		$tasktype->set_data($_POST);
         $this->model->tasktypes->save($tasktype);
         
         header('Location: ?id=bez:task_types');

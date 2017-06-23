@@ -4,18 +4,13 @@ if(!defined('DOKU_INC')) die();
 
 class BEZ_mdl_Users {
 	
-	private $model, $auth;
+	private $model;
 	
 	public function __construct($model) {
 		$this->model = $model;
-		$this->auth = new BEZ_mdl_Auth($this->model);
 	}
 	
 	public function get_all() {
-		if ($this->auth->get_level() < 5) {
-			return false;
-		}
-		
 		$wikiusers = $this->model->dw_auth->retrieveUsers();
 
 		$a = array();
@@ -40,27 +35,16 @@ class BEZ_mdl_Users {
 	}
 	
 	public function get_user_full_name($nick) {
-		if ($this->auth->get_level() < 5) {
-			return false;
-		}
-		
 		$users = $this->get_all();
 		return $users[$nick];
 	}
 	
 	public function get_user_email($nick) {
-		if ($this->auth->get_level() < 5) {
-			return false;
-		}
-		
 		$wikiusers = $this->model->dw_auth->retrieveUsers();
 		return $wikiusers[$nick]['mail'];
 	}
     
     public function get_user_nick($full_name) {
-        if ($this->auth->get_level() < 5) {
-			return false;
-		}
         $users = $this->get_all();
         return array_search($full_name, $users);
     }

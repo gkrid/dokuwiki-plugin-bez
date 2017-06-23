@@ -98,41 +98,6 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
                 $this->coordinator = '-proposal';
             }
             
-//            $input = array('title', 'description', 'type');
-//            if ($this->model->acl->get_level() >= BEZ_AUTH_LEADER) {
-//				$input[] = 'coordinator';
-//			}
-//            
-//            $val_data = $this->validator->validate($defaults, $input);
-//            if ($val_data === false)  {
-//                throw new ValidationException('issues',	$this->validator->get_errors());
-//            }
-//            
-//            $this->set_property_array($val_data);
-//            
-//            if (!isset($val_data['coordinator'])) {
-//                $this->coordinator = '-proposal';
-//            }
-            
-
-
-			
-//			$input = array('title', 'description', 'type');
-//			if ($this->auth->get_level() >= 20) {
-//				$input[] = 'coordinator';
-//			}
-//			
-//			$val_data = $this->validator->validate($defaults, $input);
-//			
-//			if ($val_data === false) {
-//				throw new ValidationException('issues', $this->validator->get_errors());
-//			}
-//			
-//			$this->set_property_array($val_data);
-            
-            
-            
-//			$this->description_cache = $this->helper->wiki_parse($this->description);
 			
 			$this->add_participant($this->reporter);
 			$this->add_subscribent($this->reporter);
@@ -141,18 +106,8 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
                 $this->add_subscribent($this->coordinator);
             }
 			
-//			if ($this->auth->get_level() >= 20) {
-//				$this->coordinator = $val_data['coordinator'];
-//				if ($val_data['coordinator'] !== '-proposal') {
-//					$this->add_participant($val_data['coordinator']);
-//					$this->add_subscribent($val_data['coordinator']);
-//				}
-//			} else {
-//				$this->coordinator = '-proposal';
-//			}
 		}
 		
-		//$this->auth->set_coordinator($this->coordinator);
 		
 		if ($this->participants !== NULL) {
 			$exp_part = explode(',', $this->participants);
@@ -170,23 +125,6 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 	}
 	
 	public function set_data($data) {
-//		if ($this->auth->get_level() < 15) {
-//			throw new PermissionDeniedException();
-//		}
-//
-//		$input = array('title', 'description', 'opinion', 'type');
-//		if ($this->auth->get_level() >= 20) {
-//			$input[] = 'coordinator';
-//		}
-//		$val_data = $this->validator->validate($data, $input); 
-//        
-//		if ($val_data === false) {
-//			throw new ValidationException('issues',	$this->validator->get_errors());
-//		}
-//		
-//		
-        
-        
         $input = array('title', 'description', 'opinion', 'type', 'coordinator');
         $val_data = $this->validator->validate($data, $input); 
                 
@@ -207,36 +145,22 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
            $this->set_property('coordinator', $val_coordinator); 
         }
         
-        
-//        if (count($this->validator->get_errors()) > 0)  {
-//			throw new ValidationException('issues',	$this->validator->get_errors());
-//		}
-		
 		//!!! don't update activity on issue update
 		
 		$this->description_cache = $this->helper->wiki_parse($this->description);
 		$this->opinion_cache = $this->helper->wiki_parse($this->opinion);
 	}
     
-//    public function update_cache() {
-//		$this->description_cache = $this->helper->wiki_parse($this->description);
-//		$this->opinion_cache = $this->helper->wiki_parse($this->opinion);
-//	}
+    public function update_cache() {
+        if ($this->model->acl->get_level() < BEZ_AUTH_ADMIN) {
+			return false;
+		}
+		$this->description_cache = $this->helper->wiki_parse($this->description);
+		$this->opinion_cache = $this->helper->wiki_parse($this->opinion);
+	}
 	
 	public function set_state($data) {
-//		if ($this->auth->get_level() < 15) {
-//			throw new PermissionDeniedException();
-//		}
-//
-//		$input = array('opinion', 'state');
-//		$val_data = $this->validator->validate($data, $input); 
-//		if ($val_data === false) {
-//			throw new ValidationException('issues', $this->validator->get_errors());
-//		}
-//
-//		
-//		$this->set_property_array($val_data);
-        
+
         $input = array('state', 'opinion');
         $val_data = $this->validator->validate($data, $input); 
         
@@ -280,7 +204,7 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 			) {
 			throw new PermissionDeniedException();
 		}
-        //var_dump($subscribent, $this->model->users->exists($subscribent));
+
 		if ($this->model->users->exists($subscribent) &&
             !in_array($subscribent, $this->subscribents_array)) {
 			$this->subscribents_array[$subscribent] = $subscribent;

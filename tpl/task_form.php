@@ -119,7 +119,10 @@ if ($nparams['bez'] === 'issue') {
 			<label for="tasktype"><?php echo $bezlang['task_type'] ?>:</label>
 			<span>
                 <select id="tasktype" name="tasktype" <?php if ($template['task']->acl_of('plan_date') < BEZ_PERMISSION_CHANGE) echo 'disabled' ?>>
+                    <?php if (isset($template['issue'])): ?>
                     <option <?php if ($value['tasktype'] == '') echo 'selected' ?> value=""><?php echo $bezlang['tasks_no_type'] ?></option>
+                    <?php endif; ?>
+                    
                     <?php foreach ($template['tasktypes'] as $tasktype): ?>
                         <option <?php if ($value['tasktype'] == $tasktype->id) echo 'selected' ?> value="<?php echo $tasktype->id ?>"><?php echo $tasktype->type ?></option>
                     <?php endforeach ?>

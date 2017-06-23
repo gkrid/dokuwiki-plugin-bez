@@ -32,17 +32,6 @@ abstract class BEZ_mdl_Entity {
 	
 	protected $parse_int = array();
     
-//    protected $allow_edit = true;
-	
-//	public function get_level() {
-//		return $this->auth->get_level();
-//	}
-//	
-//	public function get_user() {
-//		return $this->auth->get_user();
-//	}
-	
-    
 	abstract public function get_columns();
 	abstract public function get_virtual_columns();
 	
@@ -83,6 +72,12 @@ abstract class BEZ_mdl_Entity {
 	
 	public function __get($property) {
 		$columns = array_merge($this->get_columns(), $this->get_virtual_columns());
+        
+        //now only normal db columns has ACL, it should be fixed        
+        if (in_array($property, $this->get_columns()) && $this->acl_of($property) < BEZ_PERMISSION_VIEW) {
+            throw new PermissionDeniedException();
+        }
+        
 		if (property_exists($this, $property) && in_array($property, $columns)) {
 			if (in_array($property, $this->parse_int)) {
 				return (int)$this->$property;
@@ -96,9 +91,6 @@ abstract class BEZ_mdl_Entity {
         if (!in_array($property, $this->get_columns())) {
             throw new Exception('trying to set unexisting column');
         }
-        //~ if ($this->allow_edit === false) {
-            //~ throw new Exception('cannot change this object. allow_edit = false');
-        //~ }
         
         //throws ValidationException
         $this->validator->validate_field($property, $value);
@@ -107,17 +99,16 @@ abstract class BEZ_mdl_Entity {
         $this->model->acl->can_change($this, $property);
         
         $this->$property = $value;
-        
-        //update ACL if we changed saved object
-//        if ($this->id !== NULL) {
-//            $this->model->acl->replace_acl_record($this->get_table_name(), $this);
-//        }
     }
     
     protected function set_property_array($array) {
         foreach ($array as $k => $v) {
             $this->set_property($k, $v);
         }
+    }
+    
+    //by default do nothing
+    private function update_virtual_columns() {
     }
     
     public function set_data($post) {
@@ -129,6 +120,8 @@ abstract class BEZ_mdl_Entity {
 		}
 
 		$this->set_property_array($val_data);
+        
+        $this->update_virtual_columns();
     }
     
     public function changable_fields() {
@@ -153,22 +146,4 @@ abstract class BEZ_mdl_Entity {
 		$this->validator = new BEZ_mdl_Validator($this->model);
 		$this->helper = plugin_load('helper', 'bez');
 	}
-    
-
-    	
-//	public function any_errors() {
-//		return count($this->validator->get_errors()) > 0;
-//	}
-//	
-//	public function get_errors() {	
-//		return $this->validator->get_errors();
-//	}
-	
-
-	
-	/*Function protected to prevent accidential calling on child class */
-//	protected function remove() {
-//		$sth = $this->model->db->prepare('DELETE FROM '.$this->get_table_name().' WHERE id = ?');
-//		$sth->execute(array($this->id));
-//	}
 }

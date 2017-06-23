@@ -159,12 +159,6 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 
 		//takstype required	
 		if ($this->issue !== '') {
-            //set issue state
-            //var_dump($issue->state);
-            //if ($issue->state !== '0') {
-            //    $this->allow_edit = false;
-            //}
-            
 			$this->validator->set_rules(array(
 				'tasktype' => array(array('numeric'), 'NULL')
 			));
@@ -180,71 +174,16 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 			$this->validator->validate_field('tasktype', $defaults['tasktype']);
 			$this->tasktype = $defaults['tasktype'];
 		}
-		
-//		$this->auth->set_coordinator($this->coordinator);
-//		$this->auth->set_executor($this->executor);
 	}
 	
-	//~ public function set_meta($data) {
-//~ //		if ($this->auth->get_level() < 20) {
-//~ //			throw new PermissionDeniedException('admin');
-//~ //		}
-		
-		//~ $val_data = $this->validator->validate($data, array('reporter', 'date', 'close_date'));
-		//~ if ($val_data === false) {
-			//~ throw new ValidationException('tasks', $this->validator->get_errors());
-		//~ }
-		
-		//~ $this->set_property_array($val_data);
-		
-		//~ return true;
-	//~ }
-		
-//	public function update_cache() {
-//		if ($this->auth->get_level() < 20) {
-//			throw new PermissionDeniedException('admin');
-//		}
-//		$this->task_cache = $this->helper->wiki_parse($this->task);
-//		$this->reason_cache = $this->helper->wiki_parse($this->reason);
-//	}
 	
-	public function set_data($post) {
-//		if ($this->auth->get_level() >= 15) {
-//			$val_data = $this->validator->validate($data, array('executor',
-//				'cause', 'task', 'plan_date', 'cost', 'all_day_event',
-//				'start_time', 'finish_time', 'tasktype', 'reason'));
-//		//reporters can modify their own records if there is no coordinator
-//		} else if (	$this->coordinator === '-none' &&
-//					$this->reporter === $this->auth->get_user()) {
-//			$val_data = $this->validator->validate($data, array('executor',
-//			'task', 'plan_date', 'cost', 'all_day_event',
-//			'start_time', 'finish_time', 'tasktype', 'reason'));
-//			if ($val_data['executor'] !== $this->auth->get_user()) {
-//				$this->validator->set_error('executor', 'not_equal');
-//				return false;	
-//			}
-//		} else {
-//			throw new PermissionDeniedException('coordinator');
-//		}
-        
-        //~ $input = array('executor', 'task', 'plan_date', 'cost', 'all_day_event',
-			//~ 'start_time', 'finish_time', 'tasktype', 'reason');
-        
-        //~ $val_data = $this->validator->validate($data, $input);
-		//~ if ($val_data === false) {
-			//~ throw new ValidationException('tasks', $this->validator->get_errors());
-		//~ }
-
-		//~ $this->set_property_array($val_data);
-        
+	public function set_data($post) {        
         parent::set_data($post);
 		
 		//specjalne reguły
 		if ($this->issue === '') {
 			$this->cause = '';
 		}
-		
-		//$this->auth->set_executor($this->executor);
 		
 		//set parsed
 		$this->task_cache = $this->helper->wiki_parse($this->task);
@@ -257,9 +196,6 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 	}
 	
 	public function set_state($data) {
-//		if ($this->auth->get_level() < 10) {
-//			throw new PermissionDeniedException();
-//		}
 		//reason is required while changing state
 		if ($data['state'] === '2') {
 			$this->validator->set_rules(array(
@@ -285,33 +221,6 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 		
 		return true;
 	}
-	
-//	public function get_states() {
-//		return array(	
-//				'0' => 'task_opened',
-//				'-outdated' => 'task_outdated',
-//				'1' => 'task_done',
-//				'2' => 'task_rejected'
-//			);
-//	}
-//	
-//	public function state_string($state='') {
-//		if ($state === '') {
-//			$state = $this->state;
-//		}
-//		
-//		$states = $this->get_states();
-//		return $states[$state];
-//	}
-//	
-//	public function action_string($action) {
-//		switch($action) {
-//			case '0': return 'correction'; break;
-//			case '1': return 'corrective_action'; break;
-//			case '2': return 'preventive_action'; break;
-//			case '3': return 'programme'; break;
-//		}
-//	}
     
     private function mail_notify($replacements=array(), $users=array()) {        
         $plain = io_readFile($this->model->action->localFN('task-notification'));

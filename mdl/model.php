@@ -2,7 +2,6 @@
 
 require_once DOKU_PLUGIN.'bez/exceptions.php';
 
-require_once 'auth.php';
 require_once 'acl.php';
 require_once 'validator.php';
 
