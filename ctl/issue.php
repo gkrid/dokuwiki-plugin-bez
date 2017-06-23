@@ -129,7 +129,7 @@ try {
 				$redirect = true;
 			}			
 		} elseif ($action === 'issue_close') {
-			$value['opinion'] = $template['issue']['raw_opinion'];
+			$value['opinion'] = $template['issue']->opinion;
 		} elseif ($action == 'issue_close_confirm') {
 			$issue->set_state($_POST);
 			$this->model->issues->save($issue);

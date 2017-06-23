@@ -32,38 +32,50 @@
 	</td>
 </tr>
 </table>
-<h2><?php echo $bezlang['1d'] ?></h2>
+<?php $D = 1 ?>
+<h2><?php echo $D++ ?>D - <?php echo $bezlang['1d'] ?></h2>
 <ul>
 	<?php foreach($template['issue']->get_participants() as $participant): ?>
 		<li><?php echo  $participant ?></li>
 	<?php endforeach ?>
 </ul>
 
-<h2><?php echo $bezlang['2d'] ?></h2>
+<h2><?php echo $D++ ?>D - <?php echo $bezlang['2d'] ?></h2>
 <?php echo  $template['issue']->description_cache ?>
 
-<h2><?php echo $bezlang['3d'] ?></h2>
-<?php $tasks = $template['tasks']['3d'] ?>
-<?php include '8d_tasks.php' ?>
+<?php if (count($template['tasks']['3d']) > 0): ?>
+    <h2><?php echo $D++ ?>D - <?php echo $bezlang['3d'] ?></h2>
+    <?php $tasks = $template['tasks']['3d'] ?>
+    <?php include '8d_tasks.php' ?>
+<?php endif ?>
 
-<h2><?php echo $bezlang['4d'] ?></h2>	
-<?php $causes = $template['real_causes'] ?>
-<?php include '8d_causes.php' ?>
+<?php if (count($template['real_causes']) > 0): ?>
+    <h2><?php echo $D++ ?>D - <?php echo $bezlang['4d'] ?></h2>	
+    <?php $causes = $template['real_causes'] ?>
+    <?php include '8d_causes.php' ?>
+<?php endif ?>
 
-<h2><?php echo $bezlang['5d'] ?></h2>	
-<?php $tasks = $template['tasks']['5d'] ?>
-<?php include '8d_tasks.php' ?>
+<?php if (count($template['tasks']['5d']) > 0): ?>
+    <h2><?php echo $D++ ?>D - <?php echo $bezlang['5d'] ?></h2>	
+    <?php $tasks = $template['tasks']['5d'] ?>
+    <?php include '8d_tasks.php' ?>
+<?php endif ?>
 
-<h2><?php echo $bezlang['6d'] ?></h2>	
-<?php $causes = $template['potential_causes'] ?>
-<?php include '8d_causes.php' ?>
+<?php if (count($template['potential_causes']) > 0): ?>
+    <h2><?php echo $D++ ?>D - <?php echo $bezlang['6d'] ?></h2>	
+    <?php $causes = $template['potential_causes'] ?>
+    <?php include '8d_causes.php' ?>
+<?php endif ?>
 
-<h2><?php echo $bezlang['7d'] ?></h2>	
-<?php $tasks = $template['tasks']['7d'] ?>
-<?php include '8d_tasks.php' ?>
+<?php if (count($template['tasks']['7d']) > 0): ?>
+    <h2><?php echo $D++ ?>D - <?php echo $bezlang['7d'] ?></h2>	
+    <?php $tasks = $template['tasks']['7d'] ?>
+    <?php include '8d_tasks.php' ?>
+<?php endif ?>
 
-<h2><?php echo $bezlang['8d'] ?></h2>
+
 <?php if ($template['issue']->state !== '0'): ?>
+    <h2><?php echo $D++ ?>D - <?php echo $bezlang['8d'] ?></h2>
 	<?php echo  $template['issue']->opinion_cache ?>
     <table>
     <tr>
@@ -92,8 +104,6 @@
         </td>
     </tr>
     </table>
-<?php else: ?>
-	<p><i><?php echo $bezlang['not_relevant'] ?></i></p>
 <?php endif ?>
 
 
