@@ -49,5 +49,12 @@ class BEZ_mdl_Tasktypes extends BEZ_mdl_Factory {
 		$tasktype = new BEZ_mdl_Tasktype($this->model);
 		return $tasktype;
 	}
+    
+    public function delete($obj) {
+		if ($obj->refs > 0) {
+			throw new Exception('you cannot delete tasktype that has any references');
+		}
+		parent::delete($obj);
+	}
 	
 }

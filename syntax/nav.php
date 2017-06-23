@@ -174,7 +174,7 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 					$data[$report_id] = array('id' => $report_id, 'type' => 'f', 'level' => 4, 'title' => $this->getLang('bds_task_report'));
 					//~ }
 					if (isset($this->value['tid'])) {
-						$page_id = 'bez:show_task:tid:'.$this->value['tid'];
+						$page_id = 'bez:task:tid:'.$this->value['tid'];
 						//$page_id = $_GET['id'];
 						$data[$page_id.':perspective:task'] = array('id' => $page_id, 'type' => 'f', 'level' => 4, 'title' => '#z'.$this->value['tid']);
 					}
@@ -306,7 +306,7 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 		if ($item_value['bez'] == 'issue_task' ||
 			$item_value['bez'] == 'issue_cause_task' ||
 			$item_value['bez'] == 'task_form' ||
-			$item_value['bez'] == 'show_task')
+			$item_value['bez'] == 'task')
 				if ($item_value['tid'] == $this->value['tid'])
 					$actual_page = true;
 			

@@ -65,7 +65,6 @@ try {
         
         $redirect = true;
     } elseif($template['action'] === 'task_edit') {
-        $template['auth_level'] = $task->get_level();
         
         $template['users'] = $this->model->users->get_all();
         $template['tasktypes'] = $this->model->tasktypes->get_all();
@@ -84,7 +83,7 @@ try {
             }
             $task->set_data($_POST);
             //for reason
-            $task->set_state($_POST);
+            //$task->set_state($_POST);
 
             $this->model->tasks->save($task);
                 //~ $bezcache = new Bezcache();	
@@ -99,7 +98,9 @@ try {
     if ($redirect) {
         header("Location: ?id=bez:task:tid:".$template['tid']);
     }
-    
+} catch (ValidationException $e) {
+	$errors = $e->get_errors();
+	$value = $_POST;
 } catch (DBException $e) {
     echo nl2br($e);
 }

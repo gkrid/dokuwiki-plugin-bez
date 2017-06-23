@@ -2,7 +2,7 @@
  
 if(!defined('DOKU_INC')) die('meh.');
 
-// some ACL level defines
+//ACL level defines
 define('BEZ_AUTH_NONE', 0);
 define('BEZ_AUTH_USER', 5);
 define('BEZ_AUTH_LEADER', 10);
@@ -235,6 +235,18 @@ class BEZ_mdl_Acl {
                 $acl['finish_time'] = BEZ_PERMISSION_CHANGE;
             }
             
+            //przypisujemy zadanie programowe samemu sobie
+            //no executor
+            if ($task->issue === '') {
+                $acl['task'] = BEZ_PERMISSION_CHANGE;
+                $acl['tasktype'] = BEZ_PERMISSION_CHANGE;
+                $acl['cost'] = BEZ_PERMISSION_CHANGE;
+                $acl['plan_date'] = BEZ_PERMISSION_CHANGE;
+                $acl['all_day_event'] = BEZ_PERMISSION_CHANGE;
+                $acl['start_time'] = BEZ_PERMISSION_CHANGE;
+                $acl['finish_time'] = BEZ_PERMISSION_CHANGE;
+            }
+            
             return $acl;
         }
         
@@ -251,9 +263,12 @@ class BEZ_mdl_Acl {
             $acl['reason'] = BEZ_PERMISSION_CHANGE;
             $acl['state'] = BEZ_PERMISSION_CHANGE;            
         }
-        
+               
         if ($task->coordinator === $this->model->user_nick ||
             ($task->issue === '' && $this->level >= BEZ_AUTH_LEADER)) {
+                
+            $acl['reason'] = BEZ_PERMISSION_CHANGE;
+            $acl['state'] = BEZ_PERMISSION_CHANGE;  
             
             $acl['task'] = BEZ_PERMISSION_CHANGE;
             $acl['tasktype'] = BEZ_PERMISSION_CHANGE;
@@ -265,6 +280,24 @@ class BEZ_mdl_Acl {
             $acl['start_time'] = BEZ_PERMISSION_CHANGE;
             $acl['finish_time'] = BEZ_PERMISSION_CHANGE;
         }
+        
+        if ($task->issue === '' &&
+            $task->reporter === $this->model->user_nick &&
+            $task->executor === $this->model->user_nick) {
+            $acl['reason'] = BEZ_PERMISSION_CHANGE;
+            $acl['state'] = BEZ_PERMISSION_CHANGE;  
+            
+            $acl['task'] = BEZ_PERMISSION_CHANGE;
+            $acl['tasktype'] = BEZ_PERMISSION_CHANGE;
+            //no executor
+            $acl['cost'] = BEZ_PERMISSION_CHANGE;
+            $acl['reason'] = BEZ_PERMISSION_CHANGE;
+            $acl['plan_date'] = BEZ_PERMISSION_CHANGE;
+            $acl['all_day_event'] = BEZ_PERMISSION_CHANGE;
+            $acl['start_time'] = BEZ_PERMISSION_CHANGE;
+            $acl['finish_time'] = BEZ_PERMISSION_CHANGE;
+        }
+        
 
         return $acl;
         
@@ -289,10 +322,14 @@ class BEZ_mdl_Acl {
             
             return $acl;
         }
-        
         //we create new commcause
         if ($commcause->id === NULL) {        
             if ($this->level >= BEZ_USER) {
+                $acl['content'] = BEZ_PERMISSION_CHANGE;
+            }
+            
+            if ($commcause->coordinator === $this->model->user_nick) {
+                $acl['type'] = BEZ_PERMISSION_CHANGE;
                 $acl['content'] = BEZ_PERMISSION_CHANGE;
             }
             
@@ -334,6 +371,54 @@ class BEZ_mdl_Acl {
         
     }
     
+    private function check_issuetype($issuetype) {
+        $acl = array(
+            'id'            => BEZ_PERMISSION_NONE,
+            'pl'         => BEZ_PERMISSION_NONE,
+            'en'      => BEZ_PERMISSION_NONE
+        );
+        
+        if ($this->level >= BEZ_AUTH_USER) {
+            //user can display everythig
+            $acl = array_map(function($value) {
+                return BEZ_PERMISSION_VIEW;
+            }, $acl);
+        }
+        
+        if ($this->level >= BEZ_AUTH_ADMIN) {
+            //admin can edit everythig
+            $acl = array_map(function($value) {
+                return BEZ_PERMISSION_CHANGE;
+            }, $acl);
+        }
+        
+        return $acl;
+    }
+
+   private function check_tasktype($tasktype) {
+        $acl = array(
+            'id'            => BEZ_PERMISSION_NONE,
+            'pl'         => BEZ_PERMISSION_NONE,
+            'en'      => BEZ_PERMISSION_NONE
+        );
+        
+        if ($this->level >= BEZ_AUTH_USER) {
+            //user can display everythig
+            $acl = array_map(function($value) {
+                return BEZ_PERMISSION_VIEW;
+            }, $acl);
+        }
+        
+        if ($this->level >= BEZ_AUTH_ADMIN) {
+            //admin can edit everythig
+            $acl = array_map(function($value) {
+                return BEZ_PERMISSION_CHANGE;
+            }, $acl);
+        }
+        
+        return $acl;
+    }
+
     /*returns array */
     public function check($obj) {
         $table = get_class($obj);
@@ -342,9 +427,15 @@ class BEZ_mdl_Acl {
             case 'BEZ_mdl_Dummy_Issue':
                 return $this->check_issue($obj);
             case 'BEZ_mdl_Task':
+            case 'BEZ_mdl_Dummy_Task':
                 return $this->check_task($obj);
             case 'BEZ_mdl_Commcause':
+            case 'BEZ_mdl_Dummy_Commcause':
                 return $this->check_commcause($obj);
+            case 'BEZ_mdl_Issuetype':
+                return $this->check_issuetype($obj);
+            case 'BEZ_mdl_Tasktype':
+                return $this->check_tasktype($obj);
             default:
                 throw new Exception('no acl rules set for table: '.$table);
         }

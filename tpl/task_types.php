@@ -22,17 +22,19 @@
 	<?php else: ?>
 	<td><?php echo $type->pl ?></td>
 	<td><?php echo $type->en ?></td>
-	<td>
+	 <td <?php if ($type->refs !== '0') echo 'colspan="2"'; ?>>
 	<a href="<?php echo $template['uri'] ?>?id=<?php echo $this->id('task_types', 'action', 'edit', 'id', $type->id) ?>">
 		<?php echo $bezlang['edit'] ?>
 	</a>
 	</td>
+    <?php if ($type->refs === '0'): ?>
 	<td>
 	<a onclick="return confirm('<?php echo $bezlang['js']['remove_confirm'] ?>')"
 		href="<?php echo $template['uri'] ?>?id=<?php echo $this->id('task_types', 'action', 'remove', 'id', $type->id) ?>">
 		<?php echo $bezlang['delete'] ?>
 	</a>
 	</td>
+    <?php endif ?>
 	<?php endif ?>
 	<td>
 	<a href="<?php echo $template['uri'] ?>?id=<?php echo $this->id('tasks', 'tasktype', $type->id) ?>">

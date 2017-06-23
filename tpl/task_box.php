@@ -116,7 +116,7 @@
 	<?php endif ?>
 	<div class="bez_buttons">
 		<?php if (	$template['task']->state === '0' &&
-					$template['task']->user_is_executor()): ?>
+					$template['task']->acl_of('state') >= BEZ_PERMISSION_CHANGE): ?>
 			<a class="bds_inline_button"
 				href="?id=<?php
 					if ($nparams['bez'] === 'issue') {
@@ -137,7 +137,8 @@
 				?>#z<?php echo $template['task']->id ?>">
 				↛ <?php echo $bezlang['task_reject'] ?>
 			</a>
-		<?php elseif ((isset($template['issue']) && $template['issue']->state !== '0')                && $template['task']->user_is_executor()): ?>
+		<?php elseif (  $template['task']->state !== '0' &&
+                        $template['task']->acl_of('state') >= BEZ_PERMISSION_CHANGE): ?>
 			<a class="bds_inline_button"
 					href="?id=<?php
 						if ($nparams['bez'] === 'issue') {

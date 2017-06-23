@@ -13,19 +13,21 @@ $template['tasktype'] = $tasktype;
 
 try {
 
-    $task = $this->model->tasks->create_object_program(
+    $task = $this->model->tasks->create_object(
                             array('tasktype' => $tasktype));
+    $template['task'] = $task;
 
     //$template['auth_level'] = $task->get_level();
     //$template['user'] = $task->get_user();
     $value['tasktype'] = $tasktype;
+    $value['executor'] = $this->model->user_nick;
 
     if (count($_POST) > 0) {
         //checkboxes 
         if (!isset($_POST['all_day_event'])) {
             $_POST['all_day_event'] = '0';
         }
-
+        
         $task->set_data($_POST);
         //update tasktype for admins
 

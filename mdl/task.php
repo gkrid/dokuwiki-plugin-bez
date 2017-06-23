@@ -7,6 +7,32 @@ if(!defined('DOKU_INC')) die();
  */
 require_once 'entity.php';
 
+class BEZ_mdl_Dummy_Task extends BEZ_mdl_Dummy_Entity  {
+    protected $coordinator;
+ 
+    function __construct($model, $defaults=array()) {
+        parent::__construct($model);
+        
+        if (isset($defaults['issue'])) {
+            $issue = $this->model->issues->get_one($defaults['issue']);
+            $this->coordinator = $issue->coordinator;
+        } else {
+            $this->coordinator = '';
+        }
+    }
+    
+    public function __get($property) {
+        parent::__get($property);
+		if ($property === 'coordinator') {
+            return $this->coordinator;
+        }
+	}
+ 
+    function get_table_name() {
+        return 'tasks';
+    }
+}
+
 class BEZ_mdl_Task extends BEZ_mdl_Entity {
 	//if errors = true we cannot save task
 	
@@ -125,6 +151,9 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 			$this->validator->validate_field('cause', $defaults['cause']);
 			$this->cause = $defaults['cause'];
             
+            //by default reporter is a executor
+            $this->executor = $this->reporter;
+            
 				
 		}
 
@@ -156,20 +185,20 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 //		$this->auth->set_executor($this->executor);
 	}
 	
-	public function set_meta($data) {
-//		if ($this->auth->get_level() < 20) {
-//			throw new PermissionDeniedException('admin');
-//		}
+	//~ public function set_meta($data) {
+//~ //		if ($this->auth->get_level() < 20) {
+//~ //			throw new PermissionDeniedException('admin');
+//~ //		}
 		
-		$val_data = $this->validator->validate($data, array('reporter', 'date', 'close_date'));
-		if ($val_data === false) {
-			throw new ValidationException('tasks', $this->validator->get_errors());
-		}
+		//~ $val_data = $this->validator->validate($data, array('reporter', 'date', 'close_date'));
+		//~ if ($val_data === false) {
+			//~ throw new ValidationException('tasks', $this->validator->get_errors());
+		//~ }
 		
-		$this->set_property_array($val_data);
+		//~ $this->set_property_array($val_data);
 		
-		return true;
-	}
+		//~ return true;
+	//~ }
 		
 //	public function update_cache() {
 //		if ($this->auth->get_level() < 20) {
@@ -179,7 +208,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 //		$this->reason_cache = $this->helper->wiki_parse($this->reason);
 //	}
 	
-	public function set_data($data) {
+	public function set_data($post) {
 //		if ($this->auth->get_level() >= 15) {
 //			$val_data = $this->validator->validate($data, array('executor',
 //				'cause', 'task', 'plan_date', 'cost', 'all_day_event',
@@ -198,19 +227,21 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 //			throw new PermissionDeniedException('coordinator');
 //		}
         
-        $input = array('executor', 'task', 'plan_date', 'cost', 'all_day_event',
-			'start_time', 'finish_time', 'tasktype', 'reason');
+        //~ $input = array('executor', 'task', 'plan_date', 'cost', 'all_day_event',
+			//~ 'start_time', 'finish_time', 'tasktype', 'reason');
         
-        $val_data = $this->validator->validate($data, $input);
-		if ($val_data === false) {
-			throw new ValidationException('tasks', $this->validator->get_errors());
-		}
+        //~ $val_data = $this->validator->validate($data, $input);
+		//~ if ($val_data === false) {
+			//~ throw new ValidationException('tasks', $this->validator->get_errors());
+		//~ }
 
-		$this->set_property_array($val_data);
+		//~ $this->set_property_array($val_data);
+        
+        parent::set_data($post);
 		
 		//specjalne reguły
 		if ($this->issue === '') {
-			$this->set_property('cause', '');
+			$this->cause = '';
 		}
 		
 		//$this->auth->set_executor($this->executor);

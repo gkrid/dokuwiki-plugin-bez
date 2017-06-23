@@ -20,7 +20,7 @@ if ($nparams['bez'] === 'issue') {
 				</div>
 				
 				<?php if (isset($template['issue']) &&
-                          $template['issue']->user_is_coordinator()): ?>
+                    $template['task']->acl_of('cause') >= BEZ_PERMISSION_CHANGE): ?>
 				<div class="row">
 					<label for="cause"><?php echo ucfirst($bezlang['cause']) ?>:</label>
 					<span>
@@ -40,25 +40,18 @@ if ($nparams['bez'] === 'issue') {
 			<div class="row">
 			<label for="executor"><?php echo $bezlang['executor'] ?>:</label>
 			<span>
-			<?php
-                //implication -> !$p || $q $p => $q
-                if (
-                    ( isset($template['issue']) &&
-                            $template['issue']->user_is_coordinator()) ||
-                    ( !isset($template['issue']) &&
-                            $this->model->acl->get_level() >= BEZ_AUTH_LEADER)
-                    ): ?>	
+			<?php if ($template['task']->acl_of('executor') >= BEZ_PERMISSION_CHANGE): ?>	
 				<select name="executor" id="executor" data-validation="required">
 					<option value="">--- <?php echo $bezlang['select'] ?>---</option>
 				<?php foreach ($template['users'] as $nick => $name): ?>
-					<option <?php if ($value['executor'] == $nick) echo 'selected' ?>
+					<option <?php if ($value['executor'] === $nick) echo 'selected' ?>
 					 value="<?php echo $nick ?>"><?php echo $name ?></option>
 				<?php endforeach ?>
 				</select>
 			<?php else: ?>
-				<input type="hidden" name="executor" value="<?php echo $template['user'] ?>">
+				<input type="hidden" name="executor" value="<?php echo $value['executor'] ?>">
 				<strong>
-				<?php echo $this->model->users->get_user_full_name($template['user']) ?>
+				<?php echo $this->model->users->get_user_full_name($value['executor']) ?>
 				</strong>
 			<?php endif ?>
 			
@@ -69,45 +62,63 @@ if ($nparams['bez'] === 'issue') {
 			<div class="row">
 				<label for="task"><?php echo $bezlang['description'] ?>:</label>
 				<span>
-					<div class="bez_toolbar"></div>
-					<textarea name="task" id="task" data-validation="required"><?php echo $value['task'] ?></textarea>
+                    <?php if ($template['task']->acl_of('plan_date') >= BEZ_PERMISSION_CHANGE): ?>
+                        <div class="bez_toolbar"></div>
+                    <?php endif ?>
+					<textarea name="task" id="task" data-validation="required" <?php if ($template['task']->acl_of('plan_date') < BEZ_PERMISSION_CHANGE) echo 'disabled' ?>><?php echo $value['task'] ?></textarea>
 				</span>
 			</div>
 			
 			<div class="row task_plan_field">
 				<label for="plan_date"><?php echo $bezlang['plan_date'] ?>:</label>
 				<span>
-					<input name="plan_date" style="width:90px;" data-validation="required,date" value="<?php echo $value['plan_date'] ?>"/>
-				<div style="display:inline" id="task_datapair">
-					<?php echo $bezlang['from_hour'] ?>
-					<input name="start_time" style="width:60px;" class="time start" value="<?php echo $value['start_time'] ?>"
-					data-validation="required,custom"
-					data-validation-regexp="^(\d{1,2}):(\d{1,2})$"
-					data-validation-depends-on="all_day_event"
-					/>
-					<?php echo $bezlang['to_hour'] ?>
-					<input name="finish_time" style="width:60px;" class="time end" value="<?php echo $value['finish_time'] ?>"
-					data-validation="required,custom"
-					data-validation-regexp="^(\d{1,2}):(\d{1,2})$"
-					data-validation-depends-on="all_day_event"
-					/>
-				</div>
+                    <input name="plan_date" style="width:90px;" data-validation="required,date" value="<?php echo $value['plan_date'] ?>"
+                    <?php if ($template['task']->acl_of('plan_date') < BEZ_PERMISSION_CHANGE) echo 'disabled' ?>
+                    />
+                    <div style="display:inline" id="task_datapair">
+                        <?php echo $bezlang['from_hour'] ?>
+                        <input name="start_time" style="width:60px;" class="time start" value="<?php echo $value['start_time'] ?>"
+                        data-validation="required,custom"
+                        data-validation-regexp="^(\d{1,2}):(\d{1,2})$"
+                        data-validation-depends-on="all_day_event"
+                        <?php if ($template['task']->acl_of('plan_date') < BEZ_PERMISSION_CHANGE) echo 'disabled' ?>
+                        />
+                        <?php echo $bezlang['to_hour'] ?>
+                        <input name="finish_time" style="width:60px;" class="time end" value="<?php echo $value['finish_time'] ?>"
+                        data-validation="required,custom"
+                        data-validation-regexp="^(\d{1,2}):(\d{1,2})$"
+                        data-validation-depends-on="all_day_event"
+                        <?php if ($template['task']->acl_of('plan_date') < BEZ_PERMISSION_CHANGE) echo 'disabled' ?>
+                        />
+                    </div>
 				</span>
 			</div>
 			
 			<div class="row">
 				<label></label>
 				<span style="dispaly: block; position:relative; top: -10px;">
-					<label><input type="checkbox" name="all_day_event" value="1" 
-				<?php if (!isset($value['all_day_event']) || $value['all_day_event'] === '1'): ?>
-					checked
-				<?php endif ?> /> <?php echo $bezlang['all_day_event'] ?></label></span>
+					<label>
+                        <?php if ($template['task']->acl_of('all_day_event') >= BEZ_PERMISSION_CHANGE): ?>	
+                        <input type="checkbox" name="all_day_event" value="1" 
+                            <?php if (!isset($value['all_day_event']) ||
+                                        $value['all_day_event'] === '1'): ?>
+                                checked
+                            <?php endif ?> /> 
+                        <?php else: ?>
+                             <input type="checkbox" disabled
+                            <?php if ($template['task']->all_day_event === '1'): ?>
+                                checked
+                            <?php endif ?> />
+                        <?php endif ?> <?php echo $bezlang['all_day_event'] ?>
+                    </label>
+                
+                </span>
 			</div>
 			
 			<div class="row">
 			<label for="tasktype"><?php echo $bezlang['task_type'] ?>:</label>
 			<span>
-                <select id="tasktype" name="tasktype">
+                <select id="tasktype" name="tasktype" <?php if ($template['task']->acl_of('plan_date') < BEZ_PERMISSION_CHANGE) echo 'disabled' ?>>
                     <option <?php if ($value['tasktype'] == '') echo 'selected' ?> value=""><?php echo $bezlang['tasks_no_type'] ?></option>
                     <?php foreach ($template['tasktypes'] as $tasktype): ?>
                         <option <?php if ($value['tasktype'] == $tasktype->id) echo 'selected' ?> value="<?php echo $tasktype->id ?>"><?php echo $tasktype->type ?></option>
@@ -120,7 +131,8 @@ if ($nparams['bez'] === 'issue') {
 				<label for="cost"><?php echo $bezlang['cost'] ?>:</label>
 				<span><input 	type="number" name="cost" id="cost"
 								min="0" max="100000" step="50"
-								value="<?php echo $value['cost'] ?>"></span>
+								value="<?php echo $value['cost'] ?>"
+                                <?php if ($template['task']->acl_of('plan_date') < BEZ_PERMISSION_CHANGE) echo 'disabled' ?>></span>
 			</div>
 			<?php if ($template['tid'] !== '-1'): ?>
 				<div class="row">
@@ -130,9 +142,8 @@ if ($nparams['bez'] === 'issue') {
 				</span>
 				</div>
 				
-				<?php if (	$template['tid'] !== '-1' &&
-							($template['task']->state === '1' ||
-                             $template['task']->state === '2')): ?>
+				<?php if (  $template['task']->state === '1' ||
+                            $template['task']->state === '2'): ?>
 					<div class="row">
 						<label for="reason">
 							<?php if ($template['task']->state === '1'): ?>
@@ -142,8 +153,10 @@ if ($nparams['bez'] === 'issue') {
 							<?php endif ?>
 						</label>
 						<span>
-                            <div class="bez_reason_toolbar"></div>
-                            <textarea name="reason" id="reason"><?php echo $value['reason'] ?></textarea>
+                            <?php if ($template['task']->acl_of('reason') >= BEZ_PERMISSION_CHANGE): ?>
+                                <div class="bez_toolbar"></div>
+                            <?php endif ?>
+                            <textarea name="reason" id="reason" <?php if ($template['task']->acl_of('reason') < BEZ_PERMISSION_CHANGE) echo 'disabled' ?>><?php echo $value['reason'] ?></textarea>
                         </span>
 					</div>
 				<?php endif ?>

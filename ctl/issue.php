@@ -12,7 +12,36 @@ if (!isset($nparams['id'])) {
 
 try {
     $issue_id = (int)$nparams['id'];
+    
+    //new way
     $issue = $this->model->issues->get_one($issue_id);
+    $template['issue'] = $issue;
+    $template['commcauses'] = $this->model->commcauses->get_all(
+        array('issue' => $issue_id)
+    );
+    
+    $template['commcause'] = $this->model->commcauses->
+                            create_dummy_object(array('issue' => $issue->id));
+    
+    $template['corrections'] = $this->model->tasks->get_all(array(
+        'issue' => $issue_id,
+        'action' => 0,
+    ));
+
+    $template['commcauses_tasks'] = array();
+    foreach ($this->model->commcauses->get_causes_ids($issue_id) as $kid) {
+        $template['commcauses_tasks'][$kid] = $this->model->tasks->get_all(array(
+            'cause' => $kid,
+        ));
+    }
+
+
+    $template['users'] = $this->model->users->get_all();
+
+    //remove userts that are subscribents already
+    $template['users_to_invite'] = array_diff_key($template['users'], $issue->get_subscribents());
+    
+    //$issue = $this->model->issues->get_one($issue_id);
     //~ $template['commcause_action'] = 'commcause_add';
     //placeholder for adding new records
     //~ $template['commcause_id'] = '-1';
@@ -122,6 +151,8 @@ try {
             
             $redirect = true;
  		} elseif (strpos($action, 'task') === 0) {
+            $template['task'] = $this->model->tasks->
+                    create_dummy_object(array('issue' => $issue->id));
 			$template['users'] = $this->model->users->get_all();
 			$template['tasktypes'] = $this->model->tasktypes->get_all();
 			
@@ -169,7 +200,7 @@ try {
 					if ($template['kid'] !== '-1') {
 						$defaults['cause'] = $template['kid'];
 					}
-					$task = $this->model->tasks->create_object_issue($defaults);
+					$task = $this->model->tasks->create_object($defaults);
 					
 					$task->set_data($_POST);
 					$id = $this->model->tasks->save($task);
@@ -246,25 +277,3 @@ try {
 //~ $template['issue'] = $isso->get($issue_id);
 //~ $template['comments'] = $como->get($issue_id);
 
-//new way
-$template['issue'] = $this->model->issues->get_one($issue_id);
-$template['commcauses'] = $this->model->commcauses->get_all(
-    array('issue' => $issue_id)
-);
-$template['corrections'] = $this->model->tasks->get_all(array(
-	'issue' => $issue_id,
-	'action' => 0,
-));
-
-$template['commcauses_tasks'] = array();
-foreach ($this->model->commcauses->get_causes_ids($issue_id) as $kid) {
-	$template['commcauses_tasks'][$kid] = $this->model->tasks->get_all(array(
-		'cause' => $kid,
-	));
-}
-
-
-$template['users'] = $this->model->users->get_all();
-
-//remove userts that are subscribents already
-$template['users_to_invite'] = array_diff_key($template['users'], $issue->get_subscribents());

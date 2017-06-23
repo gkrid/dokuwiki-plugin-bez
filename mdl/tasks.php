@@ -145,4 +145,9 @@ class BEZ_mdl_Tasks extends BEZ_mdl_Factory {
 		$task = new BEZ_mdl_Task($this->model, $defaults);
 		return $task;
 	}
+    
+    public function create_dummy_object($defaults) {
+		$issue = new BEZ_mdl_Dummy_Task($this->model, $defaults);
+		return $issue;
+	}
 }

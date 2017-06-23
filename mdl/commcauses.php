@@ -94,6 +94,11 @@ class BEZ_mdl_Commcauses extends BEZ_mdl_Factory {
 		$commcause = new BEZ_mdl_Commcause($this->model, $defaults);
 		return $commcause;
 	}
+    
+    public function create_dummy_object($defaults) {
+		$commcause = new BEZ_mdl_Dummy_Commcause($this->model, $defaults);
+		return $commcause;
+	}
 	
 //	public function delete($obj) {
 //		if ($obj->get_level() >= 15 ||

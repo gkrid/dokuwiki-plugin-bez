@@ -7,11 +7,11 @@ abstract class BEZ_mdl_Dummy_Entity {
     
     protected $model;
     
-    protected $id = '';
+    protected $id = NULL;
     
     public function __get($property) {
 		if ($property === 'id') {
-            return '';
+            return $this->id;
         }
 	}
     
@@ -118,6 +118,17 @@ abstract class BEZ_mdl_Entity {
         foreach ($array as $k => $v) {
             $this->set_property($k, $v);
         }
+    }
+    
+    public function set_data($post) {
+        $input = array_intersect($this->changable_fields(), array_keys($post), array_keys($this->validator->get_rules()));
+       
+        $val_data = $this->validator->validate($post, $input);
+		if ($val_data === false) {
+			throw new ValidationException($this->get_table_name(), $this->validator->get_errors());
+		}
+
+		$this->set_property_array($val_data);
     }
     
     public function changable_fields() {

@@ -40,31 +40,8 @@ class BEZ_mdl_Issuetype extends BEZ_mdl_Entity {
         }
 	}
 	
-	public function set($data) {
-		if ($this->auth->get_level() < 20) {
-			return false;
-		}
-		
-		$val_data = $this->validator->validate($data, array('pl', 'en')); 
-		if ($val_data === false) {
-			throw new ValidationException(	$this->get_table_name(),
-											$this->validator->get_errors());
-		}
-		
-		foreach ($val_data as $k => $v) {
-			$this->$k = $v;
-		}
+	public function set($post) {
+		parent::set_data($post);
 		$this->update_virtual_columns();
-	}
-	
-	public function remove() {
-		if ($this->auth->get_level() < 20) {
-			return false;
-		}
-		if ($this->refs > 0) {
-			$this->validator->set_error('refs', 'must_be_0');
-			return false;
-		}
-		parent::remove();
 	}
 }

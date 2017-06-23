@@ -1,49 +1,41 @@
 <?php
 
-if	($this->model->tasktypes->get_level() < 20) {
-	$errors[] = $bezlang['error_no_permission'];
-	$controller->preventDefault();
-} 
+if ($this->model->acl->get_level() < BEZ_AUTH_ADMIN) {
+    throw new PermissionDeniedException();
+}
 
 $action = $nparams['action'];
-
 $template['edit'] = -1;
-$types = $this->model->tasktypes->get_all(array('refs'));
-if (count($_POST) > 0) {
-	if ($action == 'add') {		
+
+try {
+    $types = $this->model->tasktypes->get_all(array('refs'));
+
+	if ($action === 'add') {		
 		$tasktype = $this->model->tasktypes->create_object();
-	} else if ($action == 'update') {
+	} else if ($action === 'update') {
 		$tasktype = $this->model->tasktypes->get_one($nparams['id']);
 	}
-	try {
+    
+    if (count($_POST) > 0) {
 		$tasktype->set($_POST);
-		
-		if ($tasktype->any_errors()) {
-			$errors = $tasktype->get_errors();
-			$value = $_POST;
-		} else {
-			$this->model->tasktypes->save($tasktype);
-			header('Location: ?id=bez:task_types');
-		} 
-	} catch (Exception $e) {
-		echo nl2br($e);
-	}
-} else if ($action == 'edit') {
-	$id = (int) $nparams['id'];
-	$template['edit'] = $id;
-	
-	$tasktype = $this->model->tasktypes->get_one($nparams['id']);
-	$value = $tasktype->get_assoc();
-	
-} else if ($action == 'remove') {
-	$tasktype = $this->model->tasktypes->get_one($nparams['id']);
-	if ($tasktype != NULL) {
-		$tasktype->remove();
-		if ($tasktype->any_errors()) {
-			$errors = $tasktype->get_errors();		
-		}
-	}
-} 
+        $this->model->tasktypes->save($tasktype);
+        
+        header('Location: ?id=bez:task_types');
+    } else if ($action === 'edit') {
+        $id = (int) $nparams['id'];
+        $template['edit'] = $id;
+        
+        $tasktype = $this->model->tasktypes->get_one($nparams['id']);
+        $value = $tasktype->get_assoc();
+        
+    } else if ($action === 'remove') {
+        $tasktype = $this->model->tasktypes->get_one($nparams['id']);
+        $this->model->tasktypes->delete($tasktype);
+    }
+} catch (ValidationException $e) {
+	$errors = $e->get_errors();
+	$value = $_POST;
+}
 
 $template['types'] = $types;
 $template['uri'] = $uri;

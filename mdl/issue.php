@@ -25,7 +25,7 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 	protected $state, $opinion;
 	
 	//virtual
-	protected $participants_array, $subscribents_array,
+	protected $participants_array = array(), $subscribents_array = array(),
 				$assigned_tasks_count, $opened_tasks_count,
 				$priority;
     
@@ -154,7 +154,6 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 		
 		//$this->auth->set_coordinator($this->coordinator);
 		
-		$this->participants_array = array();
 		if ($this->participants !== NULL) {
 			$exp_part = explode(',', $this->participants);
 			foreach ($exp_part as $participant) {
@@ -162,7 +161,6 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 			}
 		}
 		
-		$this->subscribents_array = array();
 		if ($this->subscribents !== NULL) {
 			$exp_part = explode(',', $this->subscribents);
 			foreach ($exp_part as $subscribent) {
