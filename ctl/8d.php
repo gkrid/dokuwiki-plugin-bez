@@ -5,8 +5,10 @@ include_once DOKU_PLUGIN."bez/models/tokens.php";
 
 /*jeżeli nie mamy tokenu generujemy nowy i przekierowujemy*/
 $toko = new Tokens();
-if (!isset($_GET['t']) || ! $toko->check(trim($_GET['t']), $this->page_id()))
+if ($this->model->acl->get_level() >= BEZ_AUTH_USER &&
+    (!isset($_GET['t']) || ! $toko->check(trim($_GET['t']), $this->page_id()))) {
 	header('Location: '.$uri.'?id='.$_GET['id'].'&t='.$toko->get($this->page_id()));
+}
 
 $issue_id = $nparams['id'];
 
@@ -23,7 +25,7 @@ $issue_id = $nparams['id'];
 //
 //$template['tasks'] = $tasko->get_by_8d($issue_id);
 //$template['cost_total'] = $tasko->get_total_cost($issue_id);
-
+       
 $template['issue'] = $this->model->issues->get_one($issue_id);
 $template['total_cost'] = $template['issue']->total_cost();
 

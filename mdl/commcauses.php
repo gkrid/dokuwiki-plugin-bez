@@ -53,11 +53,7 @@ class BEZ_mdl_Commcauses extends BEZ_mdl_Factory {
 		return $sth;
 	}
 	
-	public function get_causes_ids($issue) {
-		if ($this->auth->get_level() < 5) {
-			throw new PermissionDeniedException();
-		}
-		
+	public function get_causes_ids($issue) {		
 		$q = "SELECT commcauses.id
 				FROM commcauses JOIN issues ON commcauses.issue = issues.id
 				WHERE issue = ? AND commcauses.type != '0'";

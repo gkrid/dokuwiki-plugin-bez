@@ -2,8 +2,11 @@
  
 if(!defined('DOKU_INC')) die('meh.');
 
+include_once DOKU_PLUGIN."bez/models/tokens.php";
+
 //ACL level defines
 define('BEZ_AUTH_NONE', 0);
+define('BEZ_AUTH_VIEWER', 2);
 define('BEZ_AUTH_USER', 5);
 define('BEZ_AUTH_LEADER', 10);
 define('BEZ_AUTH_ADMIN', 20);
@@ -44,7 +47,14 @@ class BEZ_mdl_Acl {
 			} else {
 				$this->update_level(BEZ_AUTH_USER);
 			}
-		}
+        } elseif (isset($_GET['t'])) {
+            $page_id = $this->model->action->page_id();
+            $toko = new Tokens();
+            
+            if ($toko->check(trim($_GET['t']), $page_id)) {
+                $this->update_level(BEZ_AUTH_VIEWER);
+            }
+        }
     }
         
 
@@ -67,7 +77,8 @@ class BEZ_mdl_Acl {
                 'opinion_cache' => BEZ_PERMISSION_NONE
         );
         
-        if ($this->level >= BEZ_AUTH_USER) {
+        //BEZ_AUTH_VIEWER is also token viewer
+        if ($this->level >= BEZ_AUTH_VIEWER) {
             //user can display everythig
             $acl = array_map(function($value) {
                 return BEZ_PERMISSION_VIEW;
@@ -143,7 +154,7 @@ class BEZ_mdl_Acl {
                 'reason_cache'   => BEZ_PERMISSION_NONE
         );
         
-        if ($this->level >= BEZ_AUTH_USER) {
+        if ($this->level >= BEZ_AUTH_VIEWER) {
             //user can display everythig
             $acl = array_map(function($value) {
                 return BEZ_PERMISSION_VIEW;
@@ -248,7 +259,7 @@ class BEZ_mdl_Acl {
             'content_cache'   => BEZ_PERMISSION_NONE
         );
         
-        if ($this->level >= BEZ_AUTH_USER) {
+        if ($this->level >= BEZ_AUTH_VIEWER) {
             //user can display everythig
             $acl = array_map(function($value) {
                 return BEZ_PERMISSION_VIEW;

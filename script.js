@@ -11,6 +11,7 @@ bez.ctl = {};
 
 jQuery(function () {
     'use strict';
+    
 	var getUrlVars = function() {
 		var vars = {},
 			parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi,
@@ -50,7 +51,7 @@ jQuery(function () {
 	
 	var nparams = getNparams(getUrlVars()['id']),
 		ctl = nparams['bez'];
-	
+    
 	if (typeof bez.ctl[ctl] === 'function') {
 		bez.ctl[ctl].call(ctl);
 	}

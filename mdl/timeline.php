@@ -10,9 +10,9 @@ class BEZ_mdl_Timeline extends BEZ_mdl_Factory {
         //validate
         $days_back = (int)$days_back;
         
-		if ($this->auth->get_level() < 5) {
-			return false;
-		}
+		if ($this->model->acl->get_level() < BEZ_AUTH_USER) {
+            throw new PermissionDeniedException();
+        }
 		
 		$q = "SELECT * FROM (
             SELECT  id,

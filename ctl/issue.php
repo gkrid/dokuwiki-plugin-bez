@@ -87,7 +87,8 @@ try {
 			$this->model->issues->save($issue);
             
         } elseif ($action === 'invite') {
-            $client = $this->model->users->get_user_nick($_POST['client']);
+            $client = $_POST['client'];
+            
 			$state = $issue->add_subscribent($client);
             //user wasn't subscribent
             if ($state === true) {

@@ -1,5 +1,7 @@
 Wersja 2017-06-24:
     - poprawiono #86 ptk. 2
+    - nowy system uprawnień - BEZ_Leader
+    - poprabiono błąd polegający na uniemożliwieniu Zapraszania do problemu użytkowników, których Imię i nazwisko kończyło się na spację np. "Jan Kowalski "
     - raport 8d wyświetla zadania otwarte
 
 

@@ -3,7 +3,7 @@
 if(!defined('DOKU_INC')) die();
 
 require_once 'factory.php';
-require_once 'task.php';
+require_once 'issue.php';
 
 class BEZ_mdl_Issues extends BEZ_mdl_Factory {
 	private $select_query;
@@ -56,10 +56,6 @@ class BEZ_mdl_Issues extends BEZ_mdl_Factory {
 	}
 	
 	public function get_one($id) {
-		if ($this->auth->get_level() < 5) {
-			throw new PermissionDeniedException();
-		}
-	
 		$q = $this->select_query.' WHERE id = ?';
 						
 		$sth = $this->model->db->prepare($q);
@@ -80,10 +76,6 @@ class BEZ_mdl_Issues extends BEZ_mdl_Factory {
 	);
 	
 	public function get_all($filters=array()) {
-		if ($this->auth->get_level() < 5) {
-			throw new PermissionDeniedException('BEZ_mdl_Tasks: no permission to get_all()');
-		}
-		
 		list($where_q, $execute) = $this->build_where($filters);
 		
 		$q = $this->select_query . $where_q;

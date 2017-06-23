@@ -71,10 +71,6 @@ class BEZ_mdl_Tasks extends BEZ_mdl_Factory {
 	);
 	
 	public function get_all($filters=array()) {
-		if ($this->auth->get_level() < 5) {
-			throw new PermissionDeniedException('BEZ_mdl_Tasks: no permission to get_all()');
-		}
-		
 		list($where_q, $execute) = $this->build_where($filters);
 		
 		$q = $this->select_query . $where_q;
@@ -90,10 +86,6 @@ class BEZ_mdl_Tasks extends BEZ_mdl_Factory {
 	}
     
     public function count($filters=array()) {
-        if ($this->auth->get_level() < 5) {
-			throw new PermissionDeniedException('BEZ_mdl_Tasks: no permission to get_all()');
-		}
-        
         if (in_array('action', $filters)) {
             throw new Exception('BEZ_mdl_Tasks: action filter not implemented in method count()');
         }

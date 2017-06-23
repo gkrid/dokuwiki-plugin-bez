@@ -139,7 +139,7 @@
         <select name="client">
             <option value="">--- <?php echo $bezlang['select'] ?> ---</option>
             <?php foreach ($template['users_to_invite'] as $nick => $name): ?>
-                <option name="<?php echo $nick ?>"><?php echo $name ?></option>
+                <option value="<?php echo $nick ?>"><?php echo $name ?></option>
             <?php endforeach ?>
         </select>
     </div>
