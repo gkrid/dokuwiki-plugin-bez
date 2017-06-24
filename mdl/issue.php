@@ -27,7 +27,7 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 	//virtual
 	protected $participants_array = array(), $subscribents_array = array(),
 				$assigned_tasks_count, $opened_tasks_count,
-				$priority;
+				$priority, $type_string, $state_string;
     
     
     public function get_table_name() {
@@ -47,8 +47,43 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 	public function get_virtual_columns() {
 		return array('participants_array', 'subscribents_array',
 					'assigned_tasks_count',	'opened_tasks_count',
-					'priority');
+					'priority', 'type_string', 'state_string');
 	}
+    
+    private function state_string_code() {
+        if ($this->coordinator === '-proposal') {
+            return 'state_proposal';
+        } else if ( $this->state === '0' &&
+                    (int)$this->assigned_tasks_count > 0 &&
+                    (int)$this->opened_tasks_count === 0) {
+            return 'state_done';
+        } else if ($this->state === '0') {
+            return 'state_opened';
+        } else if ($this->state === '1') {
+            return 'state_closed';
+        } else if ($this->state === '2') {
+            return 'state_rejected';
+        }
+    }
+    
+    private function type_string() {
+        if ($this->type === '') {
+            return '';
+        }
+        $issuetype = $this->model->issuetypes->get_one($this->type)->get_assoc();
+        return $issuetype[$this->model->conf['lang']];
+    }
+    
+    private function priority() {
+        return 'None';
+    }
+    
+    private function update_virtual_columns() {
+		$this->state_string = $this->model->action->getLang($this->state_string_code());
+        $this->type_string = $this->type_string();
+        $this->priority = $this->priority();
+        //we should also update assigned_tasks_count and opened_tasks_count
+    }
     
     public function full_state() {
         if (strpos($this->coordinator, '-') === 0) {
@@ -149,6 +184,9 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 		
 		$this->description_cache = $this->helper->wiki_parse($this->description);
 		$this->opinion_cache = $this->helper->wiki_parse($this->opinion);
+        
+        //update virtuals
+        $this->update_virtual_columns();
 	}
     
     public function update_cache() {
@@ -178,6 +216,9 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 		$this->last_mod = time();
 		$this->update_last_activity();
 		$this->opinion_cache = $this->helper->wiki_parse($this->opinion);
+        
+        //update virtuals
+        $this->update_virtual_columns();
 	}
     
     public function update_last_activity() {
@@ -333,7 +374,9 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
                                 'issue_id' => $this->id,
                                 'issue_link' => $issue_link,
                                 'issue_unsubscribe' => $issue_unsubscribe,
-                                'custom_content' => false
+                                'custom_content' => false,
+                                'action_border_color' => 'transparent',
+                                'action_color' => 'transparent',
                            );
         
         //$replacements can override $issue_reps
@@ -362,11 +405,13 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
                 @CONTENT_HTML@
             ', $html);
         }
+        
         //we must do it manually becouse Mailer uses htmlspecialchars()
         $html = str_replace('@CONTENT_HTML@', $rep['content_html'], $html);
         
         $mailer = new Mailer();
         $mailer->setBody($plain, $rep, $rep, $html, false);
+
         if ($emails === FALSE) {
             $emails = array_map(function($user) {
                 return $this->model->users->get_user_email($user);
@@ -383,37 +428,104 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
         }
     }
     
+    protected function mail_issue_box_reps($replacements=array()) {
+        $replacements['custom_content'] = true;
+        
+        $html =  '<h2 style="font-size: 1.2em;">';
+	    $html .=    '<a style="font-size:115%" href="@issue_link">#@ISSUE_ID@</a> ';
+            
+        if ( ! empty($this->type_string)) {
+            $html .= $this->type_string;
+        } else {
+            $html .= '<i style="color: #777"> '.
+                        $this->model->action->getLang('issue_type_no_specified').
+                    '</i>';
+        }
+        
+        $html .= ' ('.$this->state_string.') ';
+	
+        $html .= '<span style="color: #777; font-weight: normal; font-size: 90%;">';
+        $html .= $this->model->action->getLang('coordinator') . ': ';
+        $html .= '<span style="font-weight: bold;">';
+        
+        if ($this->coordinator === '-proposal') {
+            $html .= '<i style="font-weight: normal;">' . 
+                $this->model->action->getLang('proposal') . 
+                '</i>';
+        } else {
+            $html .= $this->model->users->get_user_full_name($this->coordinator);
+        }
+        $html .= '</span></span></h2>';
+        
+        $html .= '<h2 style="font-size: 1.2em;border-bottom: 1px solid @ACTION_BORDER_COLOR@">' . $this->title . '</h2>';
+        
+        $html .= $this->description_cache;
+
+        if ($this->state !== '0') {
+            $html .= '<h3 style="font-size:100%; border-bottom: 1px dotted #bbb">';
+                if ($this->state === '1') {
+                    $html .= $this->model->action->getLang('opinion');
+                } else {
+                    $html .= $this->model->action->getLang('reason');
+                }
+            $html .= '</h3>';
+            $html .= $this->opinion_cache;
+        }
+
+        $replacements['content_html'] = $html;
+        
+                
+         switch ($this->priority) {
+            case '0':
+                $replacements['action_color'] = '#F8E8E8';
+                $replacements['action_border_color'] = '#F0AFAD';
+                break;
+            case '1':
+                $replacements['action_color'] = '#ffd';
+                $replacements['action_border_color'] = '#dd9';
+                break;
+            case '2':
+                $replacements['action_color'] = '#EEF6F0';
+                $replacements['action_border_color'] = '#B0D2B6';
+                break;
+            case 'None':
+                $replacements['action_color'] = '#e7f1ff';
+                $replacements['action_border_color'] = '#a3c8ff';
+                break;
+            default:
+                $replacements['action_color'] = '#fff';
+                $replacements['action_border_color'] = '#bbb';
+                break;
+        }
+       
+        return $replacements;
+    }
+    
     public function mail_notify_change_state() {
-        $this->mail_notify(array(
+        $this->mail_notify($this->mail_issue_box_reps(array(
             'who' => $this->model->user_nick,
             'action' => $this->model->action->getLang('mail_mail_notify_change_state_action'),
-            //'subject' => $this->model->action->getLang('mail_mail_notify_change_state_subject') . ' #'.$this->id,
-            'custom_content' => true,
-            'content_html' => ''
-        ));
+            //'subject' => $this->model->action->getLang('mail_mail_notify_change_state_subject') . ' #'.$this->id
+        )));
     }
     
     public function mail_notify_invite($client) {
         $email = $this->model->users->get_user_email($client);
         
-        $this->mail_notify(array(
+        $this->mail_notify($this->mail_issue_box_reps(array(
             'who' => $this->model->user_nick,
             'action' => $this->model->action->getLang('mail_mail_notify_invite_action'),
-            //'subject' => $this->model->action->getLang('mail_mail_notify_invite_subject') . ' #'.$this->id,
-            'custom_content' => true,
-            'content_html' => ''
-        ), array($email));
+            //'subject' => $this->model->action->getLang('mail_mail_notify_invite_subject') . ' #'.$this->id
+        )), array($email));
     }
     
     public function mail_inform_coordinator() {
         $email = $this->model->users->get_user_email($this->coordinator);
         
-        $this->mail_notify(array(
+        $this->mail_notify($this->mail_issue_box_reps(array(
             'who' => $this->model->user_nick,
             'action' => $this->model->action->getLang('mail_mail_inform_coordinator_action'),
-            //'subject' => $this->model->action->getLang('mail_mail_inform_coordinator_subject') . ' #'.$this->id,
-            'custom_content' => true,
-            'content_html' => ''
-        ), array($email));
+            //'subject' => $this->model->action->getLang('mail_mail_inform_coordinator_subject') . ' #'.$this->id
+        )), array($email));
     }
 }

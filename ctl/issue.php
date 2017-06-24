@@ -9,31 +9,6 @@ try {
     
     //new way
     $issue = $this->model->issues->get_one($issue_id);
-    $template['issue'] = $issue;
-    $template['commcauses'] = $this->model->commcauses->get_all(
-        array('issue' => $issue_id)
-    );
-    
-    $template['commcause'] = $this->model->commcauses->
-                            create_dummy_object(array('issue' => $issue->id));
-    
-    $template['corrections'] = $this->model->tasks->get_all(array(
-        'issue' => $issue_id,
-        'action' => 0,
-    ));
-
-    $template['commcauses_tasks'] = array();
-    foreach ($this->model->commcauses->get_causes_ids($issue_id) as $kid) {
-        $template['commcauses_tasks'][$kid] = $this->model->tasks->get_all(array(
-            'cause' => $kid,
-        ));
-    }
-
-
-    $template['users'] = $this->model->users->get_all();
-
-    //remove userts that are subscribents already
-    $template['users_to_invite'] = array_diff_key($template['users'], $issue->get_subscribents());
     
     //$issue = $this->model->issues->get_one($issue_id);
     //~ $template['commcause_action'] = 'commcause_add';
@@ -249,6 +224,33 @@ try {
 			header("Location: ?id=bez:issue:id:$issue_id$anchor");
 		}
 	}
+    
+    $template['issue'] = $issue;
+    $template['commcauses'] = $this->model->commcauses->get_all(
+        array('issue' => $issue_id)
+    );
+    
+    $template['commcause'] = $this->model->commcauses->
+                            create_dummy_object(array('issue' => $issue->id));
+    
+    $template['corrections'] = $this->model->tasks->get_all(array(
+        'issue' => $issue_id,
+        'action' => 0,
+    ));
+
+    $template['commcauses_tasks'] = array();
+    foreach ($this->model->commcauses->get_causes_ids($issue_id) as $kid) {
+        $template['commcauses_tasks'][$kid] = $this->model->tasks->get_all(array(
+            'cause' => $kid,
+        ));
+    }
+
+
+    $template['users'] = $this->model->users->get_all();
+
+    //remove userts that are subscribents already
+    $template['users_to_invite'] = array_diff_key($template['users'], $issue->get_subscribents());
+    
 } catch (ValidationException $e) {
 	$errors = $e->get_errors();
 	$value = $_POST;

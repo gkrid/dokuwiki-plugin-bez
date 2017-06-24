@@ -194,6 +194,14 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 			
 		return true;
 	}
+    
+    public function update_cache() {
+        if ($this->model->acl->get_level() < BEZ_AUTH_ADMIN) {
+			return false;
+		}
+		$this->task_cache = $this->helper->wiki_parse($this->task);
+		$this->reason_cache = $this->helper->wiki_parse($this->reason);
+	}
 	
 	public function set_state($data) {
 		//reason is required while changing state

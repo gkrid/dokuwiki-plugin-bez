@@ -5,7 +5,7 @@
     #<?php echo $template['issue']->id ?>
 </a>
 
-<?php if ($template['issue']->type_string !== NULL): ?>
+<?php if (empty($template['issue']->type_string)): ?>
 	<?php echo $template['issue']->type_string ?>
 <?php else: ?>
 	<i style="color: #777"><?php echo $bezlang['issue_type_no_specified'] ?></i>
