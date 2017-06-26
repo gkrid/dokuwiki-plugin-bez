@@ -5,6 +5,7 @@ Wersja 2017-06-24:
     - raport 8d wyświetla zadania otwarte
     - raport nD - #105
     - Treść problemów jest teraz dołączana do powiadomień mejlowych nieposiadających innej treści #90
+    - Poprawiono błąd z niedziałającym autorespondentem: #123
 
 
 Wersja 2017-05-31:
