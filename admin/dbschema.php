@@ -1222,6 +1222,15 @@ function do_issues_remove_priority() {
 		$q = "ALTER TABLE issues ADD COLUMN subscribents TEXT NULL";
 		$this->connect->errquery($q);
 	}
+    
+    function check_rejected_old_way() {
+        return false;
+    }
+    
+    function do_rejected_old_way() {
+       $q = "UPDATE issues SET coordinator=reporter, state=2 WHERE coordinator = '-rejected'";
+        $this->connect->errquery($q); 
+    }
 	
 	private $actions = array(
 				array('Słownik kategorii przyczyn', 'check_rootcause', 'do_rootcause'),
@@ -1255,7 +1264,9 @@ function do_issues_remove_priority() {
 				array('Połącz komentarze z przyczynami.',
 				'check_create_commcauses', 'do_create_commcauses'),
 				array('Dodaj subskrybentów do problemu.',
-				'check_add_subscribents_to_issue', 'do_add_subscribents_to_issue')
+				'check_add_subscribents_to_issue', 'do_add_subscribents_to_issue'),
+                array('Zaktualizuj odrzucone po staremu',
+				'check_rejected_old_way', 'do_rejected_old_way')
 		);
     
     function get_actions() {
