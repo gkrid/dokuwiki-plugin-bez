@@ -501,7 +501,7 @@ $lang['norifications'] = 'Powiadomienia';
 
 $lang['subscribe'] = 'Subskrybuj';
 
-$lang['subscribent'] = 'Subskrbent';
+$lang['subscribent'] = 'Subskrybent';
 
 $lang['unsubscribe'] = 'Wypisz';
 
