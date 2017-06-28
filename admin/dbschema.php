@@ -937,7 +937,7 @@ function do_issues_remove_priority() {
 			$db->close();
 	}
 	
-	private function check_remove_coordinator_from_tasktypes() {
+	function check_remove_coordinator_from_tasktypes() {
 		$q = "PRAGMA table_info(tasktypes)";
 		$a = $this->connect->fetch_assoc($q);
 		$entity = false;
@@ -949,7 +949,7 @@ function do_issues_remove_priority() {
 		return true;
 	}
 	
-	private function do_remove_coordinator_from_tasktypes() {
+	function do_remove_coordinator_from_tasktypes() {
 	$con = new Connect();
 		$db = $con->open();
 
@@ -1160,8 +1160,9 @@ function do_issues_remove_priority() {
 		');
 		$db->close();
 		
-		$comments = $this->connect->fetch_assoc("SELECT issue, date, reporter, comments.content, comments_cache.content as cache FROM comments JOIN comments_cache ON comments.id = comments_cache.id");
+		$comments = $this->connect->fetch_assoc("SELECT comments.id, issue, date, reporter, comments.content FROM comments");
 		foreach($comments as $comment) {
+            echo "Inserting comment: ". $comment['id'] . " to #".$comment['issue']."\n";
 			$unix = (int) $comment['date'];
 			$this->connect->errinsert(array(
 				'issue' => $comment['issue'],
@@ -1169,13 +1170,14 @@ function do_issues_remove_priority() {
 				'reporter' => $comment['reporter'],
 				'type' => 0,
 				'content' => $comment['content'],
-				'content_cache' => $comment['cache']
+				'content_cache' => $comment['content']
 			), 'commcauses');
 		}
 		
 		$causes = $this->connect->fetch_assoc("SELECT id, issue, date, reporter, cause, cause_cache, potential FROM causes");
         $queries = array();
 		foreach($causes as $cause) {
+            echo "Inserting cause: ". $cause['id'] . " to #".$cause['issue']."\n";
 			$unix = (int) $cause['date'];
 			$type = (int) $cause['potential'] + 1;
 			$reporter = $cause['reporter'];
@@ -1195,11 +1197,13 @@ function do_issues_remove_priority() {
             $tasks = $this->connect->fetch_assoc("SELECT id FROM tasks WHERE cause=".$cause['id']);
             
             foreach ($tasks as $task) {
+                
                 $queries[] = array(array('cause' => $lastid), 'tasks', $task['id']);
             }
 		}
                     
         foreach ($queries as $q) {
+                echo "\tInserting task: ". $q[2] . " to commcause: ".$q[0]['cause']."\n";
                 $this->connect->errupdate($q[0], $q[1], $q[2]);
         }
 		
@@ -1253,6 +1257,10 @@ function do_issues_remove_priority() {
 				array('Dodaj subskrybentów do problemu.',
 				'check_add_subscribents_to_issue', 'do_add_subscribents_to_issue')
 		);
+    
+    function get_actions() {
+        return $this->actions;
+    }
 
 	function _backup($sufix) {
 		$db_file = DOKU_INC . 'data/bez.sqlite';

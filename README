@@ -1,3 +1,8 @@
+Wersja 2017-06-24a:
+    - stworzono CLI dla migracji,
+    - poprawiono procedurę migracji przeniesienia komentarzy i przyczyn do commcause,
+    - poprawiono problem ze niewyświetlanym typu nieokreślonego w ekranie Problemu 
+
 Wersja 2017-06-24:
     - poprawiono #86 ptk. 2
     - nowy system uprawnień - BEZ_Leader

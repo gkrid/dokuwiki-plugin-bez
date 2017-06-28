@@ -64,7 +64,7 @@ class Connect {
 
 	public function lastid()
 	{
-		return $this->lastid;
+		return self::$lastid;
 	}
 	
 	public function join_all($a) {
@@ -112,7 +112,7 @@ class Connect {
 		}
 		$values = substr($values, 0, -1);
 
-		$this->lastid = $this->ins_query("INSERT INTO $table ($fields) VALUES ($values)");
+		self::$lastid = $this->ins_query("INSERT INTO $table ($fields) VALUES ($values)");
 		
 	}
 
@@ -128,7 +128,7 @@ class Connect {
 		$values = substr($values, 0, -1);
 		$this->errquery("UPDATE $table SET $values WHERE id=$id");
 
-		$this->lastid = $id;
+		self::$lastid = $id;
 	}
 	public function errdelete($table, $id)
 	{

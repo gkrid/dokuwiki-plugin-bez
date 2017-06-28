@@ -4,8 +4,7 @@
 <a href="?id=<?php echo $this->id('issue', 'id', $template['issue']->id) ?>">
     #<?php echo $template['issue']->id ?>
 </a>
-
-<?php if (empty($template['issue']->type_string)): ?>
+<?php if ($template['issue']->type_string != ''): ?>
 	<?php echo $template['issue']->type_string ?>
 <?php else: ?>
 	<i style="color: #777"><?php echo $bezlang['issue_type_no_specified'] ?></i>
