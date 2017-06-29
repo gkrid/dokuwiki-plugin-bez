@@ -1229,7 +1229,19 @@ function do_issues_remove_priority() {
     
     function do_rejected_old_way() {
        $q = "UPDATE issues SET coordinator=reporter, state=2 WHERE coordinator = '-rejected'";
-        $this->connect->errquery($q); 
+       $this->connect->errquery($q); 
+       
+       $issues = $this->connect->fetch_assoc("SELECT * FROM issues WHERE state=1");
+		foreach($issues as $issue) {
+			$issue_id = $issue['id'];
+			$tasks = $this->connect->fetch_assoc("SELECT id FROM tasks WHERE issue=$issue_id");
+            if (count($tasks) == 0) {
+                echo "Marking: #". $issue['id'] . " as rejected.\n";
+                $q = "UPDATE issues SET state=2 WHERE id = $issue_id";
+                $this->connect->errquery($q); 
+            }
+		}
+        
     }
 	
 	private $actions = array(

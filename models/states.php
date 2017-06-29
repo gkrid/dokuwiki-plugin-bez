@@ -49,14 +49,15 @@ class States {
 		if ($issue['state'] == 0 && $issue['tasks_all'] > 0 && $issue['tasks_all'] == $issue['tasks_closed']) {
 			return $bezlang['state_done'];
 		}
-		$a = $this->get_all($anytask);
 				
-		if ($id == 1 && !$anytask)
+		if ($coordinator === '-proposal') {
+			return $bezlang['state_proposal'];
+		} else if ($id === 0) {
+			return $bezlang['state_opened'];
+		} else if ($id === 1) {
+			return $bezlang['state_closed'];
+		} else if ($id === 2) {
 			return $bezlang['state_rejected'];
-		else if (strpos($coordinator, '-') === 0)
-			return $a[$coordinator];
-		else {
-			return $a[$id];
 		}
 	}
 
