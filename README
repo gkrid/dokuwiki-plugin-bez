@@ -1,7 +1,11 @@
+Wersja 2017-06-24b:
+    - przy ponownym odrzucaniu problemu w polu domyślnie wprowadzana jest poprzednia przyczyna
+
 Wersja 2017-06-24a:
     - stworzono CLI dla migracji,
     - poprawiono procedurę migracji przeniesienia komentarzy i przyczyn do commcause,
-    - poprawiono problem ze niewyświetlanym typu nieokreślonego w ekranie Problemu 
+    - poprawiono problem ze niewyświetlanym typu nieokreślonego w ekranie Problemu,
+    - dodano schemat migracji do nowego sposobu oznaczania odrzuconych problemów
 
 Wersja 2017-06-24:
     - poprawiono #86 ptk. 2

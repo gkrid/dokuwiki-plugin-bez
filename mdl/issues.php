@@ -34,7 +34,8 @@ class BEZ_mdl_Issues extends BEZ_mdl_Factory {
 								AND opened_tasks_count = 0 THEN '1'
 							ELSE '1'
 					END) AS is_done,
-					(CASE 	WHEN task_priority IS NULL THEN 'None'
+					(CASE 	WHEN state = 2 then '3'
+                            WHEN task_priority IS NULL THEN 'None'
 							ELSE task_priority
 					END) AS priority
 					
