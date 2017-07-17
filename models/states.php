@@ -49,15 +49,15 @@ class States {
 		if ($issue['state'] == 0 && $issue['tasks_all'] > 0 && $issue['tasks_all'] == $issue['tasks_closed']) {
 			return $bezlang['state_done'];
 		}
-				
-		if ($coordinator === '-proposal') {
-			return $bezlang['state_proposal'];
-		} else if ($id === 0) {
-			return $bezlang['state_opened'];
-		} else if ($id === 1) {
-			return $bezlang['state_closed'];
-		} else if ($id === 2) {
+        
+        if ($id === 2) {
 			return $bezlang['state_rejected'];
+		} elseif ($coordinator === '-proposal') {
+			return $bezlang['state_proposal'];
+		} elseif ($id === 0) {
+			return $bezlang['state_opened'];
+		} elseif ($id === 1) {
+			return $bezlang['state_closed'];
 		}
 	}
 

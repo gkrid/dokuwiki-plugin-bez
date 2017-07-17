@@ -51,7 +51,9 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 	}
     
     private function state_string_code() {
-        if ($this->coordinator === '-proposal') {
+        if ($this->state === '2') {
+            return 'state_rejected';
+        } else if ($this->coordinator === '-proposal') {
             return 'state_proposal';
         } else if ( $this->state === '0' &&
                     (int)$this->assigned_tasks_count > 0 &&
@@ -61,8 +63,6 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
             return 'state_opened';
         } else if ($this->state === '1') {
             return 'state_closed';
-        } else if ($this->state === '2') {
-            return 'state_rejected';
         }
     }
     

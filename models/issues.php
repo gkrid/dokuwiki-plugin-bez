@@ -225,8 +225,8 @@ class Issues extends Connect {
 		
 		//priorytet na podstaie zadań
 		//$a['priority'] = $tasko->issue_priority($a['id']);
-		if ($a['state'] == $bezlang['state_rejected']) {
-			$a['priority'] = '3';
+ 		if ($a['raw_state'] == 2) {
+			$a['priority'] = 'Rejected';
 		} else if ($a['priority'] == NULL) {
 			$a['priority'] = 'None';
 		}

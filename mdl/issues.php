@@ -18,6 +18,8 @@ class BEZ_mdl_Issues extends BEZ_mdl_Factory {
 		*/
 		$this->select_query = "SELECT *,
 					(CASE
+                        WHEN state = 2
+							THEN '".$this->model->action->getLang('state_rejected')."'
 						WHEN coordinator = '-proposal'
 							THEN '".$this->model->action->getLang('state_proposal')."'
 						WHEN state = 0 	AND assigned_tasks_count > 0
@@ -27,8 +29,6 @@ class BEZ_mdl_Issues extends BEZ_mdl_Factory {
 							THEN '".$this->model->action->getLang('state_opened')."'
 						WHEN state = 1
 							THEN '".$this->model->action->getLang('state_closed')."'
-						WHEN state = 2
-							THEN '".$this->model->action->getLang('state_rejected')."'
 					END) AS state_string,
 					(CASE	WHEN  state = 0 AND assigned_tasks_count > 0
 								AND opened_tasks_count = 0 THEN '1'

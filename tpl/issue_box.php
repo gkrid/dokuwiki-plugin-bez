@@ -16,7 +16,7 @@
     <?php echo $bezlang['coordinator'] ?>:
     <span style="font-weight: bold;">
         <?php if ($template['issue']->coordinator === '-proposal'): ?>
-            <i style="font-weight: normal;"><?php echo $bezlang['proposal'] ?></i>
+            <i style="font-weight: normal; color: #aaa"><?php echo $bezlang['none'] ?></i>
         <?php else: ?>
             <?php echo $this->model->users->get_user_full_name($template['issue']->coordinator) ?>
         <?php endif?>

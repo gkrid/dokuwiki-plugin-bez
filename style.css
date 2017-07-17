@@ -46,6 +46,11 @@ table.bez .pr0 , #bds_timeline dt.pr0 {
 	background-color: #F8E8E8;
 }
 
+table.bez .prRejected {
+	color: #aaa;
+    font-style: italic;
+}
+
 
 #bds_issue_box.pr0 table, #bds_issue_box.pr0 td, #bds_issue_box.pr0 th,#bds_issue_box.pr0 h2, #bds_issue_box.pr0 h1#bez_issue_title {
 	border-color: #F0AFAD;
