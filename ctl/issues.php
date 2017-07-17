@@ -20,7 +20,7 @@ $rootco = new Rootcauses();
 
 if (count($_POST) > 0)
 	$raw_filters = $_POST;
-elseif (count($params) == 0 && isset($_COOKIE['bez_issues_filters']))
+elseif (count($nparams) === 1 && isset($_COOKIE['bez_issues_filters']))
 	$raw_filters = $_COOKIE['bez_issues_filters'];
 
 if (isset($raw_filters)) {
@@ -44,6 +44,7 @@ $value = array('state' => '-all', 'type' => '-all', 'coordinator' => '-all', 'ye
 for ($i = 0; $i < count($params); $i += 2)
 	$value[urldecode($params[$i])] = urldecode($params[$i+1]);
 	
+
 //save filters
 foreach ($value as $k => $v)
 	setcookie("bez_issues_filters[$k]", $v);

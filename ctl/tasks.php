@@ -19,8 +19,8 @@ $isso = new Issues();
 
 if (count($_POST) > 0)
 	$raw_filters = $_POST;
-elseif (count($params) == 0 && isset($_COOKIE[bez_tasks_filters]))
-	$raw_filters = $_COOKIE[bez_tasks_filters];
+elseif (count($nparams) === 1 && isset($_COOKIE['bez_tasks_filters']))
+	$raw_filters = $_COOKIE['bez_tasks_filters'];
 
 if (isset($raw_filters)) {
 	$filters = $tasko->validate_filters($raw_filters);
