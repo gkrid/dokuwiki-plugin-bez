@@ -19,10 +19,13 @@ abstract class BEZ_mdl_Factory {
 			
 			$operator = '=';
 			if (is_array($value)) {
-				if ($value[0] === '!=') {
+                $operators = array('!=', '<', '>', '<=', '>=');
+				if (in_array($value[0], $operators)) {
 					$operator = '!=';
 					$value = $value[1];
-				}
+				} else {
+                    throw new Exception('unknown operator: '.$value[0]);
+                }
 			}
 			
 			$where_q[] = $field." $operator :$filter";

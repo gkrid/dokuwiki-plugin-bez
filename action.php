@@ -6,6 +6,8 @@ require_once DOKU_PLUGIN.'bez/mdl/model.php';
 require_once DOKU_PLUGIN.'bez/html.php';
 require_once DOKU_PLUGIN.'bez/exceptions.php';
 
+require_once DOKU_PLUGIN.'bez/inc/BEZ_Mailer.class.php';
+
 class action_plugin_bez extends DokuWiki_Action_Plugin {
 
 	private $helper;
@@ -210,7 +212,7 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 
 	public function action_act_preprocess($event, $param)
 	{
-		global $INFO;
+		global $INFO, $conf;
 		global $template, $bezlang, $value, $errors;
 
 		try {
@@ -239,15 +241,15 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 				include_once $ctl;
 			}
         } catch(PermissionDeniedException $e) {
-            if ($this->getConf('debug') === '0') {
-                header('Location: ' . DOKU_URL . 'doku.php?id=' . $_GET['id'] . '&do=login');
-            } else {
-                echo nl2br($e);
-                /*preventDefault*/
-			    $this->norender = true;
-            }
+            //var_dump($this->getConf('allowdebug'));die();
+            dbglog('plugin_bez', $e);
+            header('Location: ' . DOKU_URL . 'doku.php?id=' . $_GET['id'] . '&do=login');
+
 		} catch(Exception $e) {
-            echo nl2br($e);
+            dbglog('plugin_bez', $e);
+            if ($conf['allowdebug']) {
+               dbg($e);
+            }
 			/*preventDefault*/
 			$this->norender = true;
 		}
@@ -305,14 +307,14 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 				include_once $tpl;
 			}
         } catch(PermissionDeniedException $e) {
-            if ($this->getConf('debug') === '0') {
-                header('Location: ' . DOKU_URL . 'doku.php?id=' . $_GET['id'] . '&do=login');
-            } else {
-                echo nl2br($e);
-            }
-            			
+            dbglog('plugin_bez', $e);
+            header('Location: ' . DOKU_URL . 'doku.php?id=' . $_GET['id'] . '&do=login');	
 		} catch(Exception $e) {
 			/*exception*/
+            dbglog('plugin_bez', $e);
+            if ($conf['allowdebug']) {
+               dbg($e);
+            }
 		}
 	}
 }

@@ -54,17 +54,17 @@ switch($issue['priority']) {
 }
 ?>
 <tr style="background-color: <?php echo $color ?>">
-	<td><a href="<?php echo $http ?>://<?php echo $URI ?>/doku.php?id=bez:issue:id:<?php echo $issue['id'] ?>">
+	<td><a href="@DOKU_URL@doku.php?id=bez:issue:id:<?php echo $issue['id'] ?>">
 		#<?php echo $issue['id'] ?>
 	</a></td>
 	<td><?php echo $issue['type'] ?></td>
 	<td><?php echo $issue['title'] ?></td>
 	<td><?php echo $helper->time2date($issue['date']) ?> (<?php echo $helper->string_time_to_now($issue['date']) ?>)</td>
 	<td>
-		<a href="<?php echo $http ?>://<?php echo $URI ?>/doku.php?id=bez:tasks:issue:<?php echo $issue['id'] ?>:state:0">
+		<a href="@DOKU_URL@doku.php?id=bez:tasks:issue:<?php echo $issue['id'] ?>:state:0">
 			<?php echo $issue['tasks_closed'] ?>
 		</a> /
-		<a href="<?php echo $http ?>://<?php echo $URI ?>/doku.php?id=bez:tasks:issue:<?php echo $issue['id'] ?>">
+		<a href="@DOKU_URL@doku.php?id=bez:tasks:issue:<?php echo $issue['id'] ?>">
 			<?php echo $issue['tasks_all'] ?>
 		</a> 
 	</td>
@@ -99,7 +99,7 @@ switch($task['priority']) {
 ?>
 <tr style="background-color: <?php echo $color ?>">
 <?php
-	$url = "$http://$URI/doku.php?id=";
+	$url = "@DOKU_URL@doku.php?id=";
 	if (isset($task['issue']))
 		$url .= "bez:issue_task:id:$task[issue]:tid:$task[id]";
 	else
@@ -153,7 +153,7 @@ switch($task['priority']) {
 ?>
 <tr style="background-color: <?php echo $color ?>">
 <?php
-	$url = "$http://$URI/doku.php?id=";
+	$url = "@DOKU_URL@doku.php?id=";
 	if (isset($task['issue']))
 		$url .= "bez:issue_task:id:$task[issue]:tid:$task[id]";
 	else

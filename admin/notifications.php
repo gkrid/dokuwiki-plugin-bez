@@ -7,7 +7,7 @@
 // must be run within DokuWiki
 if (!defined('DOKU_INC')) die();
 
-require_once DOKU_PLUGIN . 'bez/cron-functions.php';
+require_once DOKU_PLUGIN . 'bez/cron/functions.php';
 
 class admin_plugin_bez_notifications extends DokuWiki_Admin_Plugin {
     
@@ -42,7 +42,7 @@ class admin_plugin_bez_notifications extends DokuWiki_Admin_Plugin {
             }
             $helper = $this->loadHelper('bez');
             $bezlang = $this->lang;
-            $this->mails = send_message($_SERVER['SERVER_NAME'], $http, $conf, $helper, $auth, $simulate);
+            $this->mails = send_weekly_message($simulate);
         }
     }
     /**

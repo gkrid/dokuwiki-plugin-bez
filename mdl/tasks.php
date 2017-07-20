@@ -67,7 +67,8 @@ class BEZ_mdl_Tasks extends BEZ_mdl_Factory {
 		'action' 	=> 'action',
 		'cause'		=> 'tasks.cause',
         'executor'  => 'tasks.executor',
-        'state'     => 'tasks.state'
+        'state'     => 'tasks.state',
+        'plan_date' => 'tasks.plan_date'
 	);
 	
 	public function get_all($filters=array()) {

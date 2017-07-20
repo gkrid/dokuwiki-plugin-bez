@@ -234,8 +234,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
         $plain = io_readFile($this->model->action->localFN('task-notification'));
         $html = io_readFile($this->model->action->localFN('task-notification', 'html'));
                 
-        $wiki_name = $this->model->conf['title'];
-        $reps = array(  'wiki_name' => $wiki_name,
+        $reps = array(
                         'who' => $this->reporter
                      );
         
@@ -258,7 +257,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
         //we must do it manually becouse Mailer uses htmlspecialchars()
         $html = str_replace('@TASK_TABLE@', $rep['task_table'], $html);
         
-        $mailer = new Mailer();
+        $mailer = new BEZ_Mailer();
         $mailer->setBody($plain, $rep, $rep, $html, false);
 
         $emails = array_map(function($user) {
@@ -266,7 +265,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
         }, $users);
 
         $mailer->to($emails);
-        $mailer->subject('[' . $wiki_name . '][BEZ] ' . $rep['subject']);
+        $mailer->subject($rep['subject']);
 
         $send = $mailer->send();
         if ($send === false) {
@@ -275,7 +274,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
         }
     }
     
-    public function mail_notify_add($issue_obj=NULL, $users=false, $replacements=array()) {
+    public function mail_notify_task_box($issue_obj=NULL, $users=false, $replacements=array()) {
         if ($issue_obj !== NULL && $issue_obj->id !== $this->issue) {
             throw new Exception('issue object id and task->issue does not match');
         }
@@ -344,7 +343,6 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
             'custom_content' => true
         );
         
-        $rep['action'] = $this->model->action->getLang('mail_task_added');
         $rep['action_color'] = '#e4f4f4';
         $rep['action_border_color'] = '#8bbcbc';
         
@@ -359,5 +357,21 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
         } else {
             $issue_obj->mail_notify($rep);
         }
+    }
+    
+    public function mail_notify_add($issue_obj=NULL, $users=false, $replacements=array()) {
+        $replacements['action'] = $this->model->action->getLang('mail_task_added');
+        $this->mail_notify_task_box($issue_obj, $users, $replacements);
+    }
+    
+    public function mail_notify_remind() {
+        $replacements = array();
+        
+        $replacements['action'] = $this->model->action->getLang('mail_task_remind');
+        //we don't want any who
+        $replacements['who_full_name'] = '';
+        
+        $users = array($this->executor);
+        $this->mail_notify_task_box(null, $users, $replacements);
     }
 }

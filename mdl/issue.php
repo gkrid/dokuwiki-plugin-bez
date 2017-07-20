@@ -369,8 +369,7 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
         $issue_link =  DOKU_URL . 'doku.php?id='.$this->model->action->id('issue', 'id', $this->id);
         $issue_unsubscribe = DOKU_URL . 'doku.php?id='.$this->model->action->id('issue', 'id', $this->id, 'action', 'unsubscribe');
         
-        $wiki_name = $this->model->conf['title'];
-        $issue_reps = array(    'wiki_name' => $wiki_name,
+        $issue_reps = array(
                                 'issue_id' => $this->id,
                                 'issue_link' => $issue_link,
                                 'issue_unsubscribe' => $issue_unsubscribe,
@@ -408,8 +407,8 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
         
         //we must do it manually becouse Mailer uses htmlspecialchars()
         $html = str_replace('@CONTENT_HTML@', $rep['content_html'], $html);
-        
-        $mailer = new Mailer();
+
+        $mailer = new BEZ_Mailer();
         $mailer->setBody($plain, $rep, $rep, $html, false);
 
         if ($emails === FALSE) {
@@ -419,8 +418,8 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
         }
 
         $mailer->to($emails);
-        $mailer->subject('[' . $wiki_name . '][BEZ] ' . $rep['subject']);
-
+        $mailer->subject($rep['subject']);
+        
         $send = $mailer->send();
         if ($send === false) {
             //this may mean empty $emails
@@ -432,7 +431,7 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
         $replacements['custom_content'] = true;
         
         $html =  '<h2 style="font-size: 1.2em;">';
-	    $html .=    '<a style="font-size:115%" href="@issue_link">#@ISSUE_ID@</a> ';
+	    $html .=    '<a style="font-size:115%" href="@ISSUE_LINK@">#@ISSUE_ID@</a> ';
             
         if ( ! empty($this->type_string)) {
             $html .= $this->type_string;
@@ -527,5 +526,12 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
             'action' => $this->model->action->getLang('mail_mail_inform_coordinator_action'),
             //'subject' => $this->model->action->getLang('mail_mail_inform_coordinator_subject') . ' #'.$this->id
         )), array($email));
+    }
+    
+    public function mail_notify_issue_inactive() {
+        $this->mail_notify($this->mail_issue_box_reps(array(
+            'who' => '',
+            'action' => $this->model->action->getLang('mail_mail_notify_issue_inactive'),
+        )));
     }
 }

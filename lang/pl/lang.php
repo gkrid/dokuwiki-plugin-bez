@@ -529,6 +529,7 @@ $lang['mail_cause_added'] = 'dodał(a) przyczynę';
 $lang['mail_task_added'] = 'dodał(a) zadanie';
 $lang['mail_task_added_programme'] = 'przypisał(a) ci zadanie';
 $lang['mail_task_reopened'] = 'otworzył(a) ponownie zadanie';
+$lang['mail_task_remind'] = 'Jutro upłynie termin realizacji zadania';
 
 
 $lang['issue_added'] = 'Problem dodany';
@@ -547,6 +548,8 @@ $lang['mail_mail_inform_coordinator_subject'] = 'Przypisanie do problemu';
 
 $lang['mail_mail_notify_change_state_action'] = 'zmienił status';
 $lang['mail_mail_notify_change_state_subject'] = 'Zmiana statusu problemu';
+
+$lang['mail_mail_notify_issue_inactive'] = 'Brak aktywności';
 
 $lang['js']['combobox_show_all_items'] = 'Pokaż wszystkie';
 $lang['js']['combobox_did_not_match'] = 'nie pasuje do żadnego elementu';
