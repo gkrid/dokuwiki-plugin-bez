@@ -319,6 +319,13 @@ bez_comment
 	color: #fff;
 	text-decoration:none !important;
 }
+
+.bds_inline_button_noborder {
+    color: #808080 !important;
+    font-size: 70%;
+    padding-left: 0 !important;
+}
+
 .bez_delete_button {
     color: #808080 !important;
     font-size: 70%;
@@ -1059,4 +1066,9 @@ input.days {
 
 #bez_invite_users button {
     display: block;
+}
+
+.bez_metadata_edit_warn {
+    border: 1px solid #f00 !important;
+    background: url('images/warn-background.png') repeat !important;
 }

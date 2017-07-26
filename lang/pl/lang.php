@@ -557,3 +557,7 @@ $lang['js']['combobox_did_not_match'] = 'nie pasuje do żadnego elementu';
 $lang['invitation_has_been_send'] = 'Zaproszenie zostało wysłane na adres';
 
 $lang['no_evaluation'] = 'Pomiń ocenę';
+
+$lang['edit_metadata'] = 'Edytuj metadane';
+
+$lang['metadata_edit_header'] = 'Edycja metadanych';

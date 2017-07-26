@@ -46,6 +46,7 @@ jQuery(function () {
 	};
 	
 	jQuery.validate({
+        form: '.bez_form',
 		lang: 'pl'
 	});
 	

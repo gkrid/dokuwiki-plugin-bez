@@ -150,6 +150,56 @@ bez.ctl.issue = function() {
 			
 		//~ });
 	}
+    
+    if (jQuery('.bez_task_metaform').length > 0) {
+        var tooltips = jQuery('.bez_task_metaform').find("input, select").tooltip({
+                position: {
+                    my: "left top",
+                    at: "right+5 top-5",
+                    collision: "none"
+                }
+            });
+        jQuery.validate({
+            form: '.bez_task_metaform',
+            inlineErrorMessageCallback:  function($input, errorMessage, config) {
+                if ($input.tooltip("instance") === undefined) {
+                    return false;
+                }
+    
+                if (errorMessage) {
+                    //customDisplayInlineErrorMessage($input, errorMessage);
+                    $input.attr('title', errorMessage);
+                    $input.tooltip("open");
+                } else {
+                    //customRemoveInlineError($input);
+                    $input.tooltip("disable");
+                }
+                return false; // prevent default behaviour
+            }
+        });
+        
+        //~ if (jQuery('input[name="close_date"]').length > 0) {
+            //~ console.log(jQuery('.bez_timebox'));
+            //~ //https://github.com/jonthornton/Datepair.js#jquery-plugin
+            //~ jQuery('.bez_timebox').datepair({
+                //~ parseDate: function (el) {
+                    //~ var val = jQuery(el).datepicker('getDate');
+                    //~ if (!val) {
+                        //~ return null;
+                    //~ }
+                    //~ var utc = new Date(val);
+                    //~ return utc && new Date(utc.getTime() + (utc.getTimezoneOffset() * 60000));
+                //~ },
+                //~ updateDate: function (el, v) {
+                    //~ jQuery(el).datepicker('setDate', new Date(v.getTime() - (v.getTimezoneOffset() * 60000)));
+                //~ }
+            //~ });
+        //~ }
+
+        jQuery("input[name=date], input[name=close_date]").datepicker({
+			dateFormat: "yy-mm-dd"
+        });
+    }
 	
 	if (jQuery('#opinion').length > 0) {
 		bez.rich_text_editor(jQuery('#opinion'), jQuery('.bez_opinion_toolbar'));

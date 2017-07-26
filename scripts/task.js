@@ -46,4 +46,36 @@ bez.ctl.task = function() {
         jQuery('#bez_hidden_issue').slideDown();
         jQuery(this).hide();
     });
+    
+    if (jQuery('.bez_task_metaform').length > 0) {
+        var tooltips = jQuery('.bez_task_metaform').find("input, select").tooltip({
+                position: {
+                    my: "left top",
+                    at: "right+5 top-5",
+                    collision: "none"
+                }
+            });
+        jQuery.validate({
+            form: '.bez_task_metaform',
+            inlineErrorMessageCallback:  function($input, errorMessage, config) {
+                if ($input.tooltip("instance") === undefined) {
+                    return false;
+                }
+    
+                if (errorMessage) {
+                    //customDisplayInlineErrorMessage($input, errorMessage);
+                    $input.attr('title', errorMessage);
+                    $input.tooltip("open");
+                } else {
+                    //customRemoveInlineError($input);
+                    $input.tooltip("disable");
+                }
+                return false; // prevent default behaviour
+            }
+        });
+        
+        jQuery("input[name=date], input[name=close_date]").datepicker({
+			dateFormat: "yy-mm-dd"
+        });
+    }
 };

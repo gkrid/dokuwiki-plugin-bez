@@ -159,7 +159,7 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 		}
 	}
 	
-	public function set_data($data) {
+	public function set_data($data, $filter=NULL) {
         $input = array('title', 'description', 'opinion', 'type', 'coordinator');
         $val_data = $this->validator->validate($data, $input); 
                 
@@ -188,6 +188,31 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
         //update virtuals
         $this->update_virtual_columns();
 	}
+    
+    public function get_meta_fields() {
+        return array('reporter', 'date', 'last_mod');
+    }
+    
+    public function set_meta($post) {
+        
+        if (isset($post['date'])) {
+            $unix = strtotime($post['date']);
+            //if $unix === false validator will catch it
+            if ($unix !== false) {
+                $post['date'] = (string)$unix;
+            }
+        }
+        
+        if (isset($post['last_mod'])) {
+            $unix = strtotime($post['last_mod']);
+            //if $unix === false validator will catch it
+            if ($unix !== false) {
+                $post['last_mod'] = (string)$unix;
+            }
+        }
+        
+        parent::set_data($post, $this->get_meta_fields());
+    }
     
     public function update_cache() {
         if ($this->model->acl->get_level() < BEZ_AUTH_ADMIN) {

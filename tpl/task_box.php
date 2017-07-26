@@ -1,15 +1,48 @@
 <a name="z<?php echo $template['task']->id ?>"></a>
 <div id="z<?php echo $template['task']->id ?>"
-	class="bds_block task <?php $template['task']->state_string	?>">
+	class="bds_block task <?php $template['task']->state_string	?>
+    <?php if (  $template['action'] === 'task_edit_metadata' &&
+            $template['tid'] === $template['task']->id) echo 'bez_metadata_edit_warn' ?>">
+    
+<?php if (  $template['action'] === 'task_edit_metadata' &&
+            $template['tid'] === $template['task']->id): ?> 
+    <?php
+        if ($nparams['bez'] === 'issue') {
+            $id = $this->id('issue', 'id', $template['issue']->id, 'action', $template['action'], 'tid', $template['tid']);
+        } else {
+             $id = $this->id('task', 'tid', $template['tid'], 'action', $template['action']);
+        }
+    ?>
+    <h1 style="color: #f00; border-color: #f00;"><?php echo $bezlang['metadata_edit_header'] ?></h1>
+	<form class="bez_task_metaform" action="?id=<?php echo $id ?>" method="POST">
+<?php endif ?>
 
 <div class="bez_timebox">
-	<span><strong><?php echo $bezlang['open'] ?>:</strong> <?php echo $helper->time2date($template['task']->date) ?></span>
+    <span>
+    <?php if (  $template['action'] === 'task_edit_metadata' &&
+            $template['tid'] === $template['task']->id &&
+            $template['task']->acl_of('date') >= BEZ_PERMISSION_CHANGE): ?>
+            <label><strong><?php echo $bezlang['open'] ?>:</strong> <input name="date" style="width:90px;" data-validation="required,date" value="<?php echo $value['date'] ?>" class="date start" /></label>
+    <?php else: ?>
+        <strong><?php echo $bezlang['open'] ?>:</strong> <?php echo $helper->time2date($template['task']->date) ?>
+    <?php endif ?>
+    </span>
 	
 	<?php if ($template['task']->state !== '0'): ?>
-		<span>
-			<strong><?php echo $template['task']->state_string ?>:</strong>
-			<?php echo $helper->time2date($template['task']->close_date) ?>
-		</span>
+    
+        <span>
+        <?php if (  $template['action'] === 'task_edit_metadata' &&
+                $template['tid'] === $template['task']->id &&
+                $template['task']->acl_of('close_date') >= BEZ_PERMISSION_CHANGE): ?>
+                <label><strong><?php echo $template['task']->state_string ?>:</strong> <input name="close_date" style="width:90px;" data-validation="required,date" value="<?php echo $value['close_date'] ?>" class="date end" /></label>
+        <?php else: ?>
+            
+                <strong><?php echo $template['task']->state_string ?>:</strong>
+                <?php echo $helper->time2date($template['task']->close_date) ?>
+            
+        <?php endif ?>
+        </span>
+        
 		<span>
 			<strong><?php echo $bezlang['report_priority'] ?>: </strong>
 			<?php echo $helper->days((int)$template['task']->close_date - (int)$template['task']->date) ?>
@@ -28,11 +61,31 @@
 <?php
     $top_row = array(
         '<strong>'.$bezlang['executor'].': </strong>' . 
-        $this->model->users->get_user_full_name($template['task']->executor),
-        
-        '<strong>'.$bezlang['reporter'].': </strong>' . 
-        $this->model->users->get_user_full_name($template['task']->reporter)
+        $this->model->users->get_user_full_name($template['task']->executor)
     );
+    if (  $template['action'] === 'task_edit_metadata' &&
+            $template['tid'] === $template['task']->id &&
+            $template['task']->acl_of('reporter') >= BEZ_PERMISSION_CHANGE) {
+                 
+        $row  = '<strong>'.$bezlang['reporter'].': </strong>';
+        $row .= '<select name="reporter" id="reporter" data-validation="required">';
+		$row .=	'	<option value="">--- '.$bezlang['select'].' ---</option>';
+		foreach ($template['users'] as $nick => $name) {
+            $row .=	'<option';
+            if ($value['reporter'] === $nick) {
+                $row .= ' selected ';
+            }
+            $row .= ' value="'.$nick.'">'.$name.'</option>';
+        }
+		$row .= '</select>';
+        
+        $top_row[] = $row;      
+    } else {
+      $top_row[] = '<strong>'.$bezlang['reporter'].': </strong>' . 
+        $this->model->users->get_user_full_name($template['task']->reporter);  
+    }
+    
+
 
     if ($template['task']->tasktype_string != '') {
         $top_row[] =
@@ -64,6 +117,17 @@
 ?>
 
 <?php echo $template['task']->task_cache ?>
+
+<?php if (	$template['action'] !== 'task_change_state' ||
+			$template['tid'] !== $template['task']->id): ?>
+	<?php if ($template['task']->state === '2'): ?>
+		<h3><?php echo $bezlang['reason'] ?></h3>
+		<?php echo $template['task']->reason_cache ?>
+	<?php elseif ($template['task']->state === '1' && $template['task']->reason != ''): ?>
+		<h3><?php echo $bezlang['evaluation'] ?></h3>
+		<?php echo $template['task']->reason_cache ?>
+	<?php endif ?>
+<?php endif ?>
 
 <?php if (	$template['action'] === 'task_change_state' &&
 			$template['tid'] === $template['task']->id): ?>
@@ -106,15 +170,37 @@
 				<?php echo $bezlang['cancel'] ?>
 		</a>
 	</form>
+<?php elseif (  $template['action'] === 'task_edit_metadata' &&
+                $template['tid'] === $template['task']->id): ?> 
+        <input type="submit" value="<?php echo $bezlang['save'] ?>">&nbsp;&nbsp;
+		<a href="?id=<?php
+            if ($nparams['bez'] === 'issue') {
+                echo $this->id('issue', 'id', $template['issue']->id).'#z'.$template['task']->id;
+            } else {
+                echo $this->id('task', 'tid', $template['task']->id);
+            }
+        ?>"
+			 class="bez_delete_button bez_link_button">
+				<?php echo $bezlang['cancel'] ?>
+		</a>
+    </form>
 <?php else: ?>
-	<?php if ($template['task']->state === '2'): ?>
-		<h3><?php echo $bezlang['reason'] ?></h3>
-		<?php echo $template['task']->reason_cache ?>
-	<?php elseif ($template['task']->state === '1' && $template['task']->reason != ''): ?>
-		<h3><?php echo $bezlang['evaluation'] ?></h3>
-		<?php echo $template['task']->reason_cache ?>
-	<?php endif ?>
 	<div class="bez_buttons">
+        <?php if (count($template['task']->changable_fields(
+                    $template['task']->get_meta_fields()
+                )) > 0): ?>
+            <a class="bds_inline_button_noborder" style="float:left;"
+				href="?id=<?php
+					if ($nparams['bez'] === 'issue') {
+						echo $helper->id('issue', 'id', $template['issue']->id, 'tid', $template['task']->id, 'action', 'task_edit_metadata');
+					} else {
+						echo $helper->id('task', 'tid', $template['task']->id, 'action', 'task_edit_metadata');
+					}
+				?>#z<?php echo $template['task']->id ?>">
+				<?php echo $bezlang['edit_metadata'] ?>
+			</a>
+        <?php endif ?>
+        
 		<?php if (	$template['task']->state === '0' &&
 					$template['task']->acl_of('state') >= BEZ_PERMISSION_CHANGE): ?>
 			<a class="bds_inline_button"

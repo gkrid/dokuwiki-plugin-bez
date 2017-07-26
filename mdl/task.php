@@ -177,7 +177,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 	}
 	
 	
-	public function set_data($post) {        
+	public function set_data($post, $filter=NULL) {        
         parent::set_data($post);
 		
 		//specjalne reguły
@@ -229,6 +229,31 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 		
 		return true;
 	}
+    
+    public function get_meta_fields() {
+        return array('reporter', 'date', 'close_date');
+    }
+    
+    public function set_meta($post) {
+        
+        if (isset($post['date'])) {
+            $unix = strtotime($post['date']);
+            //if $unix === false validator will catch it
+            if ($unix !== false) {
+                $post['date'] = (string)$unix;
+            }
+        }
+        
+        if (isset($post['close_date'])) {
+            $unix = strtotime($post['close_date']);
+            //if $unix === false validator will catch it
+            if ($unix !== false) {
+                $post['close_date'] = (string)$unix;
+            }
+        }
+        
+        parent::set_data($post, $this->get_meta_fields());
+    }
     
     private function mail_notify($replacements=array(), $users=array()) {        
         $plain = io_readFile($this->model->action->localFN('task-notification'));

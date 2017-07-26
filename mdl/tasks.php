@@ -58,7 +58,7 @@ class BEZ_mdl_Tasks extends BEZ_mdl_Factory {
         if ($task === false) {
             throw new Exception('there is no task with id: '.$id);
         }
-				
+        				
 		return $task;
 	}
 	

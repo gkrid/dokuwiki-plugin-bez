@@ -160,7 +160,23 @@ try {
                 $template['tid'] = $nparams['tid'];				
 				$task = $this->model->tasks->get_one($template['tid']);
 				$value = array('reason' => $task->reason);
-			}
+			} elseif($action === 'task_edit_metadata') {
+                
+                $task = $this->model->tasks->get_one($template['tid']);
+                
+                $template['users'] = $this->model->users->get_all();
+                    
+                if (count($_POST) > 0) {
+                    $task->set_meta($_POST);
+                    $this->model->tasks->save($task);
+                    
+                    header("Location: ?id=bez:issue:id:$issue_id#z".$task->id);
+                } else {
+                    $value = $task->get_assoc();
+                    $value['date'] = date('Y-m-d', (int)$value['date']);
+                    $value['close_date'] = date('Y-m-d', (int)$value['close_date']);
+                }
+            }
 			
 			if (count($_POST) > 0) {				
 				//ends with

@@ -101,7 +101,7 @@ class BEZ_mdl_Commcause extends BEZ_mdl_Entity {
 		$this->content_cache = $this->helper->wiki_parse($this->content);
 	}
 	
-	public function set_data($data) {        
+	public function set_data($data, $filter=NULL) {        
         $input = array('content', 'type');
         $val_data = $this->validator->validate($data, $input); 
         

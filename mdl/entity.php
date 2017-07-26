@@ -111,8 +111,8 @@ abstract class BEZ_mdl_Entity {
     private function update_virtual_columns() {
     }
     
-    public function set_data($post) {
-        $input = array_intersect($this->changable_fields(), array_keys($post), array_keys($this->validator->get_rules()));
+    public function set_data($post, $filter=NULL) {
+        $input = array_intersect($this->changable_fields($filter), array_keys($post), array_keys($this->validator->get_rules()));
        
         $val_data = $this->validator->validate($post, $input);
 		if ($val_data === false) {
@@ -124,8 +124,15 @@ abstract class BEZ_mdl_Entity {
         $this->update_virtual_columns();
     }
     
-    public function changable_fields() {
+    public function changable_fields($filter=NULL) {
        $fields = $this->model->acl->check($this);
+       
+       if ($filter !== NULL) {
+           $fields = array_filter($fields, function ($k) use ($filter) {
+                return in_array($k, $filter);
+           }, ARRAY_FILTER_USE_KEY);
+       }
+       
        return array_keys(array_filter($fields, function ($var) {
            return $var >= BEZ_PERMISSION_CHANGE;
        }));
