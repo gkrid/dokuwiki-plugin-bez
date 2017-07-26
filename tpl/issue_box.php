@@ -1,4 +1,14 @@
-<div id="bds_issue_box" class="pr<?php echo $template['issue']->priority ?>">
+<div    id="bds_issue_box"
+        class="pr<?php echo $template['issue']->priority ?>
+        <?php if (  $template['action'] === 'issue_edit_metadata') echo 'bez_metadata_edit_warn' ?>">
+
+<?php if ($template['action'] === 'issue_edit_metadata'): ?>
+
+<h1 style="color: #f00; border-bottom: 1px solid #f00;margin-bottom: 10px; margin-top: 25px;"><?php echo $bezlang['metadata_edit_header'] ?></h1>
+<?php $id = $this->id('issue', 'id', $template['issue']->id, 'action', 'issue_edit_metadata') ?>
+<form class="bez_metaform" action="?id=<?php echo $id ?>" method="POST">
+<?php endif ?>
+
 <h1>
 
 <a href="?id=<?php echo $this->id('issue', 'id', $template['issue']->id) ?>">
@@ -11,34 +21,70 @@
 <?php endif ?>
 
 (<?php echo $template['issue']->state_string ?>)
-
-<span style="color: #777; font-weight: normal; font-size: 90%;">
-    <?php echo $bezlang['coordinator'] ?>:
-    <span style="font-weight: bold;">
-        <?php if ($template['issue']->coordinator === '-proposal'): ?>
-            <i style="font-weight: normal; color: #aaa"><?php echo $bezlang['none'] ?></i>
-        <?php else: ?>
-            <?php echo $this->model->users->get_user_full_name($template['issue']->coordinator) ?>
-        <?php endif?>
-    </span>
-</span>
 </h1>
 
 <h1 id="bez_issue_title"><?php echo $template['issue']->title ?></h1>
 
 <div class="bez_timebox">
-<span><strong><?php echo $bezlang['open'] ?>:</strong> <?php echo $helper->time2date($template['issue']->date) ?></span>
-<?php if ($template['issue']->state !== '0'): ?>
-	<span>
-		<strong><?php echo $bezlang['closed'] ?>: </strong>
-		<?php echo $helper->time2date($template['issue']->last_mod) ?>
-	</span>
+    <span>
+    <?php if (  $template['action'] === 'issue_edit_metadata' &&
+            $template['issue']->acl_of('date') >= BEZ_PERMISSION_CHANGE): ?>
+            <label><strong><?php echo $bezlang['open'] ?>:</strong> <input name="date" style="width:90px;" data-validation="required,date" value="<?php echo $value['date'] ?>" class="date start" /></label>
+    <?php else: ?>
+        <strong><?php echo $bezlang['open'] ?>:</strong> <?php echo $helper->time2date($template['issue']->date) ?>
+    <?php endif ?>
+    </span>
+
+
+<?php if ($template['issue']->state !== '0'): ?>    
+    <span>
+    <?php if (  $template['action'] === 'issue_edit_metadata' &&
+            $template['issue']->acl_of('last_mod') >= BEZ_PERMISSION_CHANGE): ?>
+            <label><strong><?php echo $bezlang['closed'] ?>:</strong> <input name="last_mod" style="width:90px;" data-validation="required,date" value="<?php echo $value['last_mod'] ?>" class="date end" /></label>
+    <?php else: ?>
+        
+            <strong><?php echo $bezlang['closed'] ?>:</strong>
+            <?php echo $helper->time2date($template['issue']->last_mod) ?>
+        
+    <?php endif ?>
+    </span>
+    
 	<span>
 		<strong><?php echo $bezlang['report_priority'] ?>: </strong>
 		<?php echo $helper->days((int)$template['issue']->last_mod - (int)$template['issue']->date) ?>
 	</span>
 <?php endif ?>
 </div>
+
+<table class="bez_box_data_table">
+<tr>
+    <th><?php echo $bezlang['reporter'] ?>:</th>
+    <td>
+        <?php if (  $template['action'] === 'issue_edit_metadata' &&
+            $template['issue']->acl_of('reporter') >= BEZ_PERMISSION_CHANGE): ?>
+            
+            <select name="reporter" id="reporter" data-validation="required">
+                <option value="">--- <?php echo $bezlang['select'] ?>---</option>
+                <?php foreach ($template['users'] as $nick => $name): ?>
+                    <option <?php if ($value['reporter'] === $nick) echo 'selected' ?>
+                     value="<?php echo $nick ?>"><?php echo $name ?></option>
+                <?php endforeach ?>
+            </select>
+        <?php else: ?>
+            <?php echo $this->model->users->get_user_full_name($template['issue']->reporter) ?>
+        <?php endif ?>
+    </td>
+    
+    <th><?php echo $bezlang['coordinator'] ?>:</th>
+    <td>
+        <?php if ($template['issue']->coordinator === '-proposal'): ?>
+            <i style="font-weight: normal; color: #aaa"><?php echo $bezlang['none'] ?></i>
+        <?php else: ?>
+            <?php echo $this->model->users->get_user_full_name($template['issue']->coordinator) ?>
+        <?php endif?>
+    </td>
+</tr>
+</table>
 
 <?php echo $template['issue']->description_cache ?>
 
@@ -78,6 +124,13 @@
 		<?php echo $bezlang['cancel'] ?>
 	</a>
 </form>
+<?php elseif ($template['action'] === 'issue_edit_metadata'): ?>
+    <input type="submit" value="<?php echo $bezlang['save'] ?>">&nbsp;&nbsp;
+		<a href="?id=<?php echo $this->id('issue', 'id', $template['issue']->id) ?>"
+			 class="bez_delete_button bez_link_button">
+				<?php echo $bezlang['cancel'] ?>
+		</a>
+    </form>
 <?php else: ?>
 	<?php if ($template['issue']->opened_tasks_count > 0): ?>
 		<div class="info"><?php echo $bezlang['issue_unclosed_tasks'] ?></div>
@@ -103,7 +156,7 @@
         </a>
     <?php endif ?>
     
-	<?php if ((!isset($template['no_edit']) || $template['no_edit'] === false) &&                  $template['issue']->acl_of('state') >= BEZ_PERMISSION_CHANGE): ?> 
+	<?php if ($template['issue']->acl_of('state') >= BEZ_PERMISSION_CHANGE): ?> 
 		<?php if ($template['issue']->state !== '0'): ?>
 			<a href="?id=<?php echo $this->id('issue', 'id', $template['issue']->id, 'action', 'reopen') ?>" class="bds_inline_button">
 			 	↺ <?php echo $bezlang['issue_reopen'] ?>
@@ -121,7 +174,7 @@
 		<?php endif ?>
 	<?php endif ?> 	
 	
-	<?php if ((!isset($template['no_edit']) || $template['no_edit'] === false) &&                  count($template['issue']->changable_fields()) > 0): ?> 
+	<?php if (count($template['issue']->changable_fields()) > 0): ?> 
 		<a href="?id=<?php echo $this->id('issue_report', 'action', 'edit', 'id', $template['issue']->id) ?>" class="bds_inline_button">
 		 	✎ <?php echo $bezlang['edit'] ?>
 		</a>

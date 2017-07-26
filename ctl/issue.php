@@ -119,6 +119,19 @@ try {
             $issue->mail_notify_change_state();
             
             $redirect = true;
+        } elseif ($action === 'issue_edit_metadata') {
+            $template['users'] = $this->model->users->get_all();
+            
+            if (count($_POST) > 0) {
+                $issue->set_meta($_POST);
+                $this->model->issues->save($issue);
+                
+                $redirect = true;
+            } else {
+                $value = $issue->get_assoc();
+                $value['date'] = date('Y-m-d', (int)$value['date']);
+                $value['last_mod'] = date('Y-m-d', (int)$value['last_mod']);
+            }
  		} elseif (strpos($action, 'task') === 0) {
             $template['task'] = $this->model->tasks->
                     create_dummy_object(array('issue' => $issue->id));

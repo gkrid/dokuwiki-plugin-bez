@@ -167,6 +167,13 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 				'tasktype' => array(array('numeric'), 'NOT NULL')
 			));
 		}
+        
+        //close_date required	
+		if ($this->state !== '0') {
+			$this->validator->set_rules(array(
+				'close_date' => array(array('unix_timestamp'), 'NOT NULL')
+			));
+		}
 		
 		//we've created empty object
 		if ($this->id === NULL) {

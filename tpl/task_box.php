@@ -14,7 +14,7 @@
         }
     ?>
     <h1 style="color: #f00; border-color: #f00;"><?php echo $bezlang['metadata_edit_header'] ?></h1>
-	<form class="bez_task_metaform" action="?id=<?php echo $id ?>" method="POST">
+	<form class="bez_metaform" action="?id=<?php echo $id ?>" method="POST">
 <?php endif ?>
 
 <div class="bez_timebox">
@@ -57,64 +57,61 @@
 	<?php echo lcfirst($template['task']->action_string) ?>
 	(<?php echo lcfirst($template['task']->state_string) ?>)
 </h2>
-    
-<?php
-    $top_row = array(
-        '<strong>'.$bezlang['executor'].': </strong>' . 
-        $this->model->users->get_user_full_name($template['task']->executor)
-    );
-    if (  $template['action'] === 'task_edit_metadata' &&
+
+<table class="bez_box_data_table">
+<tr>
+    <th><?php echo $bezlang['reporter'] ?>:</th>
+    <td>
+        <?php if (  $template['action'] === 'task_edit_metadata' &&
             $template['tid'] === $template['task']->id &&
-            $template['task']->acl_of('reporter') >= BEZ_PERMISSION_CHANGE) {
-                 
-        $row  = '<strong>'.$bezlang['reporter'].': </strong>';
-        $row .= '<select name="reporter" id="reporter" data-validation="required">';
-		$row .=	'	<option value="">--- '.$bezlang['select'].' ---</option>';
-		foreach ($template['users'] as $nick => $name) {
-            $row .=	'<option';
-            if ($value['reporter'] === $nick) {
-                $row .= ' selected ';
-            }
-            $row .= ' value="'.$nick.'">'.$name.'</option>';
-        }
-		$row .= '</select>';
-        
-        $top_row[] = $row;      
-    } else {
-      $top_row[] = '<strong>'.$bezlang['reporter'].': </strong>' . 
-        $this->model->users->get_user_full_name($template['task']->reporter);  
-    }
+            $template['task']->acl_of('reporter') >= BEZ_PERMISSION_CHANGE): ?>
+            
+            <select name="reporter" id="reporter" data-validation="required">
+                <option value="">--- <?php echo $bezlang['select'] ?>---</option>
+                <?php foreach ($template['users'] as $nick => $name): ?>
+                    <option <?php if ($value['reporter'] === $nick) echo 'selected' ?>
+                     value="<?php echo $nick ?>"><?php echo $name ?></option>
+                <?php endforeach ?>
+            </select>
+        <?php else: ?>
+            <?php echo $this->model->users->get_user_full_name($template['task']->reporter) ?>
+        <?php endif ?>
+    </td>
     
+    <th><?php echo $bezlang['executor'] ?>:</th>
+    <td><?php echo $this->model->users->get_user_full_name($template['task']->executor) ?></td>
+</tr>
 
+<tr>
+    <th><?php echo $bezlang['plan_date'] ?>:</th>
+    <td>
+        <?php echo $template['task']->plan_date ?><?php if ($template['task']->all_day_event === '0'): ?>,
+            <?php echo $template['task']->start_time ?> - <?php echo $template['task']->finish_time ?>
+        <?php endif ?>
+    </td> 
+    
+    <th><?php echo $bezlang['task_type'] ?>:</th>
+    <td>
+    <?php if ($template['task']->tasktype_string === ''): ?>
+        ---
+    <?php else: ?>
+        <?php echo $template['task']->tasktype_string ?>
+    <?php endif ?>
+    </td>
+</tr>  
 
-    if ($template['task']->tasktype_string != '') {
-        $top_row[] =
-            '<strong>'.$bezlang['task_type'].': </strong>' . 
-            $template['task']->tasktype_string;
-    }
-		
-	if ($template['task']->cost != '') {
-        $top_row[] =
-            '<strong>'.$bezlang['cost'].': </strong>' . 
-            $template['task']->cost;
-    }
-	
-    //BOTTOM ROW
-    $bottom_row = array(
-        '<strong>'.$bezlang['plan_date'].': </strong>' . 
-        $template['task']->plan_date
-    );			
+<tr>
+    <th><?php echo $bezlang['cost'] ?>:</th>
+    <td colspan="3">
+    <?php if ($template['task']->cost === ''): ?>
+        ---
+    <?php else: ?>
+        <?php echo $template['task']->cost ?>
+    <?php endif ?>
+    </td>
+</tr>  
 
-	if ($template['task']->all_day_event == '0') {
-        $bottom_row[] =
-            '<strong>'.$bezlang['start_time'].': </strong>' . 
-            $template['task']->start_time;
-        $bottom_row[] =
-            '<strong>'.$bezlang['finish_time'].': </strong>' . 
-            $template['task']->finish_time;
-	}
-    echo bez_html_irrtable(array(), $top_row, $bottom_row);
-?>
+</table>
 
 <?php echo $template['task']->task_cache ?>
 

@@ -84,7 +84,9 @@ table.bez .prNone , #bds_timeline dt.prNone {
 }
 
 #bds_issue_box h1#bez_issue_title {
+/*
 	border-bottom: 1px solid #000;
+*/
 }
 
 .bez_timebox {
@@ -113,7 +115,7 @@ table.bez .prNone , #bds_timeline dt.prNone {
 	border:0;
 	background: none;
 	border-bottom: 1px solid #bbb;
-	font-size: 0.8em;
+	font-size: 90%;
 }
 
 #bds_issue_box h2 {
@@ -1071,4 +1073,12 @@ input.days {
 .bez_metadata_edit_warn {
     border: 1px solid #f00 !important;
     background: url('images/warn-background.png') repeat !important;
+}
+
+.bez_box_data_table th {
+    width: 20%;
+}
+
+.bez_box_data_table td {
+    width: 30%;
 }

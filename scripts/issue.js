@@ -151,8 +151,8 @@ bez.ctl.issue = function() {
 		//~ });
 	}
     
-    if (jQuery('.bez_task_metaform').length > 0) {
-        var tooltips = jQuery('.bez_task_metaform').find("input, select").tooltip({
+    if (jQuery('.bez_metaform').length > 0) {
+        var tooltips = jQuery('.bez_metaform').find("input, select").tooltip({
                 position: {
                     my: "left top",
                     at: "right+5 top-5",
@@ -160,7 +160,7 @@ bez.ctl.issue = function() {
                 }
             });
         jQuery.validate({
-            form: '.bez_task_metaform',
+            form: '.bez_metaform',
             inlineErrorMessageCallback:  function($input, errorMessage, config) {
                 if ($input.tooltip("instance") === undefined) {
                     return false;
@@ -196,7 +196,7 @@ bez.ctl.issue = function() {
             //~ });
         //~ }
 
-        jQuery("input[name=date], input[name=close_date]").datepicker({
+        jQuery("input[name=date], input[name=close_date], input[name=last_mod]").datepicker({
 			dateFormat: "yy-mm-dd"
         });
     }

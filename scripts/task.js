@@ -47,8 +47,8 @@ bez.ctl.task = function() {
         jQuery(this).hide();
     });
     
-    if (jQuery('.bez_task_metaform').length > 0) {
-        var tooltips = jQuery('.bez_task_metaform').find("input, select").tooltip({
+    if (jQuery('.bez_metaform').length > 0) {
+        var tooltips = jQuery('.bez_metaform').find("input, select").tooltip({
                 position: {
                     my: "left top",
                     at: "right+5 top-5",
@@ -56,7 +56,7 @@ bez.ctl.task = function() {
                 }
             });
         jQuery.validate({
-            form: '.bez_task_metaform',
+            form: '.bez_metaform',
             inlineErrorMessageCallback:  function($input, errorMessage, config) {
                 if ($input.tooltip("instance") === undefined) {
                     return false;
