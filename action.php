@@ -8,6 +8,7 @@ require_once DOKU_PLUGIN.'bez/exceptions.php';
 
 require_once DOKU_PLUGIN.'bez/inc/BEZ_Mailer.class.php';
 
+
 class action_plugin_bez extends DokuWiki_Action_Plugin {
 
 	private $helper;
@@ -17,6 +18,30 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 	private $lang_code = '';
 	
 	private $model_object = null;
+    
+    private $cookie_name = 'bez_notifications';
+    private $notifications = array();
+    
+    private function add_notification($value, $header=NULL) {
+        global $cookie_name;
+        
+        if (isset($_COOKIE[$this->cookie_name])) {
+            $notifs = unserialize($_COOKIE[$this->cookie_name]);
+        } else {
+            $notifs = array();
+        }
+        $notifs[] = array('value' => $value, 'header' => $header);
+        setcookie($this->cookie_name, serialize($notifs));
+    }
+
+    private function flush_notifications() {
+        if (!isset($_COOKIE[$this->cookie_name])) {
+            return;
+        }
+        $this->notifications = unserialize($_COOKIE[$this->cookie_name]);
+        //remove cookie
+        setcookie($this->cookie_name, serialize(array()));
+    }
 
 	/**
 	 * Register its handlers with the DokuWiki's event controller
@@ -220,6 +245,8 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 				return false;
 
 			$event->preventDefault();
+            
+            $this->flush_notifications();
 
 
 //			if	( ! ($this->helper->token_viewer() || $this->helper->user_viewer()))
@@ -292,6 +319,16 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 				}
 				echo '</div>';
 			}
+            
+            foreach ($this->notifications as $note) {
+                echo '<div class="info">';
+				if ($note['header'] === NULL) {
+					echo $note['value'];
+				} else {
+					echo '<strong>'.$note['header'].'</strong>: '.$note['value'];
+				}
+				echo '</div>';
+            }
 
 			$tpl = DOKU_PLUGIN."bez/tpl/".str_replace('/', '', $this->action).".php";
 			if (file_exists($tpl)) {

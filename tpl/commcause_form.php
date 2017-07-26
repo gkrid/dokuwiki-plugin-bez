@@ -2,7 +2,7 @@
 	$template['action'] === 'commcause_edit' ? 'commcause_edit' : 'commcause_add',
 'kid', $template['kid']) ?>
 <a id="k_"></a>
-<form action="?id=<?php echo $id ?>" method="POST">
+<form class="bez_form_blank" action="?id=<?php echo $id ?>" method="POST">
 	<input type="hidden" name="id" value="<?php echo $id ?>">
 	<div class="bez_comment bez_comment_form">
 		<div class="bez_avatar">

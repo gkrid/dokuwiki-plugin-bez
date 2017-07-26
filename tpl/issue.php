@@ -1,16 +1,3 @@
-<?php if ($template['action'] === 'unsubscribe'): ?>
-    <div class="info">
-        <?php echo $bezlang['unsubscribed_com'] ?>
-    </div>
-<?php endif ?>
-
-<?php if (isset($template['invited_email'])): ?>
-    <div class="info">
-        <?php echo $bezlang['invitation_has_been_send'] ?>:
-        <strong><?php echo $template['invited_email'] ?></strong>
-    </div>
-<?php endif ?>
-
 <?php include "issue_box.php" ?>
 
 <!-- Comments -->
@@ -61,6 +48,7 @@
 <?php if (	$template['issue']->state === '0' &&
 			!(strpos($template['action'], 'task') === 0) &&
 			$template['action'] !== 'issue_close' &&
+            $template['action'] !== 'issue_edit_metadata' &&
 			$template['kid'] === '-1'): ?> 
 
 <?php include 'commcause_form.php' ?>

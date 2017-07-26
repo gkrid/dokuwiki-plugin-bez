@@ -112,7 +112,7 @@
 <form action="?id=<?php echo $id ?>" method="POST" class="bez_form">
 	<input type="hidden" name="id" value="<?php echo $id ?>">
 	<div class="bez_opinion_toolbar"></div>
-	<textarea name="opinion" id="opinion" class="edit"><?php echo $value['opinion'] ?></textarea>
+	<textarea name="opinion" id="opinion" class="edit" data-validation="required"><?php echo $value['opinion'] ?></textarea>
 	<?php if ($template['issue']->assigned_tasks_count > 0): ?>
 		<input type="hidden" name="state" value="1" />
 		<input type="submit" value="<?php echo $bezlang['close_issue'] ?>">

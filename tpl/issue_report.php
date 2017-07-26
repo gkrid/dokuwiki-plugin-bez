@@ -1,7 +1,7 @@
 <div class="bds_block">
 
 <?php $id = $this->id('issue_report', 'id', $template['issue']->id, 'action', $template['form_action']) ?>
-<form action="?id=<?php echo $id ?>" method="POST">
+<form class="bez_form" action="?id=<?php echo $id ?>" method="POST">
 
 <input type="hidden" name="id" value="<?php echo $id ?>">
 
@@ -34,7 +34,7 @@
 <div class="row">
 <label for="coordinator"><?php echo $bezlang['coordinator'] ?>:</label>
 <span>
-<select name="coordinator" id="coordinator">
+<select name="coordinator" id="coordinator" data-validation="required">
     <option value="">--- <?php echo $bezlang['select'] ?>---</option>
 <?php foreach ($template['nicks'] as $nick => $name): ?>
 	<option <?php if ($value['coordinator'] === $nick) echo 'selected' ?>
@@ -48,7 +48,7 @@
 <div class="row">
 <label for="title"><?php echo $bezlang['title'] ?>:</label>
 <span>
-<input name="title" id="title" value="<?php echo $value['title'] ?>">
+<input name="title" id="title" value="<?php echo $value['title'] ?>" data-validation="required">
 </span>
 </div>
 
@@ -56,7 +56,7 @@
 <label for="description"><?php echo $bezlang['description'] ?>:</label>
 <span>
 	<div class="bez_description_toolbar"></div>
-	<textarea name="description" id="description" class="edit"><?php echo $value['description'] ?></textarea>
+	<textarea name="description" id="description" class="edit" data-validation="required"><?php echo $value['description'] ?></textarea>
 </span>
 </div>
 <?php if ($template['form_action'] === 'update'): ?>
@@ -77,7 +77,7 @@
 			</label>
 			<span>
 				<div class="bez_opinion_toolbar"></div>
-				<textarea name="opinion" id="opinion" class="edit"><?php echo $value['opinion'] ?></textarea>
+				<textarea name="opinion" id="opinion" class="edit" data-validation="required"><?php echo $value['opinion'] ?></textarea>
 			</span>
 		</div>
 	<?php endif ?>

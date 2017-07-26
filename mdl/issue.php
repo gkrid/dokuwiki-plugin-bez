@@ -142,6 +142,12 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
             }
 			
 		}
+        //close_date required	
+		if ($this->state !== '0') {
+			$this->validator->set_rules(array(
+				'last_mod' => array(array('unix_timestamp'), 'NOT NULL')
+			));
+		}
 		
 		
 		if ($this->participants !== NULL) {

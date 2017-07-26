@@ -9,17 +9,38 @@ try {
     
     //new way
     $issue = $this->model->issues->get_one($issue_id);
-    
-    //$issue = $this->model->issues->get_one($issue_id);
-    //~ $template['commcause_action'] = 'commcause_add';
-    //placeholder for adding new records
-    //~ $template['commcause_id'] = '-1';
 
-    //~ $template['task_action'] = 'task_correction_add';
+
     $template['tid'] = isset($nparams['tid']) ? $nparams['tid'] : '-1';
     $template['kid'] = isset($nparams['kid']) ? $nparams['kid'] : '-1';
     $template['state'] = isset($nparams['state']) ? $nparams['state'] : '-1';
     $template['action'] = isset($nparams['action']) ? $nparams['action'] : '-default';
+        
+    $template['issue'] = $issue;
+    $template['commcauses'] = $this->model->commcauses->get_all(
+        array('issue' => $issue_id)
+    );
+    
+    $template['commcause'] = $this->model->commcauses->
+                            create_dummy_object(array('issue' => $issue->id));
+    
+    $template['corrections'] = $this->model->tasks->get_all(array(
+        'issue' => $issue_id,
+        'action' => 0,
+    ));
+
+    $template['commcauses_tasks'] = array();
+    foreach ($this->model->commcauses->get_causes_ids($issue_id) as $kid) {
+        $template['commcauses_tasks'][$kid] = $this->model->tasks->get_all(array(
+            'cause' => $kid,
+        ));
+    }
+
+
+    $template['users'] = $this->model->users->get_all();
+
+    //remove userts that are subscribents already
+    $template['users_to_invite'] = array_diff_key($template['users'], $issue->get_subscribents());
 
 
 	$action = '';
@@ -61,6 +82,10 @@ try {
 			$issue->remove_subscribent($INFO['client']);
 			$this->model->issues->save($issue);
             
+            $this->add_notification($bezlang['unsubscribed_com']);
+                
+            $redirect = true;
+            
         } elseif ($action === 'invite') {
             $client = $_POST['client'];
             
@@ -69,7 +94,10 @@ try {
             if ($state === true) {
                 $this->model->issues->save($issue);
                 $issue->mail_notify_invite($client);
-                $template['invited_email'] = $this->model->users->get_user_email($client);
+                
+                $this->add_notification($this->model->users->get_user_email($client), $bezlang['invitation_has_been_send']);
+                
+                $redirect = true;
             } 
 			
 		} elseif ($action === 'commcause_delete') {
@@ -120,8 +148,6 @@ try {
             
             $redirect = true;
         } elseif ($action === 'issue_edit_metadata') {
-            $template['users'] = $this->model->users->get_all();
-            
             if (count($_POST) > 0) {
                 $issue->set_meta($_POST);
                 $this->model->issues->save($issue);
@@ -176,8 +202,6 @@ try {
 			} elseif($action === 'task_edit_metadata') {
                 
                 $task = $this->model->tasks->get_one($template['tid']);
-                
-                $template['users'] = $this->model->users->get_all();
                     
                 if (count($_POST) > 0) {
                     $task->set_meta($_POST);
@@ -253,32 +277,7 @@ try {
 			header("Location: ?id=bez:issue:id:$issue_id$anchor");
 		}
 	}
-    
-    $template['issue'] = $issue;
-    $template['commcauses'] = $this->model->commcauses->get_all(
-        array('issue' => $issue_id)
-    );
-    
-    $template['commcause'] = $this->model->commcauses->
-                            create_dummy_object(array('issue' => $issue->id));
-    
-    $template['corrections'] = $this->model->tasks->get_all(array(
-        'issue' => $issue_id,
-        'action' => 0,
-    ));
 
-    $template['commcauses_tasks'] = array();
-    foreach ($this->model->commcauses->get_causes_ids($issue_id) as $kid) {
-        $template['commcauses_tasks'][$kid] = $this->model->tasks->get_all(array(
-            'cause' => $kid,
-        ));
-    }
-
-
-    $template['users'] = $this->model->users->get_all();
-
-    //remove userts that are subscribents already
-    $template['users_to_invite'] = array_diff_key($template['users'], $issue->get_subscribents());
     
 } catch (ValidationException $e) {
 	$errors = $e->get_errors();
