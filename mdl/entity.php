@@ -35,9 +35,14 @@ abstract class BEZ_mdl_Entity {
 	abstract public function get_columns();
 	abstract public function get_virtual_columns();
 	
-	public function get_assoc() {
+	public function get_assoc($filter=NULL) {
 		$assoc = array();
 		$columns = array_merge($this->get_columns(), $this->get_virtual_columns());
+        
+        if ($filter !== NULL) {
+            $columns = array_intersect($columns, $filter);
+        }
+        
 		foreach ($columns as $col) {
 			$assoc[$col] = $this->$col;
 		}
@@ -66,6 +71,7 @@ abstract class BEZ_mdl_Entity {
         $dt = new DateTime($datetime);
         return $dt->format('j') . ' ' .
                 $this->model->action->getLang('mon'.$dt->format('n').'_a') . ' ' .
+                ($dt->format('Y') === date('Y') ? '' : $dt->format('Y') . ' ') .
                 $this->model->action->getLang('at_hour') . ' ' .
                 $dt->format('G:i');
     }

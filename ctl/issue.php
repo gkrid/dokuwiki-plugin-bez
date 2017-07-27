@@ -130,7 +130,25 @@ try {
 				
 				$anchor = 'k'.$commcause->id;
 				$redirect = true;
-			}			
+			}
+            
+        } elseif ($action === 'commcause_edit_metadata') {
+            if (count($_POST) === 0) {
+				$commcause = $this->model->commcauses->get_one($template['kid']);
+				$template['kid'] = $commcause->id;
+				$value = $commcause->get_assoc(array('datetime', 'reporter'));
+                $unix = strtotime($value['datetime']);
+                $value['date'] = date('Y-m-d', $unix);
+                $value['time'] = date('H:i', $unix);
+			} else {
+				$commcause = $this->model->commcauses->get_one($template['kid']);
+                $_POST['datetime'] = $_POST['date']. ' '.$_POST['time'];
+				$commcause->set_meta($_POST);
+				$this->model->commcauses->save($commcause);
+				
+				$anchor = 'k'.$commcause->id;
+				$redirect = true;
+			}
 		} elseif ($action === 'issue_close') {
 			$value['opinion'] = $issue->opinion;
 		} elseif ($action == 'issue_close_confirm') {

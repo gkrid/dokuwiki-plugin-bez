@@ -83,7 +83,7 @@
 </tr>
 
 <tr>
-    <th><?php echo $bezlang['plan_date'] ?>:</th>
+    <th style="white-space: nowrap;"><?php echo $bezlang['plan_date'] ?>:</th>
     <td>
         <?php echo $template['task']->plan_date ?><?php if ($template['task']->all_day_event === '0'): ?>,
             <?php echo $template['task']->start_time ?> - <?php echo $template['task']->finish_time ?>
@@ -92,7 +92,7 @@
     
     <th><?php echo $bezlang['task_type'] ?>:</th>
     <td>
-    <?php if ($template['task']->tasktype_string === ''): ?>
+    <?php if ($template['task']->tasktype_string == ''): ?>
         ---
     <?php else: ?>
         <?php echo $template['task']->tasktype_string ?>

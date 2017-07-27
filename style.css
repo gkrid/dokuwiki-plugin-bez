@@ -324,8 +324,12 @@ bez_comment
 
 .bds_inline_button_noborder {
     color: #808080 !important;
-    font-size: 70%;
+    font-size: 10px;
     padding-left: 0 !important;
+}
+
+.bds_inline_button_noborder:hover {
+    text-decoration:underline !important;
 }
 
 .bez_delete_button {

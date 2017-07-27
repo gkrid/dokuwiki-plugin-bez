@@ -392,7 +392,7 @@ $lang['cost_of_open'] = 'Koszt otwartych';
 
 $lang['average_of_close'] = 'Średni czas zamknięcia';
 
-$lang['plan_date'] = 'Planowana data wykonania';
+$lang['plan_date'] = 'Plan';
 $lang['all_day_event'] = 'Zdarzenie całodniowe';
 $lang['start_time'] = 'Godzina rozpoczęcia';
 $lang['finish_time'] = 'Godzina zakończenia';
@@ -420,7 +420,7 @@ $lang ['task_plan_nav'] = "Plan";
 
 $lang ['month'] = "Miesiąc";
 
-$lang ['report_date'] = "Planowana data wykonania";
+$lang ['report_date'] = "Plan";
 $lang ['close_date'] = "Data zamknięcia";
 $lang ['reject_date'] = "Data odrzucenia";
 

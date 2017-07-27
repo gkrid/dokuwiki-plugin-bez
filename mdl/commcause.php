@@ -114,6 +114,14 @@ class BEZ_mdl_Commcause extends BEZ_mdl_Entity {
 		$this->content_cache = $this->helper->wiki_parse($this->content);
     }
     
+    public function get_meta_fields() {
+        return array('reporter', 'datetime');
+    }
+    
+    public function set_meta($post) {
+        parent::set_data($post, $this->get_meta_fields());
+    }
+    
     public function mail_notify_add($issue_obj) {
         if ($issue_obj->id !== $this->issue) {
             throw new Exception('issue object id and commcause->issue does not match');
