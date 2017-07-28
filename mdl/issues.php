@@ -78,8 +78,6 @@ class BEZ_mdl_Issues extends BEZ_mdl_Factory {
 	
 	public function get_all($filters=array()) {
 		list($where_q, $execute) = $this->build_where($filters);
-        
-        var_dump($where_q, $execute);
 		
 		$q = $this->select_query . $where_q;
 			
