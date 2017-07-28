@@ -10,6 +10,11 @@ try {
     $task = $this->model->tasks->get_one($template['tid']);  
     $template['task'] = $task;
     
+    if ($task->issue == '') {
+        //remove userts that are subscribents already
+        $template['users_to_invite'] = array_diff_key($this->model->users->get_all(), $task->get_subscribents());
+    }
+    
  
     if ($task->cause !== NULL && $task->cause !== '') {
         $template['commcause'] = $this->model->commcauses->get_one($task->cause);
@@ -36,6 +41,9 @@ try {
                 $template['issue']->update_last_activity(); 
                 $this->model->issues->save($template['issue']);
             }
+            
+            $task->mail_notify_subscribents($template['issue'],
+                        array('action' => $bezlang['mail_task_change_state']));
 
             $redirect = true;
         } else {
@@ -50,18 +58,9 @@ try {
             $this->model->issues->save($template['issue']);
         }
         
-        $notify_users = array();
-        if ($task->reporter !== $this->model->user_nick) {
-            //prevent duplicates
-            $notify_users[$task->reporter] = $task->reporter;
-        }
-        if ($task->executor !== $this->model->user_nick) {
-            //prevent duplicates
-            $notify_users[$task->executor] = $task->executor;
-        }
-        
-        $task->mail_notify_add($template['issue'], $notify_users,
-                                array('action' => $bezlang['mail_task_reopened']));
+        $task->mail_notify_subscribents($template['issue'],
+                        array('action' => $bezlang['mail_task_reopened']));
+                        
         
         $redirect = true;
     } elseif($template['action'] === 'task_edit') {
@@ -87,11 +86,39 @@ try {
 
             $this->model->tasks->save($task);
 
-            header("Location: ?id=bez:task:tid:".$task->id);
+            $redirect = true;
         } else {
             $value = $task->get_assoc();
         }
         
+    } elseif ($template['action'] === 'subscribe') {
+			$task->add_subscribent($INFO['client']);
+			$this->model->tasks->save($task);
+			
+            header("Location: ?id=bez:task:tid:".$task->id);
+            
+    } elseif ($template['action'] === 'unsubscribe') {
+			$task->remove_subscribent($INFO['client']);
+			$this->model->tasks->save($task);
+            
+            $this->add_notification($bezlang['unsubscribed_task_com']);
+            
+            $redirect = true;
+            
+    } elseif ($template['action'] === 'invite') {
+            $client = $_POST['client'];
+            
+			$state = $task->add_subscribent($client);
+            //user wasn't subscribent
+            if ($state === true) {
+                $this->model->tasks->save($task);
+                $task->mail_notify_invite($client);
+                
+                $this->add_notification($this->model->users->get_user_email($client), $bezlang['invitation_has_been_send']);
+                
+                $redirect = true;
+            } 
+            
     } elseif($template['action'] === 'task_edit_metadata') {
         $template['users'] = $this->model->users->get_all();
             
@@ -99,7 +126,7 @@ try {
             $task->set_meta($_POST);
             $this->model->tasks->save($task);
             
-            header("Location: ?id=bez:task:tid:".$task->id);
+            $redirect = true;
         } else {
             $value = $task->get_assoc();
             $value['date'] = date('Y-m-d', (int)$value['date']);

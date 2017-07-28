@@ -23,6 +23,8 @@ class PermissionDeniedException extends Exception {
     
 }
 
-class DBException extends Exception {
+
+
+class ConsistencyViolationException extends Exception {
     
 }

@@ -196,8 +196,8 @@ try {
 				$issue->update_last_activity();
 				$this->model->issues->save($issue);
                 
-                $task->mail_notify_add($issue, false,
-                                array('action' => $bezlang['mail_task_reopened']));
+                $task->mail_notify_subscribents($template['issue'],
+                        array('action' => $bezlang['mail_task_reopened']));
 					
 				$redirect = true;
 				$anchor = 'z'.$task->id;
@@ -270,6 +270,9 @@ try {
 					
 					$issue->update_last_activity();
 					$this->model->issues->save($issue);
+                    
+                    $task->mail_notify_subscribents($template['issue'],
+                        array('action' => $bezlang['mail_task_change_state']));
 					
 					$anchor = 'z'.$task->id;
 					$redirect = true;

@@ -28,8 +28,12 @@ try {
         }
         
         $task->set_data($_POST);
-        //update tasktype for admins
-
+        
+        if ($task->issue == '') {
+            $task->add_subscribent($task->reporter);
+            $task->add_subscribent($task->executor);
+        }
+        
         $tid = $this->model->tasks->save($task);
 
         

@@ -151,7 +151,8 @@ class BEZ_mdl_Acl {
                 'finish_time'    => BEZ_PERMISSION_NONE,
                 'issue'          => BEZ_PERMISSION_NONE,
                 'task_cache'     => BEZ_PERMISSION_NONE,
-                'reason_cache'   => BEZ_PERMISSION_NONE
+                'reason_cache'   => BEZ_PERMISSION_NONE,
+                'subscribents'   => BEZ_PERMISSION_NONE
         );
         
         if ($this->level >= BEZ_AUTH_VIEWER) {
@@ -205,6 +206,11 @@ class BEZ_mdl_Acl {
             $acl['reason'] = BEZ_PERMISSION_CHANGE;
             $acl['state'] = BEZ_PERMISSION_CHANGE;            
         }
+        
+        //reporters can add subscribents to programme task
+        if ($task->reporter === $this->model->user_nick) {
+            $acl['subscribents'] = BEZ_PERMISSION_CHANGE;          
+        }
                
         if ($task->coordinator === $this->model->user_nick ||
             ($task->issue === '' && $this->level >= BEZ_AUTH_LEADER)) {
@@ -224,6 +230,10 @@ class BEZ_mdl_Acl {
             $acl['all_day_event'] = BEZ_PERMISSION_CHANGE;
             $acl['start_time'] = BEZ_PERMISSION_CHANGE;
             $acl['finish_time'] = BEZ_PERMISSION_CHANGE;
+            
+                            
+            //leaders can add subscribents to programme tasks
+            $acl['subscribents'] = BEZ_PERMISSION_CHANGE;
         }
         
         if ($task->issue === '' &&

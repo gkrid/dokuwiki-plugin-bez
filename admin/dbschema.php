@@ -1243,6 +1243,31 @@ function do_issues_remove_priority() {
 		}
         
     }
+    
+    function check_add_subscribents_to_tasks() {
+		$q = "PRAGMA table_info(tasks)";
+		$a = $this->connect->fetch_assoc($q);
+		$entity = false;
+		foreach ($a as $r) 
+			if ($r['name'] == 'subscribents')
+				return true;
+		return false;
+	}
+	
+	function do_add_subscribents_to_tasks() {
+		$q = "ALTER TABLE tasks ADD COLUMN subscribents TEXT NULL";
+		$this->connect->errquery($q);
+        
+        $tasks = $this->connect->fetch_assoc("SELECT * FROM tasks");
+		foreach($tasks as $task) {
+			$id = $task['id'];
+            $reporter = $task['reporter'];
+            $executor = $task['executor'];
+           
+            $q = "UPDATE tasks SET subscribents='$reporter,$executor' WHERE id = $id";
+            $this->connect->errquery($q); 
+		}
+	}
 	
 	private $actions = array(
 				array('Słownik kategorii przyczyn', 'check_rootcause', 'do_rootcause'),
@@ -1278,7 +1303,9 @@ function do_issues_remove_priority() {
 				array('Dodaj subskrybentów do problemu.',
 				'check_add_subscribents_to_issue', 'do_add_subscribents_to_issue'),
                 array('Zaktualizuj odrzucone po staremu',
-				'check_rejected_old_way', 'do_rejected_old_way')
+				'check_rejected_old_way', 'do_rejected_old_way'),
+                array('Dodaj subskrybentów do zadań',
+				'check_add_subscribents_to_tasks', 'do_add_subscribents_to_tasks')
 		);
     
     function get_actions() {

@@ -325,7 +325,7 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 				if ($note['header'] === NULL) {
 					echo $note['value'];
 				} else {
-					echo '<strong>'.$note['header'].'</strong>: '.$note['value'];
+					echo $note['header'].': <strong>'.$note['value'].'</strong>';
 				}
 				echo '</div>';
             }

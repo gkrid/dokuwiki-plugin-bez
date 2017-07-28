@@ -1,3 +1,8 @@
+<?php if ($template['task']->issue == ''): ?>
+    <div class="bez_comments">
+    <div class="bez_left_col">
+<?php endif ?>
+
 <a name="z<?php echo $template['task']->id ?>"></a>
 <div id="z<?php echo $template['task']->id ?>"
 	class="bds_block task <?php $template['task']->state_string	?>
@@ -266,3 +271,76 @@
 
 </div>
 
+<?php if ($template['task']->issue == ''): ?>
+</div>
+
+<div class="bez_right_col" style="position:relative; top: -15px;">
+	
+<div class="bez_box bez_subscribe_box">
+<h2><?php echo $bezlang['norifications'] ?></h2>
+<?php if ($template['task']->is_subscribent()): ?>
+	<a href="?id=<?php echo $this->id('task', 'tid', $template['task']->id, 'action', 'unsubscribe') ?>" class="bez_subscribe_button"><span class="bez_awesome">&#xf1f6;</span>&nbsp;&nbsp;<?php echo $bezlang['unsubscribe'] ?></a>
+	<p><?php echo $bezlang['subscribed_info'] ?></p>
+<?php else: ?>
+	<a href="?id=<?php echo $this->id('task', 'tid', $template['task']->id, 'action', 'subscribe') ?>" class="bez_subscribe_button"><span class="bez_awesome">&#xf0f3;</span>&nbsp;&nbsp;<?php echo $bezlang['subscribe'] ?></a>
+	<p><?php echo $bezlang['not_subscribed_info'] ?></p>
+<?php endif ?>
+
+</div>
+
+<div class="bez_box">
+<h2><?php echo $bezlang['comment_participants'] ?></h2>
+<ul id="issue_participants">
+<?php foreach ($template['task']->get_participants() as $nick => $participant): ?>
+	<li><a href="<?php echo $helper->mailto($this->model->users->get_user_email($nick),
+		$bezlang['task'].': #z'.$template['task']->id,
+		DOKU_URL . 'doku.php?id='.$this->id('task', 'tid', $template['task']->id)) ?>"  title="<?php echo $nick ?>">
+		<span class="bez_name"><?php echo $participant ?></span>
+		<span class="bez_icons">
+		<?php if($template['task']->reporter === $nick): ?>
+			<span class="bez_awesome"
+				title="<?php echo $bezlang['reporter'] ?>">
+				&#xf058;
+			</span>
+		<?php endif ?>
+		<?php if($template['task']->executor === $nick): ?>
+			<span class="bez_awesome"
+				title="<?php echo $bezlang['executor'] ?>">
+				&#xf073;
+			</span>
+		<?php endif ?>
+        <?php if($template['task']->is_subscribent($nick)): ?>
+            <span class="bez_awesome"
+                title="<?php echo $bezlang['subscribent'] ?>">
+                &#xf0e0;
+            </span>
+        <?php endif ?>
+		</span>
+	</a></li>
+<?php endforeach ?>
+</ul>
+
+<?php if ($template['task']->acl_of('subscribents') >= BEZ_PERMISSION_CHANGE): ?>
+    <h2><?php echo $bezlang['issue_invite_header'] ?></h2>
+    <form action="?id=<?php echo $this->id('task', 'tid', $template['task']->id, 'action', 'invite') ?>" method="post" id="bez_invite_users_form">
+    <div id="bez_invite_users" class="ui-widget">
+        <select name="client">
+            <option value="">--- <?php echo $bezlang['select'] ?> ---</option>
+            <?php foreach ($template['users_to_invite'] as $nick => $name): ?>
+                <option value="<?php echo $nick ?>"><?php echo $name ?></option>
+            <?php endforeach ?>
+        </select>
+    </div>
+    <button class="bez_subscribe_button"><?php echo $bezlang['issue_invite_button'] ?></button>
+    </form>
+<?php endif ?>
+
+
+</div>
+
+
+</div>
+
+</div>
+
+<?php endif ?>

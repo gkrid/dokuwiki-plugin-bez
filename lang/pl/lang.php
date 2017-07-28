@@ -561,3 +561,8 @@ $lang['no_evaluation'] = 'Pomiń ocenę';
 $lang['edit_metadata'] = 'Edytuj metadane';
 
 $lang['metadata_edit_header'] = 'Edycja metadanych';
+
+$lang['unsubscribed_task_com'] = 'Zostałeś wypisany z tego zadania i nie będziesz już otrzymywał powiadomień jego dotyczących.';
+
+$lang['mail_task_invite'] = 'dopisał(a) cię jako subskrybenta w zadaniu';
+$lang['mail_task_change_state'] = 'zmienił status w zadaniu';

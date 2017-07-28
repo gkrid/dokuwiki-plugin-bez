@@ -10,7 +10,7 @@ class BEZ_mdl_Tasks extends BEZ_mdl_Factory {
 	
 	public function __construct($model) {
 		parent::__construct($model);
-		$this->select_query = "SELECT tasks.*,
+		$this->select_query = "SELECT tasks.*, 
                 tasktypes.".$this->model->conf['lang']." AS tasktype_string,
 
                 (CASE
@@ -54,7 +54,7 @@ class BEZ_mdl_Tasks extends BEZ_mdl_Factory {
 			
 		$task = $sth->fetchObject("BEZ_mdl_Task",
 					array($this->model));
-        
+                            
         if ($task === false) {
             throw new Exception('there is no task with id: '.$id);
         }

@@ -37,7 +37,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 	//if errors = true we cannot save task
 	
 	//meta
-	protected $reporter, $date, $close_date;
+	protected $reporter, $date, $close_date, $subscribents;
 	
 	//acl - set only on creation
 	protected $issue;
@@ -49,7 +49,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 	protected $state;
 	
 	//virtual
-	protected $coordinator, $action, $issue_state, $state_string, $action_string, $tasktype_string;
+	protected $coordinator, $action, $issue_state, $state_string, $action_string, $tasktype_string, $subscribents_array = array();
     
     public function get_table_name() {
         return 'tasks';
@@ -60,11 +60,12 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 					'executor', 'tasktype', 'issue',
 					'task', 'plan_date', 'cost', 'all_day_event',
 					'start_time', 'finish_time',
-					'state', 'reason', 'task_cache', 'reason_cache');
+					'state', 'reason', 'task_cache', 'reason_cache',
+                    'subscribents');
 	}
 	
 	public function get_virtual_columns() {
-		return array('coordinator', 'action', 'issue_state', 'state_string', 'action_string', 'tasktype_string');
+		return array('coordinator', 'action', 'issue_state', 'state_string', 'action_string', 'tasktype_string', 'subscribents_array');
 	}
     
     private function state_string() {
@@ -174,7 +175,15 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 				'close_date' => array(array('unix_timestamp'), 'NOT NULL')
 			));
 		}
-		
+        
+        //explode subscribents
+        if ($this->subscribents !== NULL) {
+			$exp_part = explode(',', $this->subscribents);
+			foreach ($exp_part as $subscribent) {
+				$this->subscribents_array[$subscribent] = $subscribent;
+			}
+		}
+        		
 		//we've created empty object
 		if ($this->id === NULL) {
             //throws ValidationException
@@ -262,11 +271,84 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
         parent::set_data($post, $this->get_meta_fields());
     }
     
+    public function is_subscribent($user=NULL) {
+		if ($user === NULL) {
+			$user = $this->model->user_nick;
+		}
+		if (in_array($user, $this->subscribents_array)) {
+			return true;
+		}
+		return false;
+	}
+    
+    public function get_subscribents() {
+        return $this->subscribents_array;
+    }
+    
+    public function get_participants() {
+        $subscribents = array_merge(array($this->reporter, $this->executor),
+                            $this->subscribents_array);
+        $full_names = array();
+        foreach ($subscribents as $par) {
+			$name = $this->model->users->get_user_full_name($par);
+			if ($name == '') {
+				$full_names[$par] = $par;
+			} else {
+				$full_names[$par] = $name;
+			}
+		}
+        ksort($full_names);
+        return $full_names;
+    }
+    
+    public function remove_subscribent($subscribent) {
+		if ($subscribent !== $this->model->user_nick &&
+            $this->acl_of('subscribents') < BEZ_PERMISSION_CHANGE) {
+			throw new PermissionDeniedException();
+		}
+        
+        if ($this->issue != '') {
+            throw new ConsistencyViolationException('cannot modify subscribents from issue related tasks');
+        }
+        
+        if (!isset($this->subscribents_array[$subscribent])) {
+            throw new ConsistencyViolationException('user '.$subscribent.' wasn\'t subscriber so cannot be removed');
+        }
+        
+		unset($this->subscribents_array[$subscribent]);
+		$this->subscribents = implode(',', $this->subscribents_array);
+	}
+    
+    public function add_subscribent($subscribent) {
+		if ($subscribent !== $this->model->user_nick &&
+            $this->acl_of('subscribents') < BEZ_PERMISSION_CHANGE) {
+			throw new PermissionDeniedException();
+		}
+        
+        if ($this->issue != '') {
+            throw new ConsistencyViolationException('cannot add subscribents to issue related tasks');
+        }
+        
+		if ($this->model->users->exists($subscribent) &&
+            !in_array($subscribent, $this->subscribents_array)) {
+			$this->subscribents_array[$subscribent] = $subscribent;
+			$this->subscribents = implode(',', $this->subscribents_array);
+            
+            return true;
+		}
+        
+        return false;
+	}
+    
     private function mail_notify($replacements=array(), $users=array()) {        
         $plain = io_readFile($this->model->action->localFN('task-notification'));
         $html = io_readFile($this->model->action->localFN('task-notification', 'html'));
-                
+        
+         $task_link =  DOKU_URL . 'doku.php?id='.$this->model->action->id('task', 'tid', $this->id);
+        
         $reps = array(
+                        'task_id' => $this->id,
+                        'task_link' => $task_link,
                         'who' => $this->reporter
                      );
         
@@ -391,6 +473,14 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
         }
     }
     
+    public function mail_notify_subscribents($issue_obj=NULL, $replacements=array()) {
+        $notify_users = $this->get_subscribents();
+        //don't notify current user
+        unset($notify_users[$this->model->user_nick]);
+        
+        $this->mail_notify_task_box($issue_obj, $notify_users, $replacements);
+    }
+    
     public function mail_notify_add($issue_obj=NULL, $users=false, $replacements=array()) {
         $replacements['action'] = $this->model->action->getLang('mail_task_added');
         $this->mail_notify_task_box($issue_obj, $users, $replacements);
@@ -404,6 +494,15 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
         $replacements['who_full_name'] = '';
         
         $users = array($this->executor);
+        $this->mail_notify_task_box(null, $users, $replacements);
+    }
+    
+    public function mail_notify_invite($client) {       
+        $replacements = array();
+        
+        $replacements['action'] = $this->model->action->getLang('mail_task_invite');
+        
+        $users = array($client);
         $this->mail_notify_task_box(null, $users, $replacements);
     }
 }

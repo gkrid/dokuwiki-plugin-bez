@@ -526,3 +526,5 @@ $lang['no_evaluation'] = 'No evaluation';
 $lang['edit_metadata'] = 'Edit metadata';
 
 $lang['metadata_edit_header'] = 'Edit metadata';
+
+$lang['unsubscribed_task_com'] = 'You\'ve been unsubscribed from this task.';
