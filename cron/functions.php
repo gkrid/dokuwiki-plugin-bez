@@ -20,7 +20,7 @@ $action = new class extends DokuWiki_Action_Plugin {
     }
 };
 
-//~ $model = new BEZ_mdl_Model($auth, $dw_user, $action, $conf);
+$model = new BEZ_mdl_Model($auth, $dw_user, $action, $conf);
 
 function send_inactive_issue() {
     global $model;
