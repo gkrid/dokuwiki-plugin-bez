@@ -1,4 +1,0 @@
-Zadanie,Status,Typ zadania,Wykonawca,Koszt,Przyczyna (zamknięcia/odrzucenia),Zgłąszający,Data zgłoszenia,Data zamknięcia,Id przyczyny,Planowana Data Wykonania,Zdarzenie całodniowe,Godzina rozpoczęcia,Godzina zakończenia,Id Problemu
-To jest zadanie całodniowe,0,1,jan,100,,root,2016-09-01,,,2016-09-03,1,,,
-To jest zadanie zamknięte,1,,roch,,Wszysko gotowe.,jan,2016-09-02,2016-09-01,,2016-09-03,1,,,60
-To jest zadanie odrzucone,2,,root,,Nie ma sensu.,roch,2016-09-03,2016-09-02,41,2016-09-03,0,11:00,15:00,61
