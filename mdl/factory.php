@@ -21,7 +21,7 @@ abstract class BEZ_mdl_Factory {
 			if (is_array($value)) {
                 $operators = array('!=', '<', '>', '<=', '>=');
 				if (in_array($value[0], $operators)) {
-					$operator = '!=';
+					$operator = $value[0];
 					$value = $value[1];
 				} else {
                     throw new Exception('unknown operator: '.$value[0]);
