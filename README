@@ -5,6 +5,7 @@ Wersja 2017-07-31:
     - subskrybenci do zadań #119
     - powiadomienia na temat zmiany statusu zadania
     - fix #129
+    - notyfikacje nie przychodzą do użytkownika który wykonał akcję
 
 Wersja 2017-06-24c:
     - poprawiono: #109, #131

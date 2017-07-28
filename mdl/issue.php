@@ -443,9 +443,11 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
         $mailer->setBody($plain, $rep, $rep, $html, false);
 
         if ($emails === FALSE) {
+            $notify_users = $this->subscribents_array;
+            unset($notify_users[$this->model->user_nick]);
             $emails = array_map(function($user) {
                 return $this->model->users->get_user_email($user);
-            }, $this->subscribents_array);
+            }, $notify_users);
         }
 
         $mailer->to($emails);
