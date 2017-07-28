@@ -86,11 +86,19 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 		}
 	}
     
+    public function cost_localized() {
+        if ($this->cost === '') {
+            return '';
+        }
+        
+        return sprintf('%.2f', (float)$this->cost);
+    }
+    
     private function update_virtual_columns() {
 		$this->state_string = $this->model->action->getLang($this->state_string());
         $this->action_string = $this->model->action->getLang($this->action_string());
         $this->tasktype_string = $this->model->tasktypes->get_one($this->tasktype)->type;
-	}
+    }
     
     public function user_is_executor() {
         if ($this->executor === $this->model->user_nick ||
@@ -157,7 +165,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
             
 				
 		}
-
+        
 		//takstype required	
 		if ($this->issue !== '') {
 			$this->validator->set_rules(array(

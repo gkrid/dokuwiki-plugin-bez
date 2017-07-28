@@ -111,7 +111,7 @@
     <?php if ($template['task']->cost === ''): ?>
         ---
     <?php else: ?>
-        <?php echo $template['task']->cost ?>
+        <?php echo $template['task']->cost_localized() ?>
     <?php endif ?>
     </td>
 </tr>  

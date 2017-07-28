@@ -96,7 +96,7 @@ if ($nparams['bez'] === 'issue') {
 			
 			<div class="row">
 				<label></label>
-				<span style="dispaly: block; position:relative; top: -10px;">
+				<span>
 					<label>
                         <?php if ($template['task']->acl_of('all_day_event') >= BEZ_PERMISSION_CHANGE): ?>	
                         <input type="checkbox" name="all_day_event" value="1" 
@@ -133,8 +133,8 @@ if ($nparams['bez'] === 'issue') {
 			<div class="row">
 				<label for="cost"><?php echo $bezlang['cost'] ?>:</label>
 				<span><input 	type="number" name="cost" id="cost"
-								min="0" max="100000" step="50"
-								value="<?php echo $value['cost'] ?>"
+								min="0" step="0.01"
+                                value="<?php echo $value['cost'] ?>"
                                 <?php if ($template['task']->acl_of('plan_date') < BEZ_PERMISSION_CHANGE) echo 'disabled' ?>></span>
 			</div>
 			<?php if ($template['tid'] !== '-1'): ?>
