@@ -196,7 +196,7 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 	}
     
     public function get_meta_fields() {
-        return array('reporter', 'date', 'last_mod');
+        return array('reporter', 'date', 'last_mod', 'last_activity');
     }
     
     public function set_meta($post) {
@@ -393,7 +393,7 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
     
     //http://data.agaric.com/capture-all-sent-mail-locally-postfix
     //https://askubuntu.com/questions/192572/how-do-i-read-local-email-in-thunderbird
-    public function mail_notify($replacements=array(), $emails=false) {
+    public function mail_notify($replacements=array(), $users=false) {
         $plain = io_readFile($this->model->action->localFN('issue-notification'));
         $html = io_readFile($this->model->action->localFN('issue-notification', 'html'));
                 
@@ -442,13 +442,15 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
         $mailer = new BEZ_Mailer();
         $mailer->setBody($plain, $rep, $rep, $html, false);
 
-        if ($emails === FALSE) {
-            $notify_users = $this->subscribents_array;
-            unset($notify_users[$this->model->user_nick]);
-            $emails = array_map(function($user) {
-                return $this->model->users->get_user_email($user);
-            }, $notify_users);
+        if ($users === FALSE) {
+            $users = $this->subscribents_array;
+            unset($users[$this->model->user_nick]);
         }
+        
+        $emails = array_map(function($user) {
+            return $this->model->users->get_user_email($user);
+        }, $users);   
+            
 
         $mailer->to($emails);
         $mailer->subject($rep['subject']);
@@ -541,30 +543,26 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
         )));
     }
     
-    public function mail_notify_invite($client) {
-        $email = $this->model->users->get_user_email($client);
-        
+    public function mail_notify_invite($client) {        
         $this->mail_notify($this->mail_issue_box_reps(array(
             'who' => $this->model->user_nick,
             'action' => $this->model->action->getLang('mail_mail_notify_invite_action'),
             //'subject' => $this->model->action->getLang('mail_mail_notify_invite_subject') . ' #'.$this->id
-        )), array($email));
+        )), array($client));
     }
     
-    public function mail_inform_coordinator() {
-        $email = $this->model->users->get_user_email($this->coordinator);
-        
+    public function mail_inform_coordinator() {        
         $this->mail_notify($this->mail_issue_box_reps(array(
             'who' => $this->model->user_nick,
             'action' => $this->model->action->getLang('mail_mail_inform_coordinator_action'),
             //'subject' => $this->model->action->getLang('mail_mail_inform_coordinator_subject') . ' #'.$this->id
-        )), array($email));
+        )), array($this->coordinator));
     }
     
-    public function mail_notify_issue_inactive() {
+    public function mail_notify_issue_inactive($users=false) {
         $this->mail_notify($this->mail_issue_box_reps(array(
             'who' => '',
             'action' => $this->model->action->getLang('mail_mail_notify_issue_inactive'),
-        )));
+        )), $users);
     }
 }

@@ -5,8 +5,7 @@
 <?php if ($template['action'] === 'issue_edit_metadata'): ?>
 
 <h1 style="color: #f00; border-bottom: 1px solid #f00;margin-bottom: 10px; margin-top: 25px;"><?php echo $bezlang['metadata_edit_header'] ?></h1>
-<?php $id = $this->id('issue', 'id', $template['issue']->id, 'action', 'issue_edit_metadata') ?>
-<form class="bez_metaform" action="?id=<?php echo $id ?>" method="POST">
+
 <?php endif ?>
 
 <h1>
@@ -130,7 +129,6 @@
 			 class="bez_delete_button bez_link_button">
 				<?php echo $bezlang['cancel'] ?>
 		</a>
-    </form>
 <?php else: ?>
 	<?php if ($template['issue']->opened_tasks_count > 0): ?>
 		<div class="info"><?php echo $bezlang['issue_unclosed_tasks'] ?></div>

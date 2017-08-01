@@ -1,3 +1,8 @@
+<?php if ($template['action'] === 'issue_edit_metadata'): ?>
+    <?php $id = $this->id('issue', 'id', $template['issue']->id, 'action', 'issue_edit_metadata') ?>
+    <form class="bez_metaform" action="?id=<?php echo $id ?>" method="POST">
+<?php endif ?>
+
 <?php include "issue_box.php" ?>
 
 <!-- Comments -->
@@ -60,7 +65,18 @@
 	
 <div class="bez_box">
 <h2><?php echo $bezlang['comment_last_activity'] ?></h2>
-<?php echo $template['issue']->last_activity ?>
+
+<?php if ($template['action'] === 'issue_edit_metadata'): ?>
+<div style="white-space: nowrap;">
+    <input name="last_activity_date" style="width:90px;" data-validation="required,date" value="<?php echo $value['last_activity_date'] ?>" />
+                          <?php echo $this->model->action->getLang('at_hour') ?>
+     <input name="last_activity_time" style="width:60px;" data-validation="required,custom" data-validation-regexp="^(\d{1,2}):(\d{1,2}):(\d{1,2})$" value="<?php echo $value['last_activity_time'] ?>" />
+</div>
+<?php else: ?>
+    <?php echo $template['issue']->last_activity ?>
+<?php endif ?>
+
+
 </div>
 
 <div class="bez_box bez_subscribe_box">
@@ -120,7 +136,8 @@
 </ul>
 
 <?php if (	$template['issue']->user_is_coordinator() &&
-						$template['issue']->full_state() === '0'): ?>
+						$template['issue']->full_state() === '0' &&
+                        $template['action'] !== 'issue_edit_metadata'): ?>
     <h2><?php echo $bezlang['issue_invite_header'] ?></h2>
     <form action="?id=<?php echo $this->id('issue', 'id', $template['issue']->id, 'action', 'invite') ?>" method="post" id="bez_invite_users_form">
     <div id="bez_invite_users" class="ui-widget">
@@ -142,3 +159,7 @@
 </div>
 
 </div>	
+
+<?php if ($template['action'] === 'issue_edit_metadata'): ?>
+    </form>
+<?php endif?>

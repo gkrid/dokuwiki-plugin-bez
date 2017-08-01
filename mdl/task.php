@@ -348,7 +348,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
         return false;
 	}
     
-    private function mail_notify($replacements=array(), $users=array()) {        
+    private function mail_notify($replacements=array(), $users=false) {        
         $plain = io_readFile($this->model->action->localFN('task-notification'));
         $html = io_readFile($this->model->action->localFN('task-notification', 'html'));
         
@@ -381,7 +381,14 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
         
         $mailer = new BEZ_Mailer();
         $mailer->setBody($plain, $rep, $rep, $html, false);
-
+        
+        if ($users === FALSE) {
+            $users = $this->get_subscribents();
+            
+            //don't notify current user
+            unset($users[$this->model->user_nick]);
+        }
+        
         $emails = array_map(function($user) {
             return $this->model->users->get_user_email($user);
         }, $users);
@@ -472,21 +479,15 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
         $rep = array_merge($rep, $replacements);
         
         if ($issue_obj === NULL) {
-            if ($users === false) {
-                $users = array($this->reporter, $this->executor);
-            }
             $this->mail_notify($rep, $users);
         } else {
             $issue_obj->mail_notify($rep);
         }
     }
     
-    public function mail_notify_subscribents($issue_obj=NULL, $replacements=array()) {
-        $notify_users = $this->get_subscribents();
-        //don't notify current user
-        unset($notify_users[$this->model->user_nick]);
-        
-        $this->mail_notify_task_box($issue_obj, $notify_users, $replacements);
+    public function mail_notify_subscribents(   $issue_obj=NULL,
+                                                $replacements=array()) {
+        $this->mail_notify_task_box($issue_obj, false, $replacements);
     }
     
     public function mail_notify_add($issue_obj=NULL, $users=false, $replacements=array()) {
@@ -494,14 +495,14 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
         $this->mail_notify_task_box($issue_obj, $users, $replacements);
     }
     
-    public function mail_notify_remind() {
+    public function mail_notify_remind($users=false) {
         $replacements = array();
         
         $replacements['action'] = $this->model->action->getLang('mail_task_remind');
         //we don't want any who
         $replacements['who_full_name'] = '';
         
-        $users = array($this->executor);
+        //$users = array($this->executor);
         $this->mail_notify_task_box(null, $users, $replacements);
     }
     

@@ -139,7 +139,7 @@ try {
 				$value = $commcause->get_assoc(array('datetime', 'reporter'));
                 $unix = strtotime($value['datetime']);
                 $value['date'] = date('Y-m-d', $unix);
-                $value['time'] = date('H:i', $unix);
+                $value['time'] = date('H:i:s', $unix);
 			} else {
 				$commcause = $this->model->commcauses->get_one($template['kid']);
                 $_POST['datetime'] = $_POST['date']. ' '.$_POST['time'];
@@ -167,6 +167,9 @@ try {
             $redirect = true;
         } elseif ($action === 'issue_edit_metadata') {
             if (count($_POST) > 0) {
+                
+                $_POST['last_activity'] = $_POST['last_activity_date']. ' '.$_POST['last_activity_time'];
+                
                 $issue->set_meta($_POST);
                 $this->model->issues->save($issue);
                 
@@ -175,6 +178,10 @@ try {
                 $value = $issue->get_assoc();
                 $value['date'] = date('Y-m-d', (int)$value['date']);
                 $value['last_mod'] = date('Y-m-d', (int)$value['last_mod']);
+                
+                $unix = strtotime($value['last_activity']);
+                $value['last_activity_date'] = date('Y-m-d', $unix);
+                $value['last_activity_time'] = date('H:i:s', $unix);
             }
  		} elseif (strpos($action, 'task') === 0) {
             $template['task'] = $this->model->tasks->

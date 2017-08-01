@@ -36,7 +36,8 @@ function send_inactive_issue() {
         //send reminder once a month
         $day_of_issue_last_activity = date('d', strtotime($issue->last_activity));
         if ($day_of_issue_last_activity === date('d')) {
-            $issue->mail_notify_issue_inactive();
+            //send message to all
+            $issue->mail_notify_issue_inactive($issue->get_subscribents());
         }
     }
 }
@@ -50,7 +51,7 @@ function send_one_day_task_reminder() {
     ));
        
     foreach ($tasks as $task) {
-        $task->mail_notify_remind();
+        $task->mail_notify_remind($task->get_subscribents());
     }
 }
 

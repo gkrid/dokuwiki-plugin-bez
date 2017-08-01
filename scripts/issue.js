@@ -196,7 +196,7 @@ bez.ctl.issue = function() {
             //~ });
         //~ }
 
-        jQuery("input[name=date], input[name=close_date], input[name=last_mod]").datepicker({
+        jQuery("input[name=date], input[name=close_date], input[name=last_mod], input[name=last_activity_date]").datepicker({
 			dateFormat: "yy-mm-dd"
         });
     }

@@ -50,7 +50,7 @@
                             $template['commcause']->acl_of('reporter') >= BEZ_PERMISSION_CHANGE): ?>
                       <input name="date" style="width:90px;" data-validation="required,date" value="<?php echo $value['date'] ?>" />
                       <?php echo $this->model->action->getLang('at_hour') ?>
-                     <input name="time" style="width:60px;" data-validation="required,custom" data-validation-regexp="^(\d{1,2}):(\d{1,2})$" value="<?php echo $value['time'] ?>" />
+                     <input name="time" style="width:60px;" data-validation="required,custom" data-validation-regexp="^(\d{1,2}):(\d{1,2}):(\d{1,2})$" value="<?php echo $value['time'] ?>" />
                 <?php else: ?>
                     <?php echo $template['commcause']->date_format($template['commcause']->datetime) ?>
                 <?php endif ?>

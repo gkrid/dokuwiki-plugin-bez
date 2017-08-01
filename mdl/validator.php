@@ -146,6 +146,16 @@ class BEZ_mdl_Validator {
 	}
     
     public function validate_sqlite_datetime($date) {
+        $strtotime = strtotime($date);
+        if ($strtotime === false) {
+            return false;
+        }
+        
+        $datetime = date('Y-m-d H:i:s', $strtotime);
+        if ($datetime !== $date) {
+            return false;
+        }
+        
 		return true;
 	}
 	
