@@ -1,7 +1,7 @@
 <?php
 
 function usage() {
-    echo "usage: cron-daily.php url user";
+    echo "usage: cron-daily.php url user\n";
     exit(1);
 }
 

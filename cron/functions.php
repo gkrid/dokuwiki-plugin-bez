@@ -27,7 +27,7 @@ function send_inactive_issue() {
     
     $issues = $model->issues->get_all(array(
         'last_activity' => array('<=',
-            date('Y-m-d 00:00', strtotime('-30 days'))
+            date('Y-m-d', strtotime('-30 days')), 'date'
         ),
         'state' => '0'
     ));

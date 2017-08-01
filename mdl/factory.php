@@ -18,17 +18,30 @@ abstract class BEZ_mdl_Factory {
 			}
 			
 			$operator = '=';
+            $function = '';
 			if (is_array($value)) {
                 $operators = array('!=', '<', '>', '<=', '>=');
-				if (in_array($value[0], $operators)) {
-					$operator = $value[0];
-					$value = $value[1];
-				} else {
-                    throw new Exception('unknown operator: '.$value[0]);
+                $functions = array('', 'date');
+                
+                $operator = $value[0];
+                $function = isset($value[2]) ? $value[2] : '';
+                
+                $value = $value[1];
+                
+				if (!in_array($operator, $operators)) {
+                    throw new Exception('unknown operator: '.$operator);
+                }
+                
+                if (!in_array($function, $functions)) {
+                    throw new Exception('unknown function: '.$function);
                 }
 			}
-			
-			$where_q[] = $field." $operator :$filter";
+            
+			if ($function !== '') {
+                $where_q[] = $field." $operator $function(:$filter)";
+            } else {
+                $where_q[] = $field." $operator :$filter";
+            }
 			$execute[":$filter"] = $value;
 		}
 		
