@@ -28,7 +28,7 @@ class BEZ_mdl_Tasks extends BEZ_mdl_Factory {
                         ELSE '2' END) AS action,
 
                 (CASE
-                    WHEN tasks.issue IS NULL
+                    WHEN tasks.issue IS NULL OR tasks.issue = ''
                         THEN '".$this->model->action->getLang('programme')."'
                     WHEN tasks.cause IS NULL OR tasks.cause = ''
                         THEN '".$this->model->action->getLang('correction')."'
