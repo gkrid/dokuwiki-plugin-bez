@@ -7,7 +7,7 @@ require_once DOKU_PLUGIN.'bez/interfaces.php';
 
 require_once DOKU_PLUGIN.'bez/mdl/model.php';
 
-$action = new class extends DokuWiki_Action_Plugin {
+class Cron_dummy_action extends DokuWiki_Action_Plugin {
     public function getPluginName() {
         return 'bez';
     }
@@ -20,7 +20,8 @@ $action = new class extends DokuWiki_Action_Plugin {
     }
 };
 
-$model = new BEZ_mdl_Model($auth, $dw_user, $action, $conf);
+$dummy_action = new Cron_dummy_action();
+$model = new BEZ_mdl_Model($auth, $dw_user, $dummy_action, $conf);
 
 function send_inactive_issue() {
     global $model;

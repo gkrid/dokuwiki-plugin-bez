@@ -1,5 +1,6 @@
 Wersja 17.07.01:
     - poprawiono #139
+    - zgodność wsteczna z php 5
 
 Wersja 17.07:
     - przebudowano autorespondenta zgodnie z #95
