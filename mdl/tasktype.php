@@ -4,6 +4,12 @@ if(!defined('DOKU_INC')) die();
 
 require_once 'entity.php';
 
+class BEZ_mdl_Dummy_Tasktype extends BEZ_mdl_Dummy_Entity  {
+    function get_table_name() {
+        return 'tasktypes';
+    }
+}
+
 class BEZ_mdl_Tasktype extends BEZ_mdl_Entity {
 
 	protected $id, $pl, $en;

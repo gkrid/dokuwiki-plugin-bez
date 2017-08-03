@@ -3,44 +3,60 @@
 if(!defined('DOKU_INC')) die();
 
 require_once DOKU_PLUGIN.'bez/mdl/model.php';
-require_once DOKU_PLUGIN.'bez/html.php';
+
+require_once DOKU_PLUGIN.'bez/interfaces.php';
 require_once DOKU_PLUGIN.'bez/exceptions.php';
 
-require_once DOKU_PLUGIN.'bez/inc/BEZ_Mailer.class.php';
+spl_autoload_register(
+    function ($class) {
+        require_once DOKU_PLUGIN.'bez/inc/'.$class.'.class.php';
+    }
+);
 
+function bez_tpl_include(Tpl $tpl) {
+    $file = DOKU_PLUGIN."bez/tpl/".str_replace('/', '', $tpl->action()).".php";
+    if (file_exists($file)) {
+        include $file;
+    }
+}
+
+define('BEZ_NOTIFICATIONS_COOKIE_NAME', 'bez_notifications');
 
 class action_plugin_bez extends DokuWiki_Action_Plugin {
 
-	private $helper;
 	private $action = '';
 	private $params = array();
-	private $norender = false;
-	private $lang_code = '';
 	
-	private $model_object = null;
+	private $model, $tpl;
     
-    private $cookie_name = 'bez_notifications';
-    private $notifications = array();
+    private $notifications = array(), $errors = array();
     
     private function add_notification($value, $header=NULL) {
-        global $cookie_name;
-        
-        if (isset($_COOKIE[$this->cookie_name])) {
-            $notifs = unserialize($_COOKIE[$this->cookie_name]);
+        if (isset($_COOKIE[BEZ_NOTIFICATIONS_COOKIE_NAME])) {
+            $notifs = unserialize($_COOKIE[BEZ_NOTIFICATIONS_COOKIE_NAME]);
         } else {
             $notifs = array();
         }
         $notifs[] = array('value' => $value, 'header' => $header);
-        setcookie($this->cookie_name, serialize($notifs));
+        setcookie(BEZ_NOTIFICATIONS_COOKIE_NAME, serialize($notifs));
     }
 
     private function flush_notifications() {
-        if (!isset($_COOKIE[$this->cookie_name])) {
-            return;
+        if (!isset($_COOKIE[BEZ_NOTIFICATIONS_COOKIE_NAME])) {
+            return array();
         }
-        $this->notifications = unserialize($_COOKIE[$this->cookie_name]);
+        $this->notifications = unserialize($_COOKIE[BEZ_NOTIFICATIONS_COOKIE_NAME]);
+        
         //remove cookie
-        setcookie($this->cookie_name, serialize(array()));
+        setcookie(BEZ_NOTIFICATIONS_COOKIE_NAME, serialize(array()));
+    }
+    
+    private function add_error($value, $header=NULL) {
+        $this->errors[] = array('value' => $value, 'header' => $header);
+    }
+    
+    private function param($id) {
+        return (isset($this->params[$id]) ? $this->params[$id] : '');
     }
 
 	/**
@@ -48,6 +64,7 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 	 */
 	public function register(Doku_Event_Handler $controller)
 	{
+        $controller->register_hook('DOKUWIKI_STARTED', 'BEFORE', $this, 'setup_enviroment');
 		$controller->register_hook('ACTION_ACT_PREPROCESS', 'BEFORE', $this, 'action_act_preprocess');
 		$controller->register_hook('TPL_ACT_RENDER', 'BEFORE', $this, 'tpl_act_render');
 		$controller->register_hook('TEMPLATE_PAGETOOLS_DISPLAY', 'BEFORE', $this, 'tpl_pagetools_display');
@@ -102,95 +119,54 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 			"lib/plugins/bez/lib/jquery.form-validator/jquery.form-validator.min.js",
 		  "_data" => "",
 		);
-		
-		
-	}
-	
-    //to powinno powędrować do __construct(!), ale nie może z powdu potoku dokuwiki,
-    //dlatego decyduję się na leniwą konkretyzację
-	public function __get($name) {
-		global $auth, $conf, $INFO;
-		if ($name === 'model') {
-			if ($this->model_object === null) {
-				if ($INFO === null) {
-					$INFO = pageinfo();
-				}
-				$this->model_object =
-				    new BEZ_mdl_Model($auth, $INFO['client'], $this, $conf);
-			}
-			return $this->model_object;
-		}
 	}
     
-    public function page_id() {
-        global $ID;
-        return $ID;
-    }
-
-	public function __construct() {
-		global $ACT;
-		$this->helper = $this->loadHelper('bez');
-		$this->setupLocale();
-
-		$id = $_GET['id'];
-		$ex = explode(':', $id);
-		if ($ex[0] == 'bez' && $ACT == 'show') {
-			$this->action = $ex[1];
-			$this->params = $ex;
-		/*BEZ w innym języku*/
-		} else if ($ex[1] == 'bez' && $ACT == 'show') {
-			$l = $ex[0];
-			$p = DOKU_PLUGIN.'bez/lang/';
-			$f = $p.$ex[0].'/lang.php';
-			if ( ! file_exists($f))
-				$f = $p.'en/lang.php';
-
-			$this->lang_code = $l;
-			include $f;
-			$this->lang = $lang;
-
-			$this->action = $ex[2];
-			$this->params = array_slice($ex, 1);
-		}
-		
-		//set default filters
-		if(!isset($_COOKIE['bez_tasks_filters'])) {
-			setcookie("bez_tasks_filters[year]", date("Y"));
-		}
-		if(!isset($_COOKIE['bez_issues_filters'])) {
-			setcookie("bez_issues_filters[year]", date("Y"));
-		}
-	}
-
-	public function id() {
-		$args = func_get_args();
-		array_unshift($args, 'bez');
+    public function setup_enviroment(Doku_Event $event, $param) {
+        global $ACT, $auth, $conf, $INFO;
         
-		if ($this->lang_code != '') {
-			array_unshift($args, $this->lang_code);
+        if ($ACT !== 'show') {
+            return;
+        }
+
+        $id = $_GET['id'];
+		$ex = explode(':', $id);
+ 
+        //check if we process BEZ
+        if ($ex[0] !== 'bez' && $ex[1] !== 'bez') {
+            return;
         }
         
-		return implode(':', $args);
+
+        $lang_code = '';
+        if ($ex[1] === 'bez') {
+            $conf['lang'] = array_shift($ex);
+            $lang_code = $conf['lang'];
+            $this->localised = false;
+        }
+        //throw out "bez"
+        array_shift($ex);
+        
+        $this->action = array_shift($ex);
+        
+        if (count($ex) % 2 !== 0) {
+            throw new Exception('invalid params');
+        }
+        
+        for ($i = 0; $i < count($ex); $i += 2) {
+            $this->params[$ex[$i]] = $ex[$i+1];
+        }
+        
+        $this->setupLocale();
+        
+        $this->model = new BEZ_mdl_Model($auth, $INFO['client'], $this, $conf);
+        $this->tpl = new Tpl($this->lang, $this->action, $this->params, $lang_code, $conf);
+		
     }
 
-//	public function issue_uri($id) {
-//		return '?id='.$this->id('issue', 'id', $id);
-//	}
-//
-//	public function html_issue_link($id) {
-//		return '<a href="'.$this->issue_uri($id).'">#'.$id.'</a>';
-//	}
-//	public function html_task_link($issue, $task) {
-//		if ($issue == NULL)
-//			return '<a href="?id='.$this->id('show_task','tid', $task).'">#z'.$task.'</a>';
-//		else
-//			return '<a href="?id='.$this->id('issue_task', 'id', $issue, 'tid', $task).'">#'.$issue.' #z'.$task.'</a>';
-//	}
-//	
 	/**
 	 * handle ajax requests
 	 */
-	function _ajax_call(Doku_Event $event, $param) {
+	public function _ajax_call(Doku_Event $event, $param) {
 		global $auth;
 		if ($event->data !== 'plugin_bez') {
 			return;
@@ -228,47 +204,36 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 
 
 	public function tpl_pagetools_display($event, $param) {
-		if ($this->action != '') 
+		if ($this->action !== '') {
 			$event->preventDefault();
-	}
-	public function preventDefault() {
-		throw new Exception('preventDefault');
+        }
 	}
 
 	public function action_act_preprocess($event, $param)
 	{
-		global $INFO, $conf;
-		global $template, $bezlang, $value, $errors;
-
+        global $conf;
+        if ($this->action === '') {
+            return;
+        }
+        
+        $event->preventDefault();
 		try {
-			if ($this->action == '')
-				return false;
-
-			$event->preventDefault();
-            
             $this->flush_notifications();
 
-
-//			if	( ! ($this->helper->token_viewer() || $this->helper->user_viewer()))
-//				return false;
-
-			$ctl= DOKU_PLUGIN."bez/ctl/".str_replace('/', '', $this->action).".php";
+			$ctl = DOKU_PLUGIN."bez/ctl/".str_replace('/', '', $this->action).".php";
 			if (file_exists($ctl)) {
-				$bezlang = $this->lang;
-				$helper = $this->helper;
-				$helper->lang_code = $this->lang_code;
-
-				$params = $this->params;
-				$nparams = array();
-				for ($i = 0; $i < count($params); $i += 2)
-					$nparams[$params[$i]] = $params[$i+1];
-
-				$uri = DOKU_URL . 'doku.php';
-				$controller = $this;
-				include_once $ctl;
+				include $ctl;
 			}
+        } catch(ValidationException $e) {
+            foreach ($e->get_errors() as $field => $error_code) {
+                $this->add_error(
+                    $this->getLang('validate_' . $error_code),
+                    $field);
+            }
+            
+            $this->tpl->set_values($_POST);
+            
         } catch(PermissionDeniedException $e) {
-            //var_dump($this->getConf('allowdebug'));die();
             dbglog('plugin_bez', $e);
             header('Location: ' . DOKU_URL . 'doku.php?id=' . $_GET['id'] . '&do=login');
 
@@ -277,45 +242,27 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
             if ($conf['allowdebug']) {
                dbg($e);
             }
-			/*preventDefault*/
-			$this->norender = true;
+            $this->tpl->prevent_rendering();
 		}
 	}
 
 	public function tpl_act_render($event, $param)
 	{
-		global $template, $bezlang, $value, $errors;
+        global $conf;
+        
+        if ($this->action === '') {
+            return false;
+        }
+        $event->preventDefault();
+        
 		try {
-			
-			if ($this->action === '')
-				return false;
 
-			$event->preventDefault();
-
-			/*przerywamy wyświetlanie*/
-			if ($this->norender)
-				return false;
-
-//			if	( ! ($this->helper->token_viewer() || $this->helper->user_viewer())) {
-//				html_denied();
-//				return false;
-//			}
-
-			if (!isset($errors)) {
-				$errors= array();
-			}
-
-			foreach ($errors as $field => $error) {
+			foreach ($this->errors as $error) {
 				echo '<div class="error">';
-				if ($field != '' && isset($bezlang[$field])) {
-					echo '<b>'.$bezlang[$field].':</b> ';
-					if (isset($bezlang['validate_'.$error])) {
-						echo $bezlang['validate_'.$error];
-					} else {
-						echo $error;
-					}
+                if ($error['header'] === NULL) {
+					echo $error['value'];
 				} else {
-					echo $error;
+					echo '<strong>'.$error['header'].'</strong>: '.$error['value'];
 				}
 				echo '</div>';
 			}
@@ -330,19 +277,8 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 				echo '</div>';
             }
 
-			$tpl = DOKU_PLUGIN."bez/tpl/".str_replace('/', '', $this->action).".php";
-			if (file_exists($tpl)) {
-				$bezlang = $this->lang;
-				$helper = $this->helper;
-				$helper->lang_code = $this->lang_code;
-
-				$params = $this->params;
-				$nparams = array();
-				for ($i = 0; $i < count($params); $i += 2)
-					$nparams[$params[$i]] = $params[$i+1];
-
-				include_once $tpl;
-			}
+			bez_tpl_include($this->tpl, $this->action);
+            
         } catch(PermissionDeniedException $e) {
             dbglog('plugin_bez', $e);
             header('Location: ' . DOKU_URL . 'doku.php?id=' . $_GET['id'] . '&do=login');	

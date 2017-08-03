@@ -25,6 +25,8 @@ class BEZ_mdl_Issuetypes extends BEZ_mdl_Factory {
 	}
 	
 	public function get_all($additional_fields=array()) {
+        parent::get_all();
+        
 		if (in_array('refs', $additional_fields)) {
 			$q = 'SELECT *, '.$this->model->conf['lang'].' as type,
 					(SELECT COUNT(*) FROM issues WHERE issues.type=issuetypes.id) AS refs
@@ -43,6 +45,11 @@ class BEZ_mdl_Issuetypes extends BEZ_mdl_Factory {
 	
 	public function create_object() {
 		$issuetype = new BEZ_mdl_Issuetype($this->model);
+		return $issuetype;
+	}
+    
+    public function create_dummy_object() {
+		$issuetype = new BEZ_mdl_Dummy_Issuetype($this->model);
 		return $issuetype;
 	}
     

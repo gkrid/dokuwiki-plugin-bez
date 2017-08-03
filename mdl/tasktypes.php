@@ -21,6 +21,8 @@ class BEZ_mdl_Tasktypes extends BEZ_mdl_Factory {
 	}
 	
 	public function get_all($additional_fields=array()) {
+        parent::get_all();
+        
 		if (in_array('refs', $additional_fields)) {
 			$q = 'SELECT *, '.$this->model->conf['lang'].' as type,
 					(SELECT COUNT(*) FROM tasks WHERE tasktype=tasktypes.id) AS refs
@@ -39,6 +41,11 @@ class BEZ_mdl_Tasktypes extends BEZ_mdl_Factory {
 	
 	public function create_object() {
 		$tasktype = new BEZ_mdl_Tasktype($this->model);
+		return $tasktype;
+	}
+    
+    public function create_dummy_object() {
+		$tasktype = new BEZ_mdl_Dummy_Tasktype($this->model);
 		return $tasktype;
 	}
     

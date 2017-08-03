@@ -55,7 +55,14 @@ abstract class BEZ_mdl_Factory {
 	public function __construct($model) {
 		$this->model = $model;
 	}
-	
+        
+    //chek acl
+    public function get_all() {
+        $dummy = $this->create_dummy_object();
+        if ($dummy->acl_of('id') < BEZ_PERMISSION_VIEW) {
+            throw new PermissionDeniedException();
+        }
+    }
 
 	public function get_table_name() {
 		$class = get_class($this);
@@ -65,6 +72,9 @@ abstract class BEZ_mdl_Factory {
 	}
     
 	public function save($obj) {
+        //if user can change id, he can modify record
+        $this->model->acl->can_change($obj, 'id');
+        
 		$set = array();
 		$execute = array();
 		foreach ($obj->get_columns() as $column) {

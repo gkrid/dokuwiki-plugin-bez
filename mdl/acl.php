@@ -387,8 +387,10 @@ class BEZ_mdl_Acl {
             case 'BEZ_mdl_Dummy_Commcause':
                 return $this->check_commcause($obj);
             case 'BEZ_mdl_Issuetype':
+            case 'BEZ_mdl_Dummy_Issuetype':
                 return $this->check_issuetype($obj);
             case 'BEZ_mdl_Tasktype':
+            case 'BEZ_mdl_Dummy_Tasktype':
                 return $this->check_tasktype($obj);
             default:
                 throw new Exception('no acl rules set for table: '.$table);
