@@ -1,87 +1,87 @@
 <div id="bez_version">
 	<div>
-		<?php echo $bezlang['bez'] ?>, <?php echo $bezlang['version'] ?>: <?php echo $template['version'] ?>
+		<?php echo $tpl->getLang('bez') ?>, <?php echo $tpl->getLang('version') ?>: <?php echo $tpl->get('version') ?>
 	</div>
 </div>
 <div id="bez_info">
-	<?php if ($this->model->acl->get_level() >= BEZ_AUTH_USER): ?>
-		<a href="?id=<?php echo $this->id('issue_report') ?>" class="bez_start_button" id="bez_report_issue_button">
-			<?php echo $bezlang['report_issue'] ?>
+	<?php if ($tpl->get_dummy_of('issues')->acl_of('id') >= BEZ_PERMISSION_CHANGE): ?>
+		<a href="<?php echo $tpl->url('issue_report') ?>" class="bez_start_button" id="bez_report_issue_button">
+			<?php echo $tpl->getLang('report_issue') ?>
 		</a>
 	<?php endif ?>
-	<a href="?id=<?php echo $this->id('issues:state:0:coordinator:'.$this->model->user_nick) ?>" class="bez_start_button" id="bez_info_issues">
-		<?php echo $bezlang['close_issues'] ?>:
-		<strong><?php echo $template['my_issues'] ?></strong>
+	<a href="<?php echo $tpl->url('issues', 'state', '0', 'coordinator', $tpl->get('client')) ?>" class="bez_start_button" id="bez_info_issues">
+		<?php echo $tpl->getLang('close_issues') ?>:
+		<strong><?php echo $tpl->get('my_issues_conut') ?></strong>
 	</a>
-	<a href="?id=<?php echo $this->id('tasks:taskstate:0:executor:'.$this->model->user_nick) ?>" class="bez_start_button" id="bez_info_tasks">
-		<?php echo $bezlang['close_tasks'] ?>:
-		<strong><?php echo $template['my_tasks'] ?></strong>
+	<a href="<?php echo $tpl->url('tasks', 'taskstate', '0', 'executor', $tpl->get('client')) ?>" class="bez_start_button" id="bez_info_tasks">
+		<?php echo $tpl->getLang('close_tasks') ?>:
+		<strong><?php echo $tpl->get('my_tasks_conut') ?></strong>
 	</a>
-	<?php if ($this->model->acl->get_level() >= BEZ_AUTH_LEADER): ?>
-		<a href="?id=<?php echo $this->id('issues:state:-proposal') ?>" class="bez_start_button" id="bez_info_proposals">
-			<?php echo $bezlang['proposals'] ?>:
-			<strong><?php echo $template['proposals'] ?></strong>
+	<?php if ($tpl->get_dummy_of('issues')->acl_of('coordinator') >= BEZ_PERMISSION_CHANGE): ?>
+		<a href="<?php echo $tpl->url('issues', 'state', '-proposal') ?>" class="bez_start_button" id="bez_info_proposals">
+			<?php echo $tpl->getLang('proposals') ?>:
+			<strong><?php echo $tpl->get('proposals_count') ?></strong>
 		</a>
 	<?php endif ?>
 </div>
 
 <dl id="bds_timeline">
 <?php $prev_date = '0000-00-00' ?>
-<?php foreach ($template['timeline'] as $elm): ?>
+<?php foreach ($tpl->get('timeline') as $elm): ?>
     <?php if ($elm->date !== $prev_date): ?>
         <h2>	
             <?php echo $elm->date ?>
             <?php if ($elm->date === date('Y-m-d')): ?>
-                <?php echo ': '.$bezlang['today'] ?>
+                <?php echo ': '.$tpl->getLang('today') ?>
             <?php elseif ($elm->date === date('Y-m-d', strtotime('yesterday'))): ?>
-                <?php echo ': '.$bezlang['yesterday'] ?>
+                <?php echo ': '.$tpl->getLang('yesterday') ?>
             <?php endif ?>
         </h2>
         <?php $prev_date = $elm->date ?>
     <?php endif ?>
     <?php
         if ($elm->author === '-proposal') {
-           $author_full_name = '<i>' . $bezlang['none'] . '</i>'; 
+           $author_full_name = '<i>' . $tpl->getLang('none') . '</i>'; 
         } else {
-            $author_full_name = $this->model->users->get_user_full_name($elm->author);
+            $author_full_name = $tpl->user_name($elm->author);
         }
         
         if ($elm->class === 'issue_created') {
-            $href = $this->id('issue', 'id', $elm->issue);
+            $href = $tpl->url('issue', 'id', $elm->issue);
             $title = '<strong>#' . $elm->issue .  '</strong> ' . 
-                    $bezlang['issue_added'] . ' ' .
+                    $tpl->getLang('issue_added') . ' ' .
                     '"' . $elm->title . '"' . 
-                    ' <span class="author">' . $bezlang['coordinator'] . ':' . 
+                    ' <span class="author">' . $tpl->getLang('coordinator') . ':' . 
                     ' <strong>' . $author_full_name . '</strong></span>';
-            $coord_string = $bezlang['coordinator'];
+            $coord_string = $tpl->getLang('coordinator');
         } else if($elm->class === 'task_opened') {
-            $href = $this->id('task', 'tid', $elm->id);
+            $href = $tpl->url('task', 'tid', $elm->id);
             
             $issue = '';
             if ($elm->issue !== '') {
                 $issue = '#' . $elm->issue. ' ';
             }
             $title = '<strong>'.$issue.'#z' . $elm->id .  '</strong> ' . 
-                    $bezlang['task_added'] . 
-                    ' <span class="author">' . $bezlang['executor'] . ':' . 
+                    $tpl->getLang('task_added') . 
+                    ' <span class="author">' . $tpl->getLang('executor') . ':' . 
                     ' <strong>' . $author_full_name . '</strong></span>';
-            $coord_string = $bezlang['executor'];
+            $coord_string = $tpl->getLang('executor');
         } else if($elm->class === 'cause') {
-            $href = $this->id('issue', 'id', $elm->issue) . '#k'  . $elm->id;
-            $title = $bezlang['timeline_cause_added'] . ' ' .
-                    ' <span class="author">' . $bezlang['by'] . 
+            $href = $tpl->url('issue', 'id', $elm->issue) . '#k'  . $elm->id;
+            $title = $tpl->getLang('timeline_cause_added') . ' ' .
+                    ' <span class="author">' . $tpl->getLang('by') . 
                     ' <strong>' . $author_full_name . '</strong></span>';
-            $coord_string = $bezlang['reporter'];
+            $coord_string = $tpl->getLang('reporter');
         } else {
-            $href = $this->id('issue', 'id', $elm->issue) . '#k'  . $elm->id;
-            $title = $bezlang['timeline_comment_added'] . ' ' .
-                    ' <span class="author">' . $bezlang['by'] . 
+            $href = $tpl->url('issue', 'id', $elm->issue) . '#k'  . $elm->id;
+            $title = $tpl->getLang('timeline_comment_added') . ' ' .
+                    ' <span class="author">' . $tpl->getLang('by') . 
                     ' <strong>' . $author_full_name . '</strong></span>';
-            $coord_string = $bezlang['reporter'];
+            $coord_string = $tpl->getLang('reporter');
         }
     ?>
     <dt class="<?php echo $elm->class ?>">
-        <a href="?id=<?php echo $href ?>">
+        <a href="<?php echo $href ?>">
            <span class="time"><?php echo $elm->time ?></span>
            <?php echo $title ?>
         </a>

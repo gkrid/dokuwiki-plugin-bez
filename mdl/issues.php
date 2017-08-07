@@ -6,7 +6,6 @@ require_once 'factory.php';
 require_once 'issue.php';
 
 class BEZ_mdl_Issues extends BEZ_mdl_Factory {
-	private $select_query;
 	
 	public function __construct($model) {
 		parent::__construct($model);
@@ -55,50 +54,27 @@ class BEZ_mdl_Issues extends BEZ_mdl_Factory {
 					FROM issues
 						LEFT JOIN issuetypes ON issues.type = issuetypes.id)";
 	}
-	
-	public function get_one($id) {
-		$q = $this->select_query.' WHERE id = ?';
-						
-		$sth = $this->model->db->prepare($q);
-		$sth->execute(array($id));
-		
-		$issue = $sth->fetchObject("BEZ_mdl_Issue",
-					array($this->model));
-        
-        if ($issue === false) {
-            throw new Exception('there is no issue with id: '.$id);
-        }
-        
-		return $issue;
-	}
     
     protected $filter_field_map = array(
 
 	);
-	
-	public function get_all($filters=array()) {
-		list($where_q, $execute) = $this->build_where($filters);
-		
-		$q = $this->select_query . $where_q;
-			
-		$sth = $this->model->db->prepare($q);
-		
-		$sth->setFetchMode(PDO::FETCH_CLASS, "BEZ_mdl_Issue",
-				array($this->model));
-				
-		$sth->execute($execute);
-						
-		return $sth;
-	}
     
-	
-	public function create_object($defaults=array()) {
-		$issue = new BEZ_mdl_Issue($this->model, $defaults);
-		return $issue;
-	}
-    
-    public function create_dummy_object() {
-		$issue = new BEZ_mdl_Dummy_Issue($this->model);
-		return $issue;
-	}
+    public function get_years_scope() {
+        $q = 'SELECT date FROM issues ORDER BY date LIMIT 1';
+        $sth = $this->model->db->prepare($q);
+		$sth->execute();
+		
+		$date = $sth->fetchColumn();
+		if ($res === false) {
+			return array();
+        }
+		$first = (int)date('Y', (int)$date);
+        $last = (int)date('Y');
+		
+		$years = array();
+		for ($year = $first; $year <= $last; $year++) {
+			$years[] = (string) $year;
+        }
+		return $years;
+    }
 }

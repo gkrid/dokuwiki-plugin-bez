@@ -1,6 +1,6 @@
 <?php
 
-$types = $this->model->tasktypes->get_all(array('refs'));
+$types = $this->model->tasktypes->get_all();
 
 if ($this->param('id') === '') {	
     $tasktype = $this->model->tasktypes->create_object();
@@ -19,12 +19,12 @@ if ($this->param('action') === 'edit') {
     
     $this->model->tasktypes->delete($tasktype);
     
-    header('Location: ?id=bez:task_types');
+    header('Location: '.$this->url('task_types'));
     
 } elseif (count($_POST) > 0) {
     $tasktype->set_data($_POST);
     $this->model->tasktypes->save($tasktype);
     
-    header('Location: ?id=bez:task_types');
+    header('Location: '.$this->url('task_types'));
 }
 

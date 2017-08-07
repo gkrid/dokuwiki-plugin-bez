@@ -6,7 +6,6 @@ require_once 'factory.php';
 require_once 'task.php';
 
 class BEZ_mdl_Tasks extends BEZ_mdl_Factory {
-	private $select_query;
 	
 	public function __construct($model) {
 		parent::__construct($model);
@@ -45,22 +44,6 @@ class BEZ_mdl_Tasks extends BEZ_mdl_Factory {
                     LEFT JOIN commcauses ON tasks.cause = commcauses.id
                     LEFT JOIN issues ON tasks.issue = issues.id";
 	}
-						
-	public function get_one($id) {
-		$q = $this->select_query.' WHERE tasks.id = ?';
-			
-		$sth = $this->model->db->prepare($q);
-		$sth->execute(array($id));
-			
-		$task = $sth->fetchObject("BEZ_mdl_Task",
-					array($this->model));
-                            
-        if ($task === false) {
-            throw new Exception('there is no task with id: '.$id);
-        }
-        				
-		return $task;
-	}
 	
 	protected $filter_field_map = array(
 		'issue' 	=> 'tasks.issue',
@@ -70,44 +53,12 @@ class BEZ_mdl_Tasks extends BEZ_mdl_Factory {
         'state'     => 'tasks.state',
         'plan_date' => 'tasks.plan_date'
 	);
-	
-	public function get_all($filters=array()) {
-		list($where_q, $execute) = $this->build_where($filters);
-		
-		$q = $this->select_query . $where_q;
-			
-		$sth = $this->model->db->prepare($q);
-		
-		$sth->setFetchMode(PDO::FETCH_CLASS, "BEZ_mdl_Task",
-				array($this->model));
-				
-		$sth->execute($execute);
-						
-		return $sth;
-	}
-    
+	    
     public function count($filters=array()) {
         if (in_array('action', $filters)) {
-            throw new Exception('BEZ_mdl_Tasks: action filter not implemented in method count()');
+            throw new Exception('action filter not implemented in method count()');
         }
         
-        list($where_q, $execute) = $this->build_where($filters);
-        
-        $q = 'SELECT COUNT(*) FROM tasks' . $where_q;
-        $sth = $this->model->db->prepare($q);
-        $sth->execute($execute);
-        
-        $count = $sth->fetchColumn();
-        return $count;
+        return parent::count($filters);
     }
-	
-	public function create_object($defaults) {
-		$task = new BEZ_mdl_Task($this->model, $defaults);
-		return $task;
-	}
-	
-    public function create_dummy_object($defaults) {
-		$issue = new BEZ_mdl_Dummy_Task($this->model, $defaults);
-		return $issue;
-	}
 }

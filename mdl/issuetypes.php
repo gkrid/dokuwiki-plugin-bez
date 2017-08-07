@@ -7,52 +7,21 @@ require_once 'issuetype.php';
 
 class BEZ_mdl_Issuetypes extends BEZ_mdl_Factory {
 	
-	public function get_one($id) {
-		$sth = $this->model->db->prepare('SELECT *,
-            '.$this->model->conf['lang'].' as type,
-            (SELECT COUNT(*) FROM issues WHERE issues.type=issuetypes.id) AS refs
-            FROM issuetypes WHERE id = ?');
-		$sth->execute(array($id));
-		
-		$issuetype = $sth->fetchObject("BEZ_mdl_Issuetype",
-					array($this->model));
+    public function __construct($model) {
+		parent::__construct($model);
         
-        if ($issuetype === false) {
-            throw new Exception('there is no issuetype with id: '.$id);
+        if (empty($this->model->conf['lang'])) {
+            $lang_code = 'en';
+        } else {
+            $lang_code = $this->model->conf['lang'];
         }
-		
-		return $issuetype;
-	}
-	
-	public function get_all($additional_fields=array()) {
-        parent::get_all();
         
-		if (in_array('refs', $additional_fields)) {
-			$q = 'SELECT *, '.$this->model->conf['lang'].' as type,
-					(SELECT COUNT(*) FROM issues WHERE issues.type=issuetypes.id) AS refs
-					FROM issuetypes';
-		} else {
-			$q = 'SELECT *, '.$this->model->conf['lang'].' AS type FROM issuetypes';
-		}
-		
-		$sth = $this->model->db->prepare($q);
-		$sth->setFetchMode(PDO::FETCH_CLASS, "BEZ_mdl_Issuetype",
-				array($this->model));
-
-		$sth->execute();
-		return $sth;
+		$this->select_query = 'SELECT *,
+            '.$lang_code.' as type,
+            (SELECT COUNT(*) FROM issues WHERE issues.type=issuetypes.id) AS refs
+            FROM issuetypes';
 	}
-	
-	public function create_object() {
-		$issuetype = new BEZ_mdl_Issuetype($this->model);
-		return $issuetype;
-	}
-    
-    public function create_dummy_object() {
-		$issuetype = new BEZ_mdl_Dummy_Issuetype($this->model);
-		return $issuetype;
-	}
-    
+	    
     public function delete($obj) {
 		if ($obj->refs > 0) {
 			throw new Exception('you cannot delete isssetype that has any references');

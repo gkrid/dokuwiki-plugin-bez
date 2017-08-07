@@ -7,7 +7,7 @@ if(!defined('DOKU_INC')) die();
  */
 require_once 'entity.php';
 
-class BEZ_mdl_Dummy_Task extends BEZ_mdl_Dummy_Entity  {
+class BEZ_mdl_Dummy_Task extends BEZ_mdl_Entity  {
     protected $coordinator;
  
     function __construct($model, $defaults=array()) {
@@ -22,18 +22,14 @@ class BEZ_mdl_Dummy_Task extends BEZ_mdl_Dummy_Entity  {
     }
     
     public function __get($property) {
-        parent::__get($property);
 		if ($property === 'coordinator') {
             return $this->coordinator;
         }
+        parent::__get($property);
 	}
- 
-    function get_table_name() {
-        return 'tasks';
-    }
 }
 
-class BEZ_mdl_Task extends BEZ_mdl_Entity {
+class BEZ_mdl_Task extends BEZ_mdl_Dummy_Task {
 	//if errors = true we cannot save task
 	
 	//meta
@@ -51,10 +47,6 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
 	//virtual
 	protected $coordinator, $action, $issue_state, $state_string, $action_string, $tasktype_string, $subscribents_array = array();
     
-    public function get_table_name() {
-        return 'tasks';
-    }
-	
 	public function get_columns() {
 		return array('id', 'reporter', 'date', 'close_date', 'cause',
 					'executor', 'tasktype', 'issue',

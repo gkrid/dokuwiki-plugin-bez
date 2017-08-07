@@ -5,15 +5,8 @@ if(!defined('DOKU_INC')) die();
 require_once 'entity.php';
 
 
-class BEZ_mdl_Dummy_Issue extends BEZ_mdl_Dummy_Entity  {
-    function get_table_name() {
-        return 'issues';
-    }
-}
-
-class BEZ_mdl_Issue extends BEZ_mdl_Entity {
-	
-	//meta
+class BEZ_mdl_Dummy_Issue extends BEZ_mdl_Entity  {
+    //meta
 	protected $reporter, $date, $last_mod, $last_activity,
 				$participants, $subscribents, $coordinator;
 	
@@ -29,10 +22,6 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 				$assigned_tasks_count, $opened_tasks_count,
 				$priority, $type_string, $state_string;
     
-    
-    public function get_table_name() {
-        return 'issues';
-    }
 	
 	protected $parse_int = array('assigned_tasks_count', 'opened_tasks_count');
 	
@@ -49,6 +38,21 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 					'assigned_tasks_count',	'opened_tasks_count',
 					'priority', 'type_string', 'state_string');
 	}
+    
+    public function get_states() {
+        return array(
+            '-proposal' => 'state_proposal',
+            '0'         => 'state_opened',
+            '-done'     => 'state_done',
+            '1'         => 'state_closed',
+            '2'         => 'state_rejected'
+        );
+    }
+}
+
+class BEZ_mdl_Issue extends BEZ_mdl_Dummy_Issue {
+	
+	
     
     private function state_string_code() {
         if ($this->state === '2') {

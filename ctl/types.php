@@ -1,6 +1,6 @@
 <?php
 
-$types = $this->model->issuetypes->get_all(array('refs'));
+$types = $this->model->issuetypes->get_all();
 
 if ($this->param('id') === '') {
     $issuetype = $this->model->issuetypes->create_object();
@@ -20,11 +20,11 @@ if ($this->param('action') === 'edit') {
     
     $this->model->issuetypes->delete($issuetype);
     
-    header('Location: ?id=bez:types');
+    header('Location: '.$this->url('types'));
     
 } elseif (count($_POST) > 0) {
     $issuetype->set_data($_POST);
     $this->model->issuetypes->save($issuetype);
     
-    header('Location: ?id=bez:types');
+    header('Location: '.$this->url('types'));
 }

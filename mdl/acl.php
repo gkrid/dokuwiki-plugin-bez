@@ -375,26 +375,11 @@ class BEZ_mdl_Acl {
 
     /*returns array */
     public function check($obj) {
-        $table = get_class($obj);
-        switch ($table) {
-            case 'BEZ_mdl_Issue':
-            case 'BEZ_mdl_Dummy_Issue':
-                return $this->check_issue($obj);
-            case 'BEZ_mdl_Task':
-            case 'BEZ_mdl_Dummy_Task':
-                return $this->check_task($obj);
-            case 'BEZ_mdl_Commcause':
-            case 'BEZ_mdl_Dummy_Commcause':
-                return $this->check_commcause($obj);
-            case 'BEZ_mdl_Issuetype':
-            case 'BEZ_mdl_Dummy_Issuetype':
-                return $this->check_issuetype($obj);
-            case 'BEZ_mdl_Tasktype':
-            case 'BEZ_mdl_Dummy_Tasktype':
-                return $this->check_tasktype($obj);
-            default:
-                throw new Exception('no acl rules set for table: '.$table);
+        $method = 'check_'.$obj->get_table_singular();
+        if (!method_exists($this, $method)) {
+            throw new Exception('no acl rules set for table: '.$obj->get_table_name());
         }
+        return $this->$method($obj);
     }
     
     public function check_field($obj, $field) {

@@ -35,7 +35,7 @@
         </td>
         <?php if ($type->refs === '0'): ?>
             <td>
-            <a onclick="return confirm('<?php echo $tpl->getLangJs('remove_confirm') ?>')"
+            <a onclick="return confirm('<?php echo $tpl->getLang('js')['remove_confirm'] ?>')"
                 href="<?php echo $tpl->url('types', 'action', 'remove', 'id', $type->id) ?>">
                 <?php echo $tpl->getLang('delete') ?>
             </a>

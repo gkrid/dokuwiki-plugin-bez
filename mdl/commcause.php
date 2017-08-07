@@ -5,7 +5,7 @@ if(!defined('DOKU_INC')) die();
 require_once 'entity.php';
 
 
-class BEZ_mdl_Dummy_Commcause extends BEZ_mdl_Dummy_Entity  {
+class BEZ_mdl_Dummy_Commcause extends BEZ_mdl_Entity  {
  
     protected $coordinator;
  
@@ -13,7 +13,7 @@ class BEZ_mdl_Dummy_Commcause extends BEZ_mdl_Dummy_Entity  {
         parent::__construct($model);
         
         if (!isset($defaults['issue'])) {
-            throw new Exception('Every dummy entity must have issue in $defaults');
+            throw new Exception('every dummy entity must have issue in $defaults');
         }
         
         $issue = $this->model->issues->get_one($defaults['issue']);
@@ -21,19 +21,15 @@ class BEZ_mdl_Dummy_Commcause extends BEZ_mdl_Dummy_Entity  {
     }
     
     public function __get($property) {
-        parent::__get($property);
 		if ($property === 'coordinator') {
             return $this->coordinator;
         }
+        parent::__get($property);
 	}
- 
-    function get_table_name() {
-        return 'commcauses';
-    }
 }
 
 
-class BEZ_mdl_Commcause extends BEZ_mdl_Entity {
+class BEZ_mdl_Commcause extends BEZ_mdl_Dummy_Commcause {
 
 	//real
 	protected $id, $issue, $datetime, $reporter, $type, $content, $content_cache;

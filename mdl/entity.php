@@ -3,39 +3,69 @@
 if(!defined('DOKU_INC')) die();
 
 
-abstract class BEZ_mdl_Dummy_Entity {
+//~ abstract class BEZ_mdl_Dummy_Entity {
     
-    protected $model;
+    //~ protected $model;
     
-    protected $id = NULL;
+    //~ protected $id = NULL;
     
-    public function __get($property) {
-		if ($property === 'id') {
-            return $this->id;
-        }
-	}
+    //~ public function __get($property) {
+		//~ if ($property === 'id') {
+            //~ return $this->id;
+        //~ }
+	//~ }
     
-    abstract public function get_table_name();
+    //~ public function get_table_singular() {
+        //~ $class = get_class($this);
+		//~ $exp = explode('_', $class);
+		//~ $singular = array_pop($exp);
+		//~ return lcfirst($singular);
+    //~ }
     
-    public function acl_of($field) {
-        return $this->model->acl->check_field($this, $field);
-    }
+    //~ public function get_table_name() {
+		//~ $singlar = $this->get_table_singular();
+		//~ return $singular.'s';
+	//~ }
     
-    public function __construct($model) {
-		$this->model = $model;
-	}
-}
+    //~ public function acl_of($field) {
+        //~ return $this->model->acl->check_field($this, $field);
+    //~ }
+    
+    //~ public function __construct($model) {
+		//~ $this->model = $model;
+	//~ }
+//~ }
 
-abstract class BEZ_mdl_Entity {	
+abstract class BEZ_mdl_Entity {// extends BEZ_mdl_Dummy_Entity {	
 	
-    protected $model, $validator, $helper;
+    protected $model, $validator;//, $helper;
 	
 	protected $parse_int = array();
     
-	abstract public function get_columns();
-	abstract public function get_virtual_columns();
+	public function get_columns() {
+        return array();
+    }
+    
+	public function get_virtual_columns() {
+        return array();
+    }
+    
+    private function is_dummy() {
+        if (strstr(get_class(), 'Dummy') === false) {
+            return false;
+        }
+        return true;
+    }
+    
+    private function not_for_dummies() {
+        if ($this->is_dummy()) {
+            throw new Exception('dummy object doesn\'t contains data.');
+        }
+    }
 	
 	public function get_assoc($filter=NULL) {
+        $this->not_for_dummies();
+        
 		$assoc = array();
 		$columns = array_merge($this->get_columns(), $this->get_virtual_columns());
         
@@ -49,8 +79,22 @@ abstract class BEZ_mdl_Entity {
 		return $assoc;
 	}
     
+    public function get_table_singular() {
+        $class = get_class($this);
+		$exp = explode('_', $class);
+		$singular = array_pop($exp);
+		return lcfirst($singular);
+    }
+    
+    public function get_table_name() {
+		$singlar = $this->get_table_singular();
+		return $singular.'s';
+	}
+    
     //set id when object is saved in database
     public function set_id($id) {
+        $this->not_for_dummies();
+         
         if ($this->id === NULL) {
             $this->id = $id;
         } else {
@@ -77,6 +121,8 @@ abstract class BEZ_mdl_Entity {
     }
 	
 	public function __get($property) {
+        $this->not_for_dummies();
+         
 		$columns = array_merge($this->get_columns(), $this->get_virtual_columns());
         
         //now only normal db columns has ACL, it should be fixed        
@@ -94,6 +140,8 @@ abstract class BEZ_mdl_Entity {
 	}
     
     protected function set_property($property, $value) {
+        $this->not_for_dummies();
+         
         if (!in_array($property, $this->get_columns())) {
             throw new Exception('trying to set unexisting column');
         }
@@ -147,7 +195,7 @@ abstract class BEZ_mdl_Entity {
     public function acl_of($field) {
         return $this->model->acl->check_field($this, $field);
     }
-    
+        
     public function __construct($model, $defaults=array()) {
         //by convention all defaults must be strings
         foreach ($defaults as $val) {
@@ -156,7 +204,10 @@ abstract class BEZ_mdl_Entity {
             }
         }
 		$this->model = $model;
-		$this->validator = new BEZ_mdl_Validator($this->model);
-		$this->helper = plugin_load('helper', 'bez');
+        
+        if (!$this->is_dummy()) {
+            $this->validator = new BEZ_mdl_Validator($this->model);
+        }
+		//$this->helper = plugin_load('helper', 'bez');
 	}
 }

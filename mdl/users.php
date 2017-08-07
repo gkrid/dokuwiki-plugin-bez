@@ -20,6 +20,33 @@ class BEZ_mdl_Users {
 		asort($a);
 		return $a;
 	}
+    
+    private function get_hidden_groups() {
+		$groups_s = $this->model->action->getConf('hidden_groups');
+		$groups = explode(',', $groups_s);
+        
+		foreach($groups as &$group) {
+            $group = trim($group);
+        }
+        
+		return $groups;
+	}
+    
+    public function get_groups() {
+		global $auth;
+		$wikiusers = $auth->retrieveUsers();
+		$groups = array();
+		foreach ($wikiusers as $data) {
+			$groups = array_merge($groups, $data['grps']);
+		}
+		$groups = array_unique($groups);
+        
+		$groups = array_diff($groups, $this->get_hidden_groups());
+		
+		sort($groups);
+		
+		return $groups;
+	}
 	
 	public function exists($nick) {
         if (!is_string($nick)) {

@@ -26,10 +26,56 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 
 	private $action = '';
 	private $params = array();
+    private $lang_code = '';
 	
 	private $model, $tpl;
     
     private $notifications = array(), $errors = array();
+    
+    public function get_action() {
+        return $this->action;
+    }
+    
+    public function get_param($id) {
+        return (isset($this->params[$id]) ? $this->params[$id] : '');
+    }
+    
+    public function id() {
+		$args = func_get_args();
+        $elms = array();
+        foreach ($args as $arg) {
+            if (is_array($arg)) {
+                foreach ($arg as $k => $v) {
+                    $elms[] = $k;
+                    $elms[] = $v;
+                }
+            } else {
+                $elms[] = $arg;
+            }
+        }
+		array_unshift($elms, 'bez');
+        
+        
+		if ($this->lang_code !== '') {
+			array_unshift($elms, $this->lang_code);
+        }
+
+		return implode(':', $elms);
+    }
+    
+    public function url() {
+        $args = func_get_args();
+        $id = call_user_func_array(array($this, 'id'), $args);
+        
+        return '?id=' . $id;
+    }
+    
+    public function get_model_of($name) {
+        if (!property_exists($this->model, $name)) {
+            throw new Exception('unknown table: '.$name);
+        }
+        return $this->model->$name;
+    }
     
     private function add_notification($value, $header=NULL) {
         if (isset($_COOKIE[BEZ_NOTIFICATIONS_COOKIE_NAME])) {
@@ -140,7 +186,7 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
         $lang_code = '';
         if ($ex[1] === 'bez') {
             $conf['lang'] = array_shift($ex);
-            $lang_code = $conf['lang'];
+            $this->lang_code = $conf['lang'];
             $this->localised = false;
         }
         //throw out "bez"
@@ -159,7 +205,7 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
         $this->setupLocale();
         
         $this->model = new BEZ_mdl_Model($auth, $INFO['client'], $this, $conf);
-        $this->tpl = new Tpl($this->lang, $this->action, $this->params, $lang_code, $conf);
+        $this->tpl = new Tpl($this, $conf);
 		
     }
 
