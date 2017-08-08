@@ -1,3 +1,6 @@
+Wersja 17.07.02:
+    - zwykli użytkownicy nie widzą już przycisku edycji metadanych komentarza
+
 Wersja 17.07.01:
     - poprawiono #139
     - zgodność wsteczna z php 5

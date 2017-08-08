@@ -68,9 +68,10 @@
             <?php if (  $template['action'] !== 'commcause_edit_metadata' ||
                             $template['kid'] !== $template['commcause']->id): ?>
                 <div class="bez_comment_buttons">
-                    
-                    <a class="bds_inline_button_noborder"
-                    href="?id=<?php echo $this->id('issue', 'id', $template['issue']->id, 'action', 'commcause_edit_metadata', 'kid', $template['commcause']->id) ?>#k<?php echo $template['commcause']->id; ?>">Edytuj metadane</a>
+                    <?php if (count($template['commcause']->changable_fields($template['commcause']->get_meta_fields())) > 0): ?> 
+                        <a class="bds_inline_button_noborder"
+                        href="?id=<?php echo $this->id('issue', 'id', $template['issue']->id, 'action', 'commcause_edit_metadata', 'kid', $template['commcause']->id) ?>#k<?php echo $template['commcause']->id; ?>">Edytuj metadane</a>
+                    <?php endif ?>
                 <?php if (
                     (!isset($template['no_edit']) || $template['no_edit'] === false) &&
                     $template['issue']->state === '0' &&
