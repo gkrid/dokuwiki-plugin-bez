@@ -78,10 +78,9 @@ switch($issue['priority']) {
 <table>
 <tr>
 	<th>Nr</th>
-	<th>Typ działania</th>
-	<th>Typ zadania</th>
 	<th>Zgłoszone</th>
 	<th>Plan</th>
+    <th>Opis</th>
 </tr>
 <?php foreach ($outdated_tasks as $task): ?>
 <?php
@@ -98,18 +97,9 @@ switch($task['priority']) {
 }
 ?>
 <tr style="background-color: <?php echo $color ?>">
-<?php
-	$url = "@DOKU_URL@doku.php?id=";
-	if (isset($task['issue']))
-		$url .= "bez:issue_task:id:$task[issue]:tid:$task[id]";
-	else
-		$url .= "bez:show_task:tid:$task[id]";
-?>
-	<td><a href="<?php echo $url ?>">
+	<td><a href="<?php echo "@DOKU_URL@doku.php?id=bez:task:tid:$task[id]" ?>">
 		#<?php echo $task['id'] ?>
 	</a></td>
-	<td><?php echo $task['action'] ?></td>
-	<td><?php echo $task['tasktype'] ?></td>
 	<td><?php echo $helper->string_time_to_now($task['date']) ?></td>
 	<td>
 		<?php if ($task['plan_date'] != ''): ?>
@@ -121,6 +111,7 @@ switch($task['priority']) {
 			<em>---</em>
 		<?php endif ?>
 	</td>
+    <td><?php echo $task['task_cache'] ?></td>
 </tr>
 <?php endforeach ?>
 </table>
@@ -132,10 +123,9 @@ switch($task['priority']) {
 <table>
 <tr>
 	<th>Nr</th>
-	<th>Typ działania</th>
-	<th>Typ zadania</th>
 	<th>Zgłoszone</th>
 	<th>Plan</th>
+    <th>Opis</th>
 </tr>
 <?php foreach ($coming_tasks as $task): ?>
 <?php
@@ -152,18 +142,9 @@ switch($task['priority']) {
 }
 ?>
 <tr style="background-color: <?php echo $color ?>">
-<?php
-	$url = "@DOKU_URL@doku.php?id=";
-	if (isset($task['issue']))
-		$url .= "bez:issue_task:id:$task[issue]:tid:$task[id]";
-	else
-		$url .= "bez:show_task:tid:$task[id]";
-?>
-	<td><a href="<?php echo $url ?>">
+	<td><a href="<?php echo "@DOKU_URL@doku.php?id=bez:task:tid:$task[id]" ?>">
 		#<?php echo $task['id'] ?>
 	</a></td>
-	<td><?php echo $task['action'] ?></td>
-	<td><?php echo $task['tasktype'] ?></td>
 	<td><?php echo $helper->string_time_to_now($task['date']) ?></td>
 	<td>
 		<?php if ($task['plan_date'] != ''): ?>
@@ -175,6 +156,7 @@ switch($task['priority']) {
 			<em>---</em>
 		<?php endif ?>
 	</td>
+    <td><?php echo $task['task_cache'] ?></td>
 </tr>
 <?php endforeach ?>
 </table>
