@@ -61,4 +61,15 @@ class BEZ_mdl_Tasks extends BEZ_mdl_Factory {
         
         return parent::count($filters);
     }
+    
+    public function min_priority($issue) {
+        $q = "SELECT MIN((CASE	WHEN tasks.state > 0 THEN '3'
+								WHEN tasks.plan_date >= date('now', '+1 month') THEN '2'
+								WHEN tasks.plan_date >= date('now') THEN '1'
+								ELSE '0' END)) FROM tasks WHERE tasks.issue = ?";
+        $sth = $this->model->db->prepare($q);
+		$sth->execute(array($issue));
+        
+        return $sth->fetchColumn();
+    }
 }

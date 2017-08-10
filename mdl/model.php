@@ -48,6 +48,9 @@ class BEZ_mdl_Model {
 		}
 		$this->db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         
+        //convert NULLS to empty strings
+        $this->db->setAttribute(PDO::ATTR_ORACLE_NULLS, PDO::NULL_TO_STRING);
+        
         $this->acl = new BEZ_mdl_Acl($this);
         
         $this->issues = new BEZ_mdl_Issues($this);

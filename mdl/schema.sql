@@ -27,7 +27,8 @@ CREATE TABLE tasks (
 				finish_time TEXT NULL,
 				issue INTEGER NULL,
 				task_cache TEXT NOT NULL,
-                reason_cache TEXT NULL);
+                reason_cache TEXT NULL,
+                subscribents TEXT NULL);
 
 CREATE TABLE tasktypes (
 				id INTEGER PRIMARY KEY,

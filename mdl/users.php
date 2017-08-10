@@ -63,7 +63,7 @@ class BEZ_mdl_Users {
 	
 	public function get_user_full_name($nick) {
 		$users = $this->get_all();
-		return $users[$nick];
+		return isset($users[$nick]) ? $users[$nick] : '';
 	}
 	
 	public function get_user_email($nick) {

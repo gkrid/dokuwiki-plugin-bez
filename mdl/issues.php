@@ -29,10 +29,21 @@ class BEZ_mdl_Issues extends BEZ_mdl_Factory {
 						WHEN state = 1
 							THEN '".$this->model->action->getLang('state_closed')."'
 					END) AS state_string,
-					(CASE	WHEN  state = 0 AND assigned_tasks_count > 0
-								AND opened_tasks_count = 0 THEN '1'
-							ELSE '1'
-					END) AS is_done,
+                    
+					(CASE
+                        WHEN state = 2
+							THEN '2'
+						WHEN coordinator = '-proposal'
+							THEN '-proposal'
+						WHEN state = 0 	AND assigned_tasks_count > 0
+										AND opened_tasks_count = 0
+							THEN '-done'
+						WHEN state = 0
+							THEN '0'
+						WHEN state = 1
+							THEN '1'
+					END) AS full_state,
+                    
 					(CASE 	WHEN state = 2 then '3'
                             WHEN task_priority IS NULL THEN 'None'
 							ELSE task_priority
@@ -50,6 +61,9 @@ class BEZ_mdl_Issues extends BEZ_mdl_Factory {
 								WHEN tasks.plan_date >= date('now') THEN '1'
 								ELSE '0' END)) FROM tasks WHERE tasks.issue = issues.id)
 							AS task_priority,
+                            (SELECT SUM(tasks.cost) FROM tasks
+								WHERE tasks.issue = issues.id)
+                            AS cost,    
 					issuetypes.".$this->model->conf['lang']." AS type_string
 					FROM issues
 						LEFT JOIN issuetypes ON issues.type = issuetypes.id)";

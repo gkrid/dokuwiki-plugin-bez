@@ -1268,6 +1268,73 @@ function do_issues_remove_priority() {
             $this->connect->errquery($q); 
 		}
 	}
+    
+    function do_null_empty() {
+        $tasks = $this->connect->fetch_assoc("SELECT * FROM tasks");
+        foreach ($tasks as $task) {
+            $impl = array();
+            if ($task['cost'] === '') {
+                $impl[] = 'cost=NULL';
+            }
+            if ($task['tasktype'] === '') {
+                $impl[] = 'tasktype=NULL';
+            }
+            if ($task['reason'] === '') {
+                $impl[] = 'reason=NULL';
+            }
+            if ($task['close_date'] === '') {
+                $impl[] = 'close_date=NULL';
+            }
+            if ($task['cause'] === '') {
+                $impl[] = 'cause=NULL';
+            }
+            if ($task['start_time'] === '') {
+                $impl[] = 'start_time=NULL';
+            }
+            if ($task['finish_time'] === '') {
+                $impl[] = 'finish_time=NULL';
+            }
+            if ($task['issue'] === '') {
+                $impl[] = 'issue=NULL';
+            }
+            if ($task['reason_cache'] === '') {
+                $impl[] = 'reason_cache=NULL';
+            }
+            if ($task['subscribents'] === '') {
+                $impl[] = 'subscribents=NULL';
+            }
+            if (count($impl) > 0) {
+                $q = "UPDATE tasks SET ".implode(',', $impl)." WHERE id = $task[id]\n";
+                echo $q;
+                $this->connect->errquery($q); 
+            }
+        }
+        
+        $issues = $this->connect->fetch_assoc("SELECT * FROM issues");
+        foreach ($issues as $issue) {
+            $impl = array();
+            if ($issue['opinion'] === '') {
+                $impl[] = 'opinion=NULL';
+            }
+            if ($issue['opinion_cache'] === '') {
+                $impl[] = 'opinion_cache=NULL';
+            }
+            if ($issue['last_mod'] === '') {
+                $impl[] = 'last_mod=NULL';
+            }
+            if ($issue['participants'] === '') {
+                $impl[] = 'participants=NULL';
+            }
+            if ($issue['subscribents'] === '') {
+                $impl[] = 'subscribents=NULL';
+            }
+            if (count($impl) > 0) {
+                $q = "UPDATE issues SET ".implode(',', $impl)." WHERE id = $issue[id]\n";
+                echo $q;
+                $this->connect->errquery($q); 
+            }
+        }
+    }
 	
 	private $actions = array(
 				array('Słownik kategorii przyczyn', 'check_rootcause', 'do_rootcause'),
@@ -1305,7 +1372,9 @@ function do_issues_remove_priority() {
                 array('Zaktualizuj odrzucone po staremu',
 				'check_rejected_old_way', 'do_rejected_old_way'),
                 array('Dodaj subskrybentów do zadań',
-				'check_add_subscribents_to_tasks', 'do_add_subscribents_to_tasks')
+				'check_add_subscribents_to_tasks', 'do_add_subscribents_to_tasks'),
+                array('Wynuluj puste pola',
+				'check_rejected_old_way', 'do_null_empty')
 		);
     
     function get_actions() {

@@ -27,7 +27,7 @@
 
 		<div class="bez_second_lv_buttons" style="margin-top: 10px">
 			<?php if (	$template['issue']->user_is_coordinator() &&
-						$template['issue']->full_state() === '0'): ?>
+						$template['issue']->state === '0'): ?>
 				<a href="?id=<?php echo $this->id('issue', 'id', $template['issue']->id, 'action', 'task_correction_add') ?>#z_" class="bez_subscribe_button">
 					<span class="bez_awesome">&#xf0fe;</span>&nbsp;&nbsp;<?php echo $bezlang['correction_add'] ?>
 				</a>
@@ -136,7 +136,7 @@
 </ul>
 
 <?php if (	$template['issue']->user_is_coordinator() &&
-						$template['issue']->full_state() === '0' &&
+						$template['issue']->state === '0' &&
                         $template['action'] !== 'issue_edit_metadata'): ?>
     <h2><?php echo $bezlang['issue_invite_header'] ?></h2>
     <form action="?id=<?php echo $this->id('issue', 'id', $template['issue']->id, 'action', 'invite') ?>" method="post" id="bez_invite_users_form">

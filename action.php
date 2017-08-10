@@ -65,9 +65,13 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
     
     public function url() {
         $args = func_get_args();
-        $id = call_user_func_array(array($this, 'id'), $args);
+        if (count($args) > 0) {
+            $id = call_user_func_array(array($this, 'id'), $args);
+        } else {
+            $id = $_GET['id'];
+        }
         
-        return '?id=' . $id;
+        return DOKU_URL . 'doku.php?id=' . $id;
     }
     
     public function get_model_of($name) {

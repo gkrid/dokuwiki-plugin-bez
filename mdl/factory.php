@@ -19,14 +19,21 @@ abstract class BEZ_mdl_Factory {
 				$field = $filter;
 			}
 			
+            //parser
 			$operator = '=';
             $function = '';
+            $function_args = array();
 			if (is_array($value)) {
-                $operators = array('!=', '<', '>', '<=', '>=');
+                $operators = array('!=', '<', '>', '<=', '>=', 'BETWEEN');
                 $functions = array('', 'date');
                 
                 $operator = $value[0];
                 $function = isset($value[2]) ? $value[2] : '';
+                
+                if (is_array($function)) {
+                    $function = $function[0];
+                    $function_args = array_slice($value[2], 1);
+                }
                 
                 $value = $value[1];
                 
@@ -39,12 +46,28 @@ abstract class BEZ_mdl_Factory {
                 }
 			}
             
-			if ($function !== '') {
-                $where_q[] = $field." $operator $function(:$filter)";
+            //builder
+            if ($operator === 'BETWEEN') {
+                if (count($value) < 2) {
+                    throw new Exception('wrong BETWEEN argument. provide two values');
+                }
+                if ($function !== '') {
+                    array_unshift($function_args, $field);
+                    $where_q[] = "$function(".implode(',', $function_args).") BETWEEN :${filter}_start AND :${filter}_end";
+                } else {
+                    $where_q[] = "$field BETWEEN :${filter}_start AND :${filter}_end";
+                }
+                $execute[":${filter}_start"] = $value[0];
+                $execute[":${filter}_end"] = $value[1];
             } else {
-                $where_q[] = $field." $operator :$filter";
+                if ($function !== '') {
+                    array_unshift($function_args, $field);
+                    $where_q[] = "$function(".implode(',', $function_args).") $operator :$filter";
+                } else {
+                    $where_q[] = "$field $operator :$filter";
+                }
+                $execute[":$filter"] = $value;
             }
-			$execute[":$filter"] = $value;
 		}
 		
 		$where = '';
@@ -166,8 +189,16 @@ abstract class BEZ_mdl_Factory {
 		$set = array();
 		$execute = array();
 		foreach ($obj->get_columns() as $column) {
+            if ($obj->$column === null) {
+                throw new Exception('cannot save object becouse it has uninitialized parameter: '.$column);
+            }
 			$set[] = ":$column";
-			$execute[':'.$column] = $obj->$column;
+            $value = $obj->$column;
+            if ($value === '') {
+                $execute[':'.$column] = null;
+            } else {
+                $execute[':'.$column] = $value;
+            }
 		}
 				
 		$query = 'REPLACE INTO '.$this->get_table_name().'

@@ -43,7 +43,11 @@ class Tpl {
     
     /*users info function for shorten the code*/
     public function user_name($login=NULL) {
-        return $this->action->get_model_of('users')->get_user_full_name($login);
+        $name = $this->action->get_model_of('users')->get_user_full_name($login);
+        if ($name === '') {
+            return $login;
+        }
+        return $name;
     }
     
     public function user_email($login=NULL) {

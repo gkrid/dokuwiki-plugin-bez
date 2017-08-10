@@ -7,7 +7,7 @@ require_once 'entity.php';
 
 class BEZ_mdl_Dummy_Issue extends BEZ_mdl_Entity  {
     //meta
-	protected $reporter, $date, $last_mod, $last_activity,
+	protected $id, $reporter, $date, $last_mod, $last_activity,
 				$participants, $subscribents, $coordinator;
 	
 	
@@ -20,7 +20,7 @@ class BEZ_mdl_Dummy_Issue extends BEZ_mdl_Entity  {
 	//virtual
 	protected $participants_array = array(), $subscribents_array = array(),
 				$assigned_tasks_count, $opened_tasks_count,
-				$priority, $type_string, $state_string;
+				$priority, $type_string, $state_string, $coordinator_string, $cost, $full_state;
     
 	
 	protected $parse_int = array('assigned_tasks_count', 'opened_tasks_count');
@@ -33,10 +33,16 @@ class BEZ_mdl_Dummy_Issue extends BEZ_mdl_Entity  {
 					'state', 'opinion', 'opinion_cache');
 	}
 	
+    protected $columns_demendencies = array(
+        'type'  => 'type_string',
+        'state' => 'state_string',
+        'coordinator' => 'coordinator_string'
+    );
+    
 	public function get_virtual_columns() {
 		return array('participants_array', 'subscribents_array',
 					'assigned_tasks_count',	'opened_tasks_count',
-					'priority', 'type_string', 'state_string');
+					'priority', 'type_string', 'state_string', 'coordinator_string', 'cost', 'full_state');
 	}
     
     public function get_states() {
@@ -54,7 +60,7 @@ class BEZ_mdl_Issue extends BEZ_mdl_Dummy_Issue {
 	
 	
     
-    private function state_string_code() {
+    private function state_string() {
         if ($this->state === '2') {
             return 'state_rejected';
         } else if ($this->coordinator === '-proposal') {
@@ -79,24 +85,16 @@ class BEZ_mdl_Issue extends BEZ_mdl_Dummy_Issue {
     }
     
     private function priority() {
-        return 'None';
-    }
-    
-    private function update_virtual_columns() {
-		$this->state_string = $this->model->action->getLang($this->state_string_code());
-        $this->type_string = $this->type_string();
-        $this->priority = $this->priority();
-        //we should also update assigned_tasks_count and opened_tasks_count
-    }
-    
-    public function full_state() {
-        if (strpos($this->coordinator, '-') === 0) {
-            return $this->coordinator;
-        } else {
-            return $this->state;
+        if ($this->state === '2') {
+            return '3';
         }
+        $min_pr = $this->model->tasks->min_priority(array('issue' => $this->id));
+        if ($min_pr === NULL) {
+            return 'None';
+        }
+        return $min_pr;
     }
-    
+        
     public function user_is_coordinator() {
         if ($this->coordinator === $this->model->user_nick ||
            $this->model->acl->get_level() >= BEZ_AUTH_ADMIN) {
@@ -196,7 +194,7 @@ class BEZ_mdl_Issue extends BEZ_mdl_Dummy_Issue {
 		$this->opinion_cache = $this->helper->wiki_parse($this->opinion);
         
         //update virtuals
-        $this->update_virtual_columns();
+        //$this->update_virtual_columns();
 	}
     
     public function get_meta_fields() {
@@ -253,7 +251,7 @@ class BEZ_mdl_Issue extends BEZ_mdl_Dummy_Issue {
 		$this->opinion_cache = $this->helper->wiki_parse($this->opinion);
         
         //update virtuals
-        $this->update_virtual_columns();
+        //$this->update_virtual_columns();
 	}
     
     public function update_last_activity() {
@@ -328,16 +326,7 @@ class BEZ_mdl_Issue extends BEZ_mdl_Dummy_Issue {
 		
 		return $full_names;
 	}
-    
-    public function total_cost() {
-        $sth = $this->model->db->prepare('SELECT SUM(cost) FROM tasks
-										WHERE issue=:issue AND state=1');
-		$sth->execute(array(':issue' => $this->id));
-		$cost = $sth->fetchColumn();
-        
-        return $cost;
-    }
-	
+    	
 	public function is_subscribent($user=NULL) {
 		if ($user === NULL) {
 			$user = $this->model->user_nick;
