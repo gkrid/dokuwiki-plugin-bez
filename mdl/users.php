@@ -47,6 +47,14 @@ class BEZ_mdl_Users {
 		
 		return $groups;
 	}
+    
+    public function users_of_group($group) {
+		$wikiusers = $this->model->dw_auth->retrieveUsers();
+
+		return array_keys(array_filter($wikiusers, function($data) use ($group) {
+           return in_array($group, $data['grps']);
+        }));
+	}
 	
 	public function exists($nick) {
         if (!is_string($nick)) {

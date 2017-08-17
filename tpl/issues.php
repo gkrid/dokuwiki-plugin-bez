@@ -7,7 +7,7 @@
 		<?php foreach ($tpl->get_dummy_of('issues')->get_states() as $key => $name): ?>
             <?php //php automaticly convert numeric strings as '12' to integers. Since 7.2 it will be fixed but since then we need to use "==" operator ?>
             <?php // https://stackoverflow.com/questions/4100488/a-numeric-string-as-array-key-in-php ?>
-			<option <?php if ($tpl->value('full_state') == $key) echo 'selected' ?>
+			<option <?php if ($tpl->value('full_state') === (string)$key) echo 'selected' ?>
 				value="<?php echo $key ?>"><?php echo $tpl->getLang($name) ?></option>
 		<?php endforeach ?>
 		</select>

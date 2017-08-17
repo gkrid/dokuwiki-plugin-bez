@@ -24,7 +24,7 @@ abstract class BEZ_mdl_Factory {
             $function = '';
             $function_args = array();
 			if (is_array($value)) {
-                $operators = array('!=', '<', '>', '<=', '>=', 'BETWEEN');
+                $operators = array('!=', '<', '>', '<=', '>=', 'LIKE', 'BETWEEN', 'OR');
                 $functions = array('', 'date');
                 
                 $operator = $value[0];
@@ -59,6 +59,21 @@ abstract class BEZ_mdl_Factory {
                 }
                 $execute[":${filter}_start"] = $value[0];
                 $execute[":${filter}_end"] = $value[1];
+            } elseif ($operator === 'OR') {
+                if (!is_array($value)) {
+                    throw new Exception('$data should be an array');
+                }
+                
+                $where_array = array();
+                
+                foreach ($value as $k => $v) {
+                    $exec = ":${filter}_$k";
+                    $where_array[] = "$field = $exec";
+                    $execute[$exec] = $v;
+                }
+                $where_q[] = '('.implode('OR', $where_array).')';
+                
+                
             } else {
                 if ($function !== '') {
                     array_unshift($function_args, $field);
