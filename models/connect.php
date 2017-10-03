@@ -5,7 +5,7 @@ class Connect {
 	protected $noclose = NULL;
 
 	public function open() {
-		$db = new SQLite3(DOKU_INC . 'data/bez.sqlite');
+		$db = new SQLite3(DOKU_INC . 'data/meta/bez.sqlite3');
 		$db->busyTimeout(2000);
 		return $db;
 	}

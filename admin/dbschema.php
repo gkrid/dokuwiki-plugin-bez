@@ -1313,8 +1313,8 @@ function do_issues_remove_priority() {
     }
 
 	function _backup($sufix) {
-		$db_file = DOKU_INC . 'data/bez.sqlite';
-		$copy_file = DOKU_INC.'data/bez.sqlite.'.date('%c').'.'.$sufix;
+		$db_file = DOKU_INC . 'data/meta/bez.sqlite3';
+		$copy_file = DOKU_INC.'data/meta/bez.sqlite3.'.date('%c').'.'.$sufix;
 		if (!file_exists($db_file)) {
 			throw new Exception("database file: $db_file doesn't exists");
 		}
