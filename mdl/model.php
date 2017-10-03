@@ -33,8 +33,14 @@ class BEZ_mdl_Model {
 		$this->user_nick = $user_nick;
 		$this->action = $action;
         $this->conf = $conf;
-        		
-		$db_path = DOKU_INC . 'data/bez.sqlite';
+
+        //update old db location
+        $old_db_path = DOKU_INC . 'data/bez.sqlite';
+		$db_path = DOKU_INC . 'data/meta/bez.sqlite3';
+        if (file_exists($old_db_path)) {
+            rename($old_db_path, $db_path);
+        }
+
 		//if database not exists
 		if (!file_exists($db_path)) {
 			$this->db = new PDO('sqlite:/' . $db_path);
