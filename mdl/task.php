@@ -348,7 +348,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
         return false;
 	}
     
-    private function mail_notify($replacements=array(), $users=false) {        
+    private function mail_notify($replacements=array(), $users=false, $attachedImages=array()) {
         $plain = io_readFile($this->model->action->localFN('task-notification'));
         $html = io_readFile($this->model->action->localFN('task-notification', 'html'));
         
@@ -396,6 +396,11 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
         $mailer->to($emails);
         $mailer->subject($rep['subject']);
 
+        //add images
+        foreach ($attachedImages as $img) {
+            $mailer->attachFile($img['path'], $img['mime'], $img['name'], $img['embed']);
+        }
+
         $send = $mailer->send();
         if ($send === false) {
             //this may mean empty $emails
@@ -442,6 +447,10 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
                 '<strong>'.$this->model->action->getLang('finish_time').': </strong>' . 
                 $this->finish_time;
         }
+
+        $info = array();
+        $task_html = p_render('bez_xhtmlmail', p_get_instructions($this->task), $info);
+        $attachedImages = $info['img'];
         
         $rep = array(
             'content' => $this->task,
@@ -466,7 +475,7 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
                         'border-bottom' => '1px solid #8bbcbc',
                         'padding' => '.3em .5em'
                     )
-                ), $top_row, $bottom_row) . $this->task_cache,
+                ), $top_row, $bottom_row) . $task_html,
             'who' => $this->model->user_nick,
             'when' => date('c', (int)$this->date),
             'custom_content' => true
@@ -479,9 +488,9 @@ class BEZ_mdl_Task extends BEZ_mdl_Entity {
         $rep = array_merge($rep, $replacements);
         
         if ($issue_obj === NULL) {
-            $this->mail_notify($rep, $users);
+            $this->mail_notify($rep, $users, $attachedImages);
         } else {
-            $issue_obj->mail_notify($rep);
+            $issue_obj->mail_notify($rep, false, $attachedImages);
         }
     }
     
