@@ -393,12 +393,13 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
     
     //http://data.agaric.com/capture-all-sent-mail-locally-postfix
     //https://askubuntu.com/questions/192572/how-do-i-read-local-email-in-thunderbird
-    public function mail_notify($replacements=array(), $users=false) {
+    public function mail_notify($replacements=array(), $users=false, $attachedImages=array()) {
         $plain = io_readFile($this->model->action->localFN('issue-notification'));
         $html = io_readFile($this->model->action->localFN('issue-notification', 'html'));
                 
         $issue_link =  DOKU_URL . 'doku.php?id='.$this->model->action->id('issue', 'id', $this->id);
-        $issue_unsubscribe = DOKU_URL . 'doku.php?id='.$this->model->action->id('issue', 'id', $this->id, 'action', 'unsubscribe');
+        $issue_unsubscribe = DOKU_URL . 'doku.php?id='.$this->model->action->id('issue', 'id', $this->id,
+                                                                                            'action', 'unsubscribe');
         
         $issue_reps = array(
                                 'issue_id' => $this->id,
@@ -454,6 +455,11 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
 
         $mailer->to($emails);
         $mailer->subject($rep['subject']);
+
+        //add images
+        foreach ($attachedImages as $img) {
+            $mailer->attachFile($img['path'], $img['mime'], $img['name'], $img['embed']);
+        }
         
         $send = $mailer->send();
         if ($send === false) {
@@ -462,7 +468,8 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
         }
     }
     
-    protected function mail_issue_box_reps($replacements=array()) {
+    protected function mail_issue_box_reps(&$replacements, &$attachedImages) {
+
         $replacements['custom_content'] = true;
         
         $html =  '<h2 style="font-size: 1.2em;">';
@@ -492,8 +499,10 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
         $html .= '</span></span></h2>';
         
         $html .= '<h2 style="font-size: 1.2em;border-bottom: 1px solid @ACTION_BORDER_COLOR@">' . $this->title . '</h2>';
-        
-        $html .= $this->description_cache;
+
+        $info = array();
+        $html .= p_render('bez_xhtmlmail', p_get_instructions($this->description), $info);
+        $attachedImages = array_merge($attachedImages, $info['img']);
 
         if ($this->state !== '0') {
             $html .= '<h3 style="font-size:100%; border-bottom: 1px dotted #bbb">';
@@ -503,7 +512,9 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
                     $html .= $this->model->action->getLang('reason');
                 }
             $html .= '</h3>';
-            $html .= $this->opinion_cache;
+            $info = array();
+            $html .= p_render('bez_xhtmlmail', p_get_instructions($this->opinion), $info);
+            $attachedImages = array_merge($attachedImages, $info['img']);
         }
 
         $replacements['content_html'] = $html;
@@ -531,38 +542,49 @@ class BEZ_mdl_Issue extends BEZ_mdl_Entity {
                 $replacements['action_border_color'] = '#bbb';
                 break;
         }
-       
-        return $replacements;
+
     }
     
     public function mail_notify_change_state() {
-        $this->mail_notify($this->mail_issue_box_reps(array(
+        $replacements = array(
             'who' => $this->model->user_nick,
             'action' => $this->model->action->getLang('mail_mail_notify_change_state_action'),
             //'subject' => $this->model->action->getLang('mail_mail_notify_change_state_subject') . ' #'.$this->id
-        )));
+        );
+        $attachedImages = array();
+        $this->mail_issue_box_reps($replacements, $attachedImages);
+        $this->mail_notify($replacements, false, $attachedImages);
     }
     
-    public function mail_notify_invite($client) {        
-        $this->mail_notify($this->mail_issue_box_reps(array(
+    public function mail_notify_invite($client) {
+        $replacements = array(
             'who' => $this->model->user_nick,
             'action' => $this->model->action->getLang('mail_mail_notify_invite_action'),
             //'subject' => $this->model->action->getLang('mail_mail_notify_invite_subject') . ' #'.$this->id
-        )), array($client));
+        );
+        $attachedImages = array();
+        $this->mail_issue_box_reps($replacements, $attachedImages);
+        $this->mail_notify($replacements, array($client), $attachedImages);
     }
     
-    public function mail_inform_coordinator() {        
-        $this->mail_notify($this->mail_issue_box_reps(array(
+    public function mail_inform_coordinator() {
+        $replacements = array(
             'who' => $this->model->user_nick,
             'action' => $this->model->action->getLang('mail_mail_inform_coordinator_action'),
             //'subject' => $this->model->action->getLang('mail_mail_inform_coordinator_subject') . ' #'.$this->id
-        )), array($this->coordinator));
+        );
+        $attachedImages = array();
+        $this->mail_issue_box_reps($replacements, $attachedImages);
+        $this->mail_notify($replacements, array($this->coordinator), $attachedImages);
     }
     
     public function mail_notify_issue_inactive($users=false) {
-        $this->mail_notify($this->mail_issue_box_reps(array(
+        $replacements = array(
             'who' => '',
             'action' => $this->model->action->getLang('mail_mail_notify_issue_inactive'),
-        )), $users);
+        );
+        $attachedImages = array();
+        $this->mail_issue_box_reps($replacements, $attachedImages);
+        $this->mail_notify($replacements, $users, $attachedImages);
     }
 }

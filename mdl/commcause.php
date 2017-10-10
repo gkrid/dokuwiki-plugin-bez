@@ -126,10 +126,12 @@ class BEZ_mdl_Commcause extends BEZ_mdl_Entity {
         if ($issue_obj->id !== $this->issue) {
             throw new Exception('issue object id and commcause->issue does not match');
         }
-        
+        $info = array();
+        $html =  p_render('bez_xhtmlmail',p_get_instructions($this->content), $info);
+
         $rep = array(
             'content' => $this->content,
-            'content_html' => $this->content_cache,
+            'content_html' => $html,
             'who' => $this->reporter,
             'when' => $this->datetime
         );
@@ -144,6 +146,6 @@ class BEZ_mdl_Commcause extends BEZ_mdl_Entity {
             $rep['action_border_color'] = '#E5E5E5';
         }
         
-        $issue_obj->mail_notify($rep);
+        $issue_obj->mail_notify($rep, false, $info['img']);
     }
 }
