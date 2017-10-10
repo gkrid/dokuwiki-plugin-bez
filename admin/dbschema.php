@@ -456,10 +456,6 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 	}
 	
 	function do_proza_import() {
-			//~ $con = new Connect();
-			//$bez = $con->open();
-			//~ $tasko = new Tasktypes();
-			//$to = new Tasks();
 			$proza = new SQLite3(DOKU_INC . 'data/proza.sqlite');
 			
 			//sprawdź czy mamy wszystkich potrzebnych użytkowników
@@ -491,32 +487,24 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 			$db->close();
 		
 			while ($w = $r->fetchArray(SQLITE3_ASSOC)) {
-				//~ $post = $w;
-				//~ unset($post['id']);
-				//~ $post['coordinator'] = 'rolewniczak';
 				$tasktype = $this->model->tasktypes->create_object();
-				$tasktype->set(array(
+				$tasktype->set_data(array(
 							'pl' => $w['pl'],
 							'en' => $w['en']							
 				));
 				$lastid = $this->model->tasktypes->save($tasktype);
 				$z_prozy_do_bezu[$w['id']] = $lastid;
-				
-				//~ $tasko->add($post);
-				//~ $lastid = $tasko->lastid();
-				//~ $z_prozy_do_bezu[$w['id']] = $lastid;
-			}			
+			}
 						
 			$r = $proza->query("SELECT * FROM events");
 			while ($w = $r->fetchArray(SQLITE3_ASSOC)) {
 				
 				$meta = array('reporter' => $w['coordinator']);
 				if ($w['finish_date'] == '') {
-					$meta['date'] =  time();
+					$meta['date'] =  date('c');
 				} else {
-					$unix = strtotime($w['finish_date']);
-					$meta['date'] = $unix;
-					$meta['close_date'] = $unix;
+					$meta['date'] = $w['finish_date'];
+					$meta['close_date'] = $meta['date'];
 				}
 				
 				$data = array(
@@ -533,30 +521,17 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 				
 				$tasktype = $z_prozy_do_bezu[$w['group_n']];
 				
-				$task = $this->model->tasks->create_object_program(array('tasktype' => $tasktype));
+				$task = $this->model->tasks->create_object(array('tasktype' => (string)$tasktype));
 				
 				//first change state - close_date update
-				$state = $task->set_state($state_data);
-				if ($state == false) {
-					throw new Exception(print_r($task->get_errors(), true));
-				}
-				
-				$state = $task->set_meta($meta);
-				if ($state == false) {
-					throw new Exception(print_r($task->get_errors(), true));
-				}
-				
-				$state = $task->set_data($data);
-				if ($state == false) {
-					throw new Exception(print_r($task->get_errors(), true));
-				}
-
+				$task->set_state($state_data);
+				$task->set_meta($meta);
+				 $task->set_data($data);
 
 				$this->model->tasks->save($task);
 			}
 			
 			$proza->close();
-			//$bez->close();
 			$fname = DOKU_INC . 'data/proza_imported';
 			fopen($fname, "w");
 	}
@@ -1313,8 +1288,8 @@ function do_issues_remove_priority() {
     }
 
 	function _backup($sufix) {
-		$db_file = DOKU_INC . 'data/meta/bez.sqlite3';
-		$copy_file = DOKU_INC.'data/meta/bez.sqlite3.'.date('%c').'.'.$sufix;
+		$db_file = DOKU_INC . 'data/bez.sqlite';
+		$copy_file = DOKU_INC.'data/bez.sqlite.'.date('%c').'.'.$sufix;
 		if (!file_exists($db_file)) {
 			throw new Exception("database file: $db_file doesn't exists");
 		}
