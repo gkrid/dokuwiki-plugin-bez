@@ -1313,7 +1313,7 @@ function do_issues_remove_priority() {
 	  if (array_key_exists($pr_id, $this->actions)) {
 		try {
 			//create db backup
-			$this->_backup('before'.$pr_id);
+			//$this->_backup('before'.$pr_id);
 			$fname = $this->actions[$pr_id][2];
 			$this->$fname();
 		} catch (Exception $e) {
