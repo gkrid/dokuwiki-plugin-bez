@@ -184,11 +184,16 @@ class BEZ_mdl_Acl {
                 $acl['all_day_event'] = BEZ_PERMISSION_CHANGE;
                 $acl['start_time'] = BEZ_PERMISSION_CHANGE;
                 $acl['finish_time'] = BEZ_PERMISSION_CHANGE;
+
+                $acl['subscribents'] = BEZ_PERMISSION_CHANGE;
             }
             
             //przypisujemy zadanie programowe samemu sobie
             //no executor
-            if ($task->issue === '') {
+            if ($task->issue === '' &&
+                $task->executor == $this->model->user_nick &&
+                $task->executor == $task->reporter) {
+
                 $acl['task'] = BEZ_PERMISSION_CHANGE;
                 $acl['tasktype'] = BEZ_PERMISSION_CHANGE;
                 $acl['cost'] = BEZ_PERMISSION_CHANGE;
@@ -196,6 +201,8 @@ class BEZ_mdl_Acl {
                 $acl['all_day_event'] = BEZ_PERMISSION_CHANGE;
                 $acl['start_time'] = BEZ_PERMISSION_CHANGE;
                 $acl['finish_time'] = BEZ_PERMISSION_CHANGE;
+
+                $acl['subscribents'] = BEZ_PERMISSION_CHANGE;
             }
             
             return $acl;
