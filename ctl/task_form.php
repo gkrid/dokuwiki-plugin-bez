@@ -48,6 +48,10 @@ try {
             $tid = (int)$nparams['duplicate'];
             $task = $this->model->tasks->get_one($tid);
             $value = $task->get_assoc();
+            //if user is not leader, he clones a task with executor=$USER['name']
+            if ($this->model->acl->get_level() < BEZ_AUTH_LEADER) {
+                $value['executor'] = $this->model->user_nick;
+            }
         } else {
             $value['all_day_event'] = '1';
         }
