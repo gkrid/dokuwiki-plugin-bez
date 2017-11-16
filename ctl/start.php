@@ -1,5 +1,5 @@
 <?php
-//include_once DOKU_PLUGIN."bez/models/issues.php";
+//include_once DOKU_PLUGIN."bez/models/threads.php";
 //include_once DOKU_PLUGIN."bez/models/comments.php";
 //include_once DOKU_PLUGIN."bez/models/causes.php";
 //include_once DOKU_PLUGIN."bez/models/tasks.php";
@@ -60,7 +60,7 @@ $this->tpl->set('proposals_count', $proposals_count);
 //create database
 //~ $this->model;
 
-//~ include_once DOKU_PLUGIN."bez/models/issues.php";
+//~ include_once DOKU_PLUGIN."bez/models/threads.php";
 //~ $isso = new Issues();
 //~ $no = count($isso->get_filtered(array('state' => '0', 'coordinator' => $INFO['client'])));
 //~ $template['my_issues'] = $no;

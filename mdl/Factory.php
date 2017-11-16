@@ -1,23 +1,22 @@
 <?php
- 
-if(!defined('DOKU_INC')) die();
 
-abstract class BEZ_mdl_Factory {
-	protected $model, $dummy_object;
-    
-    protected $select_query;
-	
-	protected $filter_field_map = array();
-	
-	protected function build_where($filters=array()) {
+namespace dokuwiki\plugin\bez\mdl;
+
+abstract class Factory {
+    /** @var Model */
+	protected $model;
+
+	protected function filter_field_map($field) {
+	    return $field;
+    }
+
+    protected abstract function select_query();
+
+    protected function build_where($filters=array()) {
 		$execute = array();
 		$where_q = array();
 		foreach ($filters as $filter => $value) {
-			if (isset($this->filter_field_map[$filter])) {
-				$field = $this->filter_field_map[$filter];
-			} else {
-				$field = $filter;
-			}
+            $field = $this->filter_field_map($filter);
 			
             //parser
 			$operator = '=';
@@ -38,18 +37,18 @@ abstract class BEZ_mdl_Factory {
                 $value = $value[1];
                 
 				if (!in_array($operator, $operators)) {
-                    throw new Exception('unknown operator: '.$operator);
+                    throw new \Exception('unknown operator: '.$operator);
                 }
                 
                 if (!in_array($function, $functions)) {
-                    throw new Exception('unknown function: '.$function);
+                    throw new \Exception('unknown function: '.$function);
                 }
 			}
             
             //builder
             if ($operator === 'BETWEEN') {
                 if (count($value) < 2) {
-                    throw new Exception('wrong BETWEEN argument. provide two values');
+                    throw new \Exception('wrong BETWEEN argument. provide two values');
                 }
                 if ($function !== '') {
                     array_unshift($function_args, $field);
@@ -61,7 +60,7 @@ abstract class BEZ_mdl_Factory {
                 $execute[":${filter}_end"] = $value[1];
             } elseif ($operator === 'OR') {
                 if (!is_array($value)) {
-                    throw new Exception('$data should be an array');
+                    throw new \Exception('$data should be an array');
                 }
                 
                 $where_array = array();
@@ -79,6 +78,9 @@ abstract class BEZ_mdl_Factory {
                     array_unshift($function_args, $field);
                     $where_q[] = "$function(".implode(',', $function_args).") $operator :$filter";
                 } else {
+                    if ($value === NULL && $operator === '=') {
+                        $operator = 'IS';
+                    }
                     $where_q[] = "$field $operator :$filter";
                 }
                 $execute[":$filter"] = $value;
@@ -92,28 +94,32 @@ abstract class BEZ_mdl_Factory {
 		return array($where, $execute);
 	}
 	
-	public function __construct($model) {
+	public function __construct(Model $model) {
 		$this->model = $model;
 	}
+
+	public function acl_static($field) {
+        return $this->model->acl->check_static_field($this->get_table_name(), $field);
+    }
         
     //chek acl
     public function get_all($filters=array()) {
-        $dummy = $this->get_dummy_object();
-        if ($dummy->acl_of('id') < BEZ_PERMISSION_VIEW) {
-            throw new PermissionDeniedException();
-        }
-        
-        if ($this->select_query === NULL) {
-            throw new Exception('no select query defined');
-        }
+//        $dummy = $this->get_dummy_object();
+//        if ($dummy->acl_of('id') < BEZ_PERMISSION_VIEW) {
+//            throw new PermissionDeniedException();
+//        }
+//
+//        if ($this->select_query === NULL) {
+//            throw new \Exception('no select query defined');
+//        }
         
         list($where_q, $execute) = $this->build_where($filters);
 		
-		$q = $this->select_query . $where_q;
-			
+		$q = $this->select_query() . $where_q;
+
 		$sth = $this->model->db->prepare($q);
-		
-		$sth->setFetchMode(PDO::FETCH_CLASS, $this->get_object_class_name(),
+
+		$sth->setFetchMode(\PDO::FETCH_CLASS, $this->get_object_class_name(),
 				array($this->model));
 				
 		$sth->execute($execute);
@@ -122,11 +128,15 @@ abstract class BEZ_mdl_Factory {
     }
     
     public function count($filters=array()) {
-        $dummy = $this->get_dummy_object();
-        if ($dummy->acl_of('id') < BEZ_PERMISSION_VIEW) {
+//        $dummy = $this->get_dummy_object();
+//        if ($dummy->acl_of('id') < BEZ_PERMISSION_VIEW) {
+//            throw new PermissionDeniedException();
+//        }
+
+        if ($this->acl_static('id') < BEZ_PERMISSION_VIEW) {
             throw new PermissionDeniedException();
         }
-               
+
         list($where_q, $execute) = $this->build_where($filters);
         
         $q = 'SELECT COUNT(*) FROM ' . $this->get_table_name() . ' ' . $where_q;
@@ -138,11 +148,11 @@ abstract class BEZ_mdl_Factory {
     }
     
     public function get_one($id) {
-        if ($this->select_query === NULL) {
-            throw new Exception('no select query defined');
-        }
+//        if ($this->select_query === NULL) {
+//            throw new \Exception('no select query defined');
+//        }
         
-		$q = $this->select_query.' WHERE '.$this->get_table_name().'.id = ?';
+		$q = $this->select_query().' WHERE '.$this->get_table_name().'.id = ?';
 						
 		$sth = $this->model->db->prepare($q);
 		$sth->execute(array($id));
@@ -151,36 +161,39 @@ abstract class BEZ_mdl_Factory {
 					array($this->model));
         
         if ($obj === false) {
-            throw new Exception('there is no '.$this->get_table_singular().' with id: '.$id);
+            throw new \Exception('there is no '.$this->get_table_name().' with id: '.$id);
         }
         
 		return $obj;
 	}
 
 	public function get_table_name() {
-		$class = get_class($this);
-		$exp = explode('_', $class);
-		$table = lcfirst($exp[2]);
-		return $table;
+        $class = (new \ReflectionClass($this))->getShortName();
+        return lcfirst(str_replace('Factory', '', $class));
 	}
-    
-    public function get_table_singular() {
-        $table = $this->get_table_name();
-        $singular = substr($table, 0, -1);
-        return $singular;
+
+    public function get_object_class_name() {
+        $class = (new \ReflectionClass($this))->getName();
+        return str_replace('Factory', '', $class);
     }
+//
+//    public function get_table_singular() {
+//        $table = $this->get_table_name();
+//        $singular = substr($table, 0, -1);
+//        return $singular;
+//    }
+//
+//    private function get_singular_object_name() {
+//        return ucfirst($this->get_table_singular());
+//    }
+//
+//    private function get_object_class_name() {
+//        return 'BEZ_mdl_'.$this->get_singular_object_name();
+//    }
     
-    private function get_singular_object_name() {
-        return ucfirst($this->get_table_singular());
-    }
-    
-    private function get_object_class_name() {
-        return 'BEZ_mdl_'.$this->get_singular_object_name();
-    }
-    
-    private function get_dummy_object_class_name() {
-        return 'BEZ_mdl_Dummy_'.$this->get_singular_object_name();
-    }
+//    private function get_dummy_object_class_name() {
+//        return 'BEZ_mdl_Dummy_'.$this->get_singular_object_name();
+//    }
     
     public function create_object($defaults=array()) {
         $object_name = $this->get_object_class_name();
@@ -188,26 +201,44 @@ abstract class BEZ_mdl_Factory {
 		$obj = new $object_name($this->model, $defaults);
 		return $obj;
 	}
+
+	public function beginTransaction() {
+        $this->model->sqlite->query('BEGIN TRANSACTION');
+    }
+
+    public function commitTransaction() {
+        $this->model->sqlite->query('COMMIT TRANSACTION');
+    }
+
+    public function rollbackTransaction() {
+        $this->model->sqlite->query('ROLLBACK');
+    }
     
-    public function get_dummy_object() {
-        if ($this->dummy_object === NULL) {
-            $dummy_object_name = $this->get_dummy_object_class_name();
-            $this->dummy_object = new $dummy_object_name($this->model);
-        }
-        return $this->dummy_object;
-	}
+//    public function get_dummy_object() {
+//        if ($this->dummy_object === NULL) {
+//            $dummy_object_name = $this->get_dummy_object_class_name();
+//            $this->dummy_object = new $dummy_object_name($this->model);
+//        }
+//        return $this->dummy_object;
+//	}
     
-	public function save($obj) {
+	public function save(Entity $obj) {
         //if user can change id, he can modify record
-        $this->model->acl->can_change($obj, 'id');
+        //$this->model->acl->can_change($obj, 'id');
         
 		$set = array();
 		$execute = array();
+		$columns = array();
 		foreach ($obj->get_columns() as $column) {
-            if ($obj->$column === null) {
-                throw new Exception('cannot save object becouse it has uninitialized parameter: '.$column);
-            }
+            if ($obj->$column === null) continue;
+            //id is special -> when null we insert new row
+//		    if ($column == 'id' && $obj->id == NULL) continue;
+
+//            if ($obj->$column === null) {
+//                throw new \Exception('cannot save object becouse it has uninitialized parameter: '.$column);
+//            }
 			$set[] = ":$column";
+			$columns[] = $column;
             $value = $obj->$column;
             if ($value === '') {
                 $execute[':'.$column] = null;
@@ -217,19 +248,25 @@ abstract class BEZ_mdl_Factory {
 		}
 				
 		$query = 'REPLACE INTO '.$this->get_table_name().'
-							('.implode(',', $obj->get_columns()).')
+							('.implode(',', $columns).')
 							VALUES ('.implode(',', $set).')';
-									
+
 		$sth = $this->model->db->prepare($query);
 		$sth->execute($execute);
 
         //new object is created
         if ($obj->id === NULL) {
-            $id = $this->model->db->lastInsertId();
-            $obj->set_id($id);
+            $reflectionClass = new \ReflectionClass($obj);
+            $reflectionProperty = $reflectionClass->getProperty('id');
+            $reflectionProperty->setAccessible(true);
+            $reflectionProperty->setValue($obj, $this->model->db->lastInsertId());
         }
+//            $id = $this->model->db->lastInsertId();
+//            $obj->set_id($id);
+
+//        }
         
-		return $id;
+//		return $id;
 	}
 	
 	protected function delete_from_db($id) {
@@ -238,7 +275,7 @@ abstract class BEZ_mdl_Factory {
 		$sth->execute(array($id));
 	}
 	
-	public function delete($obj) {        
+	public function delete(Entity $obj) {
         //if user can change id, he can delete record
         $this->model->acl->can_change($obj, 'id');
 		$this->delete_from_db($obj->id);

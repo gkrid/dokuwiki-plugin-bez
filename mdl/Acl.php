@@ -1,28 +1,34 @@
 <?php
  
-if(!defined('DOKU_INC')) die('meh.');
+//if(!defined('DOKU_INC')) die('meh.');
+//
+//include_once DOKU_PLUGIN."bez/models/tokens.php";
 
-include_once DOKU_PLUGIN."bez/models/tokens.php";
+namespace dokuwiki\plugin\bez\mdl;
 
 //ACL level defines
+use dokuwiki\plugin\bez\meta\PermissionDeniedException;
+
 define('BEZ_AUTH_NONE', 0);
 define('BEZ_AUTH_VIEWER', 2);
 define('BEZ_AUTH_USER', 5);
 define('BEZ_AUTH_LEADER', 10);
 define('BEZ_AUTH_ADMIN', 20);
 
+define('BEZ_PERMISSION_UNKNOWN', -1);
 define('BEZ_PERMISSION_NONE', 0);
 define('BEZ_PERMISSION_VIEW', 1);
 define('BEZ_PERMISSION_CHANGE', 2);
 
-class BEZ_mdl_Acl {
+class Acl {
+    /** @var  Model */
     private $model;
     
     private $level = BEZ_AUTH_NONE;
     
-    private $issues = array();
-    private $commcauses = array();
-    private $tasks = array();
+//    private $threads = array();
+//    private $commcauses = array();
+//    private $tasks = array();
     
     private function update_level($level) {
 		if ($level > $this->level) {
@@ -34,7 +40,7 @@ class BEZ_mdl_Acl {
         return $this->level;
     }
     
-    public function __construct($model) {
+    public function __construct(Model $model) {
         $this->model = $model;
         
 		$userd = $this->model->dw_auth->getUserData($this->model->user_nick); 
@@ -48,35 +54,22 @@ class BEZ_mdl_Acl {
 				$this->update_level(BEZ_AUTH_USER);
 			}
         } elseif (isset($_GET['t'])) {
-            $page_id = $this->model->action->page_id();
-            $toko = new Tokens();
-            
-            if ($toko->check(trim($_GET['t']), $page_id)) {
-                $this->update_level(BEZ_AUTH_VIEWER);
-            }
+//            $page_id = $this->model->action->page_id();
+//            $toko = new Tokens();
+//
+//            if ($toko->check(trim($_GET['t']), $page_id)) {
+//                $this->update_level(BEZ_AUTH_VIEWER);
+//            }
         }
     }
-        
 
-    private function check_issue($issue) {
-        $acl = array(
-                'id'            => BEZ_PERMISSION_NONE,
-                'title'         => BEZ_PERMISSION_NONE,
-                'description'   => BEZ_PERMISSION_NONE,
-                'state'         => BEZ_PERMISSION_NONE,
-                'opinion'       => BEZ_PERMISSION_NONE,
-                'type'          => BEZ_PERMISSION_NONE,
-                'coordinator'   => BEZ_PERMISSION_NONE,
-                'reporter'      => BEZ_PERMISSION_NONE,
-                'date'          => BEZ_PERMISSION_NONE,
-                'last_mod'      => BEZ_PERMISSION_NONE,
-                'last_activity' => BEZ_PERMISSION_NONE,
-                'participants'  => BEZ_PERMISSION_NONE,
-                'subscribents'  => BEZ_PERMISSION_NONE,
-                'description_cache' => BEZ_PERMISSION_NONE,
-                'opinion_cache' => BEZ_PERMISSION_NONE
-        );
-        
+    private function static_thread() {
+        $acl = array_fill_keys(Thread::get_columns(), BEZ_PERMISSION_NONE);
+
+        //virtual columns
+        $acl['participants'] = BEZ_PERMISSION_NONE;
+        $acl['labels'] = BEZ_PERMISSION_NONE;
+
         //BEZ_AUTH_VIEWER is also token viewer
         if ($this->level >= BEZ_AUTH_VIEWER) {
             //user can display everythig
@@ -84,22 +77,45 @@ class BEZ_mdl_Acl {
                 return BEZ_PERMISSION_VIEW;
             }, $acl);
         }
-        
+
         if ($this->level >= BEZ_AUTH_ADMIN) {
             //user can edit everythig
             $acl = array_map(function($value) {
                 return BEZ_PERMISSION_CHANGE;
             }, $acl);
-            
+
             return $acl;
         }
+    }
+        
+
+    private function check_thread(Thread $thread) {
+//        $acl = array(
+//                'id'            => BEZ_PERMISSION_NONE,
+//                'title'         => BEZ_PERMISSION_NONE,
+//                'description'   => BEZ_PERMISSION_NONE,
+//                'state'         => BEZ_PERMISSION_NONE,
+//                'opinion'       => BEZ_PERMISSION_NONE,
+//                'type'          => BEZ_PERMISSION_NONE,
+//                'coordinator'   => BEZ_PERMISSION_NONE,
+//                'reporter'      => BEZ_PERMISSION_NONE,
+//                'date'          => BEZ_PERMISSION_NONE,
+//                'last_mod'      => BEZ_PERMISSION_NONE,
+//                'last_activity' => BEZ_PERMISSION_NONE,
+//                'participants'  => BEZ_PERMISSION_NONE,
+//                'subscribents'  => BEZ_PERMISSION_NONE,
+//                'description_cache' => BEZ_PERMISSION_NONE,
+//                'opinion_cache' => BEZ_PERMISSION_NONE
+//        );
+
+        $acl = $this->static_thread();
         
         //we create new issue
-        if ($issue->id === NULL) {
+        if ($thread->id === NULL) {
             if ($this->level >= BEZ_AUTH_USER) {
                 $acl['title'] = BEZ_PERMISSION_CHANGE;
-                $acl['description'] = BEZ_PERMISSION_CHANGE;
-                $acl['type'] = BEZ_PERMISSION_CHANGE;
+                $acl['content'] = BEZ_PERMISSION_CHANGE;
+                //$acl['type'] = BEZ_PERMISSION_CHANGE;
             }
             
             if ($this->level >= BEZ_AUTH_LEADER) {
@@ -109,23 +125,23 @@ class BEZ_mdl_Acl {
             return $acl;
         }
         
-        if ($issue->coordinator === '-proposal' &&
-            $issue->reporter === $this->model->user_nick) {
+        if ($thread->state === 'proposal' &&
+            $thread->original_poster === $this->model->user_nick) {
             $acl['title'] = BEZ_PERMISSION_CHANGE;
-            $acl['description'] = BEZ_PERMISSION_CHANGE;
-            $acl['type'] = BEZ_PERMISSION_CHANGE;
+            $acl['content'] = BEZ_PERMISSION_CHANGE;
+            //$acl['type'] = BEZ_PERMISSION_CHANGE;
         }
         
-        if ($issue->coordinator === $this->model->user_nick) {
+        if ($thread->coordinator === $this->model->user_nick) {
             $acl['title'] = BEZ_PERMISSION_CHANGE;
-            $acl['description'] = BEZ_PERMISSION_CHANGE;
-            $acl['type'] = BEZ_PERMISSION_CHANGE;
+            $acl['content'] = BEZ_PERMISSION_CHANGE;
+            //$acl['type'] = BEZ_PERMISSION_CHANGE;
             
             //coordinator can change coordinator
             $acl['coordinator'] = BEZ_PERMISSION_CHANGE;
             
             $acl['state'] = BEZ_PERMISSION_CHANGE;
-            $acl['opinion'] = BEZ_PERMISSION_CHANGE;
+            //$acl['opinion'] = BEZ_PERMISSION_CHANGE;
         }
                 
         return $acl;
@@ -324,14 +340,10 @@ class BEZ_mdl_Acl {
         return $acl;
         
     }
-    
-    private function check_issuetype($issuetype) {
-        $acl = array(
-            'id'            => BEZ_PERMISSION_NONE,
-            'pl'         => BEZ_PERMISSION_NONE,
-            'en'      => BEZ_PERMISSION_NONE
-        );
-        
+
+    private function static_label() {
+        $acl = array_fill_keys(Label::get_columns(), BEZ_PERMISSION_NONE);
+
         if ($this->level >= BEZ_AUTH_USER) {
             //user can display everythig
             $acl = array_map(function($value) {
@@ -347,6 +359,10 @@ class BEZ_mdl_Acl {
         }
         
         return $acl;
+    }
+
+    private function check_label(Label $label) {
+        return $this->static_label();
     }
 
    private function check_tasktype($tasktype) {
@@ -374,22 +390,42 @@ class BEZ_mdl_Acl {
     }
 
     /*returns array */
-    public function check($obj) {
-        $method = 'check_'.$obj->get_table_singular();
+    public function check(Entity $obj) {
+        $method = 'check_'.$obj->get_table_name();
         if (!method_exists($this, $method)) {
-            throw new Exception('no acl rules set for table: '.$obj->get_table_name());
+            throw new \Exception('no acl rules set for table: '.$obj->get_table_name());
         }
         return $this->$method($obj);
     }
     
-    public function check_field($obj, $field) {
+    public function check_field(Entity $obj, $field) {
         $acl = $this->check($obj);
+
+        if (isset($acl[$field])) {
+            return $acl[$field];
+        }
+        return BEZ_PERMISSION_UNKNOWN;
+    }
+
+    public function check_static($table) {
+        $method = 'static_'.$table;
+        if (!method_exists($this, $method)) {
+            throw new \Exception('no acl rules set for table: '.$table);
+        }
+        return $this->$method($table);
+    }
+
+    public function check_static_field($table, $field) {
+        $acl = $this->check_static($table);
         return $acl[$field];
     }
+
     
-    public function can_change($obj, $field) {
+    public function can_change(Entity $obj, $field) {
         if ($this->check_field($obj, $field) < BEZ_PERMISSION_CHANGE) {
-            throw new PermissionDeniedException('user cannot change field: '.$field.' in table: '.$table.' row: '.$id);
+            $table = $obj->get_table_name();
+            $id = $obj->id;
+            throw new PermissionDeniedException('user cannot change field "'.$field.'" in table "'.$table.', rowid: "'.$id.'"');
         }
     }
 }

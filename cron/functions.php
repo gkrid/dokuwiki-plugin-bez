@@ -2,7 +2,7 @@
 
 require_once DOKU_PLUGIN.'bez/helper.php';
 
-require_once DOKU_PLUGIN.'bez/exceptions.php';
+require_once DOKU_PLUGIN . 'bez/exceptions.php';
 require_once DOKU_PLUGIN.'bez/interfaces.php';
 
 require_once DOKU_PLUGIN.'bez/mdl/model.php';

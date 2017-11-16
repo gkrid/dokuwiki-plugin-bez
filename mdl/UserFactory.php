@@ -1,8 +1,8 @@
 <?php
- 
-if(!defined('DOKU_INC')) die();
 
-class BEZ_mdl_Users {
+namespace dokuwiki\plugin\bez\mdl;
+
+class UserFactory {
 	
 	private $model;
 	

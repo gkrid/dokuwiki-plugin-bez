@@ -1,10 +1,18 @@
 <?php
 
-class BEZ_mdl_Validator {
+namespace dokuwiki\plugin\bez\mdl;
+
+use dokuwiki\plugin\bez\meta\ValidationException;
+
+class Validator {
 	private $rules=array(), $errors, $model;
 	public function __construct($model) {
 		$this->model = $model;
 	}
+
+	public function add_rule($field, $rule) {
+        $this->rules[$field] = $rule;
+    }
 	
 	public function set_rules($rules) {
 		$this->rules = array_merge($this->rules, $rules);
@@ -25,7 +33,7 @@ class BEZ_mdl_Validator {
 	protected function check_against_val_method($value, $method, $args) {
 		$validator = 'validate_'.$method;
 		if (!method_exists($this, $validator)) {
-			throw new Exception("there is no validation function $validator");
+			throw new \Exception("there is no validation function $validator");
 		}
 		
 		array_unshift($args, $value);
@@ -45,7 +53,7 @@ class BEZ_mdl_Validator {
     
     public function validate_field($field, $value) {
         if (!isset($this->rules[$field])) {
-            throw new Exception('no validation rule for '.$field);
+            throw new \Exception('no validation rule for '.$field);
         }
             
         $args = $this->rules[$field][0];
@@ -61,8 +69,12 @@ class BEZ_mdl_Validator {
         return (string) $value;
     }
 	
-	public function validate($data, $fields) {
+	public function validate($data, $fields=null) {
 		$val_data = array();
+
+		if (is_null($fields)) {
+		    $fields = array_keys($this->rules);
+        }
 
 		foreach ($data as $key => $value) {
 			if (!in_array($key, $fields)) {
@@ -103,7 +115,7 @@ class BEZ_mdl_Validator {
 	}
 	
 	public function validate_dw_user($user, $addtitional_values=array()) {
-		$wiki_users = $this->model->users->get_all();
+		$wiki_users = $this->model->userFactory->get_all();
 		if (array_key_exists($user, $wiki_users) ||
 			in_array($user, $addtitional_values)) {
 			return true;

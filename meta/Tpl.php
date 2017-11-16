@@ -1,15 +1,20 @@
 <?php
 
+namespace dokuwiki\plugin\bez\meta;
+
 class Tpl {
-    
-    private $action, $conf;
+
+    /** @var \action_plugin_bez */
+    private $action;
+
+    private $conf;
     
     private $variables = array();
     
     //form values from $_POST or from database
     private $values = array();
     
-    public function __construct(action_plugin_bez $action, $conf) {
+    public function __construct(\action_plugin_bez $action, $conf) {
         
         $this->action = $action;
         $this->conf = $conf;
@@ -21,12 +26,16 @@ class Tpl {
         $this->set('version', $info['date']);
         
         //common one
-        $this->set('users', $this->action->get_model_of('users')->get_all());
-        $this->set('groups', $this->action->get_model_of('users')->get_groups());
+        $this->set('users', $this->action->model_factory('user')->get_all());
+        $this->set('groups', $this->action->model_factory('user')->get_groups());
     }
     
-    public function action() {
-        return $this->action->get_action();
+    public function action($default=null) {
+        $action = $this->action->get_action();
+        if ($action == '' && !is_null($default)) {
+            return $default;
+        }
+        return $action;
     }
     
     public function param($id) {
@@ -37,13 +46,17 @@ class Tpl {
         return call_user_func_array(array($this->action, 'url'), func_get_args());
     }
         
-    public function get_dummy_of($name) {
-        return $this->action->get_model_of($name)->get_dummy_object();
+//    public function get_dummy_of($name) {
+//        return $this->action->get_model_of($name)->get_dummy_object();
+//    }
+
+    public function static_acl($table, $field) {
+        return $this->action->getModel()->acl->check_static_field($table, $field);
     }
     
     /*users info function for shorten the code*/
     public function user_name($login=NULL) {
-        $name = $this->action->get_model_of('users')->get_user_full_name($login);
+        $name = $this->action->getModel()->userFactory->get_user_full_name($login);
         if ($name === '') {
             return $login;
         }
@@ -51,7 +64,7 @@ class Tpl {
     }
     
     public function user_email($login=NULL) {
-        return $this->action->get_model_of('users')->get_user_email($login);  
+        return $this->action->getModel()->get_user_email($login);
     }
     /*end users info functions*/
     

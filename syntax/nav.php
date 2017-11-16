@@ -1,20 +1,18 @@
 <?php
-/**
- * Plugin Now: Inserts a timestamp.
- * 
- */
+
+use \dokuwiki\plugin\bez;
 
 // must be run within DokuWiki
 if(!defined('DOKU_INC')) die();
 
 //if(!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
 //require_once DOKU_PLUGIN.'syntax.php';
-//include_once DOKU_PLUGIN."bez/models/issues.php";
+//include_once DOKU_PLUGIN."bez/models/threads.php";
 //include_once DOKU_PLUGIN."bez/models/causes.php";
 //include_once DOKU_PLUGIN."bez/models/tasks.php";
 //include_once DOKU_PLUGIN."bez/models/taskactions.php";
 
-include_once DOKU_PLUGIN."bez/mdl/model.php";
+//include_once DOKU_PLUGIN."bez/mdl/model.php";
 
 /**
  * All DokuWiki plugins to extend the parser/rendering mechanism
@@ -75,7 +73,7 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
     function render($mode, Doku_Renderer $R, $pass) {
 		global $INFO, $auth, $conf;
         
-        $this->model = new BEZ_mdl_Model($auth, $INFO['client'], $this, $conf);
+        $this->model = new bez\mdl\Model($auth, $INFO['client'], $this, $conf);
         
 		$helper = $this->loadHelper('bez');
 		if ($mode != 'xhtml' || !$helper->user_viewer()) return false;
@@ -87,7 +85,7 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 		);
 
 
-		$data['bez:issues'] = array('id' => 'bez:issues', 'type' => 'd', 'level' => 2, 'title' => $this->getLang('bds_issues'));
+		$data['bez:threads'] = array('id' => 'bez:threads', 'type' => 'd', 'level' => 2, 'title' => $this->getLang('bds_issues'));
 
 //		$task_pages = array('issue_tasks', 'task_form', 'issue_task');
 //		$cause_pages = array('issue_causes', 'issue_cause', 'cause_form', 'issue_cause_task');
@@ -98,28 +96,28 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 //				$this->value['tasktype']  = $tasko->get_type($this->value['tid']);
                 $task = $this->model->tasks->get_one($this->value['tid']);
                 $this->value['tasktype'] = $task->tasktype;
-                $this->value['id'] = $task->issue;
+                $this->value['id'] = $task->thread;
 			}
         
 		
 
-		if ($this->value['bez'] == 'issues' ||
-            $this->value['bez'] == 'issue_report') {
+		if ($this->value['bez'] == 'threads' ||
+            $this->value['bez'] == 'thread_report') {
 			if ($helper->user_editor()) {
-				$data['bez:issue_report'] = array('id' => 'bez:issue_report', 'type' => 'f', 'level' => 3, 'title' => $this->getLang('bds_issue_report'));
+				$data['bez:thread_report'] = array('id' => 'bez:thread_report', 'type' => 'f', 'level' => 3, 'title' => $this->getLang('bds_issue_report'));
 			}
-			$data['bez:issues']['open'] = true;
+			$data['bez:threads']['open'] = true;
 		}
         
-        $issue_pages = array('issue', '8d');
-		if (in_array($this->value['bez'], $issue_pages) ||
-            ($this->value['bez'] == 'issue_report' && isset($this->value['id'])) ||
-            isset($task) && $task->issue != ''
+        $thread_pages = array('thread', '8d');
+		if (in_array($this->value['bez'], $thread_pages) ||
+            ($this->value['bez'] == 'thread_report' && isset($this->value['id'])) ||
+            isset($task) && $task->thread != ''
            ) {
 			if ($helper->user_editor()) {
-				$data['bez:issue_report'] = array('id' => 'bez:issue_report', 'type' => 'f', 'level' => 3, 'title' => $this->getLang('bds_issue_report'));
+				$data['bez:thread_report'] = array('id' => 'bez:thread_report', 'type' => 'f', 'level' => 3, 'title' => $this->getLang('bds_issue_report'));
 			}
-			$data['bez:issues']['open'] = true;
+			$data['bez:threads']['open'] = true;
 			$id = (int)$this->value['id'];
 
 //			$isso = new Issues();
@@ -128,7 +126,7 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 			
 			$type = 'f';
 
-			$pid = "bez:issue:id:$id";
+			$pid = "bez:thread:id:$id";
 			$data[$pid] = array('id' => $pid, 'type' => $type, 'level' => 3,
 												'title' => "#$id", 'open' => true);
 		}
@@ -303,8 +301,8 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 				$actual_page = false;
 				
 		//specjalny hak dla zadań, boję się ruszać całej procedury
-		if ($item_value['bez'] == 'issue_task' ||
-			$item_value['bez'] == 'issue_cause_task' ||
+		if ($item_value['bez'] == 'thread_task' ||
+			$item_value['bez'] == 'thread_cause_task' ||
 			$item_value['bez'] == 'task_form' ||
 			$item_value['bez'] == 'task')
 				if ($item_value['tid'] == $this->value['tid'])

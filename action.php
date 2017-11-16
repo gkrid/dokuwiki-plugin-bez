@@ -1,19 +1,24 @@
 <?php
+
+use \dokuwiki\plugin\bez;
  
 if(!defined('DOKU_INC')) die();
 
-require_once DOKU_PLUGIN.'bez/mdl/model.php';
+//require_once DOKU_PLUGIN.'bez/mdl/model.php';
+//
+//require_once DOKU_PLUGIN.'bez/interfaces.php';
+//require_once DOKU_PLUGIN.'bez/exceptions.php';
+//
+//spl_autoload_register(
+//    function ($class) {
+//        $file = DOKU_PLUGIN.'bez/inc/'.$class.'.class.php';
+//        if (file_exists($file)) {
+//            require_once $file;
+//        }
+//    }
+//);
 
-require_once DOKU_PLUGIN.'bez/interfaces.php';
-require_once DOKU_PLUGIN.'bez/exceptions.php';
-
-spl_autoload_register(
-    function ($class) {
-        require_once DOKU_PLUGIN.'bez/inc/'.$class.'.class.php';
-    }
-);
-
-function bez_tpl_include(Tpl $tpl) {
+function bez_tpl_include(bez\meta\Tpl $tpl) {
     $file = DOKU_PLUGIN."bez/tpl/".str_replace('/', '', $tpl->action()).".php";
     if (file_exists($file)) {
         include $file;
@@ -27,10 +32,16 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 	private $action = '';
 	private $params = array();
     private $lang_code = '';
-	
-	private $model, $tpl;
-    
-    private $notifications = array(), $errors = array();
+
+    /** @var  bez\mdl\Model */
+	private $model;
+
+    /** @var  bez\meta\Tpl */
+    private $tpl;
+
+    private $notifications = array();
+
+    private $errors = array();
     
     public function get_action() {
         return $this->action;
@@ -74,13 +85,21 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
         return DOKU_URL . 'doku.php?id=' . $id;
     }
     
-    public function get_model_of($name) {
-        if (!property_exists($this->model, $name)) {
-            throw new Exception('unknown table: '.$name);
+    public function model_factory($name) {
+        $factory = $name . 'Factory';
+        if (!property_exists($this->model, $factory)) {
+            throw new \Exception('unknown table: '.$name);
         }
-        return $this->model->$name;
+        return $this->model->$factory;
     }
-    
+
+    /**
+     * @return mixed
+     */
+    public function getModel() {
+        return $this->model;
+    }
+
     private function add_notification($value, $header=NULL) {
         if (isset($_COOKIE[BEZ_NOTIFICATIONS_COOKIE_NAME])) {
             $notifs = unserialize($_COOKIE[BEZ_NOTIFICATIONS_COOKIE_NAME]);
@@ -208,8 +227,8 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
         
         $this->setupLocale();
         
-        $this->model = new BEZ_mdl_Model($auth, $INFO['client'], $this, $conf);
-        $this->tpl = new Tpl($this, $conf);
+        $this->model = new bez\mdl\Model($auth, $INFO['client'], $this, $conf);
+        $this->tpl = new bez\meta\Tpl($this, $conf);
 		
     }
 
@@ -253,15 +272,16 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 	
 
 
-	public function tpl_pagetools_display($event, $param) {
+	public function tpl_pagetools_display(Doku_Event $event, $param) {
 		if ($this->action !== '') {
 			$event->preventDefault();
         }
 	}
 
-	public function action_act_preprocess($event, $param)
+	public function action_act_preprocess(Doku_Event $event, $param)
 	{
         global $conf;
+
         if ($this->action === '') {
             return;
         }
@@ -271,6 +291,7 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
             $this->flush_notifications();
 
 			$ctl = DOKU_PLUGIN."bez/ctl/".str_replace('/', '', $this->action).".php";
+
 			if (file_exists($ctl)) {
 				include $ctl;
 			}
@@ -299,7 +320,7 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 	public function tpl_act_render($event, $param)
 	{
         global $conf;
-        
+
         if ($this->action === '') {
             return false;
         }
@@ -327,7 +348,7 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 				echo '</div>';
             }
 
-			bez_tpl_include($this->tpl, $this->action);
+			bez_tpl_include($this->tpl);
             
         } catch(PermissionDeniedException $e) {
             dbglog('plugin_bez', $e);

@@ -1,21 +1,17 @@
 <table>
 <tr>
-	<th>Polski</th>
-	<th>English</th>
-	<th colspan="3">References</th>
+	<th>Name</th>
+	<th colspan="3">Count</th>
 </tr>
-<?php foreach ($tpl->get('types') as $type): ?>
+<?php foreach ($tpl->get('labels') as $label): ?>
 <tr>
 	<?php if (  in_array($tpl->param('action'), array('edit', 'update')) &&
-                $tpl->param('id') === $type->id): ?>
+                $tpl->param('id') === $label->id): ?>
         <form action="
-        <?php echo $tpl->url('types', 'action', 'update', 'id', $type->id) ?>"
+        <?php echo $tpl->url('types', 'action', 'update', 'id', $label->id) ?>"
         method="POST">
             <td>
-                <input name="pl" value="<?php echo $tpl->value('pl') ?>" />
-            </td>
-            <td>
-                <input name="en" value="<?php echo $tpl->value('en') ?>" />
+                <input name="name" value="<?php echo $tpl->value('name') ?>" />
             </td>
             <td colspan="2">
                 <input type="submit"
@@ -26,17 +22,16 @@
             </td>
         </form>
 	<?php else: ?>
-        <td><?php echo $type->pl ?></td>
-        <td><?php echo $type->en ?></td>
-        <td <?php if ($type->refs !== '0') echo 'colspan="2"'; ?>>
-            <a href="<?php echo $tpl->url('types', 'action', 'edit', 'id', $type->id) ?>">
+        <td><?php echo $label->name ?></td>
+        <td <?php if ($label->count > 0) echo 'colspan="2"'; ?>>
+            <a href="<?php echo $tpl->url('types', 'action', 'edit', 'id', $label->id) ?>">
                 <?php echo $tpl->getLang('edit') ?>
             </a>
         </td>
-        <?php if ($type->refs === '0'): ?>
+        <?php if ($label->count == 0): ?>
             <td>
             <a onclick="return confirm('<?php echo $tpl->getLang('js')['remove_confirm'] ?>')"
-                href="<?php echo $tpl->url('types', 'action', 'remove', 'id', $type->id) ?>">
+                href="<?php echo $tpl->url('types', 'action', 'remove', 'id', $label->id) ?>">
                 <?php echo $tpl->getLang('delete') ?>
             </a>
             </td>
@@ -44,8 +39,8 @@
     <?php endif ?>
     
         <td>
-        <a href="<?php echo $tpl->url('issues', 'type', $type->id) ?>">
-            <?php echo $type->refs ?>
+        <a href="<?php echo $tpl->url('issues', 'type', $label->id) ?>">
+            <?php echo $label->count ?>
         </a>
     </td>
 </tr>
@@ -54,8 +49,7 @@
             $tpl->param('action') !== 'update'): ?>
 <form action="<?php echo $tpl->url('types', 'action', 'add') ?>" method="POST">
 <tr>
-	<td><input name="pl" value="<?php echo $tpl->value('pl') ?>" /></td>
-	<td><input name="en" value="<?php echo $tpl->value('en') ?>" /></td>
+	<td><input name="name" value="<?php echo $tpl->value('name') ?>" /></td>
 	<td colspan="3"><input type="submit" value="<?php echo $tpl->getLang('save') ?>" /></td>
 </tr>
 <?php endif ?>

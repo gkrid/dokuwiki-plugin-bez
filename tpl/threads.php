@@ -1,27 +1,26 @@
+<?php /* @var \dokuwiki\plugin\bez\meta\Tpl $tpl */ ?>
 <div class="bez_filter_form">
-<form action="<?php echo $tpl->url('issues') ?>" method="post">
+<form action="<?php echo $tpl->url('threads') ?>" method="post">
 	<label><?php echo $tpl->getLang('state') ?>:
-		<select name="full_state">
-			<option <?php if ($tpl->value('full_state') === '-all') echo 'selected' ?>
+		<select name="state">
+			<option <?php if ($tpl->value('state') === '-all') echo 'selected' ?>
 				value="-all">--- <?php echo $tpl->getLang('all') ?> ---</option>
-		<?php foreach ($tpl->get_dummy_of('issues')->get_states() as $key => $name): ?>
-            <?php //php automaticly convert numeric strings as '12' to integers. Since 7.2 it will be fixed but since then we need to use "==" operator ?>
-            <?php // https://stackoverflow.com/questions/4100488/a-numeric-string-as-array-key-in-php ?>
-			<option <?php if ($tpl->value('full_state') === (string)$key) echo 'selected' ?>
-				value="<?php echo $key ?>"><?php echo $tpl->getLang($name) ?></option>
+		<?php foreach (\dokuwiki\plugin\bez\mdl\Thread::get_states() as $state): ?>
+			<option <?php if ($tpl->value('state') === $state) echo 'selected' ?>
+				value="<?php echo $state ?>"><?php echo $tpl->getLang('state_' . $state) ?></option>
 		<?php endforeach ?>
 		</select>
 	</label>
 
 	<label><?php echo $tpl->getLang('just_type') ?>:
-		<select name="type">
-			<option <?php if ($tpl->value('type') === '-all') echo 'selected' ?>
+		<select name="label">
+			<option <?php if ($tpl->value('label') === '-all') echo 'selected' ?>
 				value="-all">--- <?php echo $tpl->getLang('all') ?> ---</option>
-			<option <?php if ($tpl->value('type') === '-none') echo 'selected' ?>
+			<option <?php if ($tpl->value('label') === '-none') echo 'selected' ?>
 			value="-none">--- <?php echo $tpl->getLang('issue_type_no_specified') ?> ---</option>
-		<?php foreach ($tpl->get('issuetypes') as $issuetype): ?>
-			<option <?php if ($tpl->value('type') === $issuetype->id) echo 'selected' ?>
-				value="<?php echo $issuetype->id ?>"><?php echo $issuetype->type ?></option>
+		<?php foreach ($tpl->get('labels') as $label): ?>
+			<option <?php if ($tpl->value('label') === $label->id) echo 'selected' ?>
+				value="<?php echo $label->id ?>"><?php echo $label->name ?></option>
 		<?php endforeach ?>
 		</select>
 	</label>
@@ -86,69 +85,74 @@
 	</tr>
     <?php $count = 0 ?>
     <?php $total_cost = 0.0 ?>
-	<?php foreach ($tpl->get('issues') as $issue): ?>
+	<?php foreach ($tpl->get('threads') as $thread): ?>
         <?php $count += 1 ?>
-        <?php $total_cost += (float) $issue->cost ?>
+        <?php $total_cost += (float) $thread->task_sum_cost ?>
         
-		<tr class="pr<?php echo $issue->priority ?>">
+		<tr class="pr<?php echo $thread->priority ?>">
 			<td>
 				<a href="<?php echo $tpl->url('issue', 'id', $issue->id) ?>">
-                    #<?php echo $issue->id ?>
+                    #<?php echo $thread->id ?>
                 </a>
 			</td>
 			<td>
-			<?php echo $issue->state_string ?>
+			<?php echo $tpl->getLang('state_'.$thread->state) ?>
 			</td>
 			<td>
-				<?php if ($issue->type === ''): ?>
+				<?php if ($thread->label === NULL): ?>
 					<i style="color: #777"><?php echo $tpl->getLang('issue_type_no_specified') ?></i>
 				<?php else: ?>
-					<?php echo $issue->type_string ?>
+					<?php echo $thread->label ?>
 				<?php endif ?>
 			</td>
-			<td><?php echo $issue->title ?></td>
+			<td><?php echo $thread->title ?></td>
 			<td>
-                <?php if ($issue->coordinator === '-proposal'): ?>
+                <?php if ($thread->coordinator === NULL): ?>
                     <i style="color: #777"><?php echo $tpl->getLang('none') ?></i>
                 <?php else: ?>
-                    <?php echo $tpl->user_name($issue->coordinator) ?>
+                    <?php echo $tpl->user_name($thread->coordinator) ?>
                 <?php endif ?>
             </td>
-			<td><?php echo $issue->date_format('date') ?> (<?php echo $issue->days_ago('date') ?>)</td>
+<!--			<td>--><?php //echo $issue->date_format('date') ?><!-- (--><?php //echo $issue->days_ago('date') ?><!--)</td>-->
+            <td>
+                <?php echo dformat(strtotime($thread->create_date)) ?> (<?php echo datetime_h(strtotime($thread->create_date)) ?>)
+            </td>
+            <td>
+<!--				--><?php //echo $issue->date_format('last_activity') ?><!-- (--><?php //echo $issue->days_ago('last_activity') ?><!--)-->
+                <?php echo dformat(strtotime($thread->last_activity_date)) ?> (<?php echo datetime_h(strtotime($thread->last_activity_date)) ?>)
+            </td>
 			<td>
-				<?php echo $issue->date_format('last_activity') ?> (<?php echo $issue->days_ago('last_activity') ?>)
-			</td>
-			<td>
-				<?php if ($issue->full_state === '0' || $issue->full_state === '-proposal'): ?>
+				<?php if ($thread->close_date === NULL): ?>
 					<em>---</em>
 				<?php else: ?>
-					<?php echo $issue->date_format('last_mod') ?><br />
-					<?php $s = $tpl->getLang('report_priority').': '.$issue->days_ago('last_mod', 'date') ?>
+					<?php echo dformat(strtotime($thread->close_date)) ?><br />
+					<?php $s = $tpl->getLang('report_priority').': '.datetime_h(strtotime($thread->close_date)) ?>
 					<?php echo str_replace(' ', '&nbsp;', $s) ?>
+<!--                    --><?php //echo dformat(strtotime($thread->close_date)) ?>
 				<?php endif ?>
 			</td>
 			<td>
-				<?php if ($issue->cost === ''): ?>
+				<?php if ($thread->task_sum_cost === NULL): ?>
 					<em>---</em>
 				<?php else: ?>
-					<?php echo $issue->float_localized('cost') ?>
+					<?php echo $thread->task_sum_cost ?>
 				<?php endif ?>
 			</td>
 			<td>
-		<a href="<?php echo $tpl->url('tasks', 'issue', $issue->id, 'state', 0) ?>">
-				<?php echo $issue->assigned_tasks_count - $issue->opened_tasks_count ?>
+		<a href="<?php echo $tpl->url('tasks', 'issue', $thread->id, 'state', 0) ?>">
+				<?php echo $thread->task_count - $thread->task_count_open ?>
 		</a>
 			/
-		<a href="<?php echo $tpl->url('tasks', 'issue', $issue->id) ?>">
-				<?php echo $issue->assigned_tasks_count ?>
+		<a href="<?php echo $tpl->url('tasks', 'issue', $thread->id) ?>">
+				<?php echo $thread->task_count ?>
 		</a>
 			</td>
 		</tr>
 	<?php endforeach ?>
 	<tr>
 		<th><?php echo $tpl->getLang('report_total') ?></th>
-		<td colspan="7"><?php echo $count ?></td>
-		<td colspan="2"><?php echo $total_cost ?></td>
+		<td colspan="6"><?php echo $count ?></td>
+		<td colspan="3"><?php echo $total_cost ?></td>
 	</tr>
 </table>
 </div>

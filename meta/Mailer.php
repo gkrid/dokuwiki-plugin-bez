@@ -1,7 +1,8 @@
 <?php
-require_once DOKU_INC.'inc/Mailer.class.php';
+//require_once DOKU_INC.'inc/Mailer.class.php';
+namespace dokuwiki\plugin\bez\meta;
 
-class BEZ_Mailer extends Mailer {
+class Mailer extends \Mailer {
     public function __construct() {
         global $conf;
         
