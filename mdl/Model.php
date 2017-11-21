@@ -55,7 +55,7 @@ class Model {
 		$this->user_nick = $user_nick;
 		$this->action = $action;
         $this->conf = $conf;
-        		
+
 //		$db_path = DOKU_INC . 'data/bez.sqlite';
 //		//if database not exists
 //		if (!file_exists($db_path)) {
@@ -75,30 +75,27 @@ class Model {
 
         $this->sqlite = plugin_load('helper', 'sqlite');
         if(!$this->sqlite) {
-            if(defined('DOKU_UNITTEST')) throw new \Exception('Couldn\'t load sqlite.');
-            return;
+            throw new \Exception('Couldn\'t load sqlite.');
         }
 
         if($this->sqlite->getAdapter()->getName() != DOKU_EXT_PDO) {
-            if(defined('DOKU_UNITTEST')) throw new \Exception('Couldn\'t load PDO sqlite.');
-            $this->sqlite = null;
-            return;
+            throw new \Exception('Couldn\'t load PDO sqlite.');
         }
         $this->sqlite->getAdapter()->setUseNativeAlter(true);
 
         // initialize the database connection
         if(!$this->sqlite->init('b3p', DOKU_PLUGIN . 'bez/db/')) {
-            if(defined('DOKU_UNITTEST')) throw new \Exception('Couldn\'t init sqlite.');
-            $this->sqlite = null;
-            return;
+            throw new \Exception('Couldn\'t init sqlite.');
         }
 
         $this->db = $this->sqlite->getAdapter()->getDb();
 
         $this->acl = new Acl($this);
 
-        $this->threadFactory = new ThreadFactory($this);
         $this->userFactory = new UserFactory($this);
+
+        $this->threadFactory = new ThreadFactory($this);
+
         $this->labelFactory = new LabelFactory($this);
         
 //        $this->acl = new BEZ_mdl_Acl($this);

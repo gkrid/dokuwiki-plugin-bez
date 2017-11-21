@@ -30,18 +30,17 @@ if (isset($raw_filters)) {
 
 $this->tpl->set_values($filters);
 
-//$issuetypes = $this->model->issuetypes->get_all();
 $years = $this->model->threadFactory->get_years_scope();
 
 //some filters are just copied
 $db_filters = array_filter($filters, function ($k) {
-    return in_array($k, array('state', 'label', 'coordinator'));
+    return in_array($k, array('state', 'label_id', 'coordinator'));
 }, ARRAY_FILTER_USE_KEY);
 
 //-none filters become empty filters
 $db_filters = array_map(function($v) {
     if ($v === '-none') {
-        return NULL;
+        return '';
     }
     return $v;
 }, $db_filters);
@@ -66,8 +65,13 @@ if (isset($filters['title'])) {
     $db_filters['title'] = array('LIKE', "%$title%");
 }
 
-$threads = $this->model->threadFactory->get_all($db_filters);
+$orderby = 'last_activity_date';
+if (isset($filters['sort_open']) && $filters['sort_open'] == 'on') {
+    $orderby = 'id';
+}
 
-//$this->tpl->set('issuetypes', $issuetypes);
+$threads = $this->model->threadFactory->get_all($db_filters, $orderby);
+
+$this->tpl->set('labels', $this->model->labelFactory->get_all());
 $this->tpl->set('threads', $threads);
 $this->tpl->set('years', $years);

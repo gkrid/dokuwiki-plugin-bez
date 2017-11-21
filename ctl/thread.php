@@ -1,20 +1,23 @@
 <?php
+/** @var action_plugin_bez $this */
 
-if (!isset($nparams['id'])) {
-    header('Location: ?id=bez:issues');
+use \dokuwiki\plugin\bez;
+
+if ($this->get_param('id') == '') {
+    header('Location: ?id=bez:threads');
 }
 
-try {
-    $issue_id = (int)$nparams['id'];
+//try {
+    //$issue_id = (int)$nparams['id'];
     
     //new way
-    $issue = $this->model->issues->get_one($issue_id);
+    $thread = $this->model->threadFactory->get_one($this->get_param('id'));
 
 
-    $template['tid'] = isset($nparams['tid']) ? $nparams['tid'] : '-1';
-    $template['kid'] = isset($nparams['kid']) ? $nparams['kid'] : '-1';
-    $template['state'] = isset($nparams['state']) ? $nparams['state'] : '-1';
-    $template['action'] = isset($nparams['action']) ? $nparams['action'] : '-default';
+//    $template['tid'] = isset($nparams['tid']) ? $nparams['tid'] : '-1';
+//    $template['kid'] = isset($nparams['kid']) ? $nparams['kid'] : '-1';
+//    $template['state'] = isset($nparams['state']) ? $nparams['state'] : '-1';
+//    $template['action'] = isset($nparams['action']) ? $nparams['action'] : '-default';
         
     $template['issue'] = $issue;
     $template['commcauses'] = $this->model->commcauses->get_all(
@@ -307,12 +310,12 @@ try {
 	}
 
     
-} catch (ValidationException $e) {
-	$errors = $e->get_errors();
-	$value = $_POST;
-} catch (DBException $e) {
-	echo nl2br($e);
-//	header("Location: ?id=bez:issue:id:$issue_id");
-}
+//} catch (ValidationException $e) {
+//	$errors = $e->get_errors();
+//	$value = $_POST;
+//} catch (DBException $e) {
+//	echo nl2br($e);
+////	header("Location: ?id=bez:issue:id:$issue_id");
+//}
 
 

@@ -13,13 +13,13 @@
 	</label>
 
 	<label><?php echo $tpl->getLang('just_type') ?>:
-		<select name="label">
-			<option <?php if ($tpl->value('label') === '-all') echo 'selected' ?>
+		<select name="label_id">
+			<option <?php if ($tpl->value('label_id') === '-all') echo 'selected' ?>
 				value="-all">--- <?php echo $tpl->getLang('all') ?> ---</option>
-			<option <?php if ($tpl->value('label') === '-none') echo 'selected' ?>
+			<option <?php if ($tpl->value('label_id') === '-none') echo 'selected' ?>
 			value="-none">--- <?php echo $tpl->getLang('issue_type_no_specified') ?> ---</option>
 		<?php foreach ($tpl->get('labels') as $label): ?>
-			<option <?php if ($tpl->value('label') === $label->id) echo 'selected' ?>
+			<option <?php if ($tpl->value('label_id') === $label->id) echo 'selected' ?>
 				value="<?php echo $label->id ?>"><?php echo $label->name ?></option>
 		<?php endforeach ?>
 		</select>
@@ -91,7 +91,7 @@
         
 		<tr class="pr<?php echo $thread->priority ?>">
 			<td>
-				<a href="<?php echo $tpl->url('issue', 'id', $issue->id) ?>">
+				<a href="<?php echo $tpl->url('thread', 'id', $thread->id) ?>">
                     #<?php echo $thread->id ?>
                 </a>
 			</td>
@@ -99,10 +99,10 @@
 			<?php echo $tpl->getLang('state_'.$thread->state) ?>
 			</td>
 			<td>
-				<?php if ($thread->label === NULL): ?>
+				<?php if ($thread->label_name === NULL): ?>
 					<i style="color: #777"><?php echo $tpl->getLang('issue_type_no_specified') ?></i>
 				<?php else: ?>
-					<?php echo $thread->label ?>
+					<?php echo $thread->label_name ?>
 				<?php endif ?>
 			</td>
 			<td><?php echo $thread->title ?></td>
@@ -113,22 +113,19 @@
                     <?php echo $tpl->user_name($thread->coordinator) ?>
                 <?php endif ?>
             </td>
-<!--			<td>--><?php //echo $issue->date_format('date') ?><!-- (--><?php //echo $issue->days_ago('date') ?><!--)</td>-->
             <td>
-                <?php echo dformat(strtotime($thread->create_date)) ?> (<?php echo datetime_h(strtotime($thread->create_date)) ?>)
+                <?php echo dformat(strtotime($thread->create_date), '%Y-%m-%d (%f)') ?>
             </td>
             <td>
-<!--				--><?php //echo $issue->date_format('last_activity') ?><!-- (--><?php //echo $issue->days_ago('last_activity') ?><!--)-->
-                <?php echo dformat(strtotime($thread->last_activity_date)) ?> (<?php echo datetime_h(strtotime($thread->last_activity_date)) ?>)
+                <?php echo dformat(strtotime($thread->last_activity_date), '%Y-%m-%d (%f)') ?>
             </td>
 			<td>
 				<?php if ($thread->close_date === NULL): ?>
 					<em>---</em>
 				<?php else: ?>
-					<?php echo dformat(strtotime($thread->close_date)) ?><br />
+					<?php echo dformat(strtotime($thread->close_date, '%Y-%m-%d')) ?><br />
 					<?php $s = $tpl->getLang('report_priority').': '.datetime_h(strtotime($thread->close_date)) ?>
 					<?php echo str_replace(' ', '&nbsp;', $s) ?>
-<!--                    --><?php //echo dformat(strtotime($thread->close_date)) ?>
 				<?php endif ?>
 			</td>
 			<td>
@@ -155,4 +152,3 @@
 		<td colspan="3"><?php echo $total_cost ?></td>
 	</tr>
 </table>
-</div>

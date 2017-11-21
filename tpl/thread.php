@@ -3,7 +3,7 @@
     <form class="bez_metaform" action="?id=<?php echo $id ?>" method="POST">
 <?php endif ?>
 
-<?php include "issue_box.php" ?>
+<?php include "thread_box.php" ?>
 
 <!-- Comments -->
 <div class="bez_comments">

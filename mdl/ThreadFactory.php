@@ -75,7 +75,7 @@ class ThreadFactory extends Factory {
 //	}
 
     protected function select_query() {
-        return "SELECT thread.*, label.name AS label FROM thread
+        return "SELECT thread.*, label.id AS label_id, label.name AS label_name FROM thread
                         LEFT JOIN thread_label ON thread.id = thread_label.thread_id
                         LEFT JOIN label ON label.id = thread_label.label_id";
     }

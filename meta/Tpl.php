@@ -14,7 +14,7 @@ class Tpl {
     //form values from $_POST or from database
     private $values = array();
     
-    public function __construct(\action_plugin_bez $action, $conf) {
+    public function __construct(\action_plugin_bez_default $action, $conf) {
         
         $this->action = $action;
         $this->conf = $conf;
@@ -26,8 +26,8 @@ class Tpl {
         $this->set('version', $info['date']);
         
         //common one
-        $this->set('users', $this->action->model_factory('user')->get_all());
-        $this->set('groups', $this->action->model_factory('user')->get_groups());
+        $this->set('users', $this->action->get_model()->userFactory->get_all());
+        $this->set('groups', $this->action->get_model()->userFactory->get_groups());
     }
     
     public function action($default=null) {
@@ -51,12 +51,12 @@ class Tpl {
 //    }
 
     public function static_acl($table, $field) {
-        return $this->action->getModel()->acl->check_static_field($table, $field);
+        return $this->action->get_model()->acl->check_static_field($table, $field);
     }
     
     /*users info function for shorten the code*/
     public function user_name($login=NULL) {
-        $name = $this->action->getModel()->userFactory->get_user_full_name($login);
+        $name = $this->action->get_model()->userFactory->get_user_full_name($login);
         if ($name === '') {
             return $login;
         }
@@ -64,7 +64,7 @@ class Tpl {
     }
     
     public function user_email($login=NULL) {
-        return $this->action->getModel()->get_user_email($login);
+        return $this->action->get_model()->get_user_email($login);
     }
     /*end users info functions*/
     

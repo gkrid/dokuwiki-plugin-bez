@@ -78,9 +78,6 @@ abstract class Factory {
                     array_unshift($function_args, $field);
                     $where_q[] = "$function(".implode(',', $function_args).") $operator :$filter";
                 } else {
-                    if ($value === NULL && $operator === '=') {
-                        $operator = 'IS';
-                    }
                     $where_q[] = "$field $operator :$filter";
                 }
                 $execute[":$filter"] = $value;
@@ -103,7 +100,7 @@ abstract class Factory {
     }
         
     //chek acl
-    public function get_all($filters=array()) {
+    public function get_all($filters=array(), $orderby='', $desc=true) {
 //        $dummy = $this->get_dummy_object();
 //        if ($dummy->acl_of('id') < BEZ_PERMISSION_VIEW) {
 //            throw new PermissionDeniedException();
@@ -116,6 +113,17 @@ abstract class Factory {
         list($where_q, $execute) = $this->build_where($filters);
 		
 		$q = $this->select_query() . $where_q;
+
+		if ($orderby != '') {
+		    $fields = call_user_func(array($this->get_object_class_name(), 'get_columns'));
+		    if (!in_array($orderby, $fields)) {
+		        throw new \Exception('unknown field '.$orderby);
+            }
+		    $q .= " ORDER BY $orderby";
+		    if ($desc) {
+		        $q .= " DESC";
+            }
+        }
 
 		$sth = $this->model->db->prepare($q);
 

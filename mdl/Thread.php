@@ -19,7 +19,7 @@ class Thread extends Entity {
 
     protected $type, $state;
 
-    protected $create_date, $last_activity_date, $close_date;
+    protected $create_date, $last_activity_date, $last_modification_date, $close_date;
 
     protected $title, $content, $content_html;
 
@@ -30,7 +30,7 @@ class Thread extends Entity {
                      'original_poster', 'coordinator',
                      'private', 'lock',
                      'type', 'state',
-                     'create_date', 'last_activity_date', 'close_date',
+                     'create_date', 'last_activity_date', 'last_modification_date', 'close_date',
                      'title', 'content', 'content_html',
                      'task_count', 'task_count_open', 'task_sum_cost');
     }
@@ -123,6 +123,7 @@ class Thread extends Entity {
 			$this->original_poster = $this->model->user_nick;
 			$this->create_date = date('c');
 			$this->last_activity_date = $this->create_date;
+            $this->last_modification_date = $this->create_date;
 
 			$this->state = 'proposal';
 
@@ -142,7 +143,7 @@ class Thread extends Entity {
                 //throws ValidationException
 //                $this->coordinator = $this->validator->validate_field('coordinator', $defaults['coordinator']);
                 if (!$this->model->userFactory->exists($defaults['coordinator'])) {
-                    throw new \Exception('coordinator not in users');
+                    throw new ValidationException('thread', array('coordinator' => 'is_null'));
                 }
                 $this->coordinator = $defaults['coordinator'];
                 $this->state = 'opened';

@@ -1,54 +1,59 @@
 <?php
- 
-if(!defined('DOKU_INC')) die();
+//
+//if(!defined('DOKU_INC')) die();
+//
+//require_once 'entity.php';
+//
+//
+//class BEZ_mdl_Dummy_Commcause extends BEZ_mdl_Entity  {
+//
+//    protected $coordinator;
+//
+//    function __construct($model, $defaults=array()) {
+//        parent::__construct($model);
+//
+//        if (!isset($defaults['issue'])) {
+//            throw new Exception('every dummy entity must have issue in $defaults');
+//        }
+//
+//        $issue = $this->model->issues->get_one($defaults['issue']);
+//        $this->coordinator = $issue->coordinator;
+//    }
+//
+//    public function __get($property) {
+//		if ($property === 'coordinator') {
+//            return $this->coordinator;
+//        }
+//        parent::__get($property);
+//	}
+//}
+//
 
-require_once 'entity.php';
+namespace dokuwiki\plugin\bez\mdl;
 
+use dokuwiki\plugin\bez\meta\PermissionDeniedException;
+use dokuwiki\plugin\bez\meta\ValidationException;
 
-class BEZ_mdl_Dummy_Commcause extends BEZ_mdl_Entity  {
- 
-    protected $coordinator;
- 
-    function __construct($model, $defaults=array()) {
-        parent::__construct($model);
-        
-        if (!isset($defaults['issue'])) {
-            throw new Exception('every dummy entity must have issue in $defaults');
-        }
-        
-        $issue = $this->model->issues->get_one($defaults['issue']);
-        $this->coordinator = $issue->coordinator;
-    }
-    
-    public function __get($property) {
-		if ($property === 'coordinator') {
-            return $this->coordinator;
-        }
-        parent::__get($property);
-	}
-}
-
-
-class BEZ_mdl_Commcause extends BEZ_mdl_Dummy_Commcause {
+class Thread_comment extends Entity {
 
 	//real
 	protected $id, $issue, $datetime, $reporter, $type, $content, $content_cache;
 	
 	//virtual
-	protected $coordinator, $tasks_count;
+	//protected $coordinator, $tasks_count;
 	
-    protected $parse_int = array('tasks_count');
-	public function get_columns() {
-		return array('id', 'issue', 'datetime', 'reporter', 'type', 'content', 'content_cache');
+    //protected $parse_int = array('tasks_count');
+	public static function get_columns() {
+		return array('id', 'thread_id', 'type', 'author', 'create_date', 'content', 'content_cache');
 	}
 	
-	public function get_virtual_columns() {
-		return array('coordinator', 'tasks_count');
-	}
-	
-	public function get_table_name() {
-		return 'commcauses';
-	}
+//	public function get_virtual_columns() {
+//		return array('coordinator', 'tasks_count');
+//	}
+//
+//	public function get_table_name() {
+//		return 'commcauses';
+//	}
     
     //defaults: isssue, type
 	public function __construct($model, $defaults=array()) {

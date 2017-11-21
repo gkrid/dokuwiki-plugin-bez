@@ -27,7 +27,7 @@ function bez_tpl_include(bez\meta\Tpl $tpl) {
 
 define('BEZ_NOTIFICATIONS_COOKIE_NAME', 'bez_notifications');
 
-class action_plugin_bez extends DokuWiki_Action_Plugin {
+class action_plugin_bez_default extends DokuWiki_Action_Plugin {
 
 	private $action = '';
 	private $params = array();
@@ -85,18 +85,18 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
         return DOKU_URL . 'doku.php?id=' . $id;
     }
     
-    public function model_factory($name) {
-        $factory = $name . 'Factory';
-        if (!property_exists($this->model, $factory)) {
-            throw new \Exception('unknown table: '.$name);
-        }
-        return $this->model->$factory;
-    }
+//    public function model_factory($name) {
+//        $factory = $name . 'Factory';
+//        if (!property_exists($this->model, $factory)) {
+//            throw new \Exception('unknown table: '.$name);
+//        }
+//        return $this->model->$factory;
+//    }
 
     /**
      * @return mixed
      */
-    public function getModel() {
+    public function get_model() {
         return $this->model;
     }
 
@@ -124,9 +124,9 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
         $this->errors[] = array('value' => $value, 'header' => $header);
     }
     
-    private function param($id) {
-        return (isset($this->params[$id]) ? $this->params[$id] : '');
-    }
+//    private function param($id) {
+//        return (isset($this->params[$id]) ? $this->params[$id] : '');
+//    }
 
 	/**
 	 * Register its handlers with the DokuWiki's event controller
@@ -295,8 +295,12 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 			if (file_exists($ctl)) {
 				include $ctl;
 			}
-        } catch(ValidationException $e) {
+        } catch(bez\meta\ValidationException $e) {
             foreach ($e->get_errors() as $field => $error_code) {
+                $lang = $this->getLang($field);
+                if ($lang != '') {
+                    $field = $lang;
+                }
                 $this->add_error(
                     $this->getLang('validate_' . $error_code),
                     $field);
@@ -304,7 +308,7 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
             
             $this->tpl->set_values($_POST);
             
-        } catch(PermissionDeniedException $e) {
+        } catch(bez\meta\PermissionDeniedException $e) {
             dbglog('plugin_bez', $e);
             header('Location: ' . DOKU_URL . 'doku.php?id=' . $_GET['id'] . '&do=login');
 
@@ -350,7 +354,7 @@ class action_plugin_bez extends DokuWiki_Action_Plugin {
 
 			bez_tpl_include($this->tpl);
             
-        } catch(PermissionDeniedException $e) {
+        } catch(bez\meta\PermissionDeniedException $e) {
             dbglog('plugin_bez', $e);
             header('Location: ' . DOKU_URL . 'doku.php?id=' . $_GET['id'] . '&do=login');	
 		} catch(Exception $e) {

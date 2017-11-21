@@ -3,7 +3,7 @@
  * All DokuWiki plugins to extend the admin function
  * need to inherit from this class
  */
- 
+
  // must be run within DokuWiki
 if(!defined('DOKU_INC')) die();
  if(!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
@@ -13,7 +13,7 @@ include_once DOKU_PLUGIN."bez/models/connect.php";
 include_once DOKU_PLUGIN."bez/models/tasktypes.php";
 include_once DOKU_PLUGIN."bez/models/tasks.php";
 
-require_once DOKU_PLUGIN.'bez/mdl/model.php';
+//require_once DOKU_PLUGIN.'bez/mdl/model.php';
 
 class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 
@@ -27,7 +27,7 @@ class admin_plugin_bez_dbschema extends DokuWiki_Admin_Plugin {
 	function __construct() {
 		global $auth, $conf, $INFO;
 		$this->connect = new Connect();
-		$this->model = new BEZ_mdl_Model($auth, $INFO['client'], $this, $conf);
+//		$this->model = new BEZ_mdl_Model($auth, $INFO['client'], $this, $conf);
 	}
 	
 	function check_remove_action_from_tasks() {

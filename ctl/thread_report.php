@@ -24,70 +24,70 @@ if (isset($nparams['id']) && is_numeric($nparams['id'])) {
 //	$action = $nparams['action'];
 //}
 
-try {
-	if ($this->param('action') == 'edit') {
-		if (!isset($thread)) {
-			throw new Exception('there is now row with given id');
-		}
-		//$template['form_action'] = 'update';
-		//$value = $thread->get_assoc();
-        $this->tpl->set_values($thread->get_assoc());
-	} elseif ($this->param('action') == 'update') {
-		//$template['form_action'] = 'update';
-        
-        $prev_coordiantor = $thread->coordinator;
-        
-		$thread->set_data($_POST);
+//try {
+if ($this->get_param('action') == 'edit') {
+    if (!isset($thread)) {
+        throw new Exception('there is now row with given id');
+    }
+    //$template['form_action'] = 'update';
+    //$value = $thread->get_assoc();
+    $this->tpl->set_values($thread->get_assoc());
+} elseif ($this->get_param('action') == 'update') {
+    //$template['form_action'] = 'update';
 
-        $thread->add_participant($thread->coordinator);
-        
-        //save to get ID!!!
+    $prev_coordiantor = $thread->coordinator;
+
+    $thread->set_data($_POST);
+
+    $thread->add_participant($thread->coordinator);
+
+    //save to get ID!!!
+    $this->model->threadFactory->save($thread);
+
+    if ($thread->coordinator !== '-proposal' &&
+        $INFO['client'] !== $thread->coordinator &&
+        $thread->coordinator != $prev_coordiantor) {
+        //coordinator becomes subscribent automaticly
+        $thread->add_subscribent($thread->coordinator);
         $this->model->threadFactory->save($thread);
 
-        if ($thread->coordinator !== '-proposal' &&
-            $INFO['client'] !== $thread->coordinator &&
-            $thread->coordinator != $prev_coordiantor) {
-            //coordinator becomes subscribent automaticly
-            $thread->add_subscribent($thread->coordinator);
-            $this->model->threadFactory->save($thread);
+        $thread->mail_inform_coordinator();
+    }
 
-            $thread->mail_inform_coordinator();
-        }
-        
-		header('Location: ?id='.$this->id('thread', 'id', $thread->id));
-	} elseif ($this->param('action') == 'add') {
-		//$template['form_action'] = 'add';
-		
-        $defaults = array();
-        if ($this->model->acl->get_level() >= BEZ_AUTH_LEADER) {
-            $defaults['coordinator'] = $_POST['coordinator'];
-        }
-        $thread = $this->model->threadFactory->create_object($defaults);
-		
-        $data = array(
+    header('Location: ?id='.$this->id('thread', 'id', $thread->id));
+} elseif ($this->get_param('action') == 'add') {
+    //$template['form_action'] = 'add';
+
+    $defaults = array();
+    if ($this->model->acl->get_level() >= BEZ_AUTH_LEADER) {
+        $defaults['coordinator'] = $_POST['coordinator'];
+    }
+    $thread = $this->model->threadFactory->create_object($defaults);
+
+    $data = array(
 //            'type' => $_POST['type'],
-            'title' => $_POST['title'],
-            'content' => $_POST['content']
-        );
-        $thread->set_data($data);
+        'title' => $_POST['title'],
+        'content' => $_POST['content']
+    );
+    $thread->set_data($data);
 
-        try {
-            $this->model->threadFactory->beginTransaction();
+    try {
+        $this->model->threadFactory->beginTransaction();
 
-            $this->model->threadFactory->save($thread);
+        $this->model->threadFactory->save($thread);
 
-            $thread->add_label($_POST['label']);
+        $thread->add_label($_POST['label']);
 
-            $thread->set_participant_flags($thread->original_poster, array('original_poster', 'subscribent'));
-            if($thread->coordinator != null) {
-                $thread->set_participant_flags($thread->coordinator, array('coordinator', 'subscribent'));
-            }
-            $this->model->threadFactory->commitTransaction();
-        } catch(Exception $exception) {
-            $this->model->threadFactory->rollbackTransaction();
+        $thread->set_participant_flags($thread->original_poster, array('original_poster', 'subscribent'));
+        if($thread->coordinator != null) {
+            $thread->set_participant_flags($thread->coordinator, array('coordinator', 'subscribent'));
         }
+        $this->model->threadFactory->commitTransaction();
+    } catch(Exception $exception) {
+        $this->model->threadFactory->rollbackTransaction();
+    }
 
-        
+
 //        if ($thread->coordinator !== '-proposal' &&
 //            $INFO['client'] !== $thread->coordinator) {
 //            //coordinator becomes subscribent automaticly
@@ -96,19 +96,19 @@ try {
 //
 //            $thread->mail_inform_coordinator();
 //        }
-        
-        
-		header('Location: ?id='.$this->id('thread', 'id', $thread->id));
 
-	}
+
+    header('Location: ?id='.$this->id('thread', 'id', $thread->id));
+
+}
 //	else {
 //		$template['form_action'] = 'add';
 //	}
 
-} catch (bez\meta\ValidationException $e) {
-	$errors = $e->get_errors();
-	$value = $_POST;
-}
+//} catch (bez\meta\ValidationException $e) {
+//	$errors = $e->get_errors();
+//	$value = $_POST;
+//}
 
 //$template['issuetypes'] = $this->model->issuetypes->get_all();
 $this->tpl->set('users', $this->model->userFactory->get_all());

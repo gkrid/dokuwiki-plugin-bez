@@ -39,7 +39,7 @@
     <?php endif ?>
     
         <td>
-        <a href="<?php echo $tpl->url('issues', 'type', $label->id) ?>">
+        <a href="<?php echo $tpl->url('threads', 'label_id', $label->id) ?>">
             <?php echo $label->count ?>
         </a>
     </td>
