@@ -2,7 +2,7 @@
 <div class="bds_block">
 
 <?php if ($tpl->get('thread')): ?>
-    <?php $url = $tpl->url('thread_report', 'action', 'edit', 'id', $tpl->get('thread')->id) ?>
+    <?php $url = $tpl->url('thread_report', 'action', 'update', 'id', $tpl->get('thread')->id) ?>
 <?php else: ?>
     <?php $url = $tpl->url('thread_report', 'action', 'add') ?>
 <?php endif ?>
@@ -26,13 +26,13 @@
     
 <?php if ($tpl->static_acl('thread', 'labels') >= BEZ_PERMISSION_CHANGE): ?>
 <div class="row">
-<label for="type"><?php echo $tpl->getLang('type') ?>:</label>
+<label for="label_id"><?php echo $tpl->getLang('type') ?>:</label>
 <span>
-<select name="label" id="label">
-<option <?php if ($tpl->value('label') == '') echo 'selected' ?>
+<select name="label_id" id="label_id">
+<option <?php if ($tpl->value('label_id') == '') echo 'selected' ?>
 	value="">--- <?php echo $tpl->getLang('issue_type_no_specified') ?> ---</option>
 <?php foreach ($tpl->get('labels') as $label): ?>
-	<option <?php if ($value['label'] === $label->id) echo 'selected' ?>
+	<option <?php if ($tpl->value('label_id') == $label->id) echo 'selected' ?>
 	 value="<?php echo $label->id ?>"><?php echo $label->name ?></option>
 <?php endforeach ?>
 </select>

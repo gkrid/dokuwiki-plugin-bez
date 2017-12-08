@@ -273,6 +273,29 @@ class Acl {
         return $acl;
         
     }
+
+    private function static_thread_comment() {
+        $acl = array_fill_keys(Thread_comment::get_columns(), BEZ_PERMISSION_NONE);
+
+        //virtual columns
+
+        //BEZ_AUTH_VIEWER is also token viewer
+        if ($this->level >= BEZ_AUTH_VIEWER) {
+            //user can display everythig
+            $acl = array_map(function($value) {
+                return BEZ_PERMISSION_VIEW;
+            }, $acl);
+        }
+
+        if ($this->level >= BEZ_AUTH_ADMIN) {
+            //user can edit everythig
+            $acl = array_map(function($value) {
+                return BEZ_PERMISSION_CHANGE;
+            }, $acl);
+
+            return $acl;
+        }
+    }
     
     private function check_commcause($commcause) {
         $acl = array(

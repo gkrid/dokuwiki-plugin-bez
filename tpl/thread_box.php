@@ -1,194 +1,99 @@
+<?php /* @var \dokuwiki\plugin\bez\meta\Tpl $tpl */ ?>
 <div    id="bds_issue_box"
-        class="pr<?php echo $template['issue']->priority ?>
+        class="pr<?php echo $tpl->get('thread')->priority ?>
         <?php if (  $template['action'] === 'issue_edit_metadata') echo 'bez_metadata_edit_warn' ?>">
-
-<?php if ($template['action'] === 'issue_edit_metadata'): ?>
-
-<h1 style="color: #f00; border-bottom: 1px solid #f00;margin-bottom: 10px; margin-top: 25px;"><?php echo $bezlang['metadata_edit_header'] ?></h1>
-
-<?php endif ?>
 
 <h1>
 
-<a href="?id=<?php echo $this->id('issue', 'id', $template['issue']->id) ?>">
-    #<?php echo $template['issue']->id ?>
+<a href="<?php echo $tpl->url('thread', 'id', $tpl->get('thread')->id) ?>">
+    #<?php echo $tpl->get('thread')->id ?>
 </a>
-<?php if ($template['issue']->type_string != ''): ?>
-	<?php echo $template['issue']->type_string ?>
+
+<?php if (!empty($tpl->get('thread')->label_name)): ?>
+	<?php echo $tpl->get('thread')->label_name ?>
 <?php else: ?>
-	<i style="color: #777"><?php echo $bezlang['issue_type_no_specified'] ?></i>
+	<i style="color: #777"><?php echo $tpl->getLang('issue_type_no_specified') ?></i>
 <?php endif ?>
 
-(<?php echo $template['issue']->state_string ?>)
+(<?php echo $tpl->getLang('state_' . $tpl->get('thread')->state) ?>)
 </h1>
 
-<h1 id="bez_issue_title"><?php echo $template['issue']->title ?></h1>
+<h1 id="bez_issue_title"><?php echo $tpl->get('thread')->title ?></h1>
 
 <div class="bez_timebox">
     <span>
-    <?php if (  $template['action'] === 'issue_edit_metadata' &&
-            $template['issue']->acl_of('date') >= BEZ_PERMISSION_CHANGE): ?>
-            <label><strong><?php echo $bezlang['open'] ?>:</strong> <input name="date" style="width:90px;" data-validation="required,date" value="<?php echo $value['date'] ?>" class="date start" /></label>
-    <?php else: ?>
-        <strong><?php echo $bezlang['open'] ?>:</strong> <?php echo $helper->time2date($template['issue']->date) ?>
-    <?php endif ?>
+        <strong><?php echo $tpl->getLang('open') ?>:</strong>
+        <?php echo dformat(strtotime($tpl->get('thread')->create_date), '%Y-%m-%d') ?>
     </span>
 
 
-<?php if ($template['issue']->state !== '0'): ?>    
+<?php if ($tpl->get('thread')->state == 'closed' || $tpl->get('thread')->state == 'rejected'): ?>
     <span>
-    <?php if (  $template['action'] === 'issue_edit_metadata' &&
-            $template['issue']->acl_of('last_mod') >= BEZ_PERMISSION_CHANGE): ?>
-            <label><strong><?php echo $bezlang['closed'] ?>:</strong> <input name="last_mod" style="width:90px;" data-validation="required,date" value="<?php echo $value['last_mod'] ?>" class="date end" /></label>
-    <?php else: ?>
-        
-            <strong><?php echo $bezlang['closed'] ?>:</strong>
-            <?php echo $helper->time2date($template['issue']->last_mod) ?>
-        
-    <?php endif ?>
+        <strong><?php echo $tpl->getLang('closed') ?>:</strong>
+        <?php echo dformat(strtotime($tpl->get('thread')->close_date), '%Y-%m-%d') ?>
     </span>
     
 	<span>
-		<strong><?php echo $bezlang['report_priority'] ?>: </strong>
-		<?php echo $helper->days((int)$template['issue']->last_mod - (int)$template['issue']->date) ?>
+		<strong><?php echo $tpl->getLang('report_priority') ?>: </strong>
+        <?php $dStart = new DateTime($tpl->get('thread')->create_date) ?>
+        <?php $dEnd = new DateTime($tpl->get('thread')->close_date) ?>
+ 		<?php echo $dStart->diff($dEnd)->days ?> <?php echo $tpl->getLang('days') ?>
 	</span>
 <?php endif ?>
 </div>
 
 <table class="bez_box_data_table">
 <tr>
-    <th><?php echo $bezlang['reporter'] ?>:</th>
+    <th><?php echo $tpl->getLang('reporter') ?>:</th>
     <td>
-        <?php if (  $template['action'] === 'issue_edit_metadata' &&
-            $template['issue']->acl_of('reporter') >= BEZ_PERMISSION_CHANGE): ?>
-            
-            <select name="reporter" id="reporter" data-validation="required">
-                <option value="">--- <?php echo $bezlang['select'] ?>---</option>
-                <?php foreach ($template['users'] as $nick => $name): ?>
-                    <option <?php if ($value['reporter'] === $nick) echo 'selected' ?>
-                     value="<?php echo $nick ?>"><?php echo $name ?></option>
-                <?php endforeach ?>
-            </select>
-        <?php else: ?>
-            <?php echo $this->model->users->get_user_full_name($template['issue']->reporter) ?>
-        <?php endif ?>
+        <?php echo $tpl->user_name($tpl->get('thread')->original_poster) ?>
     </td>
     
-    <th><?php echo $bezlang['coordinator'] ?>:</th>
+    <th><?php echo $tpl->getLang('coordinator') ?>:</th>
     <td>
-        <?php if ($template['issue']->coordinator === '-proposal'): ?>
-            <i style="font-weight: normal; color: #aaa"><?php echo $bezlang['none'] ?></i>
+        <?php if ($tpl->get('thread')->coordinator == ''): ?>
+            <i style="font-weight: normal; color: #aaa"><?php echo $tpl->getLang('none') ?></i>
         <?php else: ?>
-            <?php echo $this->model->users->get_user_full_name($template['issue']->coordinator) ?>
+            <?php echo $tpl->user_name($tpl->get('thread')->coordinator) ?>
         <?php endif?>
     </td>
 </tr>
 </table>
 
-<?php echo $template['issue']->description_cache ?>
+<?php echo $tpl->get('thread')->content_html ?>
 
-<?php if ($template['issue']->state !== '0'): ?>
-<h2>
-	<?php if ($template['issue']->state === '1'): ?>
-		<?php echo $bezlang['opinion'] ?>
-	<?php else: ?>
-		<?php echo $bezlang['reason'] ?>
-	<?php endif ?>
-</h2>
-	<?php echo $template['issue']->opinion_cache ?>
+<?php if ($tpl->get('thread')->task_count - $tpl->get('thread')->task_count_closed > 0): ?>
+    <div class="info"><?php echo $tpl->getLang('issue_unclosed_tasks') ?></div>
+<?php endif ?>
+<?php if ($tpl->get('thread')->state == 'proposal'): ?>
+    <div class="info"><?php echo $tpl->getLang('issue_is_proposal') ?></div>
+<?php endif ?>
+<?php if ($tpl->get('thread')->causes_without_tasks_count() > 0): ?>
+    <div class="info"><?php echo $tpl->getLang('cause_without_task') ?></div>
+<?php endif ?>
+<?php if ($tpl->get('thread')->state == 'open' && $tpl->get('thread')->task_count == 0): ?>
+    <div class="info"><?php echo $tpl->getLang('issue_no_tasks') ?></div>
 <?php endif ?>
 
-<?php if (	$template['action'] === 'issue_close' ||
-			$template['action'] === 'issue_close_confirm'): ?>
-<h2>
-	<?php if ($template['issue']->assigned_tasks_count > 0): ?>
-		<?php echo $bezlang['opinion'] ?>
-	<?php else: ?>
-		<?php echo $bezlang['reason'] ?>
-	<?php endif ?>
-</h2>
-<?php $id = $this->id('issue', 'id', $template['issue']->id, 'action', 'issue_close_confirm') ?>
-<form action="?id=<?php echo $id ?>" method="POST" class="bez_form">
-	<input type="hidden" name="id" value="<?php echo $id ?>">
-	<div class="bez_opinion_toolbar"></div>
-	<textarea name="opinion" id="opinion" class="edit" data-validation="required"><?php echo $value['opinion'] ?></textarea>
-	<?php if ($template['issue']->assigned_tasks_count > 0): ?>
-		<input type="hidden" name="state" value="1" />
-		<input type="submit" value="<?php echo $bezlang['close_issue'] ?>">
-	<?php else: ?>
-	<input type="hidden" name="state" value="2" />
-		<input type="submit" value="<?php echo $bezlang['reject_issue'] ?>">
-	<?php endif ?>
-	 <a href="?id=<?php echo $this->id('issue', 'id', $template['issue']->id) ?>" class="bez_delete_button bez_link_button bez_cancel_button">
-		<?php echo $bezlang['cancel'] ?>
-	</a>
-</form>
-<?php elseif ($template['action'] === 'issue_edit_metadata'): ?>
-    <input type="submit" value="<?php echo $bezlang['save'] ?>">&nbsp;&nbsp;
-		<a href="?id=<?php echo $this->id('issue', 'id', $template['issue']->id) ?>"
-			 class="bez_delete_button bez_link_button">
-				<?php echo $bezlang['cancel'] ?>
-		</a>
-<?php else: ?>
-	<?php if ($template['issue']->opened_tasks_count > 0): ?>
-		<div class="info"><?php echo $bezlang['issue_unclosed_tasks'] ?></div>
-	<?php endif ?>
-	<?php if ($template['issue']->coordinator === '-proposal'): ?>
-		<div class="info"><?php echo $bezlang['issue_is_proposal'] ?></div>
-	<?php endif ?>
-	<?php if ($template['issue']->causes_without_tasks_count() > 0): ?>
-		<div class="info"><?php echo $bezlang['cause_without_task'] ?></div>
-	<?php endif ?>
-	<?php if (	$template['issue']->assigned_tasks_count === 0 &&
-				$template['issue']->state === '0'): ?>
-		<div class="info"><?php echo $bezlang['issue_no_tasks'] ?></div>
-	<?php endif ?>
 <div class="bez_buttons">
-        <?php if (count($template['issue']->changable_fields(
-                $template['issue']->get_meta_fields()
-            )) > 0): ?>
-        <a class="bds_inline_button_noborder" style="float:left;"
-            href="?id=<?php
-                echo $this->id('issue', 'id', $template['issue']->id, 'action', 'issue_edit_metadata') ?>">
-            <?php echo $bezlang['edit_metadata'] ?>
-        </a>
-    <?php endif ?>
-    
-	<?php if ($template['issue']->acl_of('state') >= BEZ_PERMISSION_CHANGE): ?> 
-		<?php if ($template['issue']->state !== '0'): ?>
-			<a href="?id=<?php echo $this->id('issue', 'id', $template['issue']->id, 'action', 'reopen') ?>" class="bds_inline_button">
-			 	↺ <?php echo $bezlang['issue_reopen'] ?>
-			</a>
-		<?php elseif (	$template['issue']->assigned_tasks_count > 0 &&
-						$template['issue']->opened_tasks_count === 0 &&
-						$template['issue']->causes_without_tasks_count() === 0): ?>
-			<a href="?id=<?php echo $this->id('issue', 'action', 'issue_close', 'id', $template['issue']->id) ?>" class="bds_inline_button">
-			 	↬ <?php echo $bezlang['close_issue'] ?>
-			</a>
-		<?php elseif ($template['issue']->assigned_tasks_count === 0): ?>
-			<a href="?id=<?php echo $this->id('issue', 'action', 'issue_close', 'id', $template['issue']->id) ?>" class="bds_inline_button">
-			 	↛ <?php echo $bezlang['reject_issue'] ?>
-			</a>
-		<?php endif ?>
-	<?php endif ?> 	
-	
-	<?php if (count($template['issue']->changable_fields()) > 0): ?> 
-		<a href="?id=<?php echo $this->id('issue_report', 'action', 'edit', 'id', $template['issue']->id) ?>" class="bds_inline_button">
-		 	✎ <?php echo $bezlang['edit'] ?>
+
+	<?php if (count($tpl->get('thread')->changable_fields()) > 0): ?>
+		<a href="<?php echo $tpl->url('thread_report', 'action', 'edit', 'id', $tpl->get('thread')->id) ?>" class="bds_inline_button">
+		 	✎ <?php echo $tpl->getLang('edit') ?>
 		</a>
 	<?php endif ?>
 
 	<a class="bds_inline_button" href="
-		<?php echo $helper->mailto($template['issue']->coordinator_email,
-		$bezlang['issue'].': #'.$template['issue']->id.' '.$template['issue']->title,
-		DOKU_URL . 'doku.php?id='.$this->id('issue', 'id', $template['issue']->id)) ?>">
-		✉ <?php echo $bezlang['send_mail'] ?>
+		<?php echo $tpl->mailto($tpl->user_email($tpl->get('thread')->coordinator),
+                                   '#'.$tpl->get('thread')->id.' '.$tpl->get('thread')->title,
+		$tpl->url('thread', 'id', $tpl->get('thread')->id)) ?>">
+		✉ <?php echo $tpl->getLang('send_mail') ?>
 	</a>
 
-	<a href="<?php echo $helper->link_8d($template['issue']->id) ?>" class="bds_inline_button bds_report_button">
-		⎙ <?php echo $bezlang['8d_report'] ?>
+	<a href="<?php echo $tpl->url('8d', $tpl->get('thread')->id) ?>" class="bds_inline_button bds_report_button">
+		⎙ <?php echo $tpl->getLang('8d_report') ?>
 	</a>
 </div>
-<?php endif ?>
+
 </div>
 

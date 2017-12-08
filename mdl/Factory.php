@@ -210,15 +210,15 @@ abstract class Factory {
 		return $obj;
 	}
 
-	public function beginTransaction() {
+	protected function beginTransaction() {
         $this->model->sqlite->query('BEGIN TRANSACTION');
     }
 
-    public function commitTransaction() {
+    protected function commitTransaction() {
         $this->model->sqlite->query('COMMIT TRANSACTION');
     }
 
-    public function rollbackTransaction() {
+    protected function rollbackTransaction() {
         $this->model->sqlite->query('ROLLBACK');
     }
     

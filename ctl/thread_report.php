@@ -7,12 +7,11 @@ if ($this->model->acl->get_level() < BEZ_AUTH_USER) {
 }
 
 
-if (isset($nparams['id']) && is_numeric($nparams['id'])) {
-	$thread_id = (int)$nparams['id'];
+$thread_id = $this->get_param('id');
+if ($thread_id != '') {
 	/** @var \dokuwiki\plugin\bez\mdl\Thread $thread */
 	$thread = $this->model->threadFactory->get_one($thread_id);
-	
-	$tpl->set('thread', $thread);
+	$this->tpl->set('thread', $thread);
 }
 //else {
 	//$template['thread'] = $this->model->issues->create_dummy_object();
@@ -35,24 +34,26 @@ if ($this->get_param('action') == 'edit') {
 } elseif ($this->get_param('action') == 'update') {
     //$template['form_action'] = 'update';
 
-    $prev_coordiantor = $thread->coordinator;
+//    $prev_coordiantor = $thread->coordinator;
 
-    $thread->set_data($_POST);
+    //$thread->set_data($_POST);
+    $this->model->threadFactory->update_save($thread, $_POST);
 
-    $thread->add_participant($thread->coordinator);
+
+//    $thread->add_participant($thread->coordinator);
 
     //save to get ID!!!
-    $this->model->threadFactory->save($thread);
-
-    if ($thread->coordinator !== '-proposal' &&
-        $INFO['client'] !== $thread->coordinator &&
-        $thread->coordinator != $prev_coordiantor) {
-        //coordinator becomes subscribent automaticly
-        $thread->add_subscribent($thread->coordinator);
-        $this->model->threadFactory->save($thread);
-
-        $thread->mail_inform_coordinator();
-    }
+//    $this->model->threadFactory->save($thread);
+//
+//    if ($thread->coordinator !== '-proposal' &&
+//        $INFO['client'] !== $thread->coordinator &&
+//        $thread->coordinator != $prev_coordiantor) {
+//        //coordinator becomes subscribent automaticly
+//        $thread->add_subscribent($thread->coordinator);
+//        $this->model->threadFactory->save($thread);
+//
+//        $thread->mail_inform_coordinator();
+//    }
 
     header('Location: ?id='.$this->id('thread', 'id', $thread->id));
 } elseif ($this->get_param('action') == 'add') {
@@ -62,31 +63,16 @@ if ($this->get_param('action') == 'edit') {
     if ($this->model->acl->get_level() >= BEZ_AUTH_LEADER) {
         $defaults['coordinator'] = $_POST['coordinator'];
     }
+    unset($_POST['coordinator']);
     $thread = $this->model->threadFactory->create_object($defaults);
 
-    $data = array(
-//            'type' => $_POST['type'],
-        'title' => $_POST['title'],
-        'content' => $_POST['content']
-    );
-    $thread->set_data($data);
-
-    try {
-        $this->model->threadFactory->beginTransaction();
-
-        $this->model->threadFactory->save($thread);
-
-        $thread->add_label($_POST['label']);
-
-        $thread->set_participant_flags($thread->original_poster, array('original_poster', 'subscribent'));
-        if($thread->coordinator != null) {
-            $thread->set_participant_flags($thread->coordinator, array('coordinator', 'subscribent'));
-        }
-        $this->model->threadFactory->commitTransaction();
-    } catch(Exception $exception) {
-        $this->model->threadFactory->rollbackTransaction();
-    }
-
+//    $data = array(
+////            'type' => $_POST['type'],
+//        'title' => $_POST['title'],
+//        'content' => $_POST['content']
+//    );
+    //$thread->set_data($data);
+    $this->model->threadFactory->initial_save($thread, $_POST);
 
 //        if ($thread->coordinator !== '-proposal' &&
 //            $INFO['client'] !== $thread->coordinator) {
@@ -111,5 +97,4 @@ if ($this->get_param('action') == 'edit') {
 //}
 
 //$template['issuetypes'] = $this->model->issuetypes->get_all();
-$this->tpl->set('users', $this->model->userFactory->get_all());
 $this->tpl->set('labels', $this->model->labelFactory->get_all());

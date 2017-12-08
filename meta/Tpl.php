@@ -45,7 +45,11 @@ class Tpl {
     public function url() {
         return call_user_func_array(array($this->action, 'url'), func_get_args());
     }
-        
+
+    public function mailto($to, $subject, $body) {
+        return 'mailto:'.$to.'?subject='.rawurlencode($subject).'&body='.rawurlencode($body);
+    }
+
 //    public function get_dummy_of($name) {
 //        return $this->action->get_model_of($name)->get_dummy_object();
 //    }
@@ -64,7 +68,7 @@ class Tpl {
     }
     
     public function user_email($login=NULL) {
-        return $this->action->get_model()->get_user_email($login);
+        return $this->action->get_model()->userFactory->get_user_email($login);
     }
     /*end users info functions*/
     

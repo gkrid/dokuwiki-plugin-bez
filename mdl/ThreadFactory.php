@@ -9,6 +9,8 @@ namespace dokuwiki\plugin\bez\mdl;
 
 
 
+use Assetic\Exception\Exception;
+
 class ThreadFactory extends Factory {
 	
 //	public function __construct($model) {
@@ -93,5 +95,72 @@ class ThreadFactory extends Factory {
 			$years[] = (string) $year;
         }
 		return $years;
+    }
+
+    public function initial_save(Thread $thread, $data, $label_ids=array()) {
+        if ($thread->id != NULL) {
+            throw new \Exception('row already saved. use update_save');
+        }
+
+        $thread->set_data($data);
+        $label_ids = array();
+        if (isset($data['label_id']) && $data['label_id'] != '') {
+            $label_ids[] = $data['label_id'];
+        }
+        try {
+            $this->beginTransaction();
+            parent::save($thread);
+
+            foreach($label_ids as $label_id) {
+                $thread->add_label($label_id);
+            }
+
+            $thread->set_participant_flags($thread->original_poster, array('original_poster', 'subscribent'));
+            if($thread->coordinator != null) {
+                $thread->set_participant_flags($thread->coordinator, array('coordinator', 'subscribent'));
+            }
+
+            $this->model->threadFactory->commitTransaction();
+        } catch(Exception $exception) {
+            $this->model->threadFactory->rollbackTransaction();
+        }
+    }
+
+    public function update_save(Thread $thread, $data, $label_ids=array()) {
+        if ($thread->id == NULL) {
+            throw new \Exception('row not saved. use initial_save()');
+        }
+
+        $prev_coordinator = $thread->coordinator;
+        $thread->set_data($data);
+        $label_ids = array();
+        if (isset($data['label_id']) && $data['label_id'] != '') {
+            $label_ids[] = $data['label_id'];
+        }
+        try {
+            $this->beginTransaction();
+            parent::save($thread);
+
+            $cur_label_ids = array_keys($thread->get_labels());
+            $labels_to_add = array_diff($label_ids, $cur_label_ids);
+            $labels_to_rem = array_diff($cur_label_ids, $label_ids);
+
+            foreach($labels_to_add as $label_id) {
+                $thread->add_label($label_id);
+            }
+
+            foreach($labels_to_rem as $label_id) {
+                $thread->remove_label($label_id);
+            }
+
+            if($thread->coordinator != null && $thread->coordinator != $prev_coordinator) {
+                $thread->remove_participant_flags($prev_coordinator, array('coordinator'));
+                $thread->set_participant_flags($thread->coordinator, array('subscribent', 'coordinator'));
+            }
+
+            $this->model->threadFactory->commitTransaction();
+        } catch(Exception $exception) {
+            $this->model->threadFactory->rollbackTransaction();
+        }
     }
 }

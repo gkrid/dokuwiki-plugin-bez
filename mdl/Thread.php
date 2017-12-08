@@ -25,6 +25,10 @@ class Thread extends Entity {
 
     protected $task_count, $task_count_open, $task_sum_cost;
 
+    /*new labels to add when object saved*/
+    //protected $new_label_ids;
+    protected $labels;
+
     public static function get_columns() {
         return array('id',
                      'original_poster', 'coordinator',
@@ -33,6 +37,12 @@ class Thread extends Entity {
                      'create_date', 'last_activity_date', 'last_modification_date', 'close_date',
                      'title', 'content', 'content_html',
                      'task_count', 'task_count_open', 'task_sum_cost');
+    }
+
+    public static function get_select_columns() {
+        $cols = parent::get_select_columns();
+        array_push($cols, 'label_id', 'label_name');
+        return $cols;
     }
 
     public static function get_states() {
@@ -189,7 +199,7 @@ class Thread extends Entity {
         $val_data = $this->validator->validate($data, $input); 
                 
 		if ($val_data === false) {
-			throw new ValidationException('issues',	$this->validator->get_errors());
+			throw new ValidationException('thread',	$this->validator->get_errors());
         }
         
         
@@ -212,31 +222,35 @@ class Thread extends Entity {
         //update virtuals
         //$this->update_virtual_columns();
 	}
+
+//	public function set_labels($labels_ids = array()) {
+//
+//    }
     
-    public function get_meta_fields() {
-        return array('reporter', 'date', 'last_mod', 'last_activity');
-    }
-    
-    public function set_meta($post) {
-        
-        if (isset($post['date'])) {
-            $unix = strtotime($post['date']);
-            //if $unix === false validator will catch it
-            if ($unix !== false) {
-                $post['date'] = (string)$unix;
-            }
-        }
-        
-        if (isset($post['last_mod'])) {
-            $unix = strtotime($post['last_mod']);
-            //if $unix === false validator will catch it
-            if ($unix !== false) {
-                $post['last_mod'] = (string)$unix;
-            }
-        }
-        
-        parent::set_data($post, $this->get_meta_fields());
-    }
+//    public function get_meta_fields() {
+//        return array('reporter', 'date', 'last_mod', 'last_activity');
+//    }
+//
+//    public function set_meta($post) {
+//
+//        if (isset($post['date'])) {
+//            $unix = strtotime($post['date']);
+//            //if $unix === false validator will catch it
+//            if ($unix !== false) {
+//                $post['date'] = (string)$unix;
+//            }
+//        }
+//
+//        if (isset($post['last_mod'])) {
+//            $unix = strtotime($post['last_mod']);
+//            //if $unix === false validator will catch it
+//            if ($unix !== false) {
+//                $post['last_mod'] = (string)$unix;
+//            }
+//        }
+//
+//        parent::set_data($post, $this->get_meta_fields());
+//    }
     
 //    public function update_cache() {
 //        if ($this->model->acl->get_level() < BEZ_AUTH_ADMIN) {
@@ -274,34 +288,92 @@ class Thread extends Entity {
 //        $this->last_activity = $this->sqlite_date();
 //    }
 
-    private $participants;
-    public function get_participants() {
+    //private $participants;
+    public function get_participants($filter='') {
         if ($this->acl_of('participants') < BEZ_PERMISSION_VIEW) {
             throw new PermissionDeniedException();
         }
         if ($this->id === NULL) {
-            $this->participants = array();
+            return array();
         }
-        if (is_null($this->participants)) {
-            $r = $this->model->sqlite->query('SELECT * FROM thread_participant WHERE thread_id=? ORDER BY user_id', $this->id);
-            $this->participants = $this->model->sqlite->res2arr($r);
+
+        $sql = 'SELECT * FROM thread_participant WHERE thread_id=? ORDER BY user_id';
+        $possible_flags = array('original_poster', 'coordinator', 'commentator', 'task_assignee', 'subscribent');
+        if ($filter != '') {
+            if (!in_array($filter, $possible_flags)) {
+                throw new \Exception("unknown flag $filter");
+            }
+            $sql .= " WHERE $filter=1";
         }
-        return $this->participants;
+
+        $r = $this->model->sqlite->query($sql, $this->id);
+        $pars = $this->model->sqlite->res2arr($r);
+        $participants = array();
+        foreach ($pars as $par) {
+            $participants[$par['user_id']] = $par;
+        }
+
+        return $participants;
     }
 
     public function get_participant($user_id) {
-        $participants = $this->get_participants();
-        foreach ($participants as $participant) {
-            if ($participant['user_id'] == $user_id) {
-                return $participant;
-            }
+        if ($this->acl_of('participants') < BEZ_PERMISSION_VIEW) {
+            throw new PermissionDeniedException();
+        }
+        if ($this->id === NULL) {
+            return array();
+        }
+
+        $r = $this->model->sqlite->query('SELECT * FROM thread_participant WHERE thread_id=? AND user_id=?', $this->id, $user_id);
+        $par = $this->model->sqlite->res2row($r);
+        if (!is_array($par)) {
+            return false;
+        }
+
+        return $par;
+    }
+
+    public function is_subscribent($user_id=null) {
+        if ($user_id == null) {
+            $user_id = $this->model->user_nick;
+        }
+        $par = $this->get_participant($user_id);
+        if ($par['subscribent'] == 1) {
+            return true;
         }
         return false;
     }
-		
+
+    public function remove_participant_flags($user_id, $flags) {
+        if ($this->acl_of('participants') < BEZ_PERMISSION_CHANGE) {
+            throw new PermissionDeniedException();
+        }
+
+        //thread not saved yet
+        if ($this->id === NULL) {
+            throw new \Exception('cannot remove flags from not saved thread');
+        }
+
+        $possible_flags = array('original_poster', 'coordinator', 'commentator', 'task_assignee', 'subscribent');
+        if (array_intersect($flags, $possible_flags) != $flags) {
+            throw new \Exception('unknown flags');
+        }
+
+        $set = implode(',', array_map(function ($v) { return "$v=0"; }, $flags));
+
+        $sql = "UPDATE thread_participant SET $set WHERE thread_id=? AND user_id=?";
+        $this->model->sqlite->query($sql, $this->id, $user_id);
+
+    }
+
 	public function set_participant_flags($user_id, $flags=array()) {
         if ($this->acl_of('participants') < BEZ_PERMISSION_CHANGE) {
             throw new PermissionDeniedException();
+        }
+
+        //thread not saved yet
+        if ($this->id === NULL) {
+            throw new \Exception('cannot add flags to not saved thread');
         }
 
         $possible_flags = array('original_poster', 'coordinator', 'commentator', 'task_assignee', 'subscribent');
@@ -312,19 +384,19 @@ class Thread extends Entity {
         $participant = $this->get_participant($user_id);
         if ($participant == false) {
             $participant = array_fill_keys($possible_flags, 0);
+
+            $participant['thread_id'] = $this->id;
+            $participant['user_id'] = $user_id;
+            $participant['added_by'] = $this->model->user_nick;
+            $participant['added_date'] = date('c');
         }
         $values = array_merge($participant, array_fill_keys($flags, 1));
-
-        $values['thread_id'] = $this->id;
-        $values['user_id'] = $user_id;
-        $values['added_by'] = $this->model->dw_user;
-        $valuse['added_date'] = date('c');
 
         $keys = join(',', array_keys($values));
         $vals = join(',', array_fill(0,count($values),'?'));
 
         $sql = "REPLACE INTO thread_participant ($keys) VALUES ($vals)";
-        $this->model->sqlite->query($sql, array_values($valuse));
+        $this->model->sqlite->query($sql, array_values($values));
 
 
 
@@ -340,19 +412,25 @@ class Thread extends Entity {
 //		}
 	}
 
-	private $labels;
     public function get_labels() {
         if ($this->acl_of('labels') < BEZ_PERMISSION_VIEW) {
             throw new PermissionDeniedException();
         }
+
+        //record not saved
         if ($this->id === NULL) {
-            $this->labels = array();
+           return array();
         }
-        if (is_null($this->labels)) {
-            $r = $this->model->sqlite->query('SELECT * FROM label JOIN thread_label WHERE thread_label.thread_id=?', $this->id);
-            $this->labels = $this->model->sqlite->res2arr($r);
+
+        $labels = array();
+        $r = $this->model->sqlite->query('SELECT * FROM label JOIN thread_label ON label.id = thread_label.label_id
+                                            WHERE thread_label.thread_id=?', $this->id);
+        $arr = $this->model->sqlite->res2arr($r);
+        foreach ($arr as $label) {
+            $labels[$label['id']] = $label;
         }
-        return $this->labels;
+
+        return $labels;
     }
 
 //    public function get_label_id($name) {
@@ -371,24 +449,48 @@ class Thread extends Entity {
             throw new PermissionDeniedException();
         }
 
+
         //issue not saved yet
         if ($this->id === NULL) {
-            throw new \Exception('cannot add labels to not saved thread. use set_labels() instead');
+            throw new \Exception('cannot add labels to not saved thread. use initial_save() instead');
         }
 
         //label already assigned, nothing to do
 //        if ($this->get_label_id($name)) return;
 
-//        $r = $this->model->sqlite->query('SELECT id FROM label WHERE id=?', $label_id);
-//        $label_id = $this->model->sqlite->res2single($r);
-//        if (!$label_id) {
-//            throw new \Exception('label does not exist');
-//        }
+        $r = $this->model->sqlite->query('SELECT id FROM label WHERE id=?', $label_id);
+        $label_id = $this->model->sqlite->res2single($r);
+        if (!$label_id) {
+            throw new \Exception("label($label_id) doesn't exist");
+        }
+
 
         $this->model->sqlite->storeEntry('thread_label',
                                          array('thread_id' => $this->id,
                                                'label_id' => $label_id));
 
+    }
+
+    public function remove_label($label_id) {
+        if ($this->acl_of('labels') < BEZ_PERMISSION_CHANGE) {
+            throw new PermissionDeniedException();
+        }
+
+        //issue not saved yet
+        if ($this->id === NULL) {
+            throw new \Exception('cannot remove labels from not saved thread. use initial_save() instead');
+        }
+
+        /** @var \PDOStatement $r */
+        $r = $this->model->sqlite->query('DELETE FROM thread_label WHERE thread_id=? AND label_id=?',$this->id, $label_id);
+        if ($r->rowCount() != 1) {
+            throw new \Exception('label was not assigned to this thread');
+        }
+
+    }
+
+    public function causes_without_tasks_count() {
+        return 0;
     }
 
 //    public function remove_label($name) {

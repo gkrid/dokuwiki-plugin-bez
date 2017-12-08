@@ -64,6 +64,7 @@ CREATE TABLE thread_comment (
 CREATE TABLE label (
   id         INTEGER     NOT NULL PRIMARY KEY,
   name       TEXT UNIQUE NOT NULL,
+  color      TEXT        NULL, -- color of the label, hex RGB: xxxxxx
   count      INTEGER     NOT NULL DEFAULT 0,
 
   added_by   TEXT        NOT NULL, -- user who added the label

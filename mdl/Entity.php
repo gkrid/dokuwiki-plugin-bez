@@ -61,6 +61,11 @@ abstract class Entity {// extends BEZ_mdl_Dummy_Entity {
     
 	abstract public static function get_columns();
 
+	public static function get_select_columns() {
+        $class = get_called_class();
+	    return $class::get_columns();
+    }
+
 //    abstract public static function get_virtual_columns();
     
 //    private function is_dummy() {
@@ -82,7 +87,7 @@ abstract class Entity {// extends BEZ_mdl_Dummy_Entity {
 		$assoc = array();
 		//$columns = array_merge($this->get_columns(), $this->get_virtual_columns());
 
-        $columns = $this->get_columns();
+        $columns = $this->get_select_columns();
         if ($filter !== NULL) {
             $columns = array_intersect($columns, $filter);
         }
@@ -261,19 +266,19 @@ abstract class Entity {// extends BEZ_mdl_Dummy_Entity {
 //        $this->update_virtual_columns();
     }
     
-//    public function changable_fields($filter=NULL) {
-//       $fields = $this->model->acl->check($this);
-//
-//       if ($filter !== NULL) {
-//           $fields = array_filter($fields, function ($k) use ($filter) {
-//                return in_array($k, $filter);
-//           }, ARRAY_FILTER_USE_KEY);
-//       }
-//
-//       return array_keys(array_filter($fields, function ($var) {
-//           return $var >= BEZ_PERMISSION_CHANGE;
-//       }));
-//    }
+    public function changable_fields($filter=NULL) {
+       $fields = $this->model->acl->check($this);
+
+       if ($filter !== NULL) {
+           $fields = array_filter($fields, function ($k) use ($filter) {
+                return in_array($k, $filter);
+           }, ARRAY_FILTER_USE_KEY);
+       }
+
+       return array_keys(array_filter($fields, function ($var) {
+           return $var >= BEZ_PERMISSION_CHANGE;
+       }));
+    }
     
     public function acl_of($field) {
         return $this->model->acl->check_field($this, $field);

@@ -1,3 +1,4 @@
+<?php /* @var \dokuwiki\plugin\bez\meta\Tpl $tpl */ ?>
 <table>
 <tr>
 	<th>Name</th>
