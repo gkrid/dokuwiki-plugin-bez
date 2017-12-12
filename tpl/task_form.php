@@ -1,36 +1,40 @@
 <?php
-if ($nparams['bez'] === 'issue') {
-	$id = $this->id('issue', 'id', $template['issue']->id, 'action', $template['action'], 'tid', $template['tid'], 'kid', $template['kid']);
-} elseif ($nparams['bez'] === 'task_form') {
-	$id = $this->id('task_form', 'action', $template['action'], 'tid', $template['tid']);
+/* @var \dokuwiki\plugin\bez\meta\Tpl $tpl */
+if ($tpl->action() == 'thread') {
+	$url = $tpl->url('thread', 'id', $tpl->get('thread')->id, 'action', $tpl->param('action'), 'tid', $tpl->param('tid'), 'kid', $tpl->param('kid'));
+    $id = 'bez:thread' . $tpl->get('thread')->id;
+} elseif ($tpl->action() == 'task_form') {
+    $url = $tpl->url('task_form', 'action', $tpl->param('action'), 'tid', $tpl->param('tid'));
+    $id = 'bez:tasks';
 } else {
-	$id = $this->id('task', 'action', $template['action'], 'tid', $template['tid']);
+    $url = $tpl->url('task', 'action', $tpl->param('action'), 'tid', $tpl->param('tid'));
+    $id = 'bez:tasks';
 }
 ?>
 <a name="z_"></a>
 <form 	class="bez_form bez_task_form"
-		action="?id=<?php echo $id ?>" method="POST">
+		action="<?php echo $url ?>" method="POST">
 		<input type="hidden" name="id" value="<?php echo $id ?>">
 
 		<fieldset class="bds_form">
-			<?php if ($template['tid'] !== '-1'): ?>
+			<?php if ($tpl->param('tid') != ''): ?>
 				<div class="row">
-				<label for="id"><?php echo $bezlang['id'] ?>:</label>
-				<span><strong>#z<?php echo $template['task']->id ?></strong></span>
+				<label for="id"><?php echo $tpl->getLang('id') ?>:</label>
+				<span><strong>#z<?php echo $tpl->get('task')->id ?></strong></span>
 				</div>
 				
-				<?php if (isset($template['issue']) &&
-                    $template['task']->acl_of('cause') >= BEZ_PERMISSION_CHANGE): ?>
+				<?php if ($tpl->get('thread') != '' &&
+                    $tpl->get('task')->acl_of('thread_comment_id') >= BEZ_PERMISSION_CHANGE): ?>
 				<div class="row">
-					<label for="cause"><?php echo ucfirst($bezlang['cause']) ?>:</label>
+					<label for="thread_comment_id"><?php echo ucfirst($tpl->getLang('cause')) ?>:</label>
 					<span>
-						<select name="cause" id="cause">
-							<option <?php if ($value['cause'] == '') echo 'selected' ?>
-								value="">--- <?php echo $bezlang['correction'] ?> ---</option>
+						<select name="thread_comment_id" id="thread_comment_id">
+							<option <?php if ($tpl->value('thread_comment_id') == '') echo 'selected' ?>
+								value="">--- <?php echo $tpl->getLang('correction') ?> ---</option>
 
-							<?php foreach ($template['causes'] as $cause): ?>
-								<option <?php if ($value['cause'] === $cause->id) echo 'selected' ?>
-								 value="<?php echo $cause->id ?>">#p<?php echo $cause->id ?></option>
+							<?php foreach ($tpl->get('thread')->get_causes() as $cause_id): ?>
+								<option <?php if ($tpl->value('thread_comment_id') == $cause_id) echo 'selected' ?>
+								 value="<?php echo $cause_id ?>">#p<?php echo $cause_id ?></option>
 							<?php endforeach ?>
 						</select>
 					</span>
@@ -38,20 +42,20 @@ if ($nparams['bez'] === 'issue') {
 				<?php endif ?>
 			<?php endif ?>
 			<div class="row">
-			<label for="executor"><?php echo $bezlang['executor'] ?>:</label>
+			<label for="executor"><?php echo $tpl->getLang('executor') ?>:</label>
 			<span>
-			<?php if ($template['task']->acl_of('executor') >= BEZ_PERMISSION_CHANGE): ?>	
-				<select name="executor" id="executor" data-validation="required">
-					<option value="">--- <?php echo $bezlang['select'] ?>---</option>
-				<?php foreach ($template['users'] as $nick => $name): ?>
-					<option <?php if ($value['executor'] === $nick) echo 'selected' ?>
+			<?php if ($tpl->get('task')->acl_of('assignee') >= BEZ_PERMISSION_CHANGE): ?>
+				<select name="assignee" id="assignee" data-validation="required">
+					<option value="">--- <?php echo $tpl->getLang('select') ?>---</option>
+				<?php foreach ($tpl->get('users') as $nick => $name): ?>
+					<option <?php if ($tpl->value('assignee') == $nick) echo 'selected' ?>
 					 value="<?php echo $nick ?>"><?php echo $name ?></option>
 				<?php endforeach ?>
 				</select>
 			<?php else: ?>
-				<input type="hidden" name="executor" value="<?php echo $value['executor'] ?>">
+				<input type="hidden" name="assignee" value="<?php echo $tpl->value('assignee') ?>">
 				<strong>
-				<?php echo $this->model->users->get_user_full_name($value['executor']) ?>
+				<?php echo $tpl->user_name($tpl->value('assignee')) ?>
 				</strong>
 			<?php endif ?>
 			
@@ -60,35 +64,35 @@ if ($nparams['bez'] === 'issue') {
 			</div>
 
 			<div class="row">
-				<label for="task"><?php echo $bezlang['description'] ?>:</label>
+				<label for="content"><?php echo $tpl->getLang('description') ?>:</label>
 				<span>
-                    <?php if ($template['task']->acl_of('plan_date') >= BEZ_PERMISSION_CHANGE): ?>
+                    <?php if ($tpl->get('task')->acl_of('content') >= BEZ_PERMISSION_CHANGE): ?>
                         <div class="bez_toolbar"></div>
                     <?php endif ?>
-					<textarea name="task" id="task" data-validation="required" <?php if ($template['task']->acl_of('plan_date') < BEZ_PERMISSION_CHANGE) echo 'disabled' ?>><?php echo $value['task'] ?></textarea>
+					<textarea name="content" id="content" data-validation="required" <?php if ($tpl->get('task')->acl_of('content') < BEZ_PERMISSION_CHANGE) echo 'disabled' ?>><?php echo $tpl->value('content') ?></textarea>
 				</span>
 			</div>
 			
 			<div class="row task_plan_field">
-				<label for="plan_date"><?php echo $bezlang['plan_date'] ?>:</label>
+				<label for="plan_date"><?php echo $tpl->getLang('plan_date') ?>:</label>
 				<span>
-                    <input name="plan_date" style="width:90px;" data-validation="required,date" value="<?php echo $value['plan_date'] ?>"
-                    <?php if ($template['task']->acl_of('plan_date') < BEZ_PERMISSION_CHANGE) echo 'disabled' ?>
+                    <input name="plan_date" style="width:90px;" data-validation="required,date" value="<?php echo $tpl->value('plan_date') ?>"
+                    <?php if ($tpl->get('task')->acl_of('plan_date') < BEZ_PERMISSION_CHANGE) echo 'disabled' ?>
                     />
                     <div style="display:inline" id="task_datapair">
-                        <?php echo $bezlang['from_hour'] ?>
-                        <input name="start_time" style="width:60px;" class="time start" value="<?php echo $value['start_time'] ?>"
+                        <?php echo $tpl->getLang('from_hour') ?>
+                        <input name="start_time" style="width:60px;" class="time start" value="<?php echo $tpl->value('start_time') ?>"
                         data-validation="required,custom"
                         data-validation-regexp="^(\d{1,2}):(\d{1,2})$"
                         data-validation-depends-on="all_day_event"
-                        <?php if ($template['task']->acl_of('plan_date') < BEZ_PERMISSION_CHANGE) echo 'disabled' ?>
+                        <?php if ($tpl->get('task')->acl_of('plan_date') < BEZ_PERMISSION_CHANGE) echo 'disabled' ?>
                         />
-                        <?php echo $bezlang['to_hour'] ?>
-                        <input name="finish_time" style="width:60px;" class="time end" value="<?php echo $value['finish_time'] ?>"
+                        <?php echo $tpl->getLang('to_hour') ?>
+                        <input name="finish_time" style="width:60px;" class="time end" value="<?php echo $tpl->value('finish_time') ?>"
                         data-validation="required,custom"
                         data-validation-regexp="^(\d{1,2}):(\d{1,2})$"
                         data-validation-depends-on="all_day_event"
-                        <?php if ($template['task']->acl_of('plan_date') < BEZ_PERMISSION_CHANGE) echo 'disabled' ?>
+                        <?php if ($tpl->get('task')->acl_of('plan_date') < BEZ_PERMISSION_CHANGE) echo 'disabled' ?>
                         />
                     </div>
 				</span>
@@ -98,90 +102,70 @@ if ($nparams['bez'] === 'issue') {
 				<label></label>
 				<span>
 					<label>
-                        <?php if ($template['task']->acl_of('all_day_event') >= BEZ_PERMISSION_CHANGE): ?>	
+                        <?php if ($tpl->get('task')->acl_of('all_day_event') >= BEZ_PERMISSION_CHANGE): ?>
                         <input type="checkbox" name="all_day_event" value="1" 
-                            <?php if (!isset($value['all_day_event']) ||
-                                        $value['all_day_event'] === '1'): ?>
+                            <?php if ($tpl->value('all_day_event') == '' ||
+                                        $tpl->value('all_day_event') == '1'): ?>
                                 checked
                             <?php endif ?> /> 
                         <?php else: ?>
                              <input type="checkbox" disabled
-                            <?php if ($template['task']->all_day_event === '1'): ?>
+                            <?php if ($tpl->get('task')->all_day_event == '1'): ?>
                                 checked
                             <?php endif ?> />
-                        <?php endif ?> <?php echo $bezlang['all_day_event'] ?>
+                        <?php endif ?> <?php echo $tpl->getLang('all_day_event') ?>
                     </label>
                 
                 </span>
 			</div>
 			
 			<div class="row">
-			<label for="tasktype"><?php echo $bezlang['task_type'] ?>:</label>
+			<label for="tasktype"><?php echo $tpl->getLang('task_type') ?>:</label>
 			<span>
-                <select id="tasktype" name="tasktype" <?php if ($template['task']->acl_of('plan_date') < BEZ_PERMISSION_CHANGE) echo 'disabled' ?>>
-                    <?php if (isset($template['issue'])): ?>
-                    <option <?php if ($value['tasktype'] == '') echo 'selected' ?> value=""><?php echo $bezlang['tasks_no_type'] ?></option>
+                <select id="task_program_id" name="task_program_id" <?php if ($tpl->get('task')->acl_of('task_program_id') < BEZ_PERMISSION_CHANGE) echo 'disabled' ?>>
+                    <?php if ($tpl->get('thread') != ''): ?>
+                    <option <?php if ($tpl->value('task_program_id') == '') echo 'selected' ?> value=""><?php echo $tpl->getLang('tasks_no_type') ?></option>
                     <?php endif; ?>
                     
-                    <?php foreach ($template['tasktypes'] as $tasktype): ?>
-                        <option <?php if ($value['tasktype'] == $tasktype->id) echo 'selected' ?> value="<?php echo $tasktype->id ?>"><?php echo $tasktype->type ?></option>
+                    <?php foreach ($tpl->get('task_programs') as $task_program): ?>
+                        <option <?php if ($tpl->value('task_program_id') == $task_program->id) echo 'selected' ?> value="<?php echo $task_program->id ?>"><?php echo $task_program->name ?></option>
                     <?php endforeach ?>
                 </select>
 			</span>
 			</div>
 
 			<div class="row">
-				<label for="cost"><?php echo $bezlang['cost'] ?>:</label>
+				<label for="cost"><?php echo $tpl->getLang('cost') ?>:</label>
 				<span><input 	type="number" name="cost" id="cost"
 								min="0" step="0.01"
-                                value="<?php echo $value['cost'] ?>"
-                                <?php if ($template['task']->acl_of('plan_date') < BEZ_PERMISSION_CHANGE) echo 'disabled' ?>></span>
+                                value="<?php echo $tpl->value('cost') ?>"
+                                <?php if ($tpl->get('task')->acl_of('plan_date') < BEZ_PERMISSION_CHANGE) echo 'disabled' ?>></span>
 			</div>
-			<?php if ($template['tid'] !== '-1'): ?>
+			<?php if ($tpl->param('tid') != ''): ?>
 				<div class="row">
-				<label for="task_state"><?php echo $bezlang['task_state'] ?>:</label>
+				<label for="task_state"><?php echo $tpl->getLang('task_state') ?>:</label>
 				<span>
-					<strong><?php echo $template['task']->state_string ?></strong>
+					<strong><?php echo $tpl->getLang('task_' . $tpl->get('task')->state) ?></strong>
 				</span>
 				</div>
-				
-				<?php if (  $template['task']->state === '1' ||
-                            $template['task']->state === '2'): ?>
-					<div class="row">
-						<label for="reason">
-							<?php if ($template['task']->state === '1'): ?>
-								<?php echo $bezlang['evaluation'] ?>:
-							<?php elseif ($template['task']->state === '2'): ?>
-								<?php echo $bezlang['reason'] ?>:
-							<?php endif ?>
-						</label>
-						<span>
-                            <?php if ($template['task']->acl_of('reason') >= BEZ_PERMISSION_CHANGE): ?>
-                                <div class="bez_toolbar"></div>
-                            <?php endif ?>
-                            <textarea name="reason" id="reason" <?php if ($template['task']->acl_of('reason') < BEZ_PERMISSION_CHANGE) echo 'disabled' ?>><?php echo $value['reason'] ?></textarea>
-                        </span>
-					</div>
-				<?php endif ?>
-
 			<?php endif ?>
 			<div class="row">
 				<label></label>
 				<span style="padding-top:10px;">
-					<input type="submit" value="<?php echo $template['tid'] === '-1' ? $bezlang['add'] : $bezlang['correct'] ?>">
-					<a href="?id=<?php
-				if ($nparams['bez'] === 'issue') {
-					echo $this->id('issue', 'id', $template['issue']->id);
-				} else if ($nparams['bez'] === 'task' && $template['task']->id != '') {
-					echo $this->id('task', 'tid', $template['task']->id);
-				} else if ($template['tasktype'] != '') {
-                    echo $this->id('tasks', 'tasktype', $template['tasktype']);
+					<input type="submit" value="<?php echo $tpl->param('tid') == '' ? $tpl->getLang('add') : $tpl->getLang('correct') ?>">
+					<a href="<?php
+				if ($tpl->action() == 'thread') {
+					echo $tpl->url('thread', 'id', $tpl->get('thread')->id);
+				} else if ($tpl->action() == 'task' && $tpl->get('task')->id != '') {
+					echo $tpl->url('task', 'tid', $tpl->get('task')->id);
+				} else if ($tpl->get('task')->program != '') {
+                    echo $tpl->url('tasks', 'tasktype', $tpl->get('task')->program);
                 } else {
-                    echo $this->id('tasks');
+                    echo $tpl->url('tasks');
                 }
-				?><?php if ($template['tid'] !== '-1') echo '#z'.$template['tid'] ?>"
+				?><?php if ($tpl->param('tid') != '') echo '#z'.$tpl->param('tid') ?>"
 				class="bez_delete_button bez_link_button">
-					<?php echo $bezlang['cancel'] ?>
+					<?php echo $tpl->getLang('cancel') ?>
 				</a>
 			</span>
         </div>

@@ -1,21 +1,104 @@
 <?php
-/** @var action_plugin_bez $this */
+/** @var action_plugin_bez_default $this */
 
 use \dokuwiki\plugin\bez;
 
 if ($this->get_param('id') == '') {
-    header('Location: ?id=bez:threads');
+    header('Location: ' . $this->url('threads'));
 }
 
-//try {
-    //$issue_id = (int)$nparams['id'];
-    
-    //new way
-
+/** @var bez\mdl\Thread $thread */
 $thread = $this->model->threadFactory->get_one($this->get_param('id'));
 $this->tpl->set('thread', $thread);
 $this->tpl->set('corrections', array());
-$this->tpl->set('thread_comments', array());
+$this->tpl->set('thread_comments', $this->model->thread_commentFactory->get_from_thread($thread));
+$this->tpl->set('corrections', $this->model->taskFactory->get_all(array('thread_id' => $thread->id,
+                                                                      'type' => 'correction')));
+
+
+if ($this->get_param('action') == 'commcause_add') {
+
+    /** @var bez\mdl\Thread_comment $thread_comment */
+    $thread_comment = $this->model->thread_commentFactory->create_object(array('thread' => $thread));
+    $this->model->thread_commentFactory->initial_save($thread_comment, $_POST);
+
+    $anchor = 'k'.$thread_comment->id;
+    $redirect = true;
+
+} elseif ($this->get_param('action') == 'subscribe') {
+
+    $thread->set_participant_flags($this->model->user_nick, array('subscribent'));
+    $redirect = true;
+
+} elseif ($this->get_param('action') == 'unsubscribe') {
+
+    $thread->remove_participant_flags($this->model->user_nick, array('subscribent'));
+    $this->add_notification($this->getLang('unsubscribed_com'));
+    $redirect = true;
+
+} elseif ($this->get_param('action') == 'invite') {
+    $client = $_POST['client'];
+
+    $thread->set_participant_flags($client, array('subscribent'));
+    $thread->mail_notify_invite($client);
+    $this->add_notification($this->model->userFactory->get_user_email($client), $this->getLang('invitation_has_been_send'));
+
+    $redirect = true;
+} elseif ($this->get_param('action') == 'commcause_delete') {
+    /** @var bez\mdl\Thread_comment $thread_comment */
+    $thread_comment = $this->model->thread_commentFactory->get_one($this->get_param('kid'), array('thread' => $thread));
+    $this->model->thread_commentFactory->delete($thread_comment);
+
+    $redirect = true;
+} elseif ($this->get_param('action') == 'commcause_edit') {
+    /** @var bez\mdl\Thread_comment $thread_comment */
+    $thread_comment = $this->model->thread_commentFactory->get_one($this->get_param('kid'), array('thread' => $thread));
+
+    if(count($_POST) === 0) {
+        $this->tpl->set_values($thread_comment->get_assoc());
+    } else {
+        $this->model->thread_commentFactory->update_save($thread_comment, $_POST);
+
+        $anchor   = 'k' . $thread_comment->id;
+        $redirect = true;
+    }
+} elseif ($this->get_param('action') == 'task_correction_add') {
+    /** @var bez\mdl\Task $task */
+    $task = $this->model->taskFactory->create_object(array('thread' => $thread));
+    $this->tpl->set('task', $task);
+
+    //save
+    if (count($_POST) > 0) {
+        $this->model->taskFactory->initial_save($task, $_POST);
+
+        $anchor   = 'z' . $task->id;
+        $redirect = true;
+    }
+} elseif ($this->get_param('action') == 'task_edit') {
+    /** @var bez\mdl\Task $task */
+    $task = $this->model->taskFactory->get_one($this->get_param('tid'), array('thread' => $thread));
+    $this->tpl->set('task', $task);
+
+    //save
+    if (count($_POST) === 0) {
+        $this->tpl->set_values($task->get_assoc());
+    } else {
+        $this->model->taskFactory->update_save($task, $_POST);
+
+        $anchor   = 'z' . $task->id;
+        $redirect = true;
+    }
+}
+
+if (isset($redirect) && $redirect == true) {
+    if (isset($anchor)) {
+        $anchor = '#'.$anchor;
+    } else {
+        $anchor = '';
+    }
+    header('Location: ' . $this->url('thread', 'id', $thread->id) . $anchor);
+}
+
 
 
 //    $template['tid'] = isset($nparams['tid']) ? $nparams['tid'] : '-1';

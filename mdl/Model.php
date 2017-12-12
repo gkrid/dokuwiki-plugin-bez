@@ -42,8 +42,14 @@ class Model {
     /** @var LabelFactory */
     protected $labelFactory;
 
+    /** @var Thread_commentFactory */
+    protected $thread_commentFactory;
+
+    /** @var TaskFactory */
+    protected $taskFactory;
+
 	public function __get($property) {
-        $models = array('userFactory', 'threadFactory', 'labelFactory');
+        $models = array('userFactory', 'threadFactory', 'labelFactory', 'thread_commentFactory', 'taskFactory');
 		if (in_array($property, $models) ||
             in_array($property, array('sqlite', 'db', 'acl', 'dw_auth', 'user_nick', 'action', 'conf'))) {
 			return $this->$property;
@@ -90,6 +96,8 @@ class Model {
 
         $this->db = $this->sqlite->getAdapter()->getDb();
 
+        $this->db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+
         $this->acl = new Acl($this);
 
         $this->userFactory = new UserFactory($this);
@@ -97,6 +105,10 @@ class Model {
         $this->threadFactory = new ThreadFactory($this);
 
         $this->labelFactory = new LabelFactory($this);
+
+        $this->thread_commentFactory = new Thread_commentFactory($this);
+
+        $this->taskFactory = new TaskFactory($this);
         
 //        $this->acl = new BEZ_mdl_Acl($this);
 //

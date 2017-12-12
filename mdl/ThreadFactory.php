@@ -97,10 +97,8 @@ class ThreadFactory extends Factory {
 		return $years;
     }
 
-    public function initial_save(Thread $thread, $data, $label_ids=array()) {
-        if ($thread->id != NULL) {
-            throw new \Exception('row already saved. use update_save');
-        }
+    public function initial_save(Entity $thread, $data) {
+        parent::initial_save($thread, $data);
 
         $thread->set_data($data);
         $label_ids = array();
@@ -109,7 +107,7 @@ class ThreadFactory extends Factory {
         }
         try {
             $this->beginTransaction();
-            parent::save($thread);
+            $this->save($thread);
 
             foreach($label_ids as $label_id) {
                 $thread->add_label($label_id);
@@ -120,16 +118,18 @@ class ThreadFactory extends Factory {
                 $thread->set_participant_flags($thread->coordinator, array('coordinator', 'subscribent'));
             }
 
-            $this->model->threadFactory->commitTransaction();
+            $this->commitTransaction();
         } catch(Exception $exception) {
-            $this->model->threadFactory->rollbackTransaction();
+            $this->rollbackTransaction();
+        }
+
+        if ($thread->state != 'proposal' && $this->model->user_nick != $thread->coordinator) {
+            $thread->mail_inform_coordinator();
         }
     }
 
-    public function update_save(Thread $thread, $data, $label_ids=array()) {
-        if ($thread->id == NULL) {
-            throw new \Exception('row not saved. use initial_save()');
-        }
+    public function update_save(Entity $thread, $data) {
+        parent::update_save($thread, $data);
 
         $prev_coordinator = $thread->coordinator;
         $thread->set_data($data);
@@ -139,7 +139,7 @@ class ThreadFactory extends Factory {
         }
         try {
             $this->beginTransaction();
-            parent::save($thread);
+            $this->save($thread);
 
             $cur_label_ids = array_keys($thread->get_labels());
             $labels_to_add = array_diff($label_ids, $cur_label_ids);
@@ -158,9 +158,13 @@ class ThreadFactory extends Factory {
                 $thread->set_participant_flags($thread->coordinator, array('subscribent', 'coordinator'));
             }
 
-            $this->model->threadFactory->commitTransaction();
+            $this->commitTransaction();
         } catch(Exception $exception) {
-            $this->model->threadFactory->rollbackTransaction();
+            $this->rollbackTransaction();
+        }
+
+        if ($thread->state != 'proposal' && $this->model->user_nick != $thread->coordinator) {
+            $thread->mail_inform_coordinator();
         }
     }
 }

@@ -97,4 +97,15 @@ class Tpl {
     public function getLang($id) {
         return $this->action->getLang($id);
     }
+
+    /**
+     * @return mixed
+     */
+    public function current_user() {
+        return $this->action->get_model()->user_nick;
+    }
+
+    public function user_acl_level() {
+        return $this->action->get_model()->acl->get_level();
+    }
 }

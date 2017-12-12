@@ -566,3 +566,8 @@ $lang['unsubscribed_task_com'] = 'Zostałeś wypisany z tego zadania i nie będz
 
 $lang['mail_task_invite'] = 'dopisał(a) cię jako subskrybenta w zadaniu';
 $lang['mail_task_change_state'] = 'zmienił status w zadaniu';
+
+$lang['task_type_correction'] = 'Korekcyjne';
+$lang['task_type_corrective'] = 'Korygujące';
+$lang['task_type_preventive'] = 'Zapobiegawcze';
+$lang['task_type_program'] = 'Programowe';

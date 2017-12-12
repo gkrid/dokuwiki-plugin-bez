@@ -1,4 +1,4 @@
-bez.ctl.issues = function() {
+bez.ctl.threads = function() {
 	//highlight filters
 	var highlight = function() {
 		var $this = jQuery(this);

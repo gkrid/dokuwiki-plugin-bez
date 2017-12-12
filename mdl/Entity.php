@@ -46,6 +46,7 @@ namespace dokuwiki\plugin\bez\mdl;
  **/
 
 use dokuwiki\plugin\bez\meta\PermissionDeniedException;
+use dokuwiki\plugin\bez\meta\ValidationException;
 
 abstract class Entity {// extends BEZ_mdl_Dummy_Entity {
 
@@ -228,7 +229,7 @@ abstract class Entity {// extends BEZ_mdl_Dummy_Entity {
         $this->validator->validate_field($property, $value);
         
         //throws PermissionDeniedException
-        $this->model->acl->can_change($this, $property);
+        $this->model->acl->can($this, $property, BEZ_PERMISSION_CHANGE);
         
         $this->$property = $value;
         

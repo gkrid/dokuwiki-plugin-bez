@@ -51,15 +51,20 @@ CREATE TABLE thread_comment (
 
   thread_id              INTEGER NOT NULL REFERENCES thread (id),
 
-  type                   INTEGER NOT NULL DEFAULT 0, -- 0 -comment, 1 - real cause, 2 - potential cause, 10 - closing comment
+  type                   TEXT NOT NULL DEFAULT 'comment', -- comment, cause_real, cause_potential, closing_comment
 
   author                 TEXT    NOT NULL,
   create_date            TEXT    NOT NULL, -- ISO8601
   last_modification_date TEXT    NOT NULL, -- ISO8601
 
   content                TEXT    NOT NULL,
-  content_html           TEXT    NOT NULL
+  content_html           TEXT    NOT NULL,
+
+  task_count             INTEGER NOT NULL  DEFAULT 0
 );
+
+CREATE INDEX thread_comment_ix_thread_id
+  ON thread_comment (thread_id);
 
 CREATE TABLE label (
   id         INTEGER     NOT NULL PRIMARY KEY,
@@ -111,6 +116,15 @@ BEGIN
   WHERE id = new.label_id;
 END;
 
+CREATE TABLE task_program (
+  id         INTEGER     NOT NULL PRIMARY KEY,
+  name       TEXT UNIQUE NOT NULL,
+  count      INTEGER     NOT NULL DEFAULT 0,
+
+  added_by   TEXT        NOT NULL, -- user who added the label
+  added_date TEXT        NOT NULL -- ISO8601
+);
+
 -- we cannot delete tasks (so not triggers provided)
 CREATE TABLE task (
   id                     INTEGER NOT NULL PRIMARY KEY,
@@ -121,7 +135,8 @@ CREATE TABLE task (
   private                BOOLEAN NOT NULL DEFAULT 0, -- 0 - public, 1 - private
   lock                   BOOLEAN NOT NULL DEFAULT 0, -- 0 - unlocked, 1 - locked
 
-  state                  TEXT    NOT NULL DEFAULT 'opened', -- opened, closed, rejected
+  state                  TEXT    NOT NULL DEFAULT 'opened', -- opened, done, rejected
+  type                   TEXT    NOT NULL DEFAULT 'correction', -- correction, corrective, preventive, program
 
   create_date            TEXT    NOT NULL, -- ISO8601
   last_activity_date     TEXT    NOT NULL, -- -- ISO8601
@@ -130,13 +145,23 @@ CREATE TABLE task (
 
   cost                   REAL,
   plan_date              TEXT    NOT NULL, -- -- ISO8601
+  all_day_event          INTEGER NOT NULL DEFAULT 0, -- 0 - false, 1 - true
+  start_time             TEXT NULL, -- HH:MM
+  finish_time            TEXT NULL, -- HH:MM
 
   content                TEXT    NOT NULL,
   content_html           TEXT    NOT NULL,
 
   thread_id              INTEGER REFERENCES thread (id), --may be null
-  cause_id               INTEGER REFERENCES thread_cause (id) --may be null
+  thread_comment_id      INTEGER REFERENCES thread_comment (id), --may be null
+  task_program_id        INTEGER REFERENCES task_program (id) --may be null
 );
+
+CREATE INDEX task_ix_thread_id_thread_comment_id
+  ON task (thread_id, thread_comment_id);
+
+CREATE INDEX task_ix_task_program_id
+  ON task(task_program_id);
 
 CREATE TRIGGER task_tr_insert
   INSERT
@@ -202,6 +227,74 @@ BEGIN
   SET task_count_closed = task_count_closed + 1
   WHERE id = new.thread_id;
 END;
+
+-- thread_comment triggers
+
+CREATE TRIGGER thread_comment_tr_insert
+  INSERT
+  ON task
+BEGIN
+  UPDATE thread_comment
+  SET task_count = task_count + 1
+  WHERE id = new.thread_comment_id;
+END;
+
+CREATE TRIGGER thread_comment_tr_delete
+  DELETE
+  ON task
+BEGIN
+  UPDATE thread_comment
+  SET task_count = task_count - 1
+  WHERE id = old.thread_comment_id;
+END;
+
+CREATE TRIGGER thread_comment_tr_update_label_id
+  UPDATE OF thread_comment_id
+  ON task
+BEGIN
+  UPDATE thread_comment
+  SET task_count = task_count - 1
+  WHERE id = old.thread_comment_id;
+
+  UPDATE thread_comment
+  SET task_count = task_count + 1
+  WHERE id = new.thread_comment_id;
+END;
+
+-- end of thread_comment triggers
+
+-- task_program triggers
+CREATE TRIGGER task_program_tr_insert
+  INSERT
+  ON task
+BEGIN
+  UPDATE task_program
+  SET count = count + 1
+  WHERE id = new.task_program_id;
+END;
+
+CREATE TRIGGER task_program_tr_delete
+  DELETE
+  ON task
+BEGIN
+  UPDATE task_program
+  SET count = count - 1
+  WHERE id = old.task_program_id;
+END;
+
+CREATE TRIGGER task_program_tr_update_task_program_id
+  UPDATE OF task_program_id
+  ON task
+BEGIN
+  UPDATE task_program
+  SET count = count - 1
+  WHERE id = old.task_program_id;
+
+  UPDATE task_program
+  SET count = count + 1
+  WHERE id = new.task_program_id;
+END;
+-- end of task_program triggres
 
 CREATE TABLE task_participant (
   thread_id       INTEGER NOT NULL REFERENCES thread (id),

@@ -528,3 +528,8 @@ $lang['edit_metadata'] = 'Edit metadata';
 $lang['metadata_edit_header'] = 'Edit metadata';
 
 $lang['unsubscribed_task_com'] = 'You\'ve been unsubscribed from this task.';
+
+$lang['task_type_correction'] = 'Correction';
+$lang['task_type_corrective'] = 'Corrective';
+$lang['task_type_preventive'] = 'Preventive';
+$lang['task_type_program'] = 'Program';

@@ -6,6 +6,7 @@
 
 namespace dokuwiki\plugin\bez\mdl;
 
+use dokuwiki\plugin\bez\meta\Mailer;
 use dokuwiki\plugin\bez\meta\PermissionDeniedException;
 use dokuwiki\plugin\bez\meta\ValidationException;
 
@@ -23,6 +24,8 @@ class Thread extends Entity {
 
     protected $title, $content, $content_html;
 
+    protected $priority;
+
     protected $task_count, $task_count_open, $task_sum_cost;
 
     /*new labels to add when object saved*/
@@ -36,6 +39,7 @@ class Thread extends Entity {
                      'type', 'state',
                      'create_date', 'last_activity_date', 'last_modification_date', 'close_date',
                      'title', 'content', 'content_html',
+                     'priority',
                      'task_count', 'task_count_open', 'task_sum_cost');
     }
 
@@ -214,14 +218,19 @@ class Thread extends Entity {
         if (isset($val_coordinator)) {
            $this->set_property('coordinator', $val_coordinator); 
         }
-        
-		//!!! don't update activity on issue update
+
 		$this->content_html = p_render('xhtml',p_get_instructions($this->content), $ignore);
-//		$this->opinion_cache = $this->helper->wiki_parse($this->opinion);
-        
-        //update virtuals
-        //$this->update_virtual_columns();
-	}
+
+        //update dates
+        $this->last_modification_date = date('c');
+        $this->last_activity_date = $this->last_modification_date;
+    }
+
+	public function update_last_activity() {
+        $this->last_activity_date = date('c');
+        $this->model->sqlite->query('UPDATE thread SET last_activity_date=? WHERE id=?',
+                                    $this->last_activity_date, $this->id);
+    }
 
 //	public function set_labels($labels_ids = array()) {
 //
@@ -297,14 +306,15 @@ class Thread extends Entity {
             return array();
         }
 
-        $sql = 'SELECT * FROM thread_participant WHERE thread_id=? ORDER BY user_id';
+        $sql = 'SELECT * FROM thread_participant WHERE';
         $possible_flags = array('original_poster', 'coordinator', 'commentator', 'task_assignee', 'subscribent');
         if ($filter != '') {
             if (!in_array($filter, $possible_flags)) {
                 throw new \Exception("unknown flag $filter");
             }
-            $sql .= " WHERE $filter=1";
+            $sql .= " $filter=1 AND";
         }
+        $sql .= ' thread_id=? ORDER BY user_id';
 
         $r = $this->model->sqlite->query($sql, $this->id);
         $pars = $this->model->sqlite->res2arr($r);
@@ -374,6 +384,11 @@ class Thread extends Entity {
         //thread not saved yet
         if ($this->id === NULL) {
             throw new \Exception('cannot add flags to not saved thread');
+        }
+
+        //validate user
+        if (!$this->model->userFactory->exists($user_id)) {
+            throw new \Exception("$user_id isn't dokuwiki user");
         }
 
         $possible_flags = array('original_poster', 'coordinator', 'commentator', 'task_assignee', 'subscribent');
@@ -491,6 +506,17 @@ class Thread extends Entity {
 
     public function causes_without_tasks_count() {
         return 0;
+    }
+
+    public function get_causes() {
+        $r = $this->model->sqlite->query('SELECT id FROM thread_comment WHERE thread_id=?', $this->id);
+        $arr = $this->model->sqlite->res2arr($r);
+        $causes = array();
+        foreach ($arr as $cause) {
+            $causes[] = $cause['id'];
+        }
+
+        return $causes;
     }
 
 //    public function remove_label($name) {
@@ -619,27 +645,25 @@ class Thread extends Entity {
 //        }
 //        return $this->causes_without_tasks;
 //	}
-    
+
     //http://data.agaric.com/capture-all-sent-mail-locally-postfix
     //https://askubuntu.com/questions/192572/how-do-i-read-local-email-in-thunderbird
     public function mail_notify($replacements=array(), $users=false) {
-        $plain = io_readFile($this->model->action->localFN('issue-notification'));
-        $html = io_readFile($this->model->action->localFN('issue-notification', 'html'));
-                
-        $issue_link =  DOKU_URL . 'doku.php?id='.$this->model->action->id('issue', 'id', $this->id);
-        $issue_unsubscribe = DOKU_URL . 'doku.php?id='.$this->model->action->id('issue', 'id', $this->id, 'action', 'unsubscribe');
-        
-        $issue_reps = array(
-                                'issue_id' => $this->id,
-                                'issue_link' => $issue_link,
-                                'issue_unsubscribe' => $issue_unsubscribe,
+        $plain = io_readFile($this->model->action->localFN('thread-notification'));
+        $html = io_readFile($this->model->action->localFN('thread-notification', 'html'));
+
+        $thread_reps = array(
+                                'thread_id' => $this->id,
+                                'thread_link' => $this->model->action->url('thread', 'id', $this->id),
+                                'thread_unsubscribe' =>
+                                    $this->model->action->url('thread', 'id', $this->id, 'action', 'unsubscribe'),
                                 'custom_content' => false,
                                 'action_border_color' => 'transparent',
                                 'action_color' => 'transparent',
                            );
-        
+
         //$replacements can override $issue_reps
-        $rep = array_merge($issue_reps, $replacements);
+        $rep = array_merge($thread_reps, $replacements);
         //auto title
         if (!isset($rep['subject'])) {
             $rep['subject'] =  '#'.$this->id. ' ' .$this->title;
@@ -649,12 +673,12 @@ class Thread extends Entity {
         }
         if (!isset($rep['who_full_name'])) {
             $rep['who_full_name'] =
-                $this->model->users->get_user_full_name($rep['who']);
+                $this->model->userFactory->get_user_full_name($rep['who']);
         }
-        
+
         //format when
-        $rep['when'] =  $this->date_format($rep['when']);
-        
+        $rep['when'] =  dformat(strtotime($rep['when']), '%Y-%m-%d %H:%M');
+
         if ($rep['custom_content'] === false) {
             $html = str_replace('@CONTENT_HTML@', '
                 <div style="margin: 5px 0;">
@@ -664,39 +688,43 @@ class Thread extends Entity {
                 @CONTENT_HTML@
             ', $html);
         }
-        
+
         //we must do it manually becouse Mailer uses htmlspecialchars()
         $html = str_replace('@CONTENT_HTML@', $rep['content_html'], $html);
 
-        $mailer = new BEZ_Mailer();
+        $mailer = new Mailer();
         $mailer->setBody($plain, $rep, $rep, $html, false);
 
-        if ($users === FALSE) {
-            $users = $this->subscribents_array;
+        if ($users == FALSE) {
+            $users = array_map(function($par) {
+                return $par['user_id'];
+            }, $this->get_participants('subscribent'));
+
+            //don't notify myself
             unset($users[$this->model->user_nick]);
         }
-        
-        $emails = array_map(function($user) {
-            return $this->model->users->get_user_email($user);
-        }, $users);   
-            
+
+        $emails = array_map(function($user_id) {
+            return $this->model->userFactory->get_user_email($user_id);
+        }, $users);
+
 
         $mailer->to($emails);
         $mailer->subject($rep['subject']);
-        
+
         $send = $mailer->send();
         if ($send === false) {
             //this may mean empty $emails
             //throw new Exception("can't send email");
         }
     }
-    
+
     protected function mail_issue_box_reps($replacements=array()) {
         $replacements['custom_content'] = true;
-        
+
         $html =  '<h2 style="font-size: 1.2em;">';
-	    $html .=    '<a style="font-size:115%" href="@ISSUE_LINK@">#@ISSUE_ID@</a> ';
-            
+	    $html .=    '<a style="font-size:115%" href="@THREAD_LINK@">#@THREAD_ID@</a> ';
+
         if ( ! empty($this->type_string)) {
             $html .= $this->type_string;
         } else {
@@ -704,40 +732,40 @@ class Thread extends Entity {
                         $this->model->action->getLang('issue_type_no_specified').
                     '</i>';
         }
-        
-        $html .= ' ('.$this->state_string.') ';
-	
+
+        $html .= ' ('. $this->model->action->getLang('state_' . $this->state ) .') ';
+
         $html .= '<span style="color: #777; font-weight: normal; font-size: 90%;">';
         $html .= $this->model->action->getLang('coordinator') . ': ';
         $html .= '<span style="font-weight: bold;">';
-        
-        if ($this->coordinator === '-proposal') {
-            $html .= '<i style="font-weight: normal;">' . 
-                $this->model->action->getLang('proposal') . 
+
+        if ($this->state == 'proposal') {
+            $html .= '<i style="font-weight: normal;">' .
+                $this->model->action->getLang('proposal') .
                 '</i>';
         } else {
-            $html .= $this->model->users->get_user_full_name($this->coordinator);
+            $html .= $this->model->userFactory->get_user_full_name($this->coordinator);
         }
         $html .= '</span></span></h2>';
-        
-        $html .= '<h2 style="font-size: 1.2em;border-bottom: 1px solid @ACTION_BORDER_COLOR@">' . $this->title . '</h2>';
-        
-        $html .= $this->description_cache;
 
-        if ($this->state !== '0') {
-            $html .= '<h3 style="font-size:100%; border-bottom: 1px dotted #bbb">';
-                if ($this->state === '1') {
-                    $html .= $this->model->action->getLang('opinion');
-                } else {
-                    $html .= $this->model->action->getLang('reason');
-                }
-            $html .= '</h3>';
-            $html .= $this->opinion_cache;
-        }
+        $html .= '<h2 style="font-size: 1.2em;border-bottom: 1px solid @ACTION_BORDER_COLOR@">' . $this->title . '</h2>';
+
+        $html .= $this->content_html;
+
+//        if ($this->state !== '0') {
+//            $html .= '<h3 style="font-size:100%; border-bottom: 1px dotted #bbb">';
+//                if ($this->state === '1') {
+//                    $html .= $this->model->action->getLang('opinion');
+//                } else {
+//                    $html .= $this->model->action->getLang('reason');
+//                }
+//            $html .= '</h3>';
+//            $html .= $this->opinion_cache;
+//        }
 
         $replacements['content_html'] = $html;
-        
-                
+
+
          switch ($this->priority) {
             case '0':
                 $replacements['action_color'] = '#F8E8E8';
@@ -760,10 +788,10 @@ class Thread extends Entity {
                 $replacements['action_border_color'] = '#bbb';
                 break;
         }
-       
+
         return $replacements;
     }
-    
+
     public function mail_notify_change_state() {
         $this->mail_notify($this->mail_issue_box_reps(array(
             'who' => $this->model->user_nick,
@@ -771,23 +799,23 @@ class Thread extends Entity {
             //'subject' => $this->model->action->getLang('mail_mail_notify_change_state_subject') . ' #'.$this->id
         )));
     }
-    
-    public function mail_notify_invite($client) {        
+
+    public function mail_notify_invite($client) {
         $this->mail_notify($this->mail_issue_box_reps(array(
             'who' => $this->model->user_nick,
             'action' => $this->model->action->getLang('mail_mail_notify_invite_action'),
             //'subject' => $this->model->action->getLang('mail_mail_notify_invite_subject') . ' #'.$this->id
         )), array($client));
     }
-    
-    public function mail_inform_coordinator() {        
+
+    public function mail_inform_coordinator() {
         $this->mail_notify($this->mail_issue_box_reps(array(
             'who' => $this->model->user_nick,
             'action' => $this->model->action->getLang('mail_mail_inform_coordinator_action'),
             //'subject' => $this->model->action->getLang('mail_mail_inform_coordinator_subject') . ' #'.$this->id
         )), array($this->coordinator));
     }
-    
+
     public function mail_notify_issue_inactive($users=false) {
         $this->mail_notify($this->mail_issue_box_reps(array(
             'who' => '',

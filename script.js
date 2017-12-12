@@ -1,12 +1,13 @@
 var bez = {};
 bez.ctl = {};
 
-/* DOKUWIKI:include scripts/issue.js */
-/* DOKUWIKI:include scripts/issue_report.js */
-/* DOKUWIKI:include scripts/issues.js */
+/* DOKUWIKI:include scripts/thread.js */
+/* DOKUWIKI:include scripts/thread_report.js */
+/* DOKUWIKI:include scripts/threads.js */
 /* DOKUWIKI:include scripts/task_form.js */
 /* DOKUWIKI:include scripts/task.js */
 /* DOKUWIKI:include scripts/tasks.js */
+
 
 jQuery(function () {
     'use strict';
@@ -22,8 +23,8 @@ jQuery(function () {
 	var getNparams = function(value) {
 		var nparams = [],
 			params = value.split(':');
-		for (let i = 0; i < params.length; i += 2) {
-			let k = params[i],
+		for (var i = 0; i < params.length; i += 2) {
+            var k = params[i],
 				v = params[i+1];
 			nparams[k] = v;
 		}

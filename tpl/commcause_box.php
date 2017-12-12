@@ -1,9 +1,9 @@
-<a id="k<?php echo $template['commcause']->id ?>"></a>
+<?php /* @var \dokuwiki\plugin\bez\meta\Tpl $tpl */ ?>
+<a id="k<?php echo $tpl->get('thread_comment')->id ?>"></a>
 <div class="bez_comment
-	<?php echo $template['commcause']->type === '0' ? 'bez_type_0' : 'bez_cause' ?>
+	<?php echo $tpl->get('thread_comment')->type == 'comment' ? 'bez_type_0' : 'bez_cause' ?>
 	<?php
-		if ($template['commcause']->reporter ==
-                $this->model->users->get_user_full_name($this->model->user_nick)) {
+		if ($tpl->get('thread_comment')->author == $tpl->current_user()) {
 			echo 'bez_my_comment';
 		}
 	?>">
@@ -17,108 +17,59 @@
 			</span>
 		</span>
 		<div class="commcause_content">
-            <?php if (  $template['action'] === 'commcause_edit_metadata' &&
-                        $template['kid'] === $template['commcause']->id): ?>
-                <?php $id = $this->id('issue', 'id', $template['issue']->id, 'action', 'commcause_edit_metadata', 'kid', $template['kid']) ?>
-                <form   class="bez_metaform"
-                        action="?id=<?php echo $id ?>" method="POST">
-            <?php endif ?>
 			<h2>
-                <?php if (  $template['action'] === 'commcause_edit_metadata' &&
-                            $template['kid'] === $template['commcause']->id &&
-                            $template['commcause']->acl_of('reporter') >= BEZ_PERMISSION_CHANGE): ?>
-                     <select name="reporter" id="reporter" data-validation="required">
-                        <option value="">--- <?php echo $bezlang['select'] ?>---</option>
-                        <?php foreach ($template['users'] as $nick => $name): ?>
-                            <option <?php if ($value['reporter'] === $nick) echo 'selected' ?>
-                            value="<?php echo $nick ?>"><?php echo $name ?></option>
-                        <?php endforeach ?>
-                    </select>       
+                    <strong><?php echo $tpl->user_name($tpl->get('thread_comment')->author) ?></strong>
+                
+                
+                <?php if ($tpl->get('thread_comment')->type == 'comment'): ?>
+                    <?php echo $tpl->getLang('comment_added') ?>
                 <?php else: ?>
-                    <strong><?php echo $this->model->users->get_user_full_name($template['commcause']->reporter) ?></strong>
+                    <?php echo $tpl->getLang('cause_added') ?>
                 <?php endif ?>
-                
-                
-                <?php if ($template['commcause']->type > 0): ?>
-				    <?php echo $bezlang['cause_added'] ?>
-                <?php else: ?>
-                    <?php echo $bezlang['comment_added'] ?>
-                <?php endif ?>
-                
-                <?php if (  $template['action'] === 'commcause_edit_metadata' &&
-                            $template['kid'] === $template['commcause']->id &&
-                            $template['commcause']->acl_of('reporter') >= BEZ_PERMISSION_CHANGE): ?>
-                      <input name="date" style="width:90px;" data-validation="required,date" value="<?php echo $value['date'] ?>" />
-                      <?php echo $this->model->action->getLang('at_hour') ?>
-                     <input name="time" style="width:60px;" data-validation="required,custom" data-validation-regexp="^(\d{1,2}):(\d{1,2}):(\d{1,2})$" value="<?php echo $value['time'] ?>" />
-                <?php else: ?>
-                    <?php echo $template['commcause']->date_format($template['commcause']->datetime) ?>
-                <?php endif ?>
-                
-                <?php if ($template['commcause']->type === '1'): ?>
-                    <span style="color: #000;">
-                        (<?php echo lcfirst($bezlang['cause_type_default']) ?>)
-                    </span>
-                <?php elseif ($template['commcause']->type === '2'): ?>
-                    <span style="color: #000;">
-                        (<?php echo lcfirst($bezlang['cause_type_potential']) ?>)
-                    </span>
-                <?php endif ?>
-			
-            <?php if (  $template['action'] !== 'commcause_edit_metadata' ||
-                            $template['kid'] !== $template['commcause']->id): ?>
-                <div class="bez_comment_buttons">
-                    <?php if (count($template['commcause']->changable_fields($template['commcause']->get_meta_fields())) > 0): ?> 
-                        <a class="bds_inline_button_noborder"
-                        href="?id=<?php echo $this->id('issue', 'id', $template['issue']->id, 'action', 'commcause_edit_metadata', 'kid', $template['commcause']->id) ?>#k<?php echo $template['commcause']->id; ?>">Edytuj metadane</a>
-                    <?php endif ?>
-                <?php if (
-                    (!isset($template['no_edit']) || $template['no_edit'] === false) &&
-                    $template['issue']->state === '0' &&
-                    (   ($template['commcause']->type === '0' &&
-                         $template['commcause']->reporter == $this->model->user_nick) ||
-                            $template['issue']->user_is_coordinator())
-                    ): ?> 
-                    
-                    <a class="bez_comment_button"
-                    href="?id=<?php echo $this->id('issue', 'id', $template['issue']->id, 'action', 'commcause_edit', 'kid', $template['commcause']->id) ?>#k_">
-                        <span class="bez_awesome">&#xf040;</span>
-                    </a>
-                    <?php if ($template['commcause']->tasks_count === 0): ?>
-                    <a class="bez_comment_button bez_commcause_delete_prompt"
-                        data-kid="<?php echo $template['commcause']->id ?>"
-                        href="?id=<?php echo $this->id('issue', 'id', $template['issue']->id, 'action', 'commcause_delete', 'kid', $template['commcause']->id) ?>">
-                        <span class="bez_awesome">&#xf00d;</span>
-                    </a>
-                    <?php endif ?>
-                <?php endif ?>
-                </div>
-            <?php endif ?>
 
+                <?php echo dformat(strtotime($tpl->get('thread_comment')->create_date), '%Y-%m-%d %H:%M') ?>
+                
+                <?php if ($tpl->get('thread_comment')->type == 'cause_real'): ?>
+                    <span style="color: #000;">
+                        (<?php echo lcfirst($tpl->getLang('cause_type_default')) ?>)
+                    </span>
+                <?php elseif ($tpl->get('thread_comment')->type == 'cause_potential'): ?>
+                    <span style="color: #000;">
+                        (<?php echo lcfirst($tpl->getLang('cause_type_potential')) ?>)
+                    </span>
+                <?php endif ?>
+
+                <?php if ($tpl->param('kid') != $tpl->get('thread_comment')->id): ?>
+                    <div class="bez_comment_buttons">
+                        <?php if (
+                            ($tpl->get('no_edit') == '') &&
+                             $tpl->get('thread')->state == 'opened' &&
+                             (($tpl->get('thread_comment')->type == 'comment' &&
+                                     $tpl->get('thread_comment')->author == $tpl->current_user()) ||
+                                 $tpl->get('thread')->user_is_coordinator())
+                        ): ?>
+
+                            <a class="bez_comment_button"
+                               href="<?php echo $tpl->url('thread', 'id', $tpl->get('thread')->id, 'action', 'commcause_edit', 'kid', $tpl->get('thread_comment')->id) ?>#k_">
+                                <span class="bez_awesome">&#xf040;</span>
+                            </a>
+                            <?php if ($tpl->get('thread_comment')->task_count == '0'): ?>
+                                <a class="bez_comment_button bez_commcause_delete_prompt"
+                                   data-kid="<?php echo $tpl->get('thread_comment')->id ?>"
+                                   href="<?php echo $tpl->url('thread', 'id', $tpl->get('thread')->id, 'action', 'commcause_delete', 'kid', $tpl->get('thread_comment')->id) ?>">
+                                    <span class="bez_awesome">&#xf00d;</span>
+                                </a>
+                            <?php endif ?>
+                        <?php endif ?>
+                    </div>
+                <?php endif ?>
 			</h2>
-			<div class="bez_content 
-            <?php if (  $template['action'] === 'commcause_edit_metadata' &&
-                $template['kid'] === $template['commcause']->id) echo 'bez_metadata_edit_warn' ?>">
-                <?php if (  $template['action'] === 'commcause_edit_metadata' &&
-                            $template['kid'] === $template['commcause']->id): ?>
-                    <h1 style="color: #f00; border-bottom: 1px solid #f00; font-size: 15px;"><?php echo $bezlang['metadata_edit_header'] ?></h1>
-     
-                <?php endif ?>
-                
-				<?php echo $template['commcause']->content_cache; ?>
-                
-                <?php if (  $template['action'] === 'commcause_edit_metadata' &&
-                            $template['kid'] === $template['commcause']->id): ?>
-                    <input type="submit" value="<?php echo $bezlang['save'] ?>">&nbsp;&nbsp;
-                    <a href="?id=<?php echo $this->id('issue', 'id', $template['issue']->id).'#k'.$template['commcause']->id ?>"
-                         class="bez_delete_button bez_link_button">
-                            <?php echo $bezlang['cancel'] ?>
-                    </a> 
-                <?php endif ?>
-			</div>
+			<div class="bez_content">
+				<?php echo $tpl->get('thread_comment')->content_html; ?>
+            </div>
 		</div>
 		
-		<?php if (isset($template['commcauses_tasks'][$template['commcause']->id])): ?>
+		<?php if (false): ?>
 		<div style="margin-top: 10px; margin-left: 40px">
 			<?php foreach ($template['commcauses_tasks'][$template['commcause']->id] as $task): ?>
 				<?php $template['task'] = $task ?>
@@ -135,7 +86,7 @@
 					<?php include 'task_form.php' ?>
 				<?php elseif (	(!isset($template['no_edit']) ||
                                     $template['no_edit'] === false) &&
-                                $template['commcause']->type !== '0' &&
+                                $template['commcause']->type !== 'comment' &&
                               	$template['issue']->full_state() === '0' &&
 								$template['action'] !== 'task_edit'): ?>
 						<div class="bez_second_lv_buttons">
@@ -153,9 +104,5 @@
 		</div>
 		<?php endif ?>
         
-        <?php if (  $template['action'] === 'commcause_edit_metadata' &&
-                        $template['kid'] === $template['commcause']->id): ?>
-            </form>
-        <?php endif ?>
 	</div>
 </div>			

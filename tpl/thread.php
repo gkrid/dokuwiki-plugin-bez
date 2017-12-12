@@ -8,7 +8,7 @@
 		<div style="margin-top: 10px">
 			<?php foreach ($tpl->get('corrections') as $task): ?>
 				<?php $tpl->set('task', $task) ?>
-				<?php if (	$tpl->action() === 'task_edit' &&
+				<?php if (	$tpl->param('action') == 'task_edit' &&
                             $tpl->param('tid') == $task->id): ?>
 					<?php include 'task_form.php' ?>
 				<?php else: ?>
@@ -16,7 +16,7 @@
 				<?php endif ?>
 				
 			<?php endforeach ?>
-			<?php if ($tpl->action() == 'task_correction_add'): ?>
+			<?php if ($tpl->param('action') == 'task_correction_add'): ?>
 				<?php include 'task_form.php' ?>
 			<?php endif ?>
 		</div>
@@ -38,7 +38,7 @@
 		
 		<?php foreach ($tpl->get('thread_comments') as $thread_comment): ?>
             <?php $tpl->set('thread_comment', $thread_comment) ?>
-			<?php if (	$tpl->action() == 'commcause_edit' &&
+			<?php if (	$tpl->param('action') == 'commcause_edit' &&
 						$tpl->param('kid') == $thread_comment->id): ?>
 				<?php include 'commcause_form.php' ?>
 			<?php else: ?>
@@ -47,8 +47,8 @@
 		<?php endforeach ?>
 
 <?php if (	$tpl->get('thread')->state == 'opened' &&
-			!(strpos($tpl->action(), 'task') === 0) &&
-            $tpl->action() != 'commcause_edit'): ?>
+			!(strpos($tpl->param('action'), 'task') === 0) &&
+            $tpl->param('action') != 'commcause_edit'): ?>
 
 <?php include 'commcause_form.php' ?>
 	
@@ -60,7 +60,7 @@
 <div class="bez_box">
 <h2><?php echo $tpl->getLang('comment_last_activity') ?></h2>
 
-<?php echo dformat(strtotime($tpl->get('thread')->last_activity_date), '%Y-%m-%d') ?>
+<?php echo dformat(strtotime($tpl->get('thread')->last_activity_date), '%Y-%m-%d  %H:%M') ?>
 
 
 </div>
@@ -128,7 +128,7 @@
     <div id="bez_invite_users" class="ui-widget">
         <select name="client">
             <option value="">--- <?php echo $tpl->getLang('select') ?> ---</option>
-            <?php foreach (array_key_diff($tpl->get('users'), $tpl->get('thread')->get_participants('subscribent')) as $user_id => $ignore): ?>
+            <?php foreach (array_diff_key($tpl->get('users'), $tpl->get('thread')->get_participants('subscribent')) as $user_id => $ignore): ?>
                 <option value="<?php echo $user_id ?>"><?php echo $tpl->user_name($user_id) ?></option>
             <?php endforeach ?>
         </select>

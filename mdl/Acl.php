@@ -19,6 +19,7 @@ define('BEZ_PERMISSION_UNKNOWN', -1);
 define('BEZ_PERMISSION_NONE', 0);
 define('BEZ_PERMISSION_VIEW', 1);
 define('BEZ_PERMISSION_CHANGE', 2);
+define('BEZ_PERMISSION_DELETE', 3);
 
 class Acl {
     /** @var  Model */
@@ -81,7 +82,7 @@ class Acl {
         if ($this->level >= BEZ_AUTH_ADMIN) {
             //user can edit everythig
             $acl = array_map(function($value) {
-                return BEZ_PERMISSION_CHANGE;
+                return BEZ_PERMISSION_DELETE;
             }, $acl);
 
             return $acl;
@@ -90,24 +91,6 @@ class Acl {
         
 
     private function check_thread(Thread $thread) {
-//        $acl = array(
-//                'id'            => BEZ_PERMISSION_NONE,
-//                'title'         => BEZ_PERMISSION_NONE,
-//                'description'   => BEZ_PERMISSION_NONE,
-//                'state'         => BEZ_PERMISSION_NONE,
-//                'opinion'       => BEZ_PERMISSION_NONE,
-//                'type'          => BEZ_PERMISSION_NONE,
-//                'coordinator'   => BEZ_PERMISSION_NONE,
-//                'reporter'      => BEZ_PERMISSION_NONE,
-//                'date'          => BEZ_PERMISSION_NONE,
-//                'last_mod'      => BEZ_PERMISSION_NONE,
-//                'last_activity' => BEZ_PERMISSION_NONE,
-//                'participants'  => BEZ_PERMISSION_NONE,
-//                'subscribents'  => BEZ_PERMISSION_NONE,
-//                'description_cache' => BEZ_PERMISSION_NONE,
-//                'opinion_cache' => BEZ_PERMISSION_NONE
-//        );
-
         $acl = $this->static_thread();
         
         //we create new issue
@@ -146,55 +129,40 @@ class Acl {
                 
         return $acl;
     }
-    
-    //if user can chante id => he can delete record
-    private function check_task($task) {
-        $acl = array(
-                'id'             => BEZ_PERMISSION_NONE,
-                'task'           => BEZ_PERMISSION_NONE,
-                'state'          => BEZ_PERMISSION_NONE,
-                'tasktype'       => BEZ_PERMISSION_NONE,
-                'executor'       => BEZ_PERMISSION_NONE,
-                'cost'           => BEZ_PERMISSION_NONE,
-                'reason'         => BEZ_PERMISSION_NONE,
-                'reporter'       => BEZ_PERMISSION_NONE,
-                'date'           => BEZ_PERMISSION_NONE,
-                'close_date'     => BEZ_PERMISSION_NONE,
-                'cause'          => BEZ_PERMISSION_NONE,
-                'plan_date'      => BEZ_PERMISSION_NONE,
-                'all_day_event'  => BEZ_PERMISSION_NONE,
-                'start_time'     => BEZ_PERMISSION_NONE,
-                'finish_time'    => BEZ_PERMISSION_NONE,
-                'issue'          => BEZ_PERMISSION_NONE,
-                'task_cache'     => BEZ_PERMISSION_NONE,
-                'reason_cache'   => BEZ_PERMISSION_NONE,
-                'subscribents'   => BEZ_PERMISSION_NONE
-        );
-        
+
+    private function static_task() {
+        $acl = array_fill_keys(Task::get_columns(), BEZ_PERMISSION_NONE);
+
+        //BEZ_AUTH_VIEWER is also token viewer
         if ($this->level >= BEZ_AUTH_VIEWER) {
             //user can display everythig
             $acl = array_map(function($value) {
                 return BEZ_PERMISSION_VIEW;
             }, $acl);
         }
-        
+
         if ($this->level >= BEZ_AUTH_ADMIN) {
-            //admin can edit everythig
+            //user can edit everythig
             $acl = array_map(function($value) {
-                return BEZ_PERMISSION_CHANGE;
+                return BEZ_PERMISSION_DELETE;
             }, $acl);
-            
+
             return $acl;
         }
+    }
+    
+    //if user can chante id => he can delete record
+    private function check_task($task) {
+        $acl = $this->static_task();
         
         //we create new task
         if ($task->id === NULL) {
             
-            if ($task->coordinator === $this->model->user_nick ||
-               ($task->issue === '' && $this->level >= BEZ_AUTH_LEADER)) {
-                $acl['task'] = BEZ_PERMISSION_CHANGE;
-                $acl['tasktype'] = BEZ_PERMISSION_CHANGE;
-                $acl['executor'] = BEZ_PERMISSION_CHANGE;
+            if ($task->thread != null && $task->thread->coordinator == $this->model->user_nick ||
+               ($task->thread_id == '' && $this->level >= BEZ_AUTH_LEADER)) {
+                $acl['content'] = BEZ_PERMISSION_CHANGE;
+                $acl['task_program_id'] = BEZ_PERMISSION_CHANGE;
+                $acl['assignee'] = BEZ_PERMISSION_CHANGE;
                 $acl['cost'] = BEZ_PERMISSION_CHANGE;
                 $acl['plan_date'] = BEZ_PERMISSION_CHANGE;
                 $acl['all_day_event'] = BEZ_PERMISSION_CHANGE;
@@ -203,10 +171,10 @@ class Acl {
             }
             
             //przypisujemy zadanie programowe samemu sobie
-            //no executor
-            if ($task->issue === '') {
-                $acl['task'] = BEZ_PERMISSION_CHANGE;
-                $acl['tasktype'] = BEZ_PERMISSION_CHANGE;
+            //no assignee
+            if ($task->thread_id == '') {
+                $acl['content'] = BEZ_PERMISSION_CHANGE;
+                $acl['task_program_id'] = BEZ_PERMISSION_CHANGE;
                 $acl['cost'] = BEZ_PERMISSION_CHANGE;
                 $acl['plan_date'] = BEZ_PERMISSION_CHANGE;
                 $acl['all_day_event'] = BEZ_PERMISSION_CHANGE;
@@ -218,30 +186,30 @@ class Acl {
         }
         
         //user can change state
-        if ($task->executor === $this->model->user_nick) {
-            $acl['reason'] = BEZ_PERMISSION_CHANGE;
-            $acl['state'] = BEZ_PERMISSION_CHANGE;            
-        }
+//        if ($task->assignee == $this->model->user_nick) {
+////            $acl['reason'] = BEZ_PERMISSION_CHANGE;
+//            $acl['state'] = BEZ_PERMISSION_CHANGE;
+//        }
         
         //reporters can add subscribents to programme task
-        if ($task->reporter === $this->model->user_nick) {
-            $acl['subscribents'] = BEZ_PERMISSION_CHANGE;          
-        }
-               
-        if ($task->coordinator === $this->model->user_nick ||
-            ($task->issue === '' && $this->level >= BEZ_AUTH_LEADER)) {
+//        if ($task->original_poster === $this->model->user_nick) {
+//            $acl['subscribents'] = BEZ_PERMISSION_CHANGE;
+//        }
+
+        if ($task->thread != null && $task->thread->coordinator == $this->model->user_nick ||
+            ($task->thread_id == '' && $this->level >= BEZ_AUTH_LEADER)) {
                 
-            $acl['reason'] = BEZ_PERMISSION_CHANGE;
-            $acl['state'] = BEZ_PERMISSION_CHANGE; 
+//            $acl['reason'] = BEZ_PERMISSION_CHANGE;
+            //$acl['state'] = BEZ_PERMISSION_CHANGE;
             
             //we can chante cause
-            $acl['cause'] =  BEZ_PERMISSION_CHANGE;
+            $acl['thread_comment_id'] =  BEZ_PERMISSION_CHANGE;
             
-            $acl['task'] = BEZ_PERMISSION_CHANGE;
-            $acl['tasktype'] = BEZ_PERMISSION_CHANGE;
-            $acl['executor'] = BEZ_PERMISSION_CHANGE;
+            $acl['content'] = BEZ_PERMISSION_CHANGE;
+            $acl['task_program_id'] = BEZ_PERMISSION_CHANGE;
+            $acl['assignee'] = BEZ_PERMISSION_CHANGE;
             $acl['cost'] = BEZ_PERMISSION_CHANGE;
-            $acl['reason'] = BEZ_PERMISSION_CHANGE;
+            //$acl['reason'] = BEZ_PERMISSION_CHANGE;
             $acl['plan_date'] = BEZ_PERMISSION_CHANGE;
             $acl['all_day_event'] = BEZ_PERMISSION_CHANGE;
             $acl['start_time'] = BEZ_PERMISSION_CHANGE;
@@ -249,20 +217,20 @@ class Acl {
             
                             
             //leaders can add subscribents to programme tasks
-            $acl['subscribents'] = BEZ_PERMISSION_CHANGE;
+            //$acl['subscribents'] = BEZ_PERMISSION_CHANGE;
         }
         
-        if ($task->issue === '' &&
-            $task->reporter === $this->model->user_nick &&
-            $task->executor === $this->model->user_nick) {
-            $acl['reason'] = BEZ_PERMISSION_CHANGE;
-            $acl['state'] = BEZ_PERMISSION_CHANGE;  
+        if ($task->thread_id == '' &&
+            $task->original_poster == $this->model->user_nick &&
+            $task->assignee == $this->model->user_nick) {
+            //$acl['reason'] = BEZ_PERMISSION_CHANGE;
+            //$acl['state'] = BEZ_PERMISSION_CHANGE;
             
-            $acl['task'] = BEZ_PERMISSION_CHANGE;
-            $acl['tasktype'] = BEZ_PERMISSION_CHANGE;
+            $acl['content'] = BEZ_PERMISSION_CHANGE;
+            $acl['task_program_id'] = BEZ_PERMISSION_CHANGE;
             //no executor
             $acl['cost'] = BEZ_PERMISSION_CHANGE;
-            $acl['reason'] = BEZ_PERMISSION_CHANGE;
+            //$acl['reason'] = BEZ_PERMISSION_CHANGE;
             $acl['plan_date'] = BEZ_PERMISSION_CHANGE;
             $acl['all_day_event'] = BEZ_PERMISSION_CHANGE;
             $acl['start_time'] = BEZ_PERMISSION_CHANGE;
@@ -290,46 +258,23 @@ class Acl {
         if ($this->level >= BEZ_AUTH_ADMIN) {
             //user can edit everythig
             $acl = array_map(function($value) {
-                return BEZ_PERMISSION_CHANGE;
+                return BEZ_PERMISSION_DELETE;
             }, $acl);
 
             return $acl;
         }
     }
     
-    private function check_commcause($commcause) {
-        $acl = array(
-            'id'            => BEZ_PERMISSION_NONE,
-            'issue'         => BEZ_PERMISSION_NONE,
-            'datetime'      => BEZ_PERMISSION_NONE,
-            'reporter'      => BEZ_PERMISSION_NONE,
-            'type'          => BEZ_PERMISSION_NONE,
-            'content'       => BEZ_PERMISSION_NONE,
-            'content_cache'   => BEZ_PERMISSION_NONE
-        );
-        
-        if ($this->level >= BEZ_AUTH_VIEWER) {
-            //user can display everythig
-            $acl = array_map(function($value) {
-                return BEZ_PERMISSION_VIEW;
-            }, $acl);
-        }
-        
-        if ($this->level >= BEZ_AUTH_ADMIN) {
-            //admin can edit everythig
-            $acl = array_map(function($value) {
-                return BEZ_PERMISSION_CHANGE;
-            }, $acl);
-            
-            return $acl;
-        }
+    private function check_thread_comment(Thread_comment $thread_comment) {
+        $acl = $this->static_thread_comment();
+
         //we create new commcause
-        if ($commcause->id === NULL) {        
+        if ($thread_comment->id === NULL) {
             if ($this->level >= BEZ_USER) {
                 $acl['content'] = BEZ_PERMISSION_CHANGE;
             }
             
-            if ($commcause->coordinator === $this->model->user_nick) {
+            if ($thread_comment->coordinator === $this->model->user_nick) {
                 $acl['type'] = BEZ_PERMISSION_CHANGE;
                 $acl['content'] = BEZ_PERMISSION_CHANGE;
             }
@@ -338,24 +283,24 @@ class Acl {
         }
 
 
-        if ($commcause->coordinator === $this->model->user_nick) {
+        if ($thread_comment->coordinator === $this->model->user_nick) {
             $acl['type'] = BEZ_PERMISSION_CHANGE;
             $acl['content'] = BEZ_PERMISSION_CHANGE;
             
             //we can only delete records when there is no tasks subscribed to issue
-            if ($commcause->tasks_count === 0) {
+            if ($thread_comment->task_count === 0) {
                  $acl['id'] = BEZ_PERMISSION_CHANGE;
             }
             
         }
         
         //jeżeli ktoś zmieni typ z komentarza na przyczynę, tracimy możliwość edycji
-        if ($commcause->reporter === $this->model->user_nick &&
-            $commcause->type === '0') {
+        if ($thread_comment->author === $this->model->user_nick &&
+            $thread_comment->type == '0') {
             $acl['content'] = BEZ_PERMISSION_CHANGE;
             
             //we can only delete records when there is no tasks subscribed to issue
-            if ($commcause->tasks_count === 0) {
+            if ($thread_comment->task_count === 0) {
                  $acl['id'] = BEZ_PERMISSION_CHANGE;
             }
         }
@@ -377,7 +322,7 @@ class Acl {
         if ($this->level >= BEZ_AUTH_ADMIN) {
             //admin can edit everythig
             $acl = array_map(function($value) {
-                return BEZ_PERMISSION_CHANGE;
+                return BEZ_PERMISSION_DELETE;
             }, $acl);
         }
         
@@ -444,8 +389,8 @@ class Acl {
     }
 
     
-    public function can_change(Entity $obj, $field) {
-        if ($this->check_field($obj, $field) < BEZ_PERMISSION_CHANGE) {
+    public function can(Entity $obj, $field, $what=BEZ_PERMISSION_CHANGE) {
+        if ($this->check_field($obj, $field) < $what) {
             $table = $obj->get_table_name();
             $id = $obj->id;
             throw new PermissionDeniedException('user cannot change field "'.$field.'" in table "'.$table.', rowid: "'.$id.'"');

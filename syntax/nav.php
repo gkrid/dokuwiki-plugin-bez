@@ -91,13 +91,13 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 //		$cause_pages = array('issue_causes', 'issue_cause', 'cause_form', 'issue_cause_task');
 //		$issue_pages = array_merge(array('issue', 'rr', '8d'), $task_pages, $cause_pages);
         
-            if (isset($this->value['tid'])) {
-//				$tasko = new Tasks();
-//				$this->value['tasktype']  = $tasko->get_type($this->value['tid']);
-                $task = $this->model->tasks->get_one($this->value['tid']);
-                $this->value['tasktype'] = $task->tasktype;
-                $this->value['id'] = $task->thread;
-			}
+//            if (isset($this->value['tid'])) {
+////				$tasko = new Tasks();
+////				$this->value['tasktype']  = $tasko->get_type($this->value['tid']);
+//                $task = $this->model->tasks->get_one($this->value['tid']);
+//                $this->value['tasktype'] = $task->tasktype;
+//                $this->value['id'] = $task->thread;
+//			}
         
 		
 

@@ -34,10 +34,12 @@ if ($this->get_param('action') == 'edit') {
 } elseif ($this->get_param('action') == 'update') {
     //$template['form_action'] = 'update';
 
-//    $prev_coordiantor = $thread->coordinator;
-
-    //$thread->set_data($_POST);
+    $prev_coordiantor = $thread->coordinator;
     $this->model->threadFactory->update_save($thread, $_POST);
+
+//    if ($thread->state != 'proposal' && $this->model->user_nick != $thread->coordinator) {
+//        $thread->mail_inform_coordinator();
+//    }
 
 
 //    $thread->add_participant($thread->coordinator);
@@ -73,6 +75,9 @@ if ($this->get_param('action') == 'edit') {
 //    );
     //$thread->set_data($data);
     $this->model->threadFactory->initial_save($thread, $_POST);
+//    if ($thread->state != 'proposal' && $this->model->user_nick != $thread->coordinator) {
+//        $thread->mail_inform_coordinator();
+//    }
 
 //        if ($thread->coordinator !== '-proposal' &&
 //            $INFO['client'] !== $thread->coordinator) {

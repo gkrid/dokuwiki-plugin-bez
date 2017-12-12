@@ -98,9 +98,9 @@ abstract class Factory {
 	public function acl_static($field) {
         return $this->model->acl->check_static_field($this->get_table_name(), $field);
     }
-        
+
     //chek acl
-    public function get_all($filters=array(), $orderby='', $desc=true) {
+    public function get_all($filters=array(), $orderby='', $desc=true, $defaults=array()) {
 //        $dummy = $this->get_dummy_object();
 //        if ($dummy->acl_of('id') < BEZ_PERMISSION_VIEW) {
 //            throw new PermissionDeniedException();
@@ -127,8 +127,8 @@ abstract class Factory {
 
 		$sth = $this->model->db->prepare($q);
 
-		$sth->setFetchMode(\PDO::FETCH_CLASS, $this->get_object_class_name(),
-				array($this->model));
+        $sth->setFetchMode(\PDO::FETCH_CLASS, $this->get_object_class_name(),
+                           array($this->model, $defaults));
 				
 		$sth->execute($execute);
 						
@@ -155,7 +155,7 @@ abstract class Factory {
         return $count;
     }
     
-    public function get_one($id) {
+    public function get_one($id, $defaults=array()) {
 //        if ($this->select_query === NULL) {
 //            throw new \Exception('no select query defined');
 //        }
@@ -166,7 +166,7 @@ abstract class Factory {
 		$sth->execute(array($id));
 		
 		$obj = $sth->fetchObject($this->get_object_class_name(),
-					array($this->model));
+					array($this->model, $defaults));
         
         if ($obj === false) {
             throw new \Exception('there is no '.$this->get_table_name().' with id: '.$id);
@@ -260,7 +260,7 @@ abstract class Factory {
 							VALUES ('.implode(',', $set).')';
 
 		$sth = $this->model->db->prepare($query);
-		$sth->execute($execute);
+		$res = $sth->execute($execute);
 
         //new object is created
         if ($obj->id === NULL) {
@@ -276,6 +276,18 @@ abstract class Factory {
         
 //		return $id;
 	}
+
+	public function initial_save(Entity $obj, $data) {
+        if ($obj->id != NULL) {
+            throw new \Exception('row already saved. use update_save');
+        }
+    }
+
+    public function update_save(Entity $obj, $data) {
+        if ($obj->id == NULL) {
+            throw new \Exception('row not saved. use initial_save()');
+        }
+    }
 	
 	protected function delete_from_db($id) {
 		$q = 'DELETE FROM '.$this->get_table_name().' WHERE id = ?';
@@ -284,8 +296,7 @@ abstract class Factory {
 	}
 	
 	public function delete(Entity $obj) {
-        //if user can change id, he can delete record
-        $this->model->acl->can_change($obj, 'id');
+        $this->model->acl->can($obj, 'id', BEZ_PERMISSION_DELETE);
 		$this->delete_from_db($obj->id);
 	}
 }

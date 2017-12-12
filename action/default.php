@@ -29,19 +29,19 @@ define('BEZ_NOTIFICATIONS_COOKIE_NAME', 'bez_notifications');
 
 class action_plugin_bez_default extends DokuWiki_Action_Plugin {
 
-	private $action = '';
-	private $params = array();
-    private $lang_code = '';
+	protected $action = '';
+    protected $params = array();
+    protected $lang_code = '';
 
     /** @var  bez\mdl\Model */
-	private $model;
+    protected $model;
 
     /** @var  bez\meta\Tpl */
-    private $tpl;
+    protected $tpl;
 
-    private $notifications = array();
+    protected $notifications = array();
 
-    private $errors = array();
+    protected $errors = array();
     
     public function get_action() {
         return $this->action;
@@ -243,31 +243,7 @@ class action_plugin_bez_default extends DokuWiki_Action_Plugin {
 		//no other ajax call handlers needed
 		$event->stopPropagation();
 		$event->preventDefault();
-	 
-		//data
-		$data = array();
-	 
-		//json library of DokuWiki
-		$json = new JSON();
-		
-		$action = $_POST['action'];
-		try {
-			if ($action === 'commcause_delete') {
-				$kid = $_POST['kid'];
-				
-				$commcause = $this->model->commcauses->get_one($kid);
-				$this->model->commcauses->delete($commcause);
-				
-				$data['state'] = 'ok';
-			}
-		} catch(Exception $e) {
-			$data['state'] = 'error';
-			$data['msg'] = strval($e);
-		}
-	 
-		//set content type
-		header('Content-Type: application/json');
-		echo $json->encode($data);
+
 	}
 	
 

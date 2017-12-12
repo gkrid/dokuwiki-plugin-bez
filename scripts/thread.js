@@ -1,33 +1,9 @@
 
-bez.ctl.issue = function() {
+bez.ctl.thread = function() {
 
 	jQuery('.bez_commcause_delete_prompt').click('on', function (event) {
-		event.preventDefault();
-
-		if (window.confirm(LANG.plugins.bez.remove_confirm)) {
-			var kid = jQuery(this).data('kid'),
-				$block = jQuery(this).parents('.bez_comment');
-			
-			
-			
-			jQuery.post(
-				DOKU_BASE + 'lib/exe/ajax.php?time='+Date.now(),
-				{
-					call: 'plugin_bez', 
-					action: 'commcause_delete',
-					kid:	kid
-				},
-				function(data) {
-					// data is array you returned with action.php
-					if (data.state === 'ok') {
-						$block.hide('slow', function(){ $block.remove(); });
-					}
-				},
-				'json'
-			)
-			.fail(function(d) {
-				console.log(d.responseText);
-			});
+		if (!window.confirm(LANG.plugins.bez.remove_confirm)) {
+            event.preventDefault();
 		}
 	});
 		
