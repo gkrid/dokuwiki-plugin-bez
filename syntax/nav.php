@@ -5,330 +5,70 @@ use \dokuwiki\plugin\bez;
 // must be run within DokuWiki
 if(!defined('DOKU_INC')) die();
 
-//if(!defined('DOKU_PLUGIN')) define('DOKU_PLUGIN',DOKU_INC.'lib/plugins/');
-//require_once DOKU_PLUGIN.'syntax.php';
-//include_once DOKU_PLUGIN."bez/models/threads.php";
-//include_once DOKU_PLUGIN."bez/models/causes.php";
-//include_once DOKU_PLUGIN."bez/models/tasks.php";
-//include_once DOKU_PLUGIN."bez/models/taskactions.php";
-
-//include_once DOKU_PLUGIN."bez/mdl/model.php";
-
-/**
- * All DokuWiki plugins to extend the parser/rendering mechanism
- * need to inherit from this class
- */
 class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
-	private $value = array();
-	private $lang_code = '';
-	private $default_lang = 'pl';
 
-	private $model;
-	
-    function getPType() { return 'block'; }
-    function getType() { return 'substition'; }
-    function getSort() { return 99; }
+    public function getPType() { return 'block'; }
+    public function getType() { return 'substition'; }
+    public function getSort() { return 99; }
 
 
-    function connectTo($mode) {
+    public function connectTo($mode) {
 		$this->Lexer->addSpecialPattern('~~BEZNAV~~',$mode,'plugin_bez_nav');
     }
 
-	function __construct() {
-		global $conf, $INFO;
-
-		$id = $_GET['id'];
-
-		/*usuń : z początku id - link bezwzględny*/
-		if ($id[0] == ':')
-			$id = substr($id, 1);
-
-		$ex = explode(':', $_GET['id']);
-
-		//wielojęzyczność
-		if ($ex[1] == 'bez') {
-			$this->lang_code = $ex[0];
-			$ex = array_slice($ex, 1);
-
-			$old_lang = $conf['lang'];
-			$conf['lang'] = $this->lang_code;
-			$this->setupLocale();
-			$conf['lang'] = $old_lang;
-
-		} else {
-			$this->lang_code = $conf['lang'];
-		}
-
-		for ($i = 0; $i < count($ex); $i += 2)
-			$this->value[urldecode($ex[$i])] = urldecode($ex[$i+1]);
-			
-		
-	}
-
-    function handle($match, $state, $pos, Doku_Handler $handler)
-    {
+    public function handle($match, $state, $pos, Doku_Handler $handler) {
 		return true;
     }
 
-    function render($mode, Doku_Renderer $R, $pass) {
-		global $INFO, $auth, $conf;
-        
-        $this->model = new bez\mdl\Model($auth, $INFO['client'], $this, $conf);
-        
-		$helper = $this->loadHelper('bez');
-		if ($mode != 'xhtml' || !$helper->user_viewer()) return false;
+    public function render($mode, Doku_Renderer $r, $data) {
+        global $auth, $INFO, $conf;
+        if ($mode != 'xhtml') return;
 
-        $R->info['cache'] = false;
+        $r->info['cache'] = false;
 
-		$data = array(
-			'bez:start' => array('id' => 'bez:start', 'type' => 'd', 'level' => 1, 'title' => $this->getLang('bez')),
-		);
-
-
-		$data['bez:threads'] = array('id' => 'bez:threads', 'type' => 'd', 'level' => 2, 'title' => $this->getLang('bds_issues'));
-
-//		$task_pages = array('issue_tasks', 'task_form', 'issue_task');
-//		$cause_pages = array('issue_causes', 'issue_cause', 'cause_form', 'issue_cause_task');
-//		$issue_pages = array_merge(array('issue', 'rr', '8d'), $task_pages, $cause_pages);
-        
-//            if (isset($this->value['tid'])) {
-////				$tasko = new Tasks();
-////				$this->value['tasktype']  = $tasko->get_type($this->value['tid']);
-//                $task = $this->model->tasks->get_one($this->value['tid']);
-//                $this->value['tasktype'] = $task->tasktype;
-//                $this->value['id'] = $task->thread;
-//			}
-        
-		
-
-		if ($this->value['bez'] == 'threads' ||
-            $this->value['bez'] == 'thread_report') {
-			if ($helper->user_editor()) {
-				$data['bez:thread_report'] = array('id' => 'bez:thread_report', 'type' => 'f', 'level' => 3, 'title' => $this->getLang('bds_issue_report'));
-			}
-			$data['bez:threads']['open'] = true;
-		}
-        
-        $thread_pages = array('thread', '8d');
-		if (in_array($this->value['bez'], $thread_pages) ||
-            ($this->value['bez'] == 'thread_report' && isset($this->value['id'])) ||
-            isset($task) && $task->thread != ''
-           ) {
-			if ($helper->user_editor()) {
-				$data['bez:thread_report'] = array('id' => 'bez:thread_report', 'type' => 'f', 'level' => 3, 'title' => $this->getLang('bds_issue_report'));
-			}
-			$data['bez:threads']['open'] = true;
-			$id = (int)$this->value['id'];
-
-//			$isso = new Issues();
-//			$issue_opened = $isso->opened($id);
-//			$issue_proposal = $isso->is_proposal($id);
-			
-			$type = 'f';
-
-			$pid = "bez:thread:id:$id";
-			$data[$pid] = array('id' => $pid, 'type' => $type, 'level' => 3,
-												'title' => "#$id", 'open' => true);
-		}
-		
-		
-		$data['bez:tasks'] = array('id' => 'bez:tasks', 'type' => 'd', 'level' => 2, 'title' => $this->getLang('bez_tasks'));
-		
-		if ($this->value['bez'] == 'tasks'
-            || $this->value['bez'] == 'task'
-			|| $this->value['bez'] == 'task_form') {
-            
-			$data['bez:tasks']['open'] = true;
-
-			if (isset($this->value['year']))
-				$year = $this->value['year'];
-			else
-				$year = date('Y');
-
-
-
-			
-			$page_id = "bez:tasks:tasktype:-none:year:$year";
-			if (isset($this->value['tid']) && $this->value['tasktype'] == '') {
-				$data[$page_id] = array('id' => $page_id, 'type' => 'd', 'level' => 3, 'title' => $this->getLang('tasks_no_type'), 'open' => true);
-				
-				$page_id = 'bez:task:tid:'.$this->value['tid'];
-				//$page_id = $_GET['id'];
-				$data[$page_id] = array('id' => $page_id, 'type' => 'f', 'level' => 4, 'title' => '#z'.$this->value['tid']);
-
-			} else {
-				$data[$page_id] = array('id' => $page_id, 'type' => 'f', 'level' => 3, 'title' => $this->getLang('tasks_no_type'));
-			}
-			
-			$tasktypes = $this->model->tasktypes->get_all();
-			foreach ($tasktypes as $tasktype) {
-				$page_id = "bez:tasks:tasktype:".$tasktype->id.":year:$year";
-
-				if ($this->value['tasktype'] == $tasktype->id) {	
-					$data[$page_id] = array('id' => $page_id, 'type' => 'd', 'level' => 3, 'title' => $tasktype->type, 'open' => true);
-	
-					//~ if ($tasktype->get_level() >= 15) {
-					$report_id = "bez:task_form:tasktype:".$tasktype->id;
-					$data[$report_id] = array('id' => $report_id, 'type' => 'f', 'level' => 4, 'title' => $this->getLang('bds_task_report'));
-					//~ }
-					if (isset($this->value['tid'])) {
-						$page_id = 'bez:task:tid:'.$this->value['tid'];
-						//$page_id = $_GET['id'];
-						$data[$page_id.':perspective:task'] = array('id' => $page_id, 'type' => 'f', 'level' => 4, 'title' => '#z'.$this->value['tid']);
-					}
-				} else {
-					$data[$page_id] = array('id' => $page_id, 'type' => 'f', 'level' => 3, 'title' => $tasktype->type);
-				}
-			}
-		}
-
-		$isso = new Issues();
-		$year_now = (int)date('Y');
-		$mon_now = (int)date('n');
-
-		$data['bez:report'] = array('id' => 'bez:report', 'type' => 'd', 'level' => 2, 'title' => $this->getLang('report'));
-		if ($this->value['bez'] == 'report') {
-			$data['bez:report']['open'] = true;
-
-			$oldest = $isso->get_oldest_close_date();
-			$year_old = (int)date('Y', $oldest);
-			$mon_old = (int)date('n', $oldest);
-
-			$mon = $mon_old;
-			for ($year = $year_old; $year <= $year_now; $year++) {
-
-				$y_key = 'bez:report:year:'.$year;
-				$data[$y_key] = array('id' => $y_key, 'type' => 'd', 'level' => 3, 'title' => $year);
-
-				if (isset($this->value['year']) && (int)$this->value['year'] == $year) {
-					$data['bez:report:year:'.$year]['open'] = true;
-
-					if ($year == $year_now)
-						$mon_max = $mon_now;
-					else
-						$mon_max = 12;
-					for ( ; $mon <= $mon_max; $mon++) {
-						$m_key = $y_key.':month:'.$mon;
-						$data[$m_key] = array('id' => $m_key, 'type' => 'f', 'level' => 4,
-						'title' => $mon < 10 ? '0'.$mon : $mon);
-					}	
-				}
-				$mon = 1;
-			}
-		}
-		
-		$data['bez:activity_report'] = array('id' => 'bez:activity_report', 'type' => 'd', 'level' => 2, 'title' => $this->getLang('activity_report'));
-		if ($this->value['bez'] == 'activity_report') {
-			$data['bez:activity_report']['open'] = true;
-
-			$oldest = $isso->get_oldest_close_date();
-			$year_old = (int)date('Y', $oldest);
-			$mon_old = (int)date('n', $oldest);
-
-			$mon = $mon_old;
-			for ($year = $year_old; $year <= $year_now; $year++) {
-
-				$y_key = 'bez:activity_report:year:'.$year;
-				$data[$y_key] = array('id' => $y_key, 'type' => 'd', 'level' => 3, 'title' => $year);
-
-				if (isset($this->value['year']) && (int)$this->value['year'] == $year) {
-					$data['bez:activity_report:year:'.$year]['open'] = true;
-
-					if ($year == $year_now)
-						$mon_max = $mon_now;
-					else
-						$mon_max = 12;
-					for ( ; $mon <= $mon_max; $mon++) {
-						$m_key = $y_key.':month:'.$mon;
-						$data[$m_key] = array('id' => $m_key, 'type' => 'f', 'level' => 4,
-						'title' => $mon < 10 ? '0'.$mon : $mon);
-					}	
-				}
-				$mon = 1;
-			}
-		}
-
-
-
-		if (isset($this->value['bez'])) {
-			$data['bez:start']['open'] = true;
-		} else {
-			$data['bez:start']['open'] = false;
-			array_splice($data, 1);
-		}
-
-		if ($helper->user_admin() && $data['bez:start']['open'] == true) {
-			$data['bez:types'] = array('id' => 'bez:types', 'type' => 'f', 'level' => 2, 'title' =>
-				$this->getLang('types_manage'));
-			//~ $data['bez:root_causes'] = array('id' => 'bez:root_causes', 'type' => 'f', 'level' => 2, 'title' =>
-				//~ $this->getLang('root_causes'));
-			$data['bez:task_types'] = array('id' => 'bez:task_types', 'type' => 'f', 'level' => 2, 'title' =>
-				$this->getLang('task_types'));
-		}
-
-        $R->doc .= '<div class="plugin__bez">';
-        $R->doc .= html_buildlist($data,'idx',array($this,'_list'),array($this,'_li'));
-        $R->doc .= '</div>';
-
-		return true;
-	}
-
-	function _bezlink($id, $title) {
-		//$uri = wl($id);
-		$uri = DOKU_URL . 'doku.php?id='.$id;
-		return '<a href="'.$uri.'">'.($title).'</a>';
-	}
-
-    function _list($item){
-
-		$ex = explode(':', $item['id']);
-
-		for ($i = 0; $i < count($ex); $i += 2)
-			$item_value[urldecode($ex[$i])] = urldecode($ex[$i+1]);
-
-		//pola brane pod uwagę przy określaniu aktualnej strony
-		$fields = array('bez', 'tid', 'cid', 'tasktype', 'taskstate');
-		if ($item_value['bez'] == 'report' || $item_value['bez'] == 'activity_report') {
-			$fields[] = 'month';
-			$fields[] = 'year';
-		}
-//		if ($this->value[bez] == 'task_form' && isset($this->value[cid]))
-//			unset($fields[0]);
-		
-		$actual_page = true;
-		foreach ($fields as $field)
-			if ($item_value[$field] != $this->value[$field])
-				$actual_page = false;
-				
-		//specjalny hak dla zadań, boję się ruszać całej procedury
-		if ($item_value['bez'] == 'thread_task' ||
-			$item_value['bez'] == 'thread_cause_task' ||
-			$item_value['bez'] == 'task_form' ||
-			$item_value['bez'] == 'task')
-				if ($item_value['tid'] == $this->value['tid'])
-					$actual_page = true;
-			
-        if(($item['type'] == 'd' && $item['open']) ||  $actual_page) {
-			$id = $item['id'];
-			if ($this->lang_code != $this->default_lang)
-				$id = $this->lang_code.':'.$id;
-            return '<strong>'.$this->_bezlink($id, $item['title']).'</strong>';
-        }else{
-			$id = $item['id'];
-			if ($this->lang_code != $this->default_lang)
-				$id = $this->lang_code.':'.$id;
-            return $this->_bezlink($id, $item['title']);
+        $r->doc .= '<nav id="plugin__bez">';
+        $r->doc .= '<div style="background-color: #eee; color: #333; padding: 0 .3em;">' .
+            inlineSVG(DOKU_PLUGIN . 'bez/images/logo.svg') .
+            $this->getLang('bez') .
+            '</div>';
+        $r->doc .= '<ul>';
+        $actions = array(
+            'start' => $this->getLang('nav my_activities'),
+            'threads' => $this->getLang('issues'),
+            //'projects' => $this->getLang('nav projects'),
+            'tasks' => $this->getLang('tasks'),
+            'activity' => $this->getLang('activity_report')
+        );
+        /** @var bez\mdl\Model $model */
+        $model = new bez\mdl\Model($auth, $INFO['client'], $this, $conf);
+        if ($model->acl->get_level() >= BEZ_AUTH_LEADER) {
+            $actions['types'] = $this->getLang('types_manage');
+            $actions['task_programs'] = $this->getLang('task_types');
         }
 
+        foreach ($actions as $action => $label) {
+            $r->doc .= $this->_list($action, $label);
+        }
+        $r->doc .= '</ul>';
+        $r->doc .= '</nav>';
     }
 
-    function _li($item){
-        if($item['type'] == "f"){
-            return '<li class="level'.$item['level'].'">';
-        }elseif($item['open']){
-            return '<li class="open">';
-        }else{
-            return '<li class="closed">';
+    protected function _list($action, $label) {
+        global $INFO;
+
+        $matches = array();
+        preg_match('/bez:([a-z_]*)/i', $INFO['id'], $matches);
+        $cur_action = '';
+        if (isset($matches[1])) {
+            $cur_action = $matches[1];
         }
+
+        $ret = '<li>';
+        if ($cur_action == $action) $ret .= '<strong>';
+        $ret .= '<a href="' . action_plugin_bez_default::url($action) . '">' . $label . '</a>';
+        if ($cur_action == $action) $ret .= '</strong>';
+        $ret .= '</li>';
+
+        return $ret;
     }
 }

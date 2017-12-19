@@ -31,7 +31,6 @@ class action_plugin_bez_default extends DokuWiki_Action_Plugin {
 
 	protected $action = '';
     protected $params = array();
-    protected $lang_code = '';
 
     /** @var  bez\mdl\Model */
     protected $model;
@@ -51,8 +50,15 @@ class action_plugin_bez_default extends DokuWiki_Action_Plugin {
         return (isset($this->params[$id]) ? $this->params[$id] : '');
     }
     
-    public function id() {
+    public static function id() {
+        global $conf;
+
 		$args = func_get_args();
+
+        if (count($args) === 0) {
+            return $_GET['id'];
+        }
+
         $elms = array();
         foreach ($args as $arg) {
             if (is_array($arg)) {
@@ -67,22 +73,24 @@ class action_plugin_bez_default extends DokuWiki_Action_Plugin {
 		array_unshift($elms, 'bez');
         
         
-		if ($this->lang_code !== '') {
-			array_unshift($elms, $this->lang_code);
+		if ($conf['lang'] != '') {
+			array_unshift($elms, $conf['lang']);
         }
 
 		return implode(':', $elms);
     }
     
-    public function url() {
+    public static function url() {
         $args = func_get_args();
         if (count($args) > 0) {
-            $id = call_user_func_array(array($this, 'id'), $args);
+            $id = call_user_func_array('action_plugin_bez_default::id', $args);
+            return DOKU_URL . 'doku.php?id=' . $id;
         } else {
-            $id = $_GET['id'];
+            //https://stackoverflow.com/questions/6768793/get-the-full-url-in-php
+            return (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
         }
         
-        return DOKU_URL . 'doku.php?id=' . $id;
+
     }
     
 //    public function model_factory($name) {
@@ -206,10 +214,9 @@ class action_plugin_bez_default extends DokuWiki_Action_Plugin {
         }
         
 
-        $lang_code = '';
         if ($ex[1] === 'bez') {
             $conf['lang'] = array_shift($ex);
-            $this->lang_code = $conf['lang'];
+            //$this->lang_code = $conf['lang'];
             $this->localised = false;
         }
         //throw out "bez"
@@ -286,8 +293,12 @@ class action_plugin_bez_default extends DokuWiki_Action_Plugin {
             
         } catch(bez\meta\PermissionDeniedException $e) {
             dbglog('plugin_bez', $e);
-            header('Location: ' . DOKU_URL . 'doku.php?id=' . $_GET['id'] . '&do=login');
-
+            if ($conf['allowdebug']) {
+                dbg($e);
+                $this->tpl->prevent_rendering();
+            } else {
+                header('Location: ' . DOKU_URL . 'doku.php?id=' . $_GET['id'] . '&do=login');
+            }
 		} catch(Exception $e) {
             dbglog('plugin_bez', $e);
             if ($conf['allowdebug']) {

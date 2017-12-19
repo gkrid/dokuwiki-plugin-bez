@@ -60,7 +60,7 @@ $lang['by'] = "by";
 $lang['from'] = "from";
 $lang['to'] = "to";
 $lang['diff'] = "Differences";
-$lang['comment'] = "Add";
+$lang['comment'] = "Skomentuj";
 $lang['replay'] = "Reply";
 $lang['edit'] = "Edit";
 $lang['change_task_state'] = "Change a status of task";
@@ -139,7 +139,20 @@ $lang['state_rejected'] = "rejected";
 $lang['state_closed'] = "closed";
 
 $lang['reject_issue'] = 'Reject';
-$lang['close_issue'] = 'Close';
+$lang['js']['close_issue'] = 'Close issue';
+$lang['js']['comment_and_close_issue'] = 'Close and comment';
+
+$lang['js']['reject_issue'] = 'Reject issue';
+$lang['js']['comment_and_reject_issue'] = 'Comment and reject';
+
+$lang['js']['reopen_issue'] = 'Reopen issue';
+$lang['js']['comment_and_reopen_issue'] = 'Reopen and comment';
+
+
+$lang['js']['do_task'] = 'Do task';
+$lang['js']['comment_and_do_task'] = 'Do and comment';
+$lang['js']['reopen_task'] = 'Reopen task';
+$lang['js']['comment_and_reopen_task'] = 'Reopen and comment';
 
 $lang['just_now'] = "minute before";
 $lang['seconds'] = "seconds";
@@ -340,8 +353,8 @@ $lang['pontential_cause'] = 'potential cause';
 
 $lang['cause_type'] = 'Cause type';
 
-$lang['type_default'] = 'normal';
-$lang['type_potential'] = 'potential';
+$lang['cause_real'] = 'real';
+$lang['cause_potential'] = 'potential';
 
 $lang['evaluation'] = 'Ocena';
 
@@ -484,6 +497,10 @@ $lang['subscribed_info'] = "You're receiving notifications about changes in this
 
 $lang['not_subscribed_info'] = "You're not receiving notifications about changes in this problem.";
 
+$lang['task_subscribed_info'] = "You're receiving notifications about changes in this task.";
+
+$lang['task_not_subscribed_info'] = "You're not receiving notifications about changes in this task.";
+
 $lang['show_comments'] = 'Show comments';
 $lang['hide_comments'] = 'Hide comments';
 
@@ -533,3 +550,11 @@ $lang['task_type_correction'] = 'Correction';
 $lang['task_type_corrective'] = 'Corrective';
 $lang['task_type_preventive'] = 'Preventive';
 $lang['task_type_program'] = 'Program';
+
+$lang['nav my_activities'] = 'My activities';
+$lang['nav projects'] = 'Projects';
+
+$lang['user_did_task'] = '%s did task %s';
+
+$lang['user_closed_issue'] = '%s closed issue %s';
+$lang['user_rejected_issue'] = '%s rejected issue %s';

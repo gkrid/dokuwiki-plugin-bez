@@ -1,4 +1,11 @@
 bez.ctl.task = function() {
+
+    jQuery('.bez_commcause_delete_prompt').click('on', function (event) {
+        if (!window.confirm(LANG.plugins.bez.remove_confirm)) {
+            event.preventDefault();
+        }
+    });
+
     var $task_form = jQuery('.bez_task_form');
     
     if ($task_form.length > 0) {
@@ -39,13 +46,6 @@ bez.ctl.task = function() {
         });
 		bez.rich_text_editor(jQuery('#reason'), jQuery('.bez_reason_toolbar'));
 	}
-
-    jQuery('#bez_hidden_issue').hide();
-    jQuery('#bez_show_issue').on('click', function (e) {
-        e.preventDefault();
-        jQuery('#bez_hidden_issue').slideDown();
-        jQuery(this).hide();
-    });
     
     if (jQuery('.bez_metaform').length > 0) {
         var tooltips = jQuery('.bez_metaform').find("input, select").tooltip({
@@ -78,6 +78,55 @@ bez.ctl.task = function() {
 			dateFormat: "yy-mm-dd"
         });
     }
+
+    var $bez_comment_form = jQuery('.bez_comment_form');
+    if ($bez_comment_form.length > 0) {
+        //textareas
+        var $textarea = $bez_comment_form.find("textarea");
+        var $do_button = $bez_comment_form.find("button[value=task_do]");
+        var $reopen_button = $bez_comment_form.find("button[value=task_reopen]");
+
+        var $header = $bez_comment_form.find(".bez_toolbar");
+        bez.rich_text_editor($textarea, $header);
+
+        $textarea.on('input', function() {
+            "use strict";
+            if (jQuery(this).val().length > 0) {
+                if ($do_button.length > 0) {
+                    $do_button.text(LANG.plugins.bez.comment_and_do_task);
+                } else {
+                    $reopen_button.text(LANG.plugins.bez.comment_and_reopen_task);
+                }
+            } else {
+                if ($do_button.length > 0) {
+                    $do_button.text(LANG.plugins.bez.do_task);
+                } else {
+                    $reopen_button.text(LANG.plugins.bez.reopen_task);
+                }
+            }
+        });
+    }
+
+    //tooltips
+    jQuery(document).tooltip({
+        items: '#issue_participants a[title]',
+        position: {
+            my: "left top+15",
+            at: "left bottom",
+            collision: "flipfit"
+        },
+        content: function() {
+            var $this = jQuery(this);
+            name = $this.find('.bez_name').text(),
+                content = '<div style="margin-bottom: 3px;">'+name+'</div>';
+            $this.find('.bez_awesome').each(function() {
+                var $this = jQuery(this);
+                content += '<div>'+$this.get(0).outerHTML+' '+$this.attr('title')+'</div>';
+            });
+
+            return content;
+        }
+    });
     
     //INVITE USERS
     jQuery.widget( "custom.combobox", {

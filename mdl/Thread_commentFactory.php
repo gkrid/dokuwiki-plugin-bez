@@ -9,8 +9,9 @@ class Thread_commentFactory extends Factory {
                 FROM thread_comment JOIN thread ON thread_comment.thread_id=thread.id";
     }
 
-    public function get_from_thread(Thread $thread) {
-        return $this->get_all(array('thread_id' => $thread->id), $orderby='', $desc=true, array('thread' => $thread));
+    public function get_from_thread(Thread $thread, $filters=array(), $orderby='', $desc=true, $limit=false) {
+        $filters['thread_id'] = $thread->id;
+        return $this->get_all($filters, $orderby, $desc, array('thread' => $thread), $limit);
     }
 
     /**
@@ -21,12 +22,24 @@ class Thread_commentFactory extends Factory {
     public function initial_save(Entity $thread_comment, $data) {
         parent::initial_save($thread_comment, $data);
 
-        $thread_comment->set_data($data);
         try {
             $this->beginTransaction();
-            $this->save($thread_comment);
 
-            $thread_comment->thread->set_participant_flags($thread_comment->author, array('subscribent', 'commentator'));
+            if ($data['fn'] == 'comment_add' ||
+                $data['content'] != '') {
+                $thread_comment->set_data($data);
+                $this->save($thread_comment);
+                $thread_comment->thread->set_participant_flags($thread_comment->author, array('subscribent', 'commentator'));
+            }
+
+            if ($data['fn'] == 'thread_close') {
+                $thread_comment->thread->set_state('closed');
+            } elseif ($data['fn'] == 'thread_reject') {
+                $thread_comment->thread->set_state('rejected');
+            } elseif ($data['fn'] == 'thread_reopen') {
+                $thread_comment->thread->set_state('opened');
+            }
+
             $thread_comment->thread->update_last_activity();
 
             $this->commitTransaction();

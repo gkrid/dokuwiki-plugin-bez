@@ -14,7 +14,7 @@ class Thread extends Entity {
 
     protected $id;
 
-    protected $original_poster, $coordinator;
+    protected $original_poster, $coordinator, $closed_by;
 
     protected $private, $lock;
 
@@ -26,7 +26,7 @@ class Thread extends Entity {
 
     protected $priority;
 
-    protected $task_count, $task_count_open, $task_sum_cost;
+    protected $task_count, $task_count_closed, $task_sum_cost;
 
     /*new labels to add when object saved*/
     //protected $new_label_ids;
@@ -34,13 +34,13 @@ class Thread extends Entity {
 
     public static function get_columns() {
         return array('id',
-                     'original_poster', 'coordinator',
+                     'original_poster', 'coordinator', 'closed_by',
                      'private', 'lock',
                      'type', 'state',
                      'create_date', 'last_activity_date', 'last_modification_date', 'close_date',
                      'title', 'content', 'content_html',
                      'priority',
-                     'task_count', 'task_count_open', 'task_sum_cost');
+                     'task_count', 'task_count_closed', 'task_sum_cost');
     }
 
     public static function get_select_columns() {
@@ -224,6 +224,34 @@ class Thread extends Entity {
         //update dates
         $this->last_modification_date = date('c');
         $this->last_activity_date = $this->last_modification_date;
+    }
+
+    public function set_state($state) {
+        if ($this->acl_of('state') < BEZ_PERMISSION_CHANGE) {
+            throw new PermissionDeniedException();
+        }
+
+        if (!in_array($state, array('opened', 'closed', 'rejected'))) {
+            throw new ValidationException('task', array('sholud be opened, closed or rejected'));
+        }
+
+        //nothing to do
+        if ($state == $this->state) {
+            return;
+        }
+
+        if ($state == 'closed' || $state == 'rejected') {
+            $this->model->sqlite->query("UPDATE {$this->get_table_name()} SET state=?, closed_by=?, close_date=? WHERE id=?",
+                $state,
+                $this->model->user_nick,
+                date('c'),
+                $this->id);
+            //reopen the task
+        } else {
+            $this->model->sqlite->query("UPDATE {$this->get_table_name()} SET state=? WHERE id=?", $state, $this->id);
+        }
+
+        $this->state = $state;
     }
 
 	public function update_last_activity() {
@@ -427,6 +455,12 @@ class Thread extends Entity {
 //		}
 	}
 
+
+    public function invite($client) {
+        $this->set_participant_flags($client, array('subscribent'));
+        $this->mail_notify_invite($client);
+    }
+
     public function get_labels() {
         if ($this->acl_of('labels') < BEZ_PERMISSION_VIEW) {
             throw new PermissionDeniedException();
@@ -504,12 +538,9 @@ class Thread extends Entity {
 
     }
 
-    public function causes_without_tasks_count() {
-        return 0;
-    }
-
     public function get_causes() {
-        $r = $this->model->sqlite->query('SELECT id FROM thread_comment WHERE thread_id=?', $this->id);
+        $r = $this->model->sqlite->query("SELECT id FROM thread_comment WHERE type LIKE 'cause_%' AND thread_id=?",
+                                         $this->id);
         $arr = $this->model->sqlite->res2arr($r);
         $causes = array();
         foreach ($arr as $cause) {
@@ -517,6 +548,32 @@ class Thread extends Entity {
         }
 
         return $causes;
+    }
+
+    public function can_be_closed() {
+        $res = $this->model->sqlite->query("SELECT thread_comment.id FROM thread_comment
+                               LEFT JOIN task ON thread_comment.id = task.thread_comment_id
+                               WHERE thread_comment.thread_id = ? AND
+                                     thread_comment.type LIKE 'cause_%' AND task.id IS NULL", $this->id);
+
+        $causes_without_tasks = $this->model->sqlite->res2row($res) ? true : false;
+        return $this->state == 'opened' &&
+            ($this->task_count - $this->task_count_closed == 0) &&
+            $this->state != 'proposal' &&
+            ! $causes_without_tasks &&
+            $this->task_count > 0;
+
+    }
+
+    public function can_be_rejected() {
+        return $this->state == 'opened' && $this->task_count == 0;
+    }
+
+    public function closing_comment() {
+        $r = $this->model->thread_commentFactory->get_from_thread($this, array(), 'id', true, 1);
+        $thread_comment = $r->fetch();
+
+        return $thread_comment->content_html;
     }
 
 //    public function remove_label($name) {
@@ -822,4 +879,5 @@ class Thread extends Entity {
             'action' => $this->model->action->getLang('mail_mail_notify_issue_inactive'),
         )), $users);
     }
+
 }

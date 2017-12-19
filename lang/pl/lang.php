@@ -62,7 +62,7 @@ $lang['by'] = 'przez';
 $lang['from'] = 'z';
 $lang['to'] = 'na';
 $lang['diff'] = 'różnice';
-$lang['comment'] = 'Dodaj';
+$lang['comment'] = 'Skomentuj';
 $lang['replay'] = 'Odpowiedz';
 $lang['edit'] = 'Edytuj';
 $lang['change_task_state'] = 'Zmień status zadania';
@@ -140,7 +140,20 @@ $lang['state_rejected'] = 'odrzucona';
 $lang['state_closed'] = 'zamknięta';
 
 $lang['reject_issue'] = 'Odrzuć problem';
-$lang['close_issue'] = 'Zamknij problem';
+
+$lang['js']['close_issue'] = 'Zamknij problem';
+$lang['js']['comment_and_close_issue'] = 'Zamknij i skomentuj';
+
+$lang['js']['reject_issue'] = 'Odrzuć problem';
+$lang['js']['comment_and_reject_issue'] = 'Odrzuć i i skomentuj';
+
+$lang['js']['reopen_issue'] = 'Otwórz ponownie problem';
+$lang['js']['comment_and_reopen_issue'] = 'Otwórz ponownie i skomentuj';
+
+$lang['js']['do_task'] = 'Wykonaj zadanie';
+$lang['js']['comment_and_do_task'] = 'Wykonaj i skomentuj';
+$lang['js']['reopen_task'] = 'Otwórz ponownie zadanie';
+$lang['js']['comment_and_reopen_task'] = 'Otwórz ponownie i skomentuj';
 
 
 $lang['just_now'] = 'przed chwilą';
@@ -351,8 +364,8 @@ $lang['potential_cause'] = 'potencjalna przyczyna';
 
 $lang['cause_type'] = 'Typ przyczyny';
 
-$lang['cause_type_default'] = 'rzeczywista';
-$lang['cause_type_potential'] = 'potencjalna';
+$lang['cause_real'] = 'rzeczywista';
+$lang['cause_potential'] = 'potencjalna';
 
 $lang['evaluation'] = 'Ocena';
 
@@ -509,6 +522,10 @@ $lang['subscribed_info'] = 'Otrzymujesz powiadomienia o zmianach w tym problemie
 
 $lang['not_subscribed_info'] = 'Nie otrzymujesz powiadomień o zmianach w tym problemie.';
 
+$lang['task_subscribed_info'] = 'Otrzymujesz powiadomienia o zmianach w tym zadaniu.';
+
+$lang['task_not_subscribed_info'] = 'Nie otrzymujesz powiadomień o zmianach w tym zadaniu.';
+
 $lang['show_comments'] = 'Pokaż komentarze';
 $lang['hide_comments'] = 'Ukryj komentarze';
 
@@ -571,3 +588,11 @@ $lang['task_type_correction'] = 'Korekcyjne';
 $lang['task_type_corrective'] = 'Korygujące';
 $lang['task_type_preventive'] = 'Zapobiegawcze';
 $lang['task_type_program'] = 'Programowe';
+
+$lang['nav my_activities'] = 'Moje aktywności';
+$lang['nav projects'] = 'Projekty';
+
+$lang['user_did_task'] = '%s wykonał(a) zadanie %s';
+
+$lang['user_closed_issue'] = '%s zamknął(eła) problem %s';
+$lang['user_rejected_issue'] = '%s odrzucił(a) problem %s';

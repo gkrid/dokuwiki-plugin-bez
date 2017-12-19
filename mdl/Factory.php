@@ -6,8 +6,11 @@ abstract class Factory {
     /** @var Model */
 	protected $model;
 
+	/** @var array of Entity */
+	protected $objects = array();
+
 	protected function filter_field_map($field) {
-	    return $field;
+	    return $this->get_table_name() . '.' . $field;
     }
 
     protected abstract function select_query();
@@ -100,7 +103,7 @@ abstract class Factory {
     }
 
     //chek acl
-    public function get_all($filters=array(), $orderby='', $desc=true, $defaults=array()) {
+    public function get_all($filters=array(), $orderby='', $desc=true, $defaults=array(), $limit=false) {
 //        $dummy = $this->get_dummy_object();
 //        if ($dummy->acl_of('id') < BEZ_PERMISSION_VIEW) {
 //            throw new PermissionDeniedException();
@@ -123,6 +126,10 @@ abstract class Factory {
 		    if ($desc) {
 		        $q .= " DESC";
             }
+        }
+
+        if (is_int($limit)) {
+		    $q .= " LIMIT $limit";
         }
 
 		$sth = $this->model->db->prepare($q);
@@ -154,12 +161,9 @@ abstract class Factory {
         $count = $sth->fetchColumn();
         return $count;
     }
-    
+
     public function get_one($id, $defaults=array()) {
-//        if ($this->select_query === NULL) {
-//            throw new \Exception('no select query defined');
-//        }
-        
+
 		$q = $this->select_query().' WHERE '.$this->get_table_name().'.id = ?';
 						
 		$sth = $this->model->db->prepare($q);
@@ -171,7 +175,7 @@ abstract class Factory {
         if ($obj === false) {
             throw new \Exception('there is no '.$this->get_table_name().' with id: '.$id);
         }
-        
+
 		return $obj;
 	}
 

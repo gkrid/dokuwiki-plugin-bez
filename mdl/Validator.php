@@ -13,6 +13,12 @@ class Validator {
 	public function add_rule($field, $rule) {
         $this->rules[$field] = $rule;
     }
+
+    public function delete_rule($field) {
+	    if (isset($this->rules[$field])) {
+            unset($this->rules[$field]);
+        }
+    }
 	
 	public function set_rules($rules) {
 		$this->rules = array_merge($this->rules, $rules);

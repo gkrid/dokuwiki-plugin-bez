@@ -933,7 +933,11 @@ input.days {
 }
 
 .bez_tabs li a {
-
+	color: #24292e;
+	text-decoration: none !important;
+}
+.bez_tabs li a:hover {
+	text-decoration: none !important;
 }
 
 .bez_tabs li.active {
@@ -1085,4 +1089,147 @@ input.days {
 
 .bez_box_data_table td {
     width: 30%;
+}
+
+nav#plugin__bez svg {
+	vertical-align: middle;
+	margin: 0.2em;
+	margin-right: 12px;
+}
+nav#plugin__bez ul {
+	margin-top: 5px;
+}
+
+
+nav#plugin__bez li {
+	list-style: none;
+}
+
+.bez_comments .plugin__bez_button {
+	margin-left: 5px;
+
+	position: relative;
+	display: inline-block;
+	padding: 6px 12px;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 20px;
+	white-space: nowrap;
+	vertical-align: middle;
+	cursor: pointer;
+	user-select: none;
+	background-repeat: repeat-x;
+	background-position: -1px -1px;
+	background-size: 110% 110%;
+	border: 1px solid rgba(27,31,35,0.2);
+	border-radius: 0.25em;
+}
+.bez_comments .plugin__bez_button:hover {
+	text-decoration: none;
+}
+
+
+.bez_comments .plugin__bez_button_gray {
+	color: #24292e;
+	background-color: #eff3f6;
+	background-image: linear-gradient(-180deg, #fafbfc 0%, #eff3f6 90%);
+}
+
+.bez_comments .plugin__bez_button_gray:active {
+	background-color: #e9ecef;
+	background-image: none;
+	border-color: rgba(27,31,35,0.35);
+	box-shadow: inset 0 0.15em 0.3em rgba(27,31,35,0.15);
+}
+
+.bez_comments .plugin__bez_button_gray:hover {
+	background-color: #e6ebf1;
+	background-image: linear-gradient(-180deg, #f0f3f6 0%, #e6ebf1 90%);
+	background-position: 0 -0.5em;
+	border-color: rgba(27,31,35,0.35);
+}
+
+.bez_comments .plugin__bez_button_green {
+	color: #fff;
+	background-color: #28a745;
+	background-image: linear-gradient(-180deg, #34d058 0%, #28a745 90%);
+}
+
+.bez_comments .plugin__bez_button_green:active {
+	background-color: #279f43;
+	border-color: rgba(27,31,35,0.5);
+	box-shadow: inset 0 0.15em 0.3em rgba(27,31,35,0.15);
+}
+
+.bez_comments .plugin__bez_button_green:hover {
+	background-color: #269f42;
+	background-image: linear-gradient(-180deg, #2fcb53 0%, #269f42 90%);
+	background-position: 0 -0.5em;
+	border-color: rgba(27,31,35,0.5);
+}
+
+.bez_comments .plugin__bez_button_red {
+	color: #cb2431;
+	background-color: #fafbfc;
+	background-image: linear-gradient(-180deg, #fafbfc 0%, #eff3f6 90%);
+}
+
+.bez_comments .plugin__bez_button_red:active {
+	color: #fff;
+	background-color: #b5202c;
+	background-image: none;
+	border-color: rgba(27,31,35,0.5);
+	box-shadow: inset 0 0.15em 0.3em rgba(27,31,35,0.15);
+}
+
+.bez_comments .plugin__bez_button_red:hover {
+	color: #fff;
+	background-color: #cb2431;
+	background-image: linear-gradient(-180deg, #de4450 0%, #cb2431 90%);
+	border-color: rgba(27,31,35,0.5);
+}
+
+.plugin__bez_status_label {
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+.plugin__bez_status_label .icon {
+	display: inline-block;
+	width: 30px;
+	height: 30px;
+	line-height: 35px;
+	border-radius: 50%;
+	text-align: center;
+	vertical-align: middle;
+}
+
+.plugin__bez_status_label .icon_green {
+	background-color: #2cbe4e;
+}
+
+.plugin__bez_status_label .icon_green svg {
+	fill: #fff;
+}
+
+.plugin__bez_status_label .icon_red {
+	background-color: #cb2431;
+}
+
+.plugin__bez_status_label .icon_red svg {
+	fill: #fff;
+}
+
+.plugin__bez_form_buttons_container {
+	float: right;
+}
+
+.plugin__bez_form_buttons .bez_cause_type {
+	float: left;
+}
+
+.plugin__bez_form_buttons::after {
+	content: "";
+	display: block;
+	clear: both;
 }

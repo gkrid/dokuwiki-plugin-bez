@@ -80,8 +80,17 @@ class Tpl {
         $this->variables[$id] = $value;
     }
     
-    public function get($id) {
-        return $this->variables[$id];
+    public function get($id, $default='') {
+        $arr = explode(' ', $id);
+        $var = $this->variables;
+        foreach($arr as $item) {
+            if (isset($var[$item])) {
+                $var = $var[$item];
+            } else {
+                return $default;
+            }
+        }
+        return $var;
     }
     
     public function set_values($values) {

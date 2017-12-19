@@ -34,7 +34,7 @@ if ($tpl->action() == 'thread') {
 
 							<?php foreach ($tpl->get('thread')->get_causes() as $cause_id): ?>
 								<option <?php if ($tpl->value('thread_comment_id') == $cause_id) echo 'selected' ?>
-								 value="<?php echo $cause_id ?>">#p<?php echo $cause_id ?></option>
+								 value="<?php echo $cause_id ?>">#k<?php echo $cause_id ?></option>
 							<?php endforeach ?>
 						</select>
 					</span>

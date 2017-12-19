@@ -18,31 +18,25 @@
 		</span>
 		<div class="commcause_content">
 			<h2>
-                    <strong><?php echo $tpl->user_name($tpl->get('thread_comment')->author) ?></strong>
-                
-                
+                <a href="#k<?php echo $tpl->get('thread_comment')->id ?>">#k<?php echo $tpl->get('thread_comment')->id ?></a>
+                <strong><?php echo $tpl->user_name($tpl->get('thread_comment')->author) ?></strong>
+
                 <?php if ($tpl->get('thread_comment')->type == 'comment'): ?>
                     <?php echo $tpl->getLang('comment_added') ?>
                 <?php else: ?>
                     <?php echo $tpl->getLang('cause_added') ?>
                 <?php endif ?>
-
                 <?php echo dformat(strtotime($tpl->get('thread_comment')->create_date), '%Y-%m-%d %H:%M') ?>
                 
-                <?php if ($tpl->get('thread_comment')->type == 'cause_real'): ?>
+                <?php if (strpos($tpl->get('thread_comment')->type, 'cause') === 0): ?>
                     <span style="color: #000;">
-                        (<?php echo lcfirst($tpl->getLang('cause_type_default')) ?>)
-                    </span>
-                <?php elseif ($tpl->get('thread_comment')->type == 'cause_potential'): ?>
-                    <span style="color: #000;">
-                        (<?php echo lcfirst($tpl->getLang('cause_type_potential')) ?>)
+                        (<?php echo $tpl->getLang($tpl->get('thread_comment')->type) ?>)
                     </span>
                 <?php endif ?>
 
                 <?php if ($tpl->param('kid') != $tpl->get('thread_comment')->id): ?>
                     <div class="bez_comment_buttons">
                         <?php if (
-                            ($tpl->get('no_edit') == '') &&
                              $tpl->get('thread')->state == 'opened' &&
                              (($tpl->get('thread_comment')->type == 'comment' &&
                                      $tpl->get('thread_comment')->author == $tpl->current_user()) ||
@@ -69,33 +63,33 @@
             </div>
 		</div>
 		
-		<?php if (false): ?>
+		<?php if (strpos($tpl->get('thread_comment')->type, 'cause') === 0): ?>
+        <?php if ($tpl->get('tasks ' . $tpl->get('thread_comment')->id) == '')
+            $tpl->set('causes_without_tasks', true) ?>
 		<div style="margin-top: 10px; margin-left: 40px">
-			<?php foreach ($template['commcauses_tasks'][$template['commcause']->id] as $task): ?>
-				<?php $template['task'] = $task ?>
-				<?php if (	$template['action'] === 'task_edit' &&
-							$template['tid'] === $template['task']->id): ?>
+			<?php foreach ($tpl->get('tasks ' . $tpl->get('thread_comment')->id, array()) as $task): ?>
+				<?php $tpl->set('task', $task) ?>
+				<?php if (	$tpl->param('action') == 'task_edit' &&
+                            $tpl->param('tid') == $task->id): ?>
 					<?php include 'task_form.php' ?>
 				<?php else: ?>
 					<?php include 'task_box.php' ?>
 				<?php endif ?>
 			<?php endforeach ?>
-			<?php if ($template['issue']->user_is_coordinator()): ?>
-				<?php if (	$template['action'] === 'task_commcause_add' &&
-							$template['kid'] === $template['commcause']->id): ?>
+			<?php if ($tpl->get('thread')->user_is_coordinator()): ?>
+				<?php if (	$tpl->param('action') == 'task_add' &&
+                            $tpl->param('kid') == $tpl->get('thread_comment')->id): ?>
 					<?php include 'task_form.php' ?>
-				<?php elseif (	(!isset($template['no_edit']) ||
-                                    $template['no_edit'] === false) &&
-                                $template['commcause']->type !== 'comment' &&
-                              	$template['issue']->full_state() === '0' &&
-								$template['action'] !== 'task_edit'): ?>
+				<?php elseif (	$tpl->get('thread_comment')->type != 'comment' &&
+                                $tpl->get('thread')->state == 'opened' &&
+                                $tpl->param('action') != 'task_edit'): ?>
 						<div class="bez_second_lv_buttons">
-							<a href="?id=<?php echo $this->id('issue', 'id', $template['issue']->id, 'kid', $template['commcause']->id, 'action', 'task_commcause_add') ?>#z_" class="bez_subscribe_button">
+							<a href="<?php echo $tpl->url('thread', 'id', $tpl->get('thread')->id, 'kid', $tpl->get('thread_comment')->id, 'action', 'task_add') ?>#z_" class="bez_subscribe_button">
 								<span class="bez_awesome">&#xf0fe;</span>&nbsp;&nbsp;
-								<?php if ($template['commcause']->type === '1'): ?>
-									<?php echo $bezlang['corrective_action_add'] ?>
+								<?php if ($tpl->get('thread_comment')->type == 'cause_real'): ?>
+									<?php echo $tpl->getLang('corrective_action_add') ?>
 								<?php else: ?>
-									<?php echo $bezlang['preventive_action_add'] ?>
+									<?php echo $tpl->getLang('preventive_action_add') ?>
 								<?php endif ?>
 							</a>
 						</div>

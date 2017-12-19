@@ -1,33 +1,4 @@
 <?php
-//
-//if(!defined('DOKU_INC')) die();
-//
-//require_once 'entity.php';
-//
-//
-//class BEZ_mdl_Dummy_Commcause extends BEZ_mdl_Entity  {
-//
-//    protected $coordinator;
-//
-//    function __construct($model, $defaults=array()) {
-//        parent::__construct($model);
-//
-//        if (!isset($defaults['issue'])) {
-//            throw new Exception('every dummy entity must have issue in $defaults');
-//        }
-//
-//        $issue = $this->model->issues->get_one($defaults['issue']);
-//        $this->coordinator = $issue->coordinator;
-//    }
-//
-//    public function __get($property) {
-//		if ($property === 'coordinator') {
-//            return $this->coordinator;
-//        }
-//        parent::__get($property);
-//	}
-//}
-//
 
 namespace dokuwiki\plugin\bez\mdl;
 
@@ -81,10 +52,7 @@ class Thread_comment extends Entity {
 //			'coordinator' => array(array('dw_user', array('-proposal')), 'NOT NULL')
 //		));
 
-        if (!isset($defaults['thread'])) {
-            throw new \Exception('$defaults[thread] not set');
-        }
-        $this->thread = $defaults['thread'];
+
 
         $this->validator->set_rules(array(
             //'type' => array(array('select', array('0', '1', '2')), 'NOT NULL'),
@@ -99,7 +67,10 @@ class Thread_comment extends Entity {
             $this->last_modification_date = $this->create_date;
 
 
-
+            if (!isset($defaults['thread'])) {
+                throw new \Exception('$defaults[thread] not set');
+            }
+            $this->thread = $defaults['thread'];
 			$this->thread_id = $this->thread->id;
             $this->coordinator = $this->thread->coordinator;
             
@@ -114,7 +85,16 @@ class Thread_comment extends Entity {
 			
 //			$this->reporter = $this->model->user_nick;
 //			$this->datetime = $this->sqlite_date();
-		}
+		} else {
+            if ($this->thread_id != '') {
+                if (isset($defaults['thread']) && $this->thread_id == $defaults['thread']->id) {
+                    $this->thread = $defaults['thread'];
+                } elseif ($this->thread_id != null) {
+                    $this->thread = $this->model->threadFactory->get_one($this->thread_id);
+                }
+            }
+        }
+
 
 		//set validation
         if ($this->thread->user_is_coordinator()) {

@@ -1,4 +1,13 @@
 <?php /* @var \dokuwiki\plugin\bez\meta\Tpl $tpl */ ?>
+
+<?php if ($tpl->static_acl('thread', 'id') >= BEZ_PERMISSION_CHANGE): ?>
+    <a href="<?php echo $tpl->url('thread_report') ?>" class="bez_start_button" id="bez_report_issue_button">
+        <?php echo $tpl->getLang('report_issue') ?>
+    </a>
+<?php endif ?>
+
+<br /><br />
+
 <div class="bez_filter_form">
 <form action="<?php echo $tpl->url('threads') ?>" method="post">
 	<label><?php echo $tpl->getLang('state') ?>:
@@ -123,8 +132,10 @@
 				<?php if ($thread->close_date === NULL): ?>
 					<em>---</em>
 				<?php else: ?>
-					<?php echo dformat(strtotime($thread->close_date, '%Y-%m-%d')) ?><br />
-					<?php $s = $tpl->getLang('report_priority').': '.datetime_h(strtotime($thread->close_date)) ?>
+					<?php echo dformat(strtotime($thread->close_date), '%Y-%m-%d') ?><br />
+                    <?php $dStart = new DateTime($tpl->get('thread')->create_date) ?>
+                    <?php $dEnd = new DateTime($tpl->get('thread')->close_date) ?>
+					<?php $s = $tpl->getLang('report_priority').': ' . $dStart->diff($dEnd)->days . ' ' . $tpl->getLang('days') ?>
 					<?php echo str_replace(' ', '&nbsp;', $s) ?>
 				<?php endif ?>
 			</td>
@@ -137,7 +148,7 @@
 			</td>
 			<td>
 		<a href="<?php echo $tpl->url('tasks', 'issue', $thread->id, 'state', 0) ?>">
-				<?php echo $thread->task_count - $thread->task_count_open ?>
+				<?php echo $thread->task_count_closed ?>
 		</a>
 			/
 		<a href="<?php echo $tpl->url('tasks', 'issue', $thread->id) ?>">

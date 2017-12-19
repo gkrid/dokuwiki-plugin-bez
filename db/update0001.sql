@@ -3,11 +3,13 @@ CREATE TABLE thread (
 
   original_poster        TEXT    NOT NULL,
   coordinator            TEXT    NULL, -- NULL - proposal
+  closed_by              TEXT    NULL, -- who closed or rejected the thread
+
 
   private                BOOLEAN NOT NULL  DEFAULT 0, -- 0 - public, 1 - private
   lock                   BOOLEAN NOT NULL  DEFAULT 0, -- 0 - unlocked, 1 - locked
 
-  type                   INTEGER NOT NULL  DEFAULT 0, -- 0 - project, 1 - issue
+  type                   TEXT    NOT NULL  DEFAULT 'issue', -- issue, project
   state                  TEXT    NOT NULL  DEFAULT 'proposal', -- proposal,opened,done,closed,rejected
 
   create_date            TEXT    NOT NULL, -- ISO8601
@@ -131,11 +133,12 @@ CREATE TABLE task (
 
   original_poster        TEXT    NOT NULL,
   assignee               TEXT    NOT NULL,
+  closed_by              TEXT    NULL, -- who closed the task
 
   private                BOOLEAN NOT NULL DEFAULT 0, -- 0 - public, 1 - private
   lock                   BOOLEAN NOT NULL DEFAULT 0, -- 0 - unlocked, 1 - locked
 
-  state                  TEXT    NOT NULL DEFAULT 'opened', -- opened, done, rejected
+  state                  TEXT    NOT NULL DEFAULT 'opened', -- opened, done
   type                   TEXT    NOT NULL DEFAULT 'correction', -- correction, corrective, preventive, program
 
   create_date            TEXT    NOT NULL, -- ISO8601
@@ -146,8 +149,8 @@ CREATE TABLE task (
   cost                   REAL,
   plan_date              TEXT    NOT NULL, -- -- ISO8601
   all_day_event          INTEGER NOT NULL DEFAULT 0, -- 0 - false, 1 - true
-  start_time             TEXT NULL, -- HH:MM
-  finish_time            TEXT NULL, -- HH:MM
+  start_time             TEXT    NULL, -- HH:MM
+  finish_time            TEXT    NULL, -- HH:MM
 
   content                TEXT    NOT NULL,
   content_html           TEXT    NOT NULL,
@@ -198,7 +201,7 @@ END;
 CREATE TRIGGER task_tr_update_state_opened_closed
   UPDATE OF thread_id, state
   ON task
-  WHEN old.state = 'opened' AND new.state IN ('closed', 'rejected')
+  WHEN old.state = 'opened' AND new.state = 'done'
 BEGIN
   UPDATE thread
   SET task_count_closed = task_count_closed + 1
@@ -208,7 +211,7 @@ END;
 CREATE TRIGGER task_tr_update_state_closed_opened
   UPDATE OF thread_id, state
   ON task
-  WHEN old.state IN ('closed', 'rejected') AND new.state = 'opened'
+  WHEN old.state = 'done' AND new.state = 'opened'
 BEGIN
   UPDATE thread
   SET task_count_closed = task_count_closed - 1
@@ -218,7 +221,7 @@ END;
 CREATE TRIGGER task_tr_update_state_closed_closed
   UPDATE OF thread_id, state
   ON task
-  WHEN old.state IN ('closed', 'rejected') AND new.state IN ('closed', 'rejected')
+  WHEN old.state = 'done' AND new.state = 'done'
 BEGIN
   UPDATE thread
   SET task_count_closed = task_count_closed - 1
@@ -248,7 +251,7 @@ BEGIN
   WHERE id = old.thread_comment_id;
 END;
 
-CREATE TRIGGER thread_comment_tr_update_label_id
+CREATE TRIGGER thread_comment_tr_thread_comment_id
   UPDATE OF thread_comment_id
   ON task
 BEGIN
@@ -297,7 +300,7 @@ END;
 -- end of task_program triggres
 
 CREATE TABLE task_participant (
-  thread_id       INTEGER NOT NULL REFERENCES thread (id),
+  task_id       INTEGER NOT NULL REFERENCES thread (id),
   user_id         TEXT    NOT NULL,
 
   original_poster BOOLEAN NOT NULL DEFAULT 0,
@@ -309,15 +312,13 @@ CREATE TABLE task_participant (
   added_by        TEXT    NOT NULL, -- user who added the participant. Equals user_id when user subscribed himself
   added_date      TEXT    NOT NULL, -- ISO8601
 
-  PRIMARY KEY (thread_id, user_id)
+  PRIMARY KEY (task_id, user_id)
 );
 
 CREATE TABLE task_comment (
   id                     INTEGER NOT NULL PRIMARY KEY,
 
   task_id                INTEGER NOT NULL REFERENCES task (id),
-
-  type                   INTEGER NOT NULL DEFAULT 0, -- 0 -comment, 1 - closing comment
 
   author                 TEXT    NOT NULL,
   create_date            TEXT    NOT NULL, -- ISO8601
@@ -328,10 +329,12 @@ CREATE TABLE task_comment (
 );
 
 CREATE TABLE authentication_token (
-  page_id         TEXT PRIMARY KEY,
+  page_id         TEXT NOT NULL,
   token           TEXT NOT NULL,
 
   generated_by    TEXT NOT NULL,
   generation_date TEXT NOT NULL,
-  expire_date     TEXT
+  expire_date     TEXT,
+
+  PRIMARY KEY (page_id, token)
 );

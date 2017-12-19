@@ -55,12 +55,12 @@ class Acl {
 				$this->update_level(BEZ_AUTH_USER);
 			}
         } elseif (isset($_GET['t'])) {
-//            $page_id = $this->model->action->page_id();
-//            $toko = new Tokens();
-//
-//            if ($toko->check(trim($_GET['t']), $page_id)) {
-//                $this->update_level(BEZ_AUTH_VIEWER);
-//            }
+            $page_id = $this->model->action->id();
+
+            $user_tok = trim($_GET['t']);
+            if ($this->model->authentication_tokenFactory->get_token($page_id) == $user_tok) {
+                $this->update_level(BEZ_AUTH_VIEWER);
+            }
         }
     }
 
@@ -132,6 +132,9 @@ class Acl {
 
     private function static_task() {
         $acl = array_fill_keys(Task::get_columns(), BEZ_PERMISSION_NONE);
+
+        //virtual columns
+        $acl['participants'] = BEZ_PERMISSION_NONE;
 
         //BEZ_AUTH_VIEWER is also token viewer
         if ($this->level >= BEZ_AUTH_VIEWER) {
@@ -270,7 +273,7 @@ class Acl {
 
         //we create new commcause
         if ($thread_comment->id === NULL) {
-            if ($this->level >= BEZ_USER) {
+            if ($this->level >= BEZ_AUTH_USER) {
                 $acl['content'] = BEZ_PERMISSION_CHANGE;
             }
             
@@ -333,29 +336,102 @@ class Acl {
         return $this->static_label();
     }
 
-   private function check_tasktype($tasktype) {
-        $acl = array(
-            'id'            => BEZ_PERMISSION_NONE,
-            'pl'         => BEZ_PERMISSION_NONE,
-            'en'      => BEZ_PERMISSION_NONE
-        );
-        
+    private function static_task_program() {
+        $acl = array_fill_keys(Task_program::get_columns(), BEZ_PERMISSION_NONE);
+
         if ($this->level >= BEZ_AUTH_USER) {
             //user can display everythig
             $acl = array_map(function($value) {
                 return BEZ_PERMISSION_VIEW;
             }, $acl);
         }
-        
+
         if ($this->level >= BEZ_AUTH_ADMIN) {
             //admin can edit everythig
             $acl = array_map(function($value) {
-                return BEZ_PERMISSION_CHANGE;
+                return BEZ_PERMISSION_DELETE;
             }, $acl);
         }
-        
+
         return $acl;
     }
+
+    private function check_task_program(Task_program $task_program) {
+        return $this->static_label();
+    }
+
+    private function static_task_comment() {
+        $acl = array_fill_keys(Task_comment::get_columns(), BEZ_PERMISSION_NONE);
+
+        //BEZ_AUTH_VIEWER is also token viewer
+        if ($this->level >= BEZ_AUTH_VIEWER) {
+            //user can display everythig
+            $acl = array_map(function($value) {
+                return BEZ_PERMISSION_VIEW;
+            }, $acl);
+        }
+
+        if ($this->level >= BEZ_AUTH_ADMIN) {
+            //user can edit everything
+            $acl = array_map(function($value) {
+                return BEZ_PERMISSION_DELETE;
+            }, $acl);
+
+            return $acl;
+        }
+    }
+
+    private function check_task_comment(Task_comment $task_comment) {
+        $acl = $this->static_task_comment();
+
+        //we create new comment
+        if ($task_comment->id == NULL) {
+            if ($this->level >= BEZ_AUTH_USER) {
+                $acl['content'] = BEZ_PERMISSION_CHANGE;
+            }
+
+            return $acl;
+        }
+
+
+        if ($this->level >= BEZ_AUTH_LEADER) {
+            $acl['id'] = BEZ_PERMISSION_DELETE;
+            $acl['content'] = BEZ_PERMISSION_CHANGE;
+        }
+
+
+        if ($task_comment->author === $this->model->user_nick) {
+            $acl['content'] = BEZ_PERMISSION_CHANGE;
+            $acl['id'] = BEZ_PERMISSION_DELETE;
+        }
+
+        return $acl;
+
+    }
+
+//   private function check_tasktype($tasktype) {
+//        $acl = array(
+//            'id'            => BEZ_PERMISSION_NONE,
+//            'pl'         => BEZ_PERMISSION_NONE,
+//            'en'      => BEZ_PERMISSION_NONE
+//        );
+//
+//        if ($this->level >= BEZ_AUTH_USER) {
+//            //user can display everythig
+//            $acl = array_map(function($value) {
+//                return BEZ_PERMISSION_VIEW;
+//            }, $acl);
+//        }
+//
+//        if ($this->level >= BEZ_AUTH_ADMIN) {
+//            //admin can edit everythig
+//            $acl = array_map(function($value) {
+//                return BEZ_PERMISSION_CHANGE;
+//            }, $acl);
+//        }
+//
+//        return $acl;
+//    }
 
     /*returns array */
     public function check(Entity $obj) {

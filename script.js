@@ -23,6 +23,10 @@ jQuery(function () {
 	var getNparams = function(value) {
 		var nparams = [],
 			params = value.split(':');
+		//lang
+		if (params[0] !== 'bez') {
+			params.shift();
+		}
 		for (var i = 0; i < params.length; i += 2) {
             var k = params[i],
 				v = params[i+1];

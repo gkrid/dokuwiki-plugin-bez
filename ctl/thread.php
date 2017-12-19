@@ -10,10 +10,9 @@ if ($this->get_param('id') == '') {
 /** @var bez\mdl\Thread $thread */
 $thread = $this->model->threadFactory->get_one($this->get_param('id'));
 $this->tpl->set('thread', $thread);
-$this->tpl->set('corrections', array());
 $this->tpl->set('thread_comments', $this->model->thread_commentFactory->get_from_thread($thread));
-$this->tpl->set('corrections', $this->model->taskFactory->get_all(array('thread_id' => $thread->id,
-                                                                      'type' => 'correction')));
+$this->tpl->set('tasks', $this->model->taskFactory->get_from_thread($thread));
+$this->tpl->set('task_programs',  $this->model->task_programFactory->get_all());
 
 
 if ($this->get_param('action') == 'commcause_add') {
@@ -39,8 +38,8 @@ if ($this->get_param('action') == 'commcause_add') {
 } elseif ($this->get_param('action') == 'invite') {
     $client = $_POST['client'];
 
-    $thread->set_participant_flags($client, array('subscribent'));
-    $thread->mail_notify_invite($client);
+    $thread->invite($client);
+
     $this->add_notification($this->model->userFactory->get_user_email($client), $this->getLang('invitation_has_been_send'));
 
     $redirect = true;
@@ -62,9 +61,16 @@ if ($this->get_param('action') == 'commcause_add') {
         $anchor   = 'k' . $thread_comment->id;
         $redirect = true;
     }
-} elseif ($this->get_param('action') == 'task_correction_add') {
+} elseif ($this->get_param('action') == 'task_add') {
+
+    $defaults = array('thread' => $thread);
+
+    if ($this->get_param('kid') != '') {
+        $thread_comment = $this->model->thread_commentFactory->get_one($this->get_param('kid'), array('thread' => $thread));
+        $defaults['thread_comment'] = $thread_comment;
+    }
     /** @var bez\mdl\Task $task */
-    $task = $this->model->taskFactory->create_object(array('thread' => $thread));
+    $task = $this->model->taskFactory->create_object($defaults);
     $this->tpl->set('task', $task);
 
     //save

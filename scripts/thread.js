@@ -20,6 +20,8 @@ bez.ctl.thread = function() {
 			$tabs.find('.active').removeClass('active');
 			$a.parent().addClass('active');
 		};
+
+        var $action_buttons = $bez_comment_form.find("button[value=thread_close], button[value=thread_reject]");
 		
 		var activateComment = function () {		
 			$comment_type_input.removeAttr("disabled");
@@ -27,6 +29,7 @@ bez.ctl.thread = function() {
 			$cause_type_div.find("input").attr("disabled", "disabled");
 			
 			$bez_comment_form.removeClass('bez_cause');
+            $action_buttons.show();
 		};
 		
 		var activateCause = function() {
@@ -35,6 +38,7 @@ bez.ctl.thread = function() {
 			$cause_type_div.find("input").removeAttr("disabled");
 			
 			$bez_comment_form.addClass('bez_cause');
+            $action_buttons.hide();
 		};
 
 		if (active.hash === '#comment') {
@@ -57,8 +61,34 @@ bez.ctl.thread = function() {
     if ($bez_comment_form.length > 0) {
 		//textareas
 		var $textarea = $bez_comment_form.find("textarea");
+
+        var $close_button = $bez_comment_form.find("button[value=thread_close]");
+        var $reopen_button = $bez_comment_form.find("button[value=thread_reopen]");
+        var $reject_button = $bez_comment_form.find("button[value=thread_reject]");
+
 		var $header = $bez_comment_form.find(".bez_toolbar");
 		bez.rich_text_editor($textarea, $header);
+
+        $textarea.on('input', function() {
+            "use strict";
+            if (jQuery(this).val().length > 0) {
+                if ($close_button.length > 0) {
+                    $close_button.text(LANG.plugins.bez.comment_and_close_issue);
+                } else if($reopen_button.length > 0) {
+                    $reopen_button.text(LANG.plugins.bez.comment_and_reopen_issue);
+                } else {
+                    $reject_button.text(LANG.plugins.bez.comment_and_reject_issue);
+                }
+            } else {
+                if ($close_button.length > 0) {
+                    $close_button.text(LANG.plugins.bez.close_issue);
+                } else if($reopen_button.length > 0) {
+                    $reopen_button.text(LANG.plugins.bez.reopen_issue);
+                } else {
+                    $reject_button.text(LANG.plugins.bez.reject_issue);
+                }
+            }
+        });
     }
 
 	//show/hide comments

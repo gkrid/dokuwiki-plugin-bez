@@ -17,7 +17,8 @@
 			</span>
 			<div class="commcause_content">
 			<h2>
-				<?php if ($tpl->static_acl('thread_comment', 'type') >= BEZ_PERMISSION_CHANGE): ?>
+				<?php if ($tpl->static_acl('thread_comment', 'type') >= BEZ_PERMISSION_CHANGE &&
+                          $tpl->get('thread')->state == 'opened'): ?>
 				<ul class="bez_tabs">
 					<li
                         <?php if (  $tpl->value('type') == '' ||
@@ -38,41 +39,72 @@
 			</h2>
 			</div>
 			<div class="bez_content">
-				<textarea data-validation="required" name="content" class="bez_textarea_content" id="content1"><?php echo $tpl->value('content') ?></textarea>
+				<textarea name="content" class="bez_textarea_content" id="content1"><?php echo $tpl->value('content') ?></textarea>
 				
 				<input class="bez_comment_type" type="hidden" name="type" value="comment" />
-				<?php if ($tpl->static_acl('thread_comment', 'type') >= BEZ_PERMISSION_CHANGE): ?>
-					<div class="bez_cause_type">
-						<div style="margin-bottom: 10px;">
-						<label for="potential">
-							<?php echo $tpl->getLang('cause_type') ?>:
-						</label>
-                        <label>
-                            <input type="radio" name="type" value="cause_real"
-                                <?php if($tpl->value('type') != 'cause_potential') echo 'checked' ?>/>
-                                <?php echo $tpl->getLang('cause_type_default') ?>
-						</label>
-						&nbsp;&nbsp;
-                        <label>
-                            <input type="radio" name="type" value="cause_potential"
-                                <?php if($tpl->value('type') == 'cause_potential') echo 'checked' ?>/>
-                                <?php echo $tpl->getLang('cause_type_potential') ?>
-                        </label>
-					   </div>
+
+                <div class="plugin__bez_form_buttons">
+
+                <?php if ($tpl->static_acl('thread_comment', 'type') >= BEZ_PERMISSION_CHANGE &&
+                    $tpl->get('thread')->state == 'opened'): ?>
+                    <div class="bez_cause_type">
+                        <div style="margin-bottom: 10px;">
+                            <label for="potential">
+                                <?php echo $tpl->getLang('cause_type') ?>:
+                            </label>
+                            <label>
+                                <input type="radio" name="type" value="cause_real"
+                                    <?php if($tpl->value('type') != 'cause_potential') echo 'checked' ?>/>
+                                <?php echo $tpl->getLang('cause_real') ?>
+                            </label>
+                            &nbsp;&nbsp;
+                            <label>
+                                <input type="radio" name="type" value="cause_potential"
+                                    <?php if($tpl->value('type') == 'cause_potential') echo 'checked' ?>/>
+                                <?php echo $tpl->getLang('cause_potential') ?>
+                            </label>
+                        </div>
                     </div>
-				<?php endif ?>
-				<input type="submit" value="<?php echo $tpl->param('kid') != '' ? $tpl->getLang('correct') : $tpl->getLang('add') ?>">
-				 <a href="<?php echo $tpl->url('thread', 'id', $tpl->get('thread')->id) ?><?php if ($tpl->param('kid') !== '-1') echo '#k'.$tpl->param('kid') ?>" class="bez_delete_button bez_link_button bez_cancel_button">
-					<?php echo $tpl->getLang('cancel') ?>
-				</a>
+                <?php endif ?>
+
+                <div class="plugin__bez_form_buttons_container">
+                <?php if ($tpl->param('kid') != ''): ?>
+                    <a href="<?php echo $tpl->url('thread', 'id', $tpl->get('thread')->id) ?><?php if ($tpl->param('kid') != '') echo '#k'.$tpl->param('kid') ?>"
+                       class="plugin__bez_button plugin__bez_button_red">
+                        <?php echo $tpl->getLang('cancel') ?>
+                    </a>
+                <?php endif ?>
+
+                <?php if ($tpl->get('thread')->state == 'opened'): ?>
+                    <button class="plugin__bez_button plugin__bez_button_green" name="fn" value="comment_add">
+                        <?php echo $tpl->param('kid') != '' ? $tpl->getLang('correct') : $tpl->getLang('add') ?>
+                    </button>
+                <?php endif ?>
+                <?php if ($tpl->param('kid') == ''): ?>
+                    <?php if ($tpl->get('thread')->can_be_closed()): ?>
+                        <button class="plugin__bez_button plugin__bez_button_gray" name="fn" value="thread_close">
+                            <?php echo $tpl->getLang('js')['close_issue'] ?>
+                        </button>
+                    <?php elseif ($tpl->get('thread')->can_be_rejected()): ?>
+                        <button class="plugin__bez_button plugin__bez_button_gray" name="fn" value="thread_reject">
+                            <?php echo $tpl->getLang('js')['reject_issue'] ?>
+                        </button>
+                    <?php else: ?>
+                        <button class="plugin__bez_button plugin__bez_button_gray" name="fn" value="thread_reopen">
+                            <?php echo $tpl->getLang('js')['reopen_issue'] ?>
+                        </button>
+                    <?php endif ?>
+                <?php endif ?>
+                </div>
+                </div>
 		</div>
-        <?php if (  $tpl->param('kid') !== '-1' &&
+        <?php if (  $tpl->param('kid') != '' &&
                     $tpl->get('thread_comment')->task_count > 0): ?>
             <div style="margin-top: 10px; margin-left: 40px">
-                <?php foreach ($tpl->get('thread_comment')->get_tasks() as $task): ?>
+                <?php foreach ($tpl->get('tasks ' . $tpl->get('thread_comment')->id, array()) as $task): ?>
                     <?php $tpl->set('task', $task) ?>
-                    <?php if (	$tpl->action() == 'task_edit' &&
-                                $tpl->param('kid') == $task->id): ?>
+                    <?php if (	$tpl->param('action') == 'task_edit' &&
+                        $tpl->param('tid') == $task->id): ?>
                         <?php include 'task_form.php' ?>
                     <?php else: ?>
                         <?php include 'task_box.php' ?>

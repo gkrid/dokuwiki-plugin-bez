@@ -1,10 +1,11 @@
+<?php /* @var \dokuwiki\plugin\bez\meta\Tpl $tpl */ ?>
 <h1>
-	<?php echo $bezlang['8d_report'] ?>
+	<?php echo $tpl->getLang('8d_report') ?>
 	<span id="bez_8d_send_button">[<a href="
-		<?php echo $helper->mailto('',
-		$bezlang['8d_report'].': #'.$template['issue']->id.' '.$template['issue']->title,
-		$template['uri']) ?>">
-		✉ <?php echo $bezlang['send_mail'] ?>
+		<?php echo $tpl->mailto('',
+   $tpl->getLang('8d_report').': #'.$tpl->get('thread')->id.' '.$tpl->get('thread')->title,
+		$tpl->url()) ?>">
+		✉ <?php echo $tpl->getLang('send_mail') ?>
 	</a>]</span>
 </h1>
 
@@ -12,95 +13,99 @@
 <tr>
 	<td>
 		 <strong>
-		 	<a href="?id=<?php echo $this->id('issue', 'id', $template['issue']->id) ?>">
-				#<?php echo  $template['issue']->id ?>
+		 	<a href="<?php echo $tpl->url('thread', 'id', $tpl->get('thread')->id) ?>">
+				#<?php echo  $tpl->get('thread')->id ?>
 			</a>
 		</strong>
-		<?php echo  ucfirst($template['issue']->type_string) ?>
+        <?php if (!empty($tpl->get('thread')->label_name)): ?>
+            <?php echo $tpl->get('thread')->label_name ?>
+        <?php else: ?>
+            <i style="color: #777"><?php echo $tpl->getLang('issue_type_no_specified') ?></i>
+        <?php endif ?>
 	</td>
 
 	<td>
-		<strong><?php echo $bezlang['open_date'] ?>:</strong>
-		<?php echo  $helper->time2date($template['issue']->date) ?>
+		<strong><?php echo $tpl->getLang('open_date') ?>:</strong>
+        <?php echo dformat(strtotime($tpl->get('thread')->create_date), '%Y-%m-%d') ?>
 	</td>
 </tr>
 
 	<tr>
 	<td colspan="2">
-		<strong><?php echo $bezlang['title'] ?>:</strong>
-		<?php echo  $template['issue']->title ?>
+		<strong><?php echo $tpl->getLang('title') ?>:</strong>
+		<?php echo  $tpl->get('thread')->title ?>
 	</td>
 </tr>
 </table>
 <?php $D = 1 ?>
-<h2><?php echo $D++ ?>D - <?php echo $bezlang['1d'] ?></h2>
+<h2><?php echo $D++ ?>D - <?php echo $tpl->getLang('1d') ?></h2>
 <ul>
-	<?php foreach($template['issue']->get_participants() as $participant): ?>
-		<li><?php echo  $participant ?></li>
+	<?php foreach($tpl->get('thread')->get_participants() as $participant): ?>
+		<li><?php echo $tpl->user_name($participant['user_id']) ?></li>
 	<?php endforeach ?>
 </ul>
 
-<h2><?php echo $D++ ?>D - <?php echo $bezlang['2d'] ?></h2>
-<?php echo  $template['issue']->description_cache ?>
+<h2><?php echo $D++ ?>D - <?php echo $tpl->getLang('2d') ?></h2>
+<?php echo $tpl->get('thread')->content_html ?>
 
-<?php if (count($template['tasks']['3d']) > 0): ?>
-    <h2><?php echo $D++ ?>D - <?php echo $bezlang['3d'] ?></h2>
-    <?php $tasks = $template['tasks']['3d'] ?>
+<?php if (count($tpl->get('8d_tasks')['correction']) > 0): ?>
+    <h2><?php echo $D++ ?>D - <?php echo $tpl->getLang('3d') ?></h2>
+    <?php $tpl->set('tasks', $tpl->get('8d_tasks')['correction']) ?>
     <?php include '8d_tasks.php' ?>
 <?php endif ?>
 
-<?php if (count($template['real_causes']) > 0): ?>
-    <h2><?php echo $D++ ?>D - <?php echo $bezlang['4d'] ?></h2>	
-    <?php $causes = $template['real_causes'] ?>
+<?php if (count($tpl->get('causes_real')) > 0): ?>
+    <h2><?php echo $D++ ?>D - <?php echo $tpl->getLang('4d') ?></h2>
+    <?php $tpl->set('causes', $tpl->get('causes_real')) ?>
     <?php include '8d_causes.php' ?>
 <?php endif ?>
 
-<?php if (count($template['tasks']['5d']) > 0): ?>
-    <h2><?php echo $D++ ?>D - <?php echo $bezlang['5d'] ?></h2>	
-    <?php $tasks = $template['tasks']['5d'] ?>
+<?php if (count($tpl->get('8d_tasks')['corrective']) > 0): ?>
+    <h2><?php echo $D++ ?>D - <?php echo $tpl->getLang('5d') ?></h2>
+    <?php $tpl->set('tasks', $tpl->get('8d_tasks')['corrective']) ?>
     <?php include '8d_tasks.php' ?>
 <?php endif ?>
 
-<?php if (count($template['potential_causes']) > 0): ?>
-    <h2><?php echo $D++ ?>D - <?php echo $bezlang['6d'] ?></h2>	
-    <?php $causes = $template['potential_causes'] ?>
+<?php if (count($tpl->get('causes_potential')) > 0): ?>
+    <h2><?php echo $D++ ?>D - <?php echo $tpl->getLang('6d') ?></h2>
+    <?php $tpl->set('causes', $tpl->get('causes_potential')) ?>
     <?php include '8d_causes.php' ?>
 <?php endif ?>
 
-<?php if (count($template['tasks']['7d']) > 0): ?>
-    <h2><?php echo $D++ ?>D - <?php echo $bezlang['7d'] ?></h2>	
-    <?php $tasks = $template['tasks']['7d'] ?>
+<?php if (count($tpl->get('8d_tasks')['preventive']) > 0): ?>
+    <h2><?php echo $D++ ?>D - <?php echo $tpl->getLang('7d') ?></h2>
+    <?php $tpl->set('tasks', $tpl->get('8d_tasks')['preventive']) ?>
     <?php include '8d_tasks.php' ?>
 <?php endif ?>
 
 
-<?php if ($template['issue']->state !== '0'): ?>
-    <h2><?php echo $D++ ?>D - <?php echo $bezlang['8d'] ?></h2>
-	<?php echo  $template['issue']->opinion_cache ?>
+<?php if ($tpl->get('thread')->state != 'opened'): ?>
+    <h2><?php echo $D++ ?>D - <?php echo $tpl->getLang('8d') ?></h2>
+	<?php echo  $tpl->get('thread')->closing_comment() ?>
     <table>
     <tr>
         <td>
-            <strong><?php echo $bezlang['true_date'] ?>:</strong>
-            <?php echo  $helper->time2date($template['issue']->last_mod) ?>
+            <strong><?php echo $tpl->getLang('true_date') ?>:</strong>
+            <?php echo dformat(strtotime($tpl->get('thread')->close_date), '%Y-%m-%d') ?>
         </td>
         <td>
-            <strong><?php echo $bezlang['state'] ?>:</strong>
-            <?php echo $template['issue']->state_string ?>
+            <strong><?php echo $tpl->getLang('state') ?>:</strong>
+            <?php echo $tpl->getLang('state_' . $tpl->get('thread')->state) ?>
         </td>
     </tr>
 
     <tr>
         <td>
-            <strong><?php echo $bezlang['totalcost'] ?>:</strong>
-            <?php if ($template['total_cost'] !== NULL): ?>
-                <?php echo $template['total_cost'] ?>
+            <strong><?php echo $tpl->getLang('totalcost') ?>:</strong>
+            <?php if ($tpl->get('thread')->task_sum_cost != ''): ?>
+                <?php echo $tpl->get('thread')->task_sum_cost ?>
             <?php else: ?>
                 <em>---</em>
             <?php endif ?>
         </td>
         <td>
-            <strong><?php echo $bezlang['coordinator'] ?>:</strong>
-            <?php echo $this->model->users->get_user_full_name($template['issue']->coordinator) ?>
+            <strong><?php echo $tpl->getLang('coordinator') ?>:</strong>
+            <?php echo $tpl->user_name($tpl->get('thread')->coordinator) ?>
         </td>
     </tr>
     </table>

@@ -6,7 +6,7 @@
 	<div class="bez_left_col">
 		<!-- Correction -->
 		<div style="margin-top: 10px">
-			<?php foreach ($tpl->get('corrections') as $task): ?>
+			<?php foreach ($tpl->get('tasks')['corrections'] as $task): ?>
 				<?php $tpl->set('task', $task) ?>
 				<?php if (	$tpl->param('action') == 'task_edit' &&
                             $tpl->param('tid') == $task->id): ?>
@@ -16,7 +16,8 @@
 				<?php endif ?>
 				
 			<?php endforeach ?>
-			<?php if ($tpl->param('action') == 'task_correction_add'): ?>
+			<?php if (  $tpl->param('action') == 'task_add' &&
+                        $tpl->param('kid') == ''): ?>
 				<?php include 'task_form.php' ?>
 			<?php endif ?>
 		</div>
@@ -24,7 +25,7 @@
 		<div class="bez_second_lv_buttons" style="margin-top: 10px">
 			<?php if (	$tpl->get('thread')->user_is_coordinator() &&
                         $tpl->get('thread')->state == 'opened'): ?>
-				<a href="<?php echo $tpl->url('thread', 'id', $tpl->get('thread')->id, 'action', 'task_correction_add') ?>#z_" class="bez_subscribe_button">
+				<a href="<?php echo $tpl->url('thread', 'id', $tpl->get('thread')->id, 'action', 'task_add') ?>#z_" class="bez_subscribe_button">
 					<span class="bez_awesome">&#xf0fe;</span>&nbsp;&nbsp;<?php echo $tpl->getLang('correction_add') ?>
 				</a>
 			<?php endif ?>
@@ -42,17 +43,52 @@
 						$tpl->param('kid') == $thread_comment->id): ?>
 				<?php include 'commcause_form.php' ?>
 			<?php else: ?>
+                <?php //$tpl->set('causes_without_tasks') ?>
 				<?php include 'commcause_box.php' ?>
 			<?php endif ?>
 		<?php endforeach ?>
 
-<?php if (	$tpl->get('thread')->state == 'opened' &&
-			!(strpos($tpl->param('action'), 'task') === 0) &&
+        <?php if ($tpl->get('thread')->state == 'closed'): ?>
+            <div class="plugin__bez_status_label">
+            <span class="icon icon_green">
+                <?php echo inlineSVG(DOKU_PLUGIN . 'bez/images/tick.svg') ?>
+            </span>
+                <?php printf($tpl->getLang('user_closed_issue'),
+                             '<strong>' . $tpl->user_name($tpl->get('thread')->closed_by) . '</strong>',
+                             dformat(strtotime($tpl->get('thread')->close_date), '%f')) ?>
+            </div>
+        <?php elseif ($tpl->get('thread')->state == 'rejected'): ?>
+                <div class="plugin__bez_status_label">
+            <span class="icon icon_red">
+                <?php echo inlineSVG(DOKU_PLUGIN . 'bez/images/close.svg') ?>
+            </span>
+                    <?php printf($tpl->getLang('user_rejected_issue'),
+                                 '<strong>' . $tpl->user_name($tpl->get('thread')->closed_by) . '</strong>',
+                                 dformat(strtotime($tpl->get('thread')->close_date), '%f')) ?>
+                </div>
+        <?php endif ?>
+
+
+<?php if (	!(strpos($tpl->param('action'), 'task') === 0) &&
             $tpl->param('action') != 'commcause_edit'): ?>
 
-<?php include 'commcause_form.php' ?>
-	
+    <?php include 'commcause_form.php' ?>
+
+    <br>
+    <?php if ($tpl->get('thread')->task_count - $tpl->get('thread')->task_count_closed > 0): ?>
+        <div class="info"><?php echo $tpl->getLang('issue_unclosed_tasks') ?></div>
+    <?php endif ?>
+    <?php if ($tpl->get('thread')->state == 'proposal'): ?>
+        <div class="info"><?php echo $tpl->getLang('issue_is_proposal') ?></div>
+    <?php endif ?>
+    <?php if ($tpl->get('causes_without_tasks')): ?>
+        <div class="info"><?php echo $tpl->getLang('cause_without_task') ?></div>
+    <?php endif ?>
+    <?php if ($tpl->get('thread')->state == 'opened' && $tpl->get('thread')->task_count == 0): ?>
+        <div class="info"><?php echo $tpl->getLang('issue_no_tasks') ?></div>
+    <?php endif ?>
 <?php endif ?>
+
 
 </div>
 <div class="bez_right_col">

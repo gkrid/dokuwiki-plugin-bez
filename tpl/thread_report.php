@@ -17,7 +17,7 @@
 <?php endif ?>
 <fieldset id="bds_issue_box"  class="bds_form <?php echo $class ?>">
 
-<?php if ($tpl->action() === 'update'): ?>
+<?php if ($tpl->param('action') == 'edit'): ?>
 <div class="row">
 <label for="id"><?php echo $tpl->getLang('id') ?>:</label>
 <span><strong>#<?php echo $tpl->get('thread')->id ?></strong></span>

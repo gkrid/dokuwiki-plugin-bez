@@ -1,7 +1,6 @@
 <?php /* @var \dokuwiki\plugin\bez\meta\Tpl $tpl */ ?>
 <div    id="bds_issue_box"
-        class="pr<?php echo $tpl->get('thread')->priority ?>
-        <?php if (  $template['action'] === 'issue_edit_metadata') echo 'bez_metadata_edit_warn' ?>">
+        class="pr<?php echo $tpl->get('thread')->priority ?>">
 
 <h1>
 
@@ -61,20 +60,7 @@
 </table>
 
 <?php echo $tpl->get('thread')->content_html ?>
-
-<?php if ($tpl->get('thread')->task_count - $tpl->get('thread')->task_count_closed > 0): ?>
-    <div class="info"><?php echo $tpl->getLang('issue_unclosed_tasks') ?></div>
-<?php endif ?>
-<?php if ($tpl->get('thread')->state == 'proposal'): ?>
-    <div class="info"><?php echo $tpl->getLang('issue_is_proposal') ?></div>
-<?php endif ?>
-<?php if ($tpl->get('thread')->causes_without_tasks_count() > 0): ?>
-    <div class="info"><?php echo $tpl->getLang('cause_without_task') ?></div>
-<?php endif ?>
-<?php if ($tpl->get('thread')->state == 'open' && $tpl->get('thread')->task_count == 0): ?>
-    <div class="info"><?php echo $tpl->getLang('issue_no_tasks') ?></div>
-<?php endif ?>
-
+    
 <div class="bez_buttons">
 
 	<?php if (count($tpl->get('thread')->changable_fields()) > 0): ?>
@@ -90,7 +76,7 @@
 		✉ <?php echo $tpl->getLang('send_mail') ?>
 	</a>
 
-	<a href="<?php echo $tpl->url('8d', $tpl->get('thread')->id) ?>" class="bds_inline_button bds_report_button">
+	<a href="<?php echo $tpl->url('8d', 'id', $tpl->get('thread')->id) ?>" class="bds_inline_button bds_report_button">
 		⎙ <?php echo $tpl->getLang('8d_report') ?>
 	</a>
 </div>

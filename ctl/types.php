@@ -5,7 +5,7 @@ $labels = $this->model->labelFactory->get_all();
 if ($this->get_param('id') === '') {
     $label = $this->model->labelFactory->create_object();
 } else {
-    $label = $this->model->labelFactory->get_one($this->param('id'));
+    $label = $this->model->labelFactory->get_one($this->get_param('id'));
 }
 
 $this->tpl->set('labels', $labels);

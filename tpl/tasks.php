@@ -1,115 +1,118 @@
+<?php if ($tpl->static_acl('task', 'id') >= BEZ_PERMISSION_CHANGE): ?>
+    <a href="<?php echo $tpl->url('task_form') ?>" class="bez_start_button" id="bez_report_issue_button">
+        <?php echo $tpl->getLang('add_task') ?>
+    </a>
+<?php endif ?>
+
+<br /><br />
+
 <div class="bez_filter_form">
-<form action="<?php echo $template['uri'] ?>?id=<?php echo $this->id('tasks') ?>" method="POST">
+<form action="<?php echo $tpl->url('tasks') ?>" method="POST">
 
-<label><?php echo $bezlang['issue'] ?>:
-	<select name="issue">
-		<option <?php if ($value['issue'] == '-all') echo 'selected' ?>
-			value="-all">--- <?php echo $bezlang['all'] ?> ---</option>
-	<?php foreach ($template['issues'] as $issue_id): ?>
-		<option <?php if ($value['issue'] == $issue_id) echo 'selected' ?>
-			value="<?php echo $issue_id ?>">#<?php echo $issue_id ?></option>
+<label><?php echo $tpl->getLang('issue') ?>:
+	<select name="thread_id">
+		<option <?php if ($tpl->value('thread_id') == '-all') echo 'selected' ?>
+			value="-all">--- <?php echo $tpl->getLang('all') ?> ---</option>
+	<?php foreach ($tpl->get('thread_ids') as $thread_id): ?>
+		<option <?php if ($tpl->value('thread_id') == $thread_id) echo 'selected' ?>
+			value="<?php echo $thread_id ?>">#<?php echo $thread_id ?></option>
 	<?php endforeach ?>
 	</select>
 </label>
 
-<label><?php echo $bezlang['class'] ?>:
-	<select name="action">
-		<option <?php if ($value['action'] == '-all') echo 'selected' ?>
-			value="-all">--- <?php echo $bezlang['all'] ?> ---</option>
-	<?php foreach ($template['actions'] as $key => $name): ?>
-		<option <?php if ($value['action'] == (string)$key) echo 'selected' ?>
-			value="<?php echo $key ?>"><?php echo $name ?></option>
+<label><?php echo $tpl->getLang('class') ?>:
+	<select name="type">
+		<option <?php if ($tpl->value('type') == '-all') echo 'selected' ?>
+			value="-all">--- <?php echo $tpl->getLang('all') ?> ---</option>
+	<?php foreach (\dokuwiki\plugin\bez\mdl\Task::get_types() as $type): ?>
+		<option <?php if ($tpl->value('$type') == $type) echo 'selected' ?>
+			value="<?php echo $type ?>"><?php echo $tpl->getLang('task_type_' . $type) ?></option>
 	<?php endforeach ?>
 	</select>
 </label>
 
-<label><?php echo $bezlang['state'] ?>:
-	<select name="taskstate">
-		<option <?php if ($value['taskstate'] == '-all') echo 'selected' ?>
-			value="-all">--- <?php echo $bezlang['all'] ?> ---</option>
-	<?php foreach ($template['states'] as $key => $name): ?>
-		<option <?php if ($value['taskstate'] == (string)$key) echo 'selected' ?>
-			value="<?php echo $key ?>"><?php echo $name ?></option>
+<label><?php echo $tpl->getLang('state') ?>:
+	<select name="state">
+		<option <?php if ($tpl->value('state') == '-all') echo 'selected' ?>
+			value="-all">--- <?php echo $tpl->getLang('all') ?> ---</option>
+	<?php foreach (\dokuwiki\plugin\bez\mdl\Task::get_states() as $state): ?>
+		<option <?php if ($tpl->value('state') == $state) echo 'selected' ?>
+			value="<?php echo $state ?>"><?php echo $tpl->getLang('task_state_' . $state) ?></option>
 	<?php endforeach ?>
 	</select>
 </label>
 
-<label><?php echo $bezlang['task_type'] ?>:
-	<select name="tasktype">
-		<option <?php if ($value['tasktype'] == '-all') echo 'selected' ?>
-			value="-all">--- <?php echo $bezlang['all'] ?> ---</option>
-		<option <?php if ($value['tasktype'] == '-none') echo 'selected' ?>
-			value="-none">-- <?php echo $bezlang['none'] ?> --</option>
-	<?php foreach ($template['tasktypes'] as $key => $name): ?>
-		<option <?php if ($value['tasktype'] == (string)$key) echo 'selected' ?>
-			value="<?php echo $key ?>"><?php echo $name ?></option>
+<label><?php echo $tpl->getLang('task_type') ?>:
+	<select name="task_program_id">
+		<option <?php if ($tpl->value('task_program_id') == '-all') echo 'selected' ?>
+			value="-all">--- <?php echo $tpl->getLang('all') ?> ---</option>
+		<option <?php if ($tpl->value('task_program_id') == '-none') echo 'selected' ?>
+			value="-none">-- <?php echo $tpl->getLang('none') ?> --</option>
+	<?php foreach ($tpl->get('task_programs') as $task_program): ?>
+		<option <?php if ($tpl->value('task_program_id') == $task_program->id) echo 'selected' ?>
+			value="<?php echo $task_program->id ?>"><?php echo $task_program->name ?></option>
 	<?php endforeach ?>
 	</select>
 </label>
 
-<label><?php echo $bezlang['executor'] ?>:
-	<select name="executor">
-		<option <?php if ($value['executor'] == '-all') echo 'selected' ?>
-			value="-all">--- <?php echo $bezlang['all'] ?> ---</option>
-	<optgroup label="<?php echo $bezlang['users'] ?>">
-		<?php foreach ($template['executors'] as $nick => $name): ?>
-			<option <?php if ($value['executor'] == $nick) echo 'selected' ?>
-				value="<?php echo $nick ?>"><?php echo $name ?></option>
-		<?php endforeach ?>
-	</optgroup>
-	
-	<optgroup label="<?php echo $bezlang['groups'] ?>">
-		<?php foreach ($template['groups'] as $name): ?>
-			<?php $group = "@$name" ?>
-			<option <?php if ($value['executor'] == $group) echo 'selected' ?>
-				value="<?php echo $group ?>"><?php echo $group ?></option>
-		<?php endforeach ?>
-	</optgroup>
-	</select>
-	
+<label><?php echo $tpl->getLang('executor') ?>:
+    <select name="assignee">
+        <option <?php if ($tpl->value('assignee') == '-all') echo 'selected' ?>
+                value="-all">--- <?php echo $tpl->getLang('all') ?> ---</option>
+        <optgroup label="<?php echo $tpl->getLang('users') ?>">
+            <?php foreach ($tpl->get('users') as $nick => $name): ?>
+                <option <?php if ($tpl->value('assignee') == $nick) echo 'selected' ?>
+                        value="<?php echo $nick ?>"><?php echo $name ?></option>
+            <?php endforeach ?>
+        </optgroup>
+        <optgroup label="<?php echo $tpl->getLang('groups') ?>">
+            <?php foreach ($tpl->get('groups') as $name): ?>
+                <?php $group = "@$name" ?>
+                <option <?php if ($tpl->value('assignee') == $group) echo 'selected' ?>
+                        value="<?php echo $group ?>"><?php echo $group ?></option>
+            <?php endforeach ?>
+        </optgroup>
+    </select>
 </label>
 
 
-<label><?php echo $bezlang['description'] ?>:
-	<input name="task" value="<?php echo $value['task'] ?>" />
+<label><?php echo $tpl->getLang('description') ?>:
+	<input name="content" value="<?php echo $tpl->value('content') ?>" />
 </label>
 
-<label><?php echo $bezlang['evaluation'] ?>:
-	<input name="reason" value="<?php echo $value['reason'] ?>" />
-</label>
 
 <div class="time_filter">
 	<label>
 		<select name="date_type">
-			<option <?php if ($value['date_type'] == 'plan') echo 'selected' ?>
-				value="plan"><?php echo $bezlang['plan_date'] ?></option>
-			<option <?php if ($value['date_type'] == 'open') echo 'selected' ?>
-				value="open"><?php echo $bezlang['open_date'] ?></option>
-			<option <?php if ($value['date_type'] == 'closed') echo 'selected' ?>
-				value="closed"><?php echo $bezlang['close_date'] ?></option>
+			<option <?php if ($tpl->value('date_type') == 'plan') echo 'selected' ?>
+				value="plan"><?php echo $tpl->getLang('plan_date') ?></option>
+			<option <?php if ($tpl->value('date_type') == 'open') echo 'selected' ?>
+				value="open"><?php echo $tpl->getLang('open_date') ?></option>
+			<option <?php if ($tpl->value('date_type') == 'closed') echo 'selected' ?>
+				value="closed"><?php echo $tpl->getLang('close_date') ?></option>
 		</select>:
 	</label>
-	<label><?php echo $bezlang['month'] ?>:
+	<label><?php echo $tpl->getLang('month') ?>:
 		<select name="month">
-			<option <?php if ($value['month'] == '-all') echo 'selected' ?>
-				value="-all">--- <?php echo $bezlang['all'] ?> ---</option>
-		<?php foreach ($template['months'] as $id => $month): ?>
-			<option <?php if ($value['month'] == $id) echo 'selected' ?>
-				value="<?php echo $id ?>"><?php echo $bezlang[$month] ?></option>
+			<option <?php if ($tpl->value('month') == '-all') echo 'selected' ?>
+				value="-all">--- <?php echo $tpl->getLang('all') ?> ---</option>
+		<?php foreach ($tpl->get('months') as $nr => $month): ?>
+			<option <?php if ($value['month'] == $nr) echo 'selected' ?>
+				value="<?php echo $nr ?>"><?php echo $tpl->getLang($month) ?></option>
 		<?php endforeach ?>
 		</select>
 	</label>
-	<label><?php echo $bezlang['year'] ?>:
+	<label><?php echo $tpl->getLang('year') ?>:
 		<select name="year">
-			<option <?php if ($value['year'] == '-all') echo 'selected' ?>
-				value="-all">--- <?php echo $bezlang['all'] ?> ---</option>
-		<?php foreach ($template['years'] as $year): ?>
-			<option <?php if ($value['year'] == $year) echo 'selected' ?>
+			<option <?php if ($tpl->value('year') == '-all') echo 'selected' ?>
+				value="-all">--- <?php echo $tpl->getLang('all') ?> ---</option>
+		<?php foreach ($tpl->get('years') as $year): ?>
+			<option <?php if ($tpl->value('year') == $year) echo 'selected' ?>
 				value="<?php echo $year ?>"><?php echo $year ?></option>
 		<?php endforeach ?>
 		</select>
 	</label>
-	<label><input type="submit" value="<?php echo $bezlang['filter'] ?>" /></label>
+	<label><input type="submit" value="<?php echo $tpl->getLang('filter') ?>" /></label>
 </div>
 </form>
 </div>
@@ -129,24 +132,24 @@
 
 <table class="bez bez_sumarise">
 <tr>
-	<th><?php echo $bezlang['id'] ?></th>
-	<th><?php echo $bezlang['state'] ?></th>
-	<th><?php echo $bezlang['task_type'] ?></th>
-	<th><?php echo $bezlang['description'] ?></th>
+	<th><?php echo $tpl->getLang('id') ?></th>
+	<th><?php echo $tpl->getLang('state') ?></th>
+	<th><?php echo $tpl->getLang('task_type') ?></th>
+	<th><?php echo $tpl->getLang('description') ?></th>
 	
-	<th><?php echo $bezlang['executor'] ?></th>
-	<th><?php echo $bezlang['plan'] ?></th>
-	<th><?php echo $bezlang['cost'] ?></th>
+	<th><?php echo $tpl->getLang('executor') ?></th>
+	<th><?php echo $tpl->getLang('plan') ?></th>
+	<th><?php echo $tpl->getLang('cost') ?></th>
 	
-	<th><?php echo $bezlang['closed'] ?></th>
-	<th><?php echo $bezlang['hours_no'] ?></th>
+	<th><?php echo $tpl->getLang('closed') ?></th>
+	<th><?php echo $tpl->getLang('hours_no') ?></th>
 	
 </tr>
-<?php foreach ($template['tasks'] as $task): ?>
-	<tr class="pr<?php echo $task['priority'] ?>" data-bez-row-id="<?php echo $task['id'] ?>">
+<?php foreach ($tpl->get('tasks') as $task): ?>
+	<tr class="pr<?php echo $task->priority ?>" data-bez-row-id="<?php echo $task->id ?>">
 		<td>
-            <a href="?id=<?php echo $this->id('task', 'tid', $task['id']) ?>">
-               <?php if (!empty($task['issue'])) echo '#'.$task['issue'] ?>
+            <a href="<?php echo $tpl->url('task', 'tid', $task->id) ?>">
+               <?php if (!empty($task->thread_id)) echo '#'.$task->thread_id ?>
 		       #z<?php echo $task['id'] ?>
 	       </a>
 		</td>
@@ -232,12 +235,4 @@
 		<td colspan="1"><?php echo $template['tasks_stats']['totalhours'] ?></td>
 	</tr>
 </table>
-
-[ <a class="" href="
-	<?php echo $helper->mailto('',
-	'[BEZ] '.$bezlang['tasks_juxtaposition'],
-	DOKU_URL . 'doku.php?id='.$_GET['id']) ?>">
-	✉ <?php echo $bezlang['send_mail'] ?>
-</a> ]
-
 </div>
