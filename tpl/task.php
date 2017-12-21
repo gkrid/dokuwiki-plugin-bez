@@ -1,4 +1,4 @@
-
+<?php /* @var \dokuwiki\plugin\bez\meta\Tpl $tpl */ ?>
 <?php if ($tpl->get('task')->thread != null): ?>
     <div id="bds_issue_box" class="pr<?php echo $tpl->get('task')->thread->priority ?>">
         <div>
@@ -63,7 +63,7 @@
             </span>
             <?php printf($tpl->getLang('user_did_task'),
                            '<strong>' . $tpl->user_name($tpl->get('task')->closed_by) . '</strong>',
-                           dformat(strtotime($tpl->get('task')->close_date), '%f')) ?>
+                           $tpl->date_fuzzy_age($tpl->get('task')->close_date)) ?>
         </div>
     <?php endif ?>
 

@@ -26,6 +26,7 @@ class Thread_commentFactory extends Factory {
             $this->beginTransaction();
 
             if ($data['fn'] == 'comment_add' ||
+                $data['fn'] == 'thread_close' ||
                 $data['content'] != '') {
                 $thread_comment->set_data($data);
                 $this->save($thread_comment);

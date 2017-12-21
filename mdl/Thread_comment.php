@@ -23,7 +23,16 @@ class Thread_comment extends Entity {
 	}
 
     public function __get($property) {
-	    if ($property == 'coordinator' || $property == 'thread') {
+        if ($property == 'thread') {
+            if ($this->thread_id == null) {
+                return null;
+            }
+            if ($this->thread == null) {
+                $this->thread = $this->model->threadFactory->get_one($this->thread_id);
+            }
+            return $this->thread;
+
+        } elseif ($property == 'coordinator') {
 	        return $this->$property;
         }
         return parent::__get($property);
@@ -86,12 +95,8 @@ class Thread_comment extends Entity {
 //			$this->reporter = $this->model->user_nick;
 //			$this->datetime = $this->sqlite_date();
 		} else {
-            if ($this->thread_id != '') {
-                if (isset($defaults['thread']) && $this->thread_id == $defaults['thread']->id) {
-                    $this->thread = $defaults['thread'];
-                } elseif ($this->thread_id != null) {
-                    $this->thread = $this->model->threadFactory->get_one($this->thread_id);
-                }
+            if (isset($defaults['thread']) && $this->thread_id == $defaults['thread']->id) {
+                $this->thread = $defaults['thread'];
             }
         }
 

@@ -10,10 +10,25 @@ abstract class Factory {
 	protected $objects = array();
 
 	protected function filter_field_map($field) {
-	    return $this->get_table_name() . '.' . $field;
+        $table = $this->get_table_view();
+        if (!$table) {
+            $table = $this->get_table_name();
+        }
+
+	    return "$table.$field";
     }
 
-    protected abstract function select_query();
+    protected function select_query() {
+	    $table = $this->get_table_view();
+	    if (!$table) {
+	        $table = $this->get_table_name();
+        }
+        return "SELECT * FROM $table";
+    }
+
+    public function get_table_view() {
+	    return false;
+    }
 
     protected function build_where($filters=array()) {
 		$execute = array();
@@ -104,15 +119,7 @@ abstract class Factory {
 
     //chek acl
     public function get_all($filters=array(), $orderby='', $desc=true, $defaults=array(), $limit=false) {
-//        $dummy = $this->get_dummy_object();
-//        if ($dummy->acl_of('id') < BEZ_PERMISSION_VIEW) {
-//            throw new PermissionDeniedException();
-//        }
-//
-//        if ($this->select_query === NULL) {
-//            throw new \Exception('no select query defined');
-//        }
-        
+
         list($where_q, $execute) = $this->build_where($filters);
 		
 		$q = $this->select_query() . $where_q;
@@ -143,18 +150,17 @@ abstract class Factory {
     }
     
     public function count($filters=array()) {
-//        $dummy = $this->get_dummy_object();
-//        if ($dummy->acl_of('id') < BEZ_PERMISSION_VIEW) {
-//            throw new PermissionDeniedException();
-//        }
-
+        $table = $this->get_table_view();
+        if (!$table) {
+            $table = $this->get_table_name();
+        }
         if ($this->acl_static('id') < BEZ_PERMISSION_VIEW) {
             throw new PermissionDeniedException();
         }
 
         list($where_q, $execute) = $this->build_where($filters);
         
-        $q = 'SELECT COUNT(*) FROM ' . $this->get_table_name() . ' ' . $where_q;
+        $q = "SELECT COUNT(*) FROM $table " . $where_q;
         $sth = $this->model->db->prepare($q);
         $sth->execute($execute);
         
@@ -163,8 +169,12 @@ abstract class Factory {
     }
 
     public function get_one($id, $defaults=array()) {
+        $table = $this->get_table_view();
+        if (!$table) {
+            $table = $this->get_table_name();
+        }
 
-		$q = $this->select_query().' WHERE '.$this->get_table_name().'.id = ?';
+		$q = $this->select_query()." WHERE $table.id = ?";
 						
 		$sth = $this->model->db->prepare($q);
 		$sth->execute(array($id));

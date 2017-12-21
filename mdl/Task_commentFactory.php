@@ -4,10 +4,6 @@ namespace dokuwiki\plugin\bez\mdl;
 
 class Task_commentFactory extends Factory {
 
-    protected function select_query() {
-        return "SELECT * FROM task_comment";
-    }
-
     public function get_from_task(Task $task) {
         return $this->get_all(array('task_id' => $task->id), $orderby='', $desc=true, array('task' => $task));
     }

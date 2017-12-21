@@ -17,7 +17,13 @@ class Task_comment extends Entity {
 
     public function __get($property) {
         if ($property == 'task') {
-            return $this->$property;
+            if ($this->task_id == null) {
+                return null;
+            }
+            if ($this->task == null) {
+                $this->task = $this->model->taskFactory->get_one($this->task_id);
+            }
+            return $this->task;
         }
         return parent::__get($property);
     }
@@ -43,12 +49,8 @@ class Task_comment extends Entity {
             $this->task = $defaults['task'];
             $this->task_id = $this->task->id;
         } else {
-            if ($this->task_id != '') {
-                if (isset($defaults['task']) && $this->task_id == $defaults['task']->id) {
-                    $this->task = $defaults['task'];
-                } elseif ($this->task_id != null) {
-                    $this->task = $this->model->taskFactory->get_one($this->task_id);
-                }
+            if (isset($defaults['task']) && $this->task_id == $defaults['task']->id) {
+                $this->task = $defaults['task'];
             }
         }
 

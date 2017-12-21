@@ -20,7 +20,7 @@
                 <a href="#zk<?php echo $tpl->get('task_comment')->id ?>">#zk<?php echo $tpl->get('task_comment')->id ?></a>
                 <strong><?php echo $tpl->user_name($tpl->get('task_comment')->author) ?></strong>
                 <?php echo $tpl->getLang('comment_added') ?>
-                <?php echo dformat(strtotime($tpl->get('task_comment')->create_date), '%Y-%m-%d %H:%M') ?>
+                <?php echo $tpl->datetime($tpl->get('task_comment')->create_date) ?>
 
                 <?php if ($tpl->param('zkid') != $tpl->get('task_comment')->id): ?>
                     <div class="bez_comment_buttons">

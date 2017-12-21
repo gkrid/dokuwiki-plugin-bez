@@ -53,7 +53,7 @@ CREATE TABLE thread_comment (
 
   thread_id              INTEGER NOT NULL REFERENCES thread (id),
 
-  type                   TEXT NOT NULL DEFAULT 'comment', -- comment, cause_real, cause_potential, closing_comment
+  type                   TEXT NOT NULL DEFAULT 'comment', -- comment, cause_real, cause_potential -- will be: comment, cause, risk
 
   author                 TEXT    NOT NULL,
   create_date            TEXT    NOT NULL, -- ISO8601
@@ -165,6 +165,20 @@ CREATE INDEX task_ix_thread_id_thread_comment_id
 
 CREATE INDEX task_ix_task_program_id
   ON task(task_program_id);
+
+CREATE VIEW task_view
+  AS
+    SELECT
+      task.*,
+      task_program.name AS task_program_name,
+      thread.coordinator AS coordinator,
+      CASE	WHEN task.state = 'done' THEN NULL
+       WHEN task.plan_date >= date('now', '+1 month') THEN '2'
+       WHEN task.plan_date >= date('now') THEN '1'
+       ELSE '0' END AS priority
+    FROM task
+      LEFT JOIN task_program ON task.task_program_id = task_program.id
+      LEFT JOIN thread ON task.thread_id = thread.id;
 
 CREATE TRIGGER task_tr_insert
   INSERT

@@ -9,7 +9,7 @@
             <?php if (  in_array($tpl->param('action'), array('edit', 'update')) &&
                 $tpl->param('id') == $task_program->id): ?>
                 <form action="
-        <?php echo $tpl->url('types', 'action', 'update', 'id', $task_program->id) ?>"
+        <?php echo $tpl->url('task_programs', 'action', 'update', 'id', $task_program->id) ?>"
                       method="POST">
                     <td>
                         <input name="name" value="<?php echo $tpl->value('name') ?>" />
@@ -17,7 +17,7 @@
                     <td colspan="2">
                         <input type="submit"
                                value="<?php echo $tpl->getLang('save') ?>" />
-                        <a href="<?php echo $tpl->url('types') ?>">
+                        <a href="<?php echo $tpl->url('task_programs') ?>">
                             <?php echo $tpl->getLang('cancel') ?>
                         </a>
                     </td>
@@ -25,14 +25,14 @@
             <?php else: ?>
                 <td><?php echo $task_program->name ?></td>
                 <td <?php if ($task_program->count > 0) echo 'colspan="2"'; ?>>
-                    <a href="<?php echo $tpl->url('types', 'action', 'edit', 'id', $task_program->id) ?>">
+                    <a href="<?php echo $tpl->url('task_programs', 'action', 'edit', 'id', $task_program->id) ?>">
                         <?php echo $tpl->getLang('edit') ?>
                     </a>
                 </td>
                 <?php if ($task_program->count == 0): ?>
                     <td>
                         <a onclick="return confirm('<?php echo $tpl->getLang('js')['remove_confirm'] ?>')"
-                           href="<?php echo $tpl->url('types', 'action', 'remove', 'id', $task_program->id) ?>">
+                           href="<?php echo $tpl->url('task_programs', 'action', 'remove', 'id', $task_program->id) ?>">
                             <?php echo $tpl->getLang('delete') ?>
                         </a>
                     </td>

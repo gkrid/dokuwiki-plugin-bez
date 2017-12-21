@@ -1,13 +1,13 @@
 <?php
 /* @var \dokuwiki\plugin\bez\meta\Tpl $tpl */
 if ($tpl->action() == 'thread') {
-	$url = $tpl->url('thread', 'id', $tpl->get('thread')->id, 'action', $tpl->param('action'), 'tid', $tpl->param('tid'), 'kid', $tpl->param('kid'));
+	$url = $tpl->url('thread', 'id', $tpl->get('thread')->id, 'action', $tpl->param('action', 'add'), 'tid', $tpl->param('tid'), 'kid', $tpl->param('kid'));
     $id = 'bez:thread' . $tpl->get('thread')->id;
 } elseif ($tpl->action() == 'task_form') {
-    $url = $tpl->url('task_form', 'action', $tpl->param('action'), 'tid', $tpl->param('tid'));
+    $url = $tpl->url('task_form', 'action', $tpl->param('action', 'add'), 'tid', $tpl->param('tid'));
     $id = 'bez:tasks';
 } else {
-    $url = $tpl->url('task', 'action', $tpl->param('action'), 'tid', $tpl->param('tid'));
+    $url = $tpl->url('task', 'action', $tpl->param('action', 'add'), 'tid', $tpl->param('tid'));
     $id = 'bez:tasks';
 }
 ?>
@@ -158,8 +158,8 @@ if ($tpl->action() == 'thread') {
 					echo $tpl->url('thread', 'id', $tpl->get('thread')->id);
 				} else if ($tpl->action() == 'task' && $tpl->get('task')->id != '') {
 					echo $tpl->url('task', 'tid', $tpl->get('task')->id);
-				} else if ($tpl->get('task')->program != '') {
-                    echo $tpl->url('tasks', 'tasktype', $tpl->get('task')->program);
+				} else if ($tpl->get('task')->task_program_id != '') {
+                    echo $tpl->url('tasks', 'task_program_id', $tpl->get('task')->task_program_id);
                 } else {
                     echo $tpl->url('tasks');
                 }

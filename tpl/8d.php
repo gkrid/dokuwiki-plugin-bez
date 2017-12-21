@@ -26,7 +26,7 @@
 
 	<td>
 		<strong><?php echo $tpl->getLang('open_date') ?>:</strong>
-        <?php echo dformat(strtotime($tpl->get('thread')->create_date), '%Y-%m-%d') ?>
+        <?php echo $tpl->date($tpl->get('thread')->create_date) ?>
 	</td>
 </tr>
 
@@ -86,7 +86,7 @@
     <tr>
         <td>
             <strong><?php echo $tpl->getLang('true_date') ?>:</strong>
-            <?php echo dformat(strtotime($tpl->get('thread')->close_date), '%Y-%m-%d') ?>
+            <?php echo $tpl->date($tpl->get('thread')->close_date) ?>
         </td>
         <td>
             <strong><?php echo $tpl->getLang('state') ?>:</strong>

@@ -98,7 +98,7 @@
         <?php $count += 1 ?>
         <?php $total_cost += (float) $thread->task_sum_cost ?>
         
-		<tr class="pr<?php echo $thread->priority ?>">
+		<tr class="pr<?php echo $thread->state == 'opened' ? 'None' : '-1' ?>">
 			<td>
 				<a href="<?php echo $tpl->url('thread', 'id', $thread->id) ?>">
                     #<?php echo $thread->id ?>
@@ -123,19 +123,19 @@
                 <?php endif ?>
             </td>
             <td>
-                <?php echo dformat(strtotime($thread->create_date), '%Y-%m-%d (%f)') ?>
+                <?php echo $tpl->date($thread->create_date) ?>
             </td>
             <td>
-                <?php echo dformat(strtotime($thread->last_activity_date), '%Y-%m-%d (%f)') ?>
+                <?php echo $tpl->date($thread->last_activity_date) ?>
             </td>
 			<td>
 				<?php if ($thread->close_date === NULL): ?>
 					<em>---</em>
 				<?php else: ?>
-					<?php echo dformat(strtotime($thread->close_date), '%Y-%m-%d') ?><br />
-                    <?php $dStart = new DateTime($tpl->get('thread')->create_date) ?>
-                    <?php $dEnd = new DateTime($tpl->get('thread')->close_date) ?>
-					<?php $s = $tpl->getLang('report_priority').': ' . $dStart->diff($dEnd)->days . ' ' . $tpl->getLang('days') ?>
+					<?php echo $tpl->date($thread->close_date) ?><br />
+					<?php $s = $tpl->getLang('report_priority').': ' .
+                        $tpl->date_diff_days($tpl->get('thread')->create_date,
+                                             $tpl->get('thread')->close_date, '%a') ?>
 					<?php echo str_replace(' ', '&nbsp;', $s) ?>
 				<?php endif ?>
 			</td>

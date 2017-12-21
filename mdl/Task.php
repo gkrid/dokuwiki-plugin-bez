@@ -58,7 +58,7 @@ class Task extends Entity {
 	protected $thread_comment;
 
 	//virtual
-    protected $task_program_name;
+    protected $task_program_name, $priority, $coordinator;
     
 	public static function get_columns() {
 		return array('id',
@@ -80,7 +80,25 @@ class Task extends Entity {
     }
 
     public function __get($property) {
-        if ($property == 'thread' || $property == 'thread_comment' || $property == 'task_program_name') {
+        if ($property == 'thread') {
+            if ($this->thread_id == null) {
+                return null;
+            }
+            if ($this->thread == null) {
+                $this->thread = $this->model->threadFactory->get_one($this->thread_id);
+            }
+            return $this->thread;
+
+        } elseif($property == 'thread_comment') {
+            if ($this->thread_comment_id == null) {
+                return null;
+            }
+            if ($this->thread_comment == null) {
+                $this->thread = $this->model->thread_commentFactory->get_one($this->thread_comment_id);
+            }
+            return $this->thread_comment;
+
+        } elseif($property == 'priority' || $property == 'coordinator' || $property == 'task_program_name') {
             return $this->$property;
         }
         return parent::__get($property);
@@ -183,6 +201,8 @@ class Task extends Entity {
                         $this->type = 'preventive';
                     }
                 }
+            } else {
+                $this->type = 'program';
             }
 
 //			//meta
@@ -212,20 +232,15 @@ class Task extends Entity {
 
         //we get object form db
 		} else {
-		    if ($this->thread_id != '') {
-		        if (isset($defaults['thread']) && $this->thread_id == $defaults['thread']->id) {
-		            $this->thread = $defaults['thread'];
-                } elseif ($this->thread_id != null) {
-		            $this->thread = $this->model->threadFactory->get_one($this->thread_id);
-                }
 
-                if (isset($defaults['thread_comment']) && $this->thread_comment_id == $defaults['thread_comment']->id) {
-                    $this->thread_comment = $defaults['thread_comment'];
-                } elseif ($this->thread_comment_id != null) {
-                    $this->thread_comment = $this->model->thread_commentFactory->get_one($this->thread_comment_id);
-                }
-
+            if (isset($defaults['thread']) && $this->thread_id == $defaults['thread']->id) {
+                $this->thread = $defaults['thread'];
             }
+
+            if (isset($defaults['thread_comment']) && $this->thread_comment_id == $defaults['thread_comment']->id) {
+                $this->thread_comment = $defaults['thread_comment'];
+            }
+
         }
 
 		if ($this->thread_id == '') {
@@ -269,6 +284,11 @@ class Task extends Entity {
         //update dates
         $this->last_modification_date = date('c');
         $this->last_activity_date = $this->last_modification_date;
+
+        //all day event
+        if (!isset($post['all_day_event'])) {
+            $post['all_day_event'] = '0';
+        }
 		
 		//specjalne reguły
 //		if ($this->issue === '') {

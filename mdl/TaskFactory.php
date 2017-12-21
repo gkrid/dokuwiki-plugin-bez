@@ -9,9 +9,9 @@
 namespace dokuwiki\plugin\bez\mdl;
 
 class TaskFactory extends Factory {
-    protected function select_query() {
-        return "SELECT task.*, task_program.name AS task_program_name
-                  FROM task LEFT JOIN task_program ON task.task_program_id = task_program.id";
+
+    public function get_table_view() {
+        return 'task_view';
     }
 
     public function get_from_thread(Thread $thread) {
@@ -41,6 +41,20 @@ class TaskFactory extends Factory {
         }
 
         return $by_type;
+    }
+
+    public function users_involvement() {
+        $sql = 'SELECT user_id,
+                       SUM(original_poster),
+                       SUM(assignee),
+                       SUM(commentator),
+                       COUNT(*)
+                       FROM task_participant
+                       GROUP BY user_id
+                       ORDER BY user_id';
+
+        $r = $this->model->sqlite->query($sql);
+        return $r;
     }
 
     public function initial_save(Entity $task, $data) {

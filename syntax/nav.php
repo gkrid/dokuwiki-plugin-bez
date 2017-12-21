@@ -33,11 +33,11 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
             '</div>';
         $r->doc .= '<ul>';
         $actions = array(
-            'start' => $this->getLang('nav my_activities'),
+            //'start' => $this->getLang('nav my_activities'),
             'threads' => $this->getLang('issues'),
             //'projects' => $this->getLang('nav projects'),
             'tasks' => $this->getLang('tasks'),
-            'activity' => $this->getLang('activity_report')
+            'activity_report' => $this->getLang('activity_report')
         );
         /** @var bez\mdl\Model $model */
         $model = new bez\mdl\Model($auth, $INFO['client'], $this, $conf);

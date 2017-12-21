@@ -5,7 +5,7 @@ $task_programs = $this->model->task_programFactory->get_all();
 if ($this->get_param('id') === '') {
     $task_program = $this->model->task_programFactory->create_object();
 } else {
-    $task_program = $this->model->task_programFactory->get_one($this->param('id'));
+    $task_program = $this->model->task_programFactory->get_one($this->get_param('id'));
 }
 
 $this->tpl->set('task_programs', $task_programs);

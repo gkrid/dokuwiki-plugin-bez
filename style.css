@@ -542,6 +542,10 @@ input.days {
     background: url("images/addticket.png") no-repeat 4px 50% #fafafa;
 }
 
+#bez_report_task_button {
+	background: url("images/addtask.png") no-repeat 4px 50% #fafafa;
+}
+
 #bez_info_issues {
     background: url("images/newticket.png") no-repeat 4px 50% #fafafa;
 }

@@ -1,5 +1,6 @@
+<?php /* @var \dokuwiki\plugin\bez\meta\Tpl $tpl */ ?>
 <?php if ($tpl->static_acl('task', 'id') >= BEZ_PERMISSION_CHANGE): ?>
-    <a href="<?php echo $tpl->url('task_form') ?>" class="bez_start_button" id="bez_report_issue_button">
+    <a href="<?php echo $tpl->url('task_form') ?>" class="bez_start_button" id="bez_report_task_button">
         <?php echo $tpl->getLang('add_task') ?>
     </a>
 <?php endif ?>
@@ -8,17 +9,6 @@
 
 <div class="bez_filter_form">
 <form action="<?php echo $tpl->url('tasks') ?>" method="POST">
-
-<label><?php echo $tpl->getLang('issue') ?>:
-	<select name="thread_id">
-		<option <?php if ($tpl->value('thread_id') == '-all') echo 'selected' ?>
-			value="-all">--- <?php echo $tpl->getLang('all') ?> ---</option>
-	<?php foreach ($tpl->get('thread_ids') as $thread_id): ?>
-		<option <?php if ($tpl->value('thread_id') == $thread_id) echo 'selected' ?>
-			value="<?php echo $thread_id ?>">#<?php echo $thread_id ?></option>
-	<?php endforeach ?>
-	</select>
-</label>
 
 <label><?php echo $tpl->getLang('class') ?>:
 	<select name="type">
@@ -37,7 +27,7 @@
 			value="-all">--- <?php echo $tpl->getLang('all') ?> ---</option>
 	<?php foreach (\dokuwiki\plugin\bez\mdl\Task::get_states() as $state): ?>
 		<option <?php if ($tpl->value('state') == $state) echo 'selected' ?>
-			value="<?php echo $state ?>"><?php echo $tpl->getLang('task_state_' . $state) ?></option>
+			value="<?php echo $state ?>"><?php echo $tpl->getLang('task_' . $state) ?></option>
 	<?php endforeach ?>
 	</select>
 </label>
@@ -69,6 +59,26 @@
             <?php foreach ($tpl->get('groups') as $name): ?>
                 <?php $group = "@$name" ?>
                 <option <?php if ($tpl->value('assignee') == $group) echo 'selected' ?>
+                        value="<?php echo $group ?>"><?php echo $group ?></option>
+            <?php endforeach ?>
+        </optgroup>
+    </select>
+</label>
+
+<label><?php echo $tpl->getLang('reporter') ?>:
+    <select name="original_poster">
+        <option <?php if ($tpl->value('original_poster') == '-all') echo 'selected' ?>
+                value="-all">--- <?php echo $tpl->getLang('all') ?> ---</option>
+        <optgroup label="<?php echo $tpl->getLang('users') ?>">
+            <?php foreach ($tpl->get('users') as $nick => $name): ?>
+                <option <?php if ($tpl->value('original_poster') == $nick) echo 'selected' ?>
+                        value="<?php echo $nick ?>"><?php echo $name ?></option>
+            <?php endforeach ?>
+        </optgroup>
+        <optgroup label="<?php echo $tpl->getLang('groups') ?>">
+            <?php foreach ($tpl->get('groups') as $name): ?>
+                <?php $group = "@$name" ?>
+                <option <?php if ($tpl->value('original_poster') == $group) echo 'selected' ?>
                         value="<?php echo $group ?>"><?php echo $group ?></option>
             <?php endforeach ?>
         </optgroup>
@@ -117,18 +127,6 @@
 </form>
 </div>
 
-<?php if ($template['view'] == 'realization'): ?>
-	[ <a href="#" id="bez_show_desc">
-		<span class="show"><?php echo $bezlang['show_desc_and_eval'] ?></span>
-		<span class="hide" style="display:none"><?php echo $bezlang['hide_desc_and_eval'] ?></span>
-		</a> ]
-<?php else: ?>
-	[ <a href="#" id="bez_show_desc">
-		<span class="show"><?php echo $bezlang['show_desc'] ?></span>
-		<span class="hide" style="display:none"><?php echo $bezlang['hide_desc'] ?></span>
-	
-	</a> ]
-<?php endif ?>
 
 <table class="bez bez_sumarise">
 <tr>
@@ -145,94 +143,82 @@
 	<th><?php echo $tpl->getLang('hours_no') ?></th>
 	
 </tr>
+<?php $count = 0 ?>
+<?php $total_cost = 0.0 ?>
+<?php $total_hours = 0.0 ?>
 <?php foreach ($tpl->get('tasks') as $task): ?>
 	<tr class="pr<?php echo $task->priority ?>" data-bez-row-id="<?php echo $task->id ?>">
 		<td>
             <a href="<?php echo $tpl->url('task', 'tid', $task->id) ?>">
-               <?php if (!empty($task->thread_id)) echo '#'.$task->thread_id ?>
-		       #z<?php echo $task['id'] ?>
+               <?php if ($task->thread_id != '') echo '#'.$task->thread_id ?>
+		       #z<?php echo $task->id ?>
 	       </a>
 		</td>
 		<td>
-			<?php echo lcfirst($task['state']) ?>
-			<?php if ($task['priority'] == '0'): ?>
-			(<?php echo lcfirst($bezlang['task_outdated']) ?>)
+			<?php echo lcfirst($tpl->getLang('task_' . $task->state)) ?>
+			<?php if ($task->plan_date < date('%Y-%m-%d')): ?>
+			(<?php echo lcfirst($tpl->getLang('task_outdated')) ?>)
 			<?php endif ?>
 		</td>
 		<td>
-			<?php if ($task['tasktype'] == ''): ?>
+			<?php if ($task->task_program_id == ''): ?>
 				<em>---</em>
 			<?php else: ?>
-				<?php echo $task['tasktype'] ?>
+				<?php echo $task->task_program_name ?>
 			<?php endif ?>
 		</td>
 		<td>
 			<div style="max-width:200px;max-height:60px;overflow:hidden;">
-			<?php echo $task['task'] ?>
+			<?php echo $task->content_html ?>
 			</div>
 			 <a class="bez_show_single_desc" href="#">(...)</a>
 			</td>
-		<td><?php echo $task['executor'] ?></td>
+		<td><?php echo $tpl->user_name($task->assignee) ?></td>
 		
 		<td>
-		<?php if ($task['plan_date'] != ''): ?>
-			<?php echo $task['plan_date'] ?>
-			<?php if ($task['raw_state'] == '0'): ?>
-				(<?php echo $helper->days_left($task['plan_date']) ?>)
-			<?php endif ?>
-			<?php if ($task['all_day_event'] == '0'): ?>
-				<?php echo $task['start_time'] ?>&nbsp;-&nbsp;<?php echo $task['finish_time'] ?>
-			<?php endif ?>
-		<?php else: ?>
-			<em>---</em>
-		<?php endif ?>
+        <?php echo $task->plan_date ?>
+        <?php if ($task->state == 'opened'): ?>
+            (<?php echo $tpl->date_diff_days($task->plan_date) ?>)
+        <?php endif ?>
+        <?php if ($task->all_day_event == '0'): ?>
+            <?php echo $task->start_time ?>&nbsp;-&nbsp;<?php echo $task->finish_time ?>
+        <?php endif ?>
 		</td>
 
 		<td>
-			<?php if ($task['cost'] == ''): ?>
+			<?php if ($task->cost == ''): ?>
 				<em>---</em>
 			<?php else: ?>
-				<?php echo $task['cost'] ?>
+				<?php echo $task->cost ?>
 			<?php endif ?>
 		</td>
 
 		<td>
-			<?php if ($task['state'] == $bezlang['task_opened']): ?>
+			<?php if ($task->state == 'opened'): ?>
 				<em>---</em>
 			<?php else: ?>
-				<?php echo $helper->time2date($task['close_date']) ?>
+				<?php echo $tpl->date_diff_days($tpl->get('task')->close_date) ?>
 			<?php endif ?>
 		</td>
 		<td>
-			<?php if ($task['start_time'] == ''): ?>
+			<?php if ($task->start_time == ''): ?>
 				<em>---</em>
 			<?php else: ?>
-				<?php echo $task['hours'] ?>
+                <?php echo $tpl->date_diff_hours($task->start_time, $task->finish_time) ?>
 			<?php endif ?>
 		</td>
 		</tr>
-		<tr class="bez_desc_row task<?php echo $task['id'] ?>">
+		<tr class="bez_desc_row task<?php echo $task->id ?>">
 			<td colspan="10">
-				<?php echo $task['task'] ?>
+				<?php echo $task->content_html ?>
 			</td>
 		</tr>
-		<?php if ($template['view'] == 'realization'): ?>
-		<tr class="bez_desc_row task<?php echo $task['id'] ?>">
-			<td colspan="10">
-				<?php if ($task['reason'] == ''): ?>
-					<em>---</em>
-				<?php else: ?>
-					<?php echo $task['reason'] ?>
-				<?php endif ?>
-			</td>
-		</tr>
-		<?php endif ?>
 	<?php endforeach ?>
 	<tr>
-		<th><?php echo $bezlang['report_total'] ?></th>
-		<td colspan="5"><?php echo $template['tasks_stats']['total'] ?></td>
-		<td colspan="2"><?php echo $template['tasks_stats']['totalcost'] ?></td>
-		<td colspan="1"><?php echo $template['tasks_stats']['totalhours'] ?></td>
+		<th><?php echo $tpl->getLang('report_total') ?></th>
+		<td colspan="5"><?php echo $count ?></td>
+		<td colspan="2"><?php echo $total_cost ?></td>
+		<td colspan="1"><?php echo $total_hours ?></td>
 	</tr>
 </table>
 </div>

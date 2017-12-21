@@ -217,7 +217,7 @@ $lang['correction_h'] = 'Działania korekcyjne';
 $lang['corrective_action_h'] = 'Działania korygujące';
 $lang['preventive_action_h'] = 'Działania zapobiegawcze';
 
-$lang['correction_add'] = 'Dodaj korekcję';
+$lang['correction_add'] = 'Dodaj zadanie';
 $lang['corrective_action_add'] = 'Dodaj działanie korygujące';
 $lang['preventive_action_add'] = 'Dodaj działanie zapobiegawcze';
 

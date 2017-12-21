@@ -46,8 +46,8 @@ class action_plugin_bez_default extends DokuWiki_Action_Plugin {
         return $this->action;
     }
     
-    public function get_param($id) {
-        return (isset($this->params[$id]) ? $this->params[$id] : '');
+    public function get_param($id, $default='') {
+        return (isset($this->params[$id]) ? $this->params[$id] : $default);
     }
     
     public static function id() {

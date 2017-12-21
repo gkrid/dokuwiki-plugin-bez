@@ -9,7 +9,4 @@
 namespace dokuwiki\plugin\bez\mdl;
 
 class Task_programFactory  extends Factory {
-    protected function select_query() {
-        return 'SELECT * FROM task_program';
-    }
 }

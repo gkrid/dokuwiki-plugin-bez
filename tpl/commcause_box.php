@@ -26,7 +26,7 @@
                 <?php else: ?>
                     <?php echo $tpl->getLang('cause_added') ?>
                 <?php endif ?>
-                <?php echo dformat(strtotime($tpl->get('thread_comment')->create_date), '%Y-%m-%d %H:%M') ?>
+                <?php echo $tpl->datetime($tpl->get('thread_comment')->create_date) ?>
                 
                 <?php if (strpos($tpl->get('thread_comment')->type, 'cause') === 0): ?>
                     <span style="color: #000;">

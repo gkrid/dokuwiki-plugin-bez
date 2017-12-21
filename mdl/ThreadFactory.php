@@ -97,6 +97,21 @@ class ThreadFactory extends Factory {
 		return $years;
     }
 
+    public function users_involvement() {
+        $sql = 'SELECT user_id,
+                       SUM(original_poster),
+                       SUM(coordinator),
+                       SUM(commentator),
+                       SUM(task_assignee),
+                       COUNT(*)
+                       FROM thread_participant
+                       GROUP BY user_id
+                       ORDER BY user_id';
+
+        $r = $this->model->sqlite->query($sql);
+        return $r;
+    }
+
     public function initial_save(Entity $thread, $data) {
         parent::initial_save($thread, $data);
 

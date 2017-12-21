@@ -161,7 +161,7 @@ class Acl {
         //we create new task
         if ($task->id === NULL) {
             
-            if ($task->thread != null && $task->thread->coordinator == $this->model->user_nick ||
+            if ($task->coordinator == $this->model->user_nick ||
                ($task->thread_id == '' && $this->level >= BEZ_AUTH_LEADER)) {
                 $acl['content'] = BEZ_PERMISSION_CHANGE;
                 $acl['task_program_id'] = BEZ_PERMISSION_CHANGE;
@@ -199,7 +199,7 @@ class Acl {
 //            $acl['subscribents'] = BEZ_PERMISSION_CHANGE;
 //        }
 
-        if ($task->thread != null && $task->thread->coordinator == $this->model->user_nick ||
+        if ($task->coordinator == $this->model->user_nick ||
             ($task->thread_id == '' && $this->level >= BEZ_AUTH_LEADER)) {
                 
 //            $acl['reason'] = BEZ_PERMISSION_CHANGE;

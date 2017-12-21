@@ -1,3 +1,5 @@
+<?php /* @var \dokuwiki\plugin\bez\meta\Tpl $tpl */ ?>
+
 <a name="z<?php echo $tpl->get('task')->id ?>"></a>
 <div id="z<?php echo $tpl->get('task')->id ?>"
 	class="bds_block task <?php echo 'state_' . $tpl->get('task')->state ?>">
@@ -5,21 +7,19 @@
 <div class="bez_timebox">
     <span>
         <strong><?php echo $tpl->getLang('open') ?>:</strong>
-        <?php echo dformat(strtotime($tpl->get('task')->create_date), '%Y-%m-%d') ?>
+        <?php echo $tpl->date($tpl->get('task')->create_date) ?>
     </span>
 	
 	<?php if ($tpl->get('task')->state != 'opened'): ?>
     
         <span>
             <strong><?php echo $tpl->getLang('task_' . $tpl->get('task')->state) ?>:</strong>
-            <?php echo dformat(strtotime($tpl->get('task')->close_date), '%Y-%m-%d') ?>
+            <?php echo $tpl->date($tpl->get('task')->close_date) ?>
         </span>
         
 		<span>
 			<strong><?php echo $tpl->getLang('report_priority') ?>: </strong>
-            <?php $dStart = new DateTime($tpl->get('task')->create_date) ?>
-            <?php $dEnd = new DateTime($tpl->get('task')->close_date) ?>
-            <?php echo $dStart->diff($dEnd)->days ?> <?php echo $tpl->getLang('days') ?>
+            <?php echo $tpl->date_diff_days($tpl->get('task')->create_date, $tpl->get('task')->close_date, '%a'); ?>
 		</span>
 	<?php endif ?>
 </div>

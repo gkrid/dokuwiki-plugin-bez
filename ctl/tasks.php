@@ -72,6 +72,18 @@ $tasks = $this->model->taskFactory->get_all($db_filters, $orderby);
 
 $this->tpl->set('task_programs', $this->model->task_programFactory->get_all());
 $this->tpl->set('tasks', $tasks);
+$this->tpl->set('months', array(1 => 'jan',
+                                2 => 'feb',
+                                3 => 'mar',
+                                4 => 'apr',
+                                5 => 'may',
+                                6 => 'june',
+                                7 => 'july',
+                                8 => 'aug',
+                                9 => 'sept',
+                                10 => 'oct',
+                                11 => 'nov',
+                                12 => 'dec'));
 $this->tpl->set('years', $years);
 
 

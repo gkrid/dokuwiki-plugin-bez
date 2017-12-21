@@ -55,7 +55,7 @@
             </span>
                 <?php printf($tpl->getLang('user_closed_issue'),
                              '<strong>' . $tpl->user_name($tpl->get('thread')->closed_by) . '</strong>',
-                             dformat(strtotime($tpl->get('thread')->close_date), '%f')) ?>
+                             $tpl->date_fuzzy_age($tpl->get('thread')->close_date)) ?>
             </div>
         <?php elseif ($tpl->get('thread')->state == 'rejected'): ?>
                 <div class="plugin__bez_status_label">
@@ -64,7 +64,7 @@
             </span>
                     <?php printf($tpl->getLang('user_rejected_issue'),
                                  '<strong>' . $tpl->user_name($tpl->get('thread')->closed_by) . '</strong>',
-                                 dformat(strtotime($tpl->get('thread')->close_date), '%f')) ?>
+                                 $tpl->date_fuzzy_age($tpl->get('thread')->close_date)) ?>
                 </div>
         <?php endif ?>
 
@@ -96,7 +96,7 @@
 <div class="bez_box">
 <h2><?php echo $tpl->getLang('comment_last_activity') ?></h2>
 
-<?php echo dformat(strtotime($tpl->get('thread')->last_activity_date), '%Y-%m-%d  %H:%M') ?>
+<?php echo $tpl->datetime($tpl->get('thread')->last_activity_date) ?>
 
 
 </div>

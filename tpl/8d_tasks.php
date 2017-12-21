@@ -17,7 +17,7 @@
         <td>
             <?php echo $task->content_html ?>
         </td>
-        <td><?php echo $tpl->getLang('task_' . $tpl->get('task')->state) ?></td>
+        <td><?php echo lcfirst($tpl->getLang('task_' . $task->state)) ?></td>
         <td>
             <?php if ($task->cost == ''): ?>
                 <em>---</em>
@@ -30,7 +30,7 @@
             <?php if ($task->state == 'opened'): ?>
                 <em>---</em>
             <?php else: ?>
-                <?php echo dformat(strtotime($task->close_date), '%Y-%m-%d') ?>
+                <?php echo $tpl->date($task->close_date) ?>
             <?php endif ?>
         </td>
     </tr>

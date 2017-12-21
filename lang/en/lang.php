@@ -217,7 +217,7 @@ $lang['correction_h'] = 'Correction';
 $lang['corrective_action'] = "Corrective action";
 $lang['preventive_action'] = "Preventive action";
 
-$lang['correction_add'] = 'Add correction';
+$lang['correction_add'] = 'Add task';
 $lang['corrective_action_add'] = 'Add corrective action';
 $lang['preventive_action_add'] = 'Add preventive action';
 

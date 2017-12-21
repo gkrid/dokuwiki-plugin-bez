@@ -5,9 +5,6 @@ namespace dokuwiki\plugin\bez\mdl;
 use dokuwiki\plugin\bez\meta\PermissionDeniedException;
 
 class Authentication_tokenFactory extends Factory {
-    protected function select_query() {
-        return "SELECT * FROM {$this->get_table_name()}";
-    }
 
     public function get_token($page_id) {
         if ($this->model->acl->get_level() < BEZ_AUTH_USER) {
