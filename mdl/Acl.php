@@ -27,10 +27,6 @@ class Acl {
     
     private $level = BEZ_AUTH_NONE;
     
-//    private $threads = array();
-//    private $commcauses = array();
-//    private $tasks = array();
-    
     private function update_level($level) {
 		if ($level > $this->level) {
 			$this->level = $level;
@@ -98,7 +94,6 @@ class Acl {
             if ($this->level >= BEZ_AUTH_USER) {
                 $acl['title'] = BEZ_PERMISSION_CHANGE;
                 $acl['content'] = BEZ_PERMISSION_CHANGE;
-                //$acl['type'] = BEZ_PERMISSION_CHANGE;
             }
             
             if ($this->level >= BEZ_AUTH_LEADER) {
@@ -112,19 +107,16 @@ class Acl {
             $thread->original_poster === $this->model->user_nick) {
             $acl['title'] = BEZ_PERMISSION_CHANGE;
             $acl['content'] = BEZ_PERMISSION_CHANGE;
-            //$acl['type'] = BEZ_PERMISSION_CHANGE;
         }
         
         if ($thread->coordinator === $this->model->user_nick) {
             $acl['title'] = BEZ_PERMISSION_CHANGE;
             $acl['content'] = BEZ_PERMISSION_CHANGE;
-            //$acl['type'] = BEZ_PERMISSION_CHANGE;
             
             //coordinator can change coordinator
             $acl['coordinator'] = BEZ_PERMISSION_CHANGE;
             
             $acl['state'] = BEZ_PERMISSION_CHANGE;
-            //$acl['opinion'] = BEZ_PERMISSION_CHANGE;
         }
                 
         return $acl;
@@ -172,8 +164,7 @@ class Acl {
                 $acl['start_time'] = BEZ_PERMISSION_CHANGE;
                 $acl['finish_time'] = BEZ_PERMISSION_CHANGE;
             }
-            
-            //przypisujemy zadanie programowe samemu sobie
+
             //no assignee
             if ($task->thread_id == '') {
                 $acl['content'] = BEZ_PERMISSION_CHANGE;
@@ -187,23 +178,10 @@ class Acl {
             
             return $acl;
         }
-        
-        //user can change state
-//        if ($task->assignee == $this->model->user_nick) {
-////            $acl['reason'] = BEZ_PERMISSION_CHANGE;
-//            $acl['state'] = BEZ_PERMISSION_CHANGE;
-//        }
-        
-        //reporters can add subscribents to programme task
-//        if ($task->original_poster === $this->model->user_nick) {
-//            $acl['subscribents'] = BEZ_PERMISSION_CHANGE;
-//        }
+
 
         if ($task->coordinator == $this->model->user_nick ||
             ($task->thread_id == '' && $this->level >= BEZ_AUTH_LEADER)) {
-                
-//            $acl['reason'] = BEZ_PERMISSION_CHANGE;
-            //$acl['state'] = BEZ_PERMISSION_CHANGE;
             
             //we can chante cause
             $acl['thread_comment_id'] =  BEZ_PERMISSION_CHANGE;
@@ -217,23 +195,17 @@ class Acl {
             $acl['all_day_event'] = BEZ_PERMISSION_CHANGE;
             $acl['start_time'] = BEZ_PERMISSION_CHANGE;
             $acl['finish_time'] = BEZ_PERMISSION_CHANGE;
-            
-                            
-            //leaders can add subscribents to programme tasks
-            //$acl['subscribents'] = BEZ_PERMISSION_CHANGE;
         }
         
         if ($task->thread_id == '' &&
             $task->original_poster == $this->model->user_nick &&
             $task->assignee == $this->model->user_nick) {
-            //$acl['reason'] = BEZ_PERMISSION_CHANGE;
-            //$acl['state'] = BEZ_PERMISSION_CHANGE;
+
             
             $acl['content'] = BEZ_PERMISSION_CHANGE;
             $acl['task_program_id'] = BEZ_PERMISSION_CHANGE;
             //no executor
             $acl['cost'] = BEZ_PERMISSION_CHANGE;
-            //$acl['reason'] = BEZ_PERMISSION_CHANGE;
             $acl['plan_date'] = BEZ_PERMISSION_CHANGE;
             $acl['all_day_event'] = BEZ_PERMISSION_CHANGE;
             $acl['start_time'] = BEZ_PERMISSION_CHANGE;
@@ -408,30 +380,6 @@ class Acl {
         return $acl;
 
     }
-
-//   private function check_tasktype($tasktype) {
-//        $acl = array(
-//            'id'            => BEZ_PERMISSION_NONE,
-//            'pl'         => BEZ_PERMISSION_NONE,
-//            'en'      => BEZ_PERMISSION_NONE
-//        );
-//
-//        if ($this->level >= BEZ_AUTH_USER) {
-//            //user can display everythig
-//            $acl = array_map(function($value) {
-//                return BEZ_PERMISSION_VIEW;
-//            }, $acl);
-//        }
-//
-//        if ($this->level >= BEZ_AUTH_ADMIN) {
-//            //admin can edit everythig
-//            $acl = array_map(function($value) {
-//                return BEZ_PERMISSION_CHANGE;
-//            }, $acl);
-//        }
-//
-//        return $acl;
-//    }
 
     /*returns array */
     public function check(Entity $obj) {

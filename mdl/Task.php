@@ -1,32 +1,5 @@
 <?php
 
-/*
- * Task coordinator is taken from tasktypes
- */
-//require_once 'entity.php';
-//
-//class BEZ_mdl_Dummy_Task extends BEZ_mdl_Entity  {
-//    protected $coordinator;
-//
-//    function __construct($model, $defaults=array()) {
-//        parent::__construct($model);
-//
-//        if (isset($defaults['issue'])) {
-//            $issue = $this->model->issues->get_one($defaults['issue']);
-//            $this->coordinator = $issue->coordinator;
-//        } else {
-//            $this->coordinator = '';
-//        }
-//    }
-//
-//    public function __get($property) {
-//		if ($property === 'coordinator') {
-//            return $this->coordinator;
-//        }
-//        parent::__get($property);
-//	}
-//}
-
 namespace dokuwiki\plugin\bez\mdl;
 
 use dokuwiki\plugin\bez\meta\Mailer;
@@ -104,63 +77,10 @@ class Task extends Entity {
         return parent::__get($property);
     }
 
-
-//    private function state_string() {
-//		switch($this->state) {
-//            case '0':         return 'task_opened';
-//            case '-outdated': return 'task_outdated';
-//            case '1':         return 'task_done';
-//            case '2':         return 'task_rejected';
-//        }
-//	}
-//
-//	private function action_string() {
-//		switch($this->action) {
-//			case '0': return 'correction';
-//			case '1': return 'corrective_action';
-//			case '2': return 'preventive_action';
-//			case '3': return 'programme';
-//		}
-//	}
-//
-//    public function cost_localized() {
-//        if ($this->cost === '') {
-//            return '';
-//        }
-//
-//        return sprintf('%.2f', (float)$this->cost);
-//    }
-//
-//    private function update_virtual_columns() {
-//		$this->state_string = $this->model->action->getLang($this->state_string());
-//        $this->action_string = $this->model->action->getLang($this->action_string());
-//        $this->tasktype_string = $this->model->tasktypes->get_one($this->tasktype)->type;
-//    }
-//
-//    public function user_is_executor() {
-//        if ($this->executor === $this->model->user_nick ||
-//           $this->model->acl->get_level() >= BEZ_AUTH_ADMIN) {
-//            return true;
-//        }
-//    }
-		
-	//by defaults you can set: cause, tasktype and issue
-	//tasktype is required
 	public function __construct($model, $defaults=array()) {
 		parent::__construct($model, $defaults);
 
-				
-		//array(filter, NULL)
 		$this->validator->set_rules(array(
-//			'reporter' => array(array('dw_user'), 'NOT NULL'),
-//			'date' => array(array('unix_timestamp'), 'NOT NULL'),
-//			'close_date' => array(array('unix_timestamp'), 'NULL'),
-//			'cause' => array(array('numeric'), 'NULL'),
-			
-//			'executor' => array(array('dw_user'), 'NOT NULL'),
-			
-//			'issue' => array(array('numeric'), 'NULL'),
-
             'assignee' => array(array('dw_user'), 'NOT NULL'),
             'cost' => array(array('numeric'), 'NULL'),
 			'plan_date' => array(array('iso_date'), 'NOT NULL'),
@@ -170,11 +90,6 @@ class Task extends Entity {
             'content' => array(array('length', 10000), 'NOT NULL'),
             'thread_comment_id' => array(array('numeric'), 'NULL'),
             'task_program_id' => array(array('numeric'), 'NULL')
-			
-//			'state' => array(array('select', array('0', '1', '2')), 'NULL'),
-//			'reason' => array(array('length', 10000), 'NULL'),
-			
-//			'coordinator' => array(array('dw_user', array('-none')), 'NOT NULL'),
 		));
 		
 		//we've created empty object
@@ -204,32 +119,6 @@ class Task extends Entity {
             } else {
                 $this->type = 'program';
             }
-
-//			//meta
-//			$this->reporter = $this->model->user_nick;
-//			$this->date = time();
-//
-//			$this->state = '0';
-//			$this->all_day_event = '1';
-//
-//            //throws ValidationException
-//			$this->issue = $this->validator->validate_field('issue', $defaults['issue']);
-//
-//            if ($this->issue !== '') {
-//                $issue = $this->model->issues->get_one($defaults['issue']);
-//			    $this->coordinator = $issue->coordinator;
-//            } else {
-//                $this->coordinator = '';
-//            }
-//
-//			//throws ValidationException
-//			$this->validator->validate_field('cause', $defaults['cause']);
-//			$this->cause = $defaults['cause'];
-//
-//            //by default reporter is a executor
-//            $this->executor = $this->reporter;
-            
-
         //we get object form db
 		} else {
 
@@ -250,29 +139,6 @@ class Task extends Entity {
 		    //this field is unused in program tasks
             $this->validator->delete_rule('thread_comment_id');
         }
-
-
-//        //close_date required
-//		if ($this->state !== '0') {
-//			$this->validator->set_rules(array(
-//				'close_date' => array(array('unix_timestamp'), 'NOT NULL')
-//			));
-//		}
-        
-        //explode subscribents
-//        if ($this->subscribents !== NULL) {
-//			$exp_part = explode(',', $this->subscribents);
-//			foreach ($exp_part as $subscribent) {
-//				$this->subscribents_array[$subscribent] = $subscribent;
-//			}
-//		}
-//
-//		//we've created empty object
-//		if ($this->id === NULL) {
-//            //throws ValidationException
-//			$this->validator->validate_field('tasktype', $defaults['tasktype']);
-//			$this->tasktype = $defaults['tasktype'];
-//		}
 	}
 	
 	
@@ -289,18 +155,6 @@ class Task extends Entity {
         if (!isset($post['all_day_event'])) {
             $post['all_day_event'] = '0';
         }
-		
-		//specjalne reguły
-//		if ($this->issue === '') {
-//			$this->cause = '';
-//		}
-		
-		//set parsed
-//		$this->task_cache = $this->helper->wiki_parse($this->task);
-//		$this->reason_cache = $this->helper->wiki_parse($this->reason);
-        
-        //update virtuals
-        //$this->update_virtual_columns();
 			
 		return true;
 	}
@@ -338,135 +192,6 @@ class Task extends Entity {
         $this->model->sqlite->query('UPDATE task SET last_activity_date=? WHERE id=?',
                                     $this->last_activity_date, $this->id);
     }
-    
-//    public function update_cache() {
-//        if ($this->model->acl->get_level() < BEZ_AUTH_ADMIN) {
-//			return false;
-//		}
-//		$this->task_cache = $this->helper->wiki_parse($this->task);
-//		$this->reason_cache = $this->helper->wiki_parse($this->reason);
-//	}
-//
-//	public function set_state($data) {
-//		//reason is required while changing state
-//		if ($data['state'] === '2') {
-//			$this->validator->set_rules(array(
-//				'reason' => array(array('length', 10000), 'NOT NULL')
-//			));
-//		}
-//
-//		$val_data = $this->validator->validate($data, array('state', 'reason'));
-//		if ($val_data === false) {
-//			throw new ValidationException('tasks', $this->validator->get_errors());
-//		}
-//
-//		//if state is changed
-//		if ($this->state != $data['state']) {
-//			$this->close_date = time();
-//		}
-//
-//        $this->set_property_array($val_data);
-//		$this->reason_cache = $this->helper->wiki_parse($this->reason);
-//
-//        //update virtuals
-//        $this->update_virtual_columns();
-//
-//		return true;
-//	}
-//
-//    public function get_meta_fields() {
-//        return array('reporter', 'date', 'close_date');
-//    }
-//
-//    public function set_meta($post) {
-//
-//        if (isset($post['date'])) {
-//            $unix = strtotime($post['date']);
-//            //if $unix === false validator will catch it
-//            if ($unix !== false) {
-//                $post['date'] = (string)$unix;
-//            }
-//        }
-//
-//        if (isset($post['close_date'])) {
-//            $unix = strtotime($post['close_date']);
-//            //if $unix === false validator will catch it
-//            if ($unix !== false) {
-//                $post['close_date'] = (string)$unix;
-//            }
-//        }
-//
-//        parent::set_data($post, $this->get_meta_fields());
-//    }
-//
-//    public function is_subscribent($user=NULL) {
-//		if ($user === NULL) {
-//			$user = $this->model->user_nick;
-//		}
-//		if (in_array($user, $this->subscribents_array)) {
-//			return true;
-//		}
-//		return false;
-//	}
-//
-//    public function get_subscribents() {
-//        return $this->subscribents_array;
-//    }
-//
-//    public function get_participants() {
-//        $subscribents = array_merge(array($this->reporter, $this->executor),
-//                            $this->subscribents_array);
-//        $full_names = array();
-//        foreach ($subscribents as $par) {
-//			$name = $this->model->users->get_user_full_name($par);
-//			if ($name == '') {
-//				$full_names[$par] = $par;
-//			} else {
-//				$full_names[$par] = $name;
-//			}
-//		}
-//        ksort($full_names);
-//        return $full_names;
-//    }
-//
-//    public function remove_subscribent($subscribent) {
-//		if ($subscribent !== $this->model->user_nick &&
-//            $this->acl_of('subscribents') < BEZ_PERMISSION_CHANGE) {
-//			throw new PermissionDeniedException();
-//		}
-//
-//        if ($this->issue != '') {
-//            throw new ConsistencyViolationException('cannot modify subscribents from issue related tasks');
-//        }
-//
-//        if (!isset($this->subscribents_array[$subscribent])) {
-//            throw new ConsistencyViolationException('user '.$subscribent.' wasn\'t subscriber so cannot be removed');
-//        }
-//
-//		unset($this->subscribents_array[$subscribent]);
-//		$this->subscribents = implode(',', $this->subscribents_array);
-//	}
-//
-//    public function add_subscribent($subscribent) {
-//		if ($subscribent !== $this->model->user_nick &&
-//            $this->acl_of('subscribents') < BEZ_PERMISSION_CHANGE) {
-//			throw new PermissionDeniedException();
-//		}
-//
-//        if ($this->issue != '') {
-//            throw new ConsistencyViolationException('cannot add subscribents to issue related tasks');
-//        }
-//
-//		if ($this->model->users->exists($subscribent) &&
-//            !in_array($subscribent, $this->subscribents_array)) {
-//			$this->subscribents_array[$subscribent] = $subscribent;
-//			$this->subscribents = implode(',', $this->subscribents_array);
-//
-//            return true;
-//		}
-//
-//        return false;
-//	}
 
     public function get_participants($filter='') {
         if ($this->acl_of('participants') < BEZ_PERMISSION_VIEW) {
@@ -582,19 +307,6 @@ class Task extends Entity {
 
         $sql = "REPLACE INTO task_participant ($keys) VALUES ($vals)";
         $this->model->sqlite->query($sql, array_values($values));
-
-
-
-//		if (! (	$this->user_is_coordinator() ||
-//				$participant === $this->model->user_nick ||
-//                $participant === $this->coordinator) //dodajemy nowego koordynatora
-//			) {
-//			throw new PermissionDeniedException();
-//		}
-//		if ($this->model->users->exists($participant)) {
-//			$this->participants_array[$participant] = $participant;
-//			$this->participants = implode(',', $this->participants_array);
-//		}
     }
 
     public function invite($client) {
@@ -715,10 +427,6 @@ class Task extends Entity {
     }
     
     public function mail_notify_task_box($users=false, $replacements=array()) {
-//        if ($issue_obj !== NULL && $issue_obj->id !== $this->issue) {
-//            throw new Exception('issue object id and task->issue does not match');
-//        }
-        
        $top_row = array(
             '<strong>'.$this->model->action->getLang('executor').': </strong>' . 
             $this->model->userFactory->get_user_full_name($this->assignee),

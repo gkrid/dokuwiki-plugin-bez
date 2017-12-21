@@ -1,5 +1,5 @@
 <?php
-//require_once DOKU_INC.'inc/Mailer.class.php';
+
 namespace dokuwiki\plugin\bez\meta;
 
 class Mailer extends \Mailer {

@@ -37,34 +37,12 @@ class Thread_comment extends Entity {
         }
         return parent::__get($property);
     }
-	
-//	public function get_virtual_columns() {
-//		return array('coordinator', 'tasks_count');
-//	}
-//
-//	public function get_table_name() {
-//		return 'commcauses';
-//	}
     
     //defaults: isssue, type
 	public function __construct($model, $defaults=array()) {
 		parent::__construct($model, $defaults);
 
-//		$this->validator->set_rules(array(
-//			'issue' => array(array('numeric'), 'NOT NULL'),
-//			'datetime'	=> array(array('sqlite_datetime'), 'NOT NULL'),
-//			'reporter' => array(array('dw_user'), 'NOT NULL'),
-//			'type' => array(array('select', array('0', '1', '2')), 'NOT NULL'),
-//			'content' => array(array('length', 10000), 'NOT NULL'),
-//			'content_cache' => array(array('length', 10000), 'NOT NULL'),
-//
-//			'coordinator' => array(array('dw_user', array('-proposal')), 'NOT NULL')
-//		));
-
-
-
         $this->validator->set_rules(array(
-            //'type' => array(array('select', array('0', '1', '2')), 'NOT NULL'),
             'content' => array(array('length', 10000), 'NOT NULL')
         ));
 		
@@ -82,18 +60,6 @@ class Thread_comment extends Entity {
             $this->thread = $defaults['thread'];
 			$this->thread_id = $this->thread->id;
             $this->coordinator = $this->thread->coordinator;
-            
-//            //we are coordinator of newly created object
-//            if ($issue->user_is_coordinator()) {
-//                //throws ValidationException
-//                $this->type =
-//                    $this->validator->validate_field('type', $defaults['type']);
-//            } else {
-//                $this->type = '0';
-//            }
-			
-//			$this->reporter = $this->model->user_nick;
-//			$this->datetime = $this->sqlite_date();
 		} else {
             if (isset($defaults['thread']) && $this->thread_id == $defaults['thread']->id) {
                 $this->thread = $defaults['thread'];
@@ -112,45 +78,14 @@ class Thread_comment extends Entity {
             );
         }
 	}
-    
-//    public function update_cache() {
-//		if ($this->model->acl->get_level() < BEZ_AUTH_ADMIN) {
-//			return false;
-//		}
-//		$this->content_cache = $this->helper->wiki_parse($this->content);
-//	}
-//
-//	public function set_data($data, $filter=NULL) {
-//        $input = array('content', 'type');
-//        $val_data = $this->validator->validate($data, $input);
-//
-//		if ($val_data === false) {
-//			throw new ValidationException('issues',	$this->validator->get_errors());
-//		}
-//
-//        $this->set_property_array($val_data);
-		
-//		$this->content_cache = $this->helper->wiki_parse($this->content);
-//    }
 
     public function set_data($post) {
         parent::set_data($post);
         $this->content_html = p_render('xhtml',p_get_instructions($this->content), $ignore);
     }
 
-//    public function get_meta_fields() {
-//        return array('reporter', 'datetime');
-//    }
-//
-//    public function set_meta($post) {
-//        parent::set_data($post, $this->get_meta_fields());
-//    }
-    
     public function mail_notify_add() {
-//        if ($thread->id !== $this->thread_id) {
-//            throw new Exception('issue object id and commcause->issue does not match');
-//        }
-        
+
         $rep = array(
             'content' => $this->content,
             'content_html' => $this->content_html,

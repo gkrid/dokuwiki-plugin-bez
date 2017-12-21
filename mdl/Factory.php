@@ -198,24 +198,6 @@ abstract class Factory {
         $class = (new \ReflectionClass($this))->getName();
         return str_replace('Factory', '', $class);
     }
-//
-//    public function get_table_singular() {
-//        $table = $this->get_table_name();
-//        $singular = substr($table, 0, -1);
-//        return $singular;
-//    }
-//
-//    private function get_singular_object_name() {
-//        return ucfirst($this->get_table_singular());
-//    }
-//
-//    private function get_object_class_name() {
-//        return 'BEZ_mdl_'.$this->get_singular_object_name();
-//    }
-    
-//    private function get_dummy_object_class_name() {
-//        return 'BEZ_mdl_Dummy_'.$this->get_singular_object_name();
-//    }
     
     public function create_object($defaults=array()) {
         $object_name = $this->get_object_class_name();
@@ -235,30 +217,14 @@ abstract class Factory {
     protected function rollbackTransaction() {
         $this->model->sqlite->query('ROLLBACK');
     }
-    
-//    public function get_dummy_object() {
-//        if ($this->dummy_object === NULL) {
-//            $dummy_object_name = $this->get_dummy_object_class_name();
-//            $this->dummy_object = new $dummy_object_name($this->model);
-//        }
-//        return $this->dummy_object;
-//	}
-    
+
 	public function save(Entity $obj) {
         //if user can change id, he can modify record
-        //$this->model->acl->can_change($obj, 'id');
-        
 		$set = array();
 		$execute = array();
 		$columns = array();
 		foreach ($obj->get_columns() as $column) {
             if ($obj->$column === null) continue;
-            //id is special -> when null we insert new row
-//		    if ($column == 'id' && $obj->id == NULL) continue;
-
-//            if ($obj->$column === null) {
-//                throw new \Exception('cannot save object becouse it has uninitialized parameter: '.$column);
-//            }
 			$set[] = ":$column";
 			$columns[] = $column;
             $value = $obj->$column;
@@ -283,12 +249,6 @@ abstract class Factory {
             $reflectionProperty->setAccessible(true);
             $reflectionProperty->setValue($obj, $this->model->db->lastInsertId());
         }
-//            $id = $this->model->db->lastInsertId();
-//            $obj->set_id($id);
-
-//        }
-        
-//		return $id;
 	}
 
 	public function initial_save(Entity $obj, $data) {

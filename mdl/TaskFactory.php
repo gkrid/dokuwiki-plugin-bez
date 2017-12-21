@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: ghi
- * Date: 12.12.17
- * Time: 11:58
- */
 
 namespace dokuwiki\plugin\bez\mdl;
 

@@ -50,10 +50,6 @@ class Tpl {
         return 'mailto:'.$to.'?subject='.rawurlencode($subject).'&body='.rawurlencode($body);
     }
 
-//    public function get_dummy_of($name) {
-//        return $this->action->get_model_of($name)->get_dummy_object();
-//    }
-
     public function static_acl($table, $field) {
         return $this->action->get_model()->acl->check_static_field($table, $field);
     }
@@ -139,51 +135,4 @@ class Tpl {
         $interval = date_diff(date_create($lDate), date_create($rDate));
         return $interval->format('%h:%I');
     }
-
-//    public function days($lDate, $rDate='now') {
-//        $diff = strtotime($lDate) - strtotime($rDate);
-//
-//        if ($diff >= 0 && $diff < 5) {
-//            return $this->getLang('just_now');
-//        }
-//
-//        $time_str = '';
-//        $minutes = floor($diff/60);
-//        if ($minutes > 0) {
-//            $hours = floor($minutes/60);
-//            if ($hours > 0) {
-//                $days = floor($hours/24);
-//                if ($days > 0) {
-//                    $time_str = $days.'&nbsp;'.$this->getLang('days');
-//                } else {
-//                    $time_str = $hours.'&nbsp;'.$this->getLang('hours');
-//                }
-//            } else {
-//                $time_str = $minutes.'&nbsp;'.$this->getLang('minutes');
-//            }
-//        } else {
-//            $time_str = $diff.'&nbsp;'.$this->getLang('seconds');
-//        }
-//
-//        if ($diff > 0) {
-//            $time_str .= '&nbsp;'.$this->getLang('ago');
-//        }
-//
-//        return $time_str;
-//    }
-//
-//    public function days_left($date) {
-//        $d = date_create($date);
-//        $now = date_create('now');
-//        $interval = date_diff($now, $d);
-//        return $interval->format('%R%a '.$this->getLang('days'));
-//    }
-
-//    public function string_time_to_now($value) {
-//        $diff = time() - $value;
-//        if ($diff < 5) {
-//            return $this->getLang('just_now');
-//        }
-//        return self::days($diff).'&nbsp;'.$this->getLang('ago');
-//    }
 }

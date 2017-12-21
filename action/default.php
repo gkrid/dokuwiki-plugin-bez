@@ -4,20 +4,6 @@ use \dokuwiki\plugin\bez;
  
 if(!defined('DOKU_INC')) die();
 
-//require_once DOKU_PLUGIN.'bez/mdl/model.php';
-//
-//require_once DOKU_PLUGIN.'bez/interfaces.php';
-//require_once DOKU_PLUGIN.'bez/exceptions.php';
-//
-//spl_autoload_register(
-//    function ($class) {
-//        $file = DOKU_PLUGIN.'bez/inc/'.$class.'.class.php';
-//        if (file_exists($file)) {
-//            require_once $file;
-//        }
-//    }
-//);
-
 function bez_tpl_include(bez\meta\Tpl $tpl) {
     $file = DOKU_PLUGIN."bez/tpl/".str_replace('/', '', $tpl->action()).".php";
     if (file_exists($file)) {
@@ -92,14 +78,6 @@ class action_plugin_bez_default extends DokuWiki_Action_Plugin {
         
 
     }
-    
-//    public function model_factory($name) {
-//        $factory = $name . 'Factory';
-//        if (!property_exists($this->model, $factory)) {
-//            throw new \Exception('unknown table: '.$name);
-//        }
-//        return $this->model->$factory;
-//    }
 
     /**
      * @return mixed
@@ -131,10 +109,6 @@ class action_plugin_bez_default extends DokuWiki_Action_Plugin {
     private function add_error($value, $header=NULL) {
         $this->errors[] = array('value' => $value, 'header' => $header);
     }
-    
-//    private function param($id) {
-//        return (isset($this->params[$id]) ? $this->params[$id] : '');
-//    }
 
 	/**
 	 * Register its handlers with the DokuWiki's event controller
