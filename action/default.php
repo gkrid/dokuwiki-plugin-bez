@@ -317,7 +317,6 @@ class action_plugin_bez_default extends DokuWiki_Action_Plugin {
             
         } catch(bez\meta\PermissionDeniedException $e) {
             dbglog('plugin_bez', $e);
-            header('Location: ' . DOKU_URL . 'doku.php?id=' . $_GET['id'] . '&do=login');	
 		} catch(Exception $e) {
 			/*exception*/
             dbglog('plugin_bez', $e);

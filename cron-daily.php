@@ -45,16 +45,10 @@ define('DOKU_INC', $inc.'/');
 
 // load and initialize the core system
 require_once(DOKU_INC.'inc/init.php');
-
-require_once DOKU_PLUGIN.'bez/inc/BEZ_Mailer.class.php';
 require_once 'cron/functions.php';
 
-require_once DOKU_PLUGIN.'bez/lang/pl/lang.php';
-global $bezlang;
-$bezlang = $lang;
-
 if (date('l') === $conf['plugin']['bez']['weekly_cron_day_of_the_week']) {
-    send_weekly_message(false);
+    //send_weekly_message(false);
 }
 
 send_one_day_task_reminder();

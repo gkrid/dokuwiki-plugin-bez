@@ -1,6 +1,12 @@
 <?php
 /** @var action_plugin_bez $this */
 
+use \dokuwiki\plugin\bez;
+
+if ($this->model->acl->get_level() < BEZ_AUTH_USER) {
+    throw new bez\meta\PermissionDeniedException();
+}
+
 define('BEZ_THREAD_FILTERS_COOKIE_NAME', 'bez_thread_filters');
 
 if (count($_POST) > 0) {
@@ -23,7 +29,7 @@ if (isset($raw_filters)) {
         $filters['year'] = '-all';
     }
 
-	header('Location: '.$this->url('threads', $filters));
+	header('Location: '.$this->url($this->get_action(), $filters));
 } else {
     $filters = $this->params;
 }
@@ -34,7 +40,7 @@ $years = $this->model->threadFactory->get_years_scope();
 
 //some filters are just copied
 $db_filters = array_filter($filters, function ($k) {
-    return in_array($k, array('state', 'label_id', 'coordinator'));
+    return in_array($k, array('original_poster', 'state', 'label_id', 'coordinator'));
 }, ARRAY_FILTER_USE_KEY);
 
 //-none filters become empty filters
@@ -60,6 +66,12 @@ if (isset($filters['coordinator']) &&
     $db_filters['coordinator'] = array('OR', $this->model->userFactory->users_of_group($group));
 }
 
+if (isset($filters['original_poster']) &&
+    substr($filters['original_poster'], 0, 1) === '@') {
+    $group = substr($filters['original_poster'], 1);
+    $db_filters['original_poster'] = array('OR', $this->model->userFactory->users_of_group($group));
+}
+
 if (isset($filters['title'])) {
     $title = preg_replace('/\s/', '%', $filters['title']);
     $db_filters['title'] = array('LIKE', "%$title%");
@@ -68,6 +80,12 @@ if (isset($filters['title'])) {
 $orderby = 'last_activity_date';
 if (isset($filters['sort_open']) && $filters['sort_open'] == 'on') {
     $orderby = 'id';
+}
+
+if ($this->get_action() == 'threads') {
+    $db_filters['type'] = 'issue';
+} else {
+    $db_filters['type'] = 'project';
 }
 
 $threads = $this->model->threadFactory->get_all($db_filters, $orderby);

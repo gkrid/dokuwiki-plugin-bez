@@ -28,7 +28,9 @@
 	<a href="<?php echo $tpl->url('task', 'tid', $tpl->get('task')->id) ?>">
 		#z<?php echo $tpl->get('task')->id ?>
 	</a>
-	<?php echo lcfirst($tpl->getLang('task_type_' . $tpl->get('task')->type)) ?>
+    <?php if ($tpl->get('task')->thread_id != '' && $tpl->get('task')->thread->type != 'project'): ?>
+	    <?php echo lcfirst($tpl->getLang('task_type_' . $tpl->get('task')->type)) ?>
+    <?php endif ?>
 	(<?php echo lcfirst($tpl->getLang('task_' . $tpl->get('task')->state)) ?>)
 </h2>
 
@@ -78,7 +80,9 @@
 
     <div class="bez_buttons">
 
-        <?php if (count($tpl->get('task')->changable_fields()) > 0): ?>
+        <?php if (count($tpl->get('task')->changable_fields(
+                array('content', 'plan_date', 'all_day_event', 'start_time', 'finish_time', 'task_program_id', 'cost')
+            )) > 0): ?>
                 <a class="bds_inline_button"
                     href="<?php
                         if ($tpl->action() == 'thread') {
@@ -99,7 +103,7 @@
         </a>
 
         <?php if ($tpl->get('task')->task_program_id != '' &&
-                  $tpl->user_acl_level() >= BEZ_AUTH_USER): ?>
+                  $tpl->acl('task', 'id') >= BEZ_PERMISSION_CHANGE): ?>
             <a class="bds_inline_button"
                     href="<?php echo $tpl->url('task_form', 'duplicate', $tpl->get('task')->id, 'task_program_id', $tpl->get('task')->task_program_id) ?>">
                     ⇲ <?php echo $tpl->getLang('duplicate') ?>

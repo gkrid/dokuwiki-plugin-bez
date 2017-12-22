@@ -18,7 +18,16 @@ $lang['issue'] = 'Problem';
 $lang['task'] = 'Zadanie';
 
 
-$lang['report_issue'] = 'Zgłoś problem';
+$lang['report_threads'] = 'Zgłoś problem';
+$lang['report_projects'] = "Dodaj projekt";
+$lang['project'] = "projekt";
+$lang['kp_report'] = "Karta projektu";
+
+$lang['kp_team'] = "Zespół";
+$lang['kp_description'] = "Opis projektu";
+$lang['kp_schedule'] = "Harmonogram prac";
+$lang['kp_evaluation'] = "Ocena wykonania";
+
 $lang['id'] = 'Nr';
 $lang['_id'] = 'Nr';
 $lang['type'] = 'Typ problemu';
@@ -139,15 +148,15 @@ $lang['state_done'] = 'wykonane';
 $lang['state_rejected'] = 'odrzucona';
 $lang['state_closed'] = 'zamknięta';
 
-$lang['reject_issue'] = 'Odrzuć problem';
+$lang['reject_issue'] = 'Odrzuć wątek';
 
-$lang['js']['close_issue'] = 'Zamknij problem';
+$lang['js']['close_issue'] = 'Zamknij wątek';
 $lang['js']['comment_and_close_issue'] = 'Zamknij i skomentuj';
 
-$lang['js']['reject_issue'] = 'Odrzuć problem';
+$lang['js']['reject_issue'] = 'Odrzuć wątek';
 $lang['js']['comment_and_reject_issue'] = 'Odrzuć i i skomentuj';
 
-$lang['js']['reopen_issue'] = 'Otwórz ponownie problem';
+$lang['js']['reopen_issue'] = 'Otwórz ponownie wątek';
 $lang['js']['comment_and_reopen_issue'] = 'Otwórz ponownie i skomentuj';
 
 $lang['js']['do_task'] = 'Wykonaj zadanie';
@@ -518,9 +527,9 @@ $lang['subscribent'] = 'Subskrybent';
 
 $lang['unsubscribe'] = 'Wypisz';
 
-$lang['subscribed_info'] = 'Otrzymujesz powiadomienia o zmianach w tym problemie.';
+$lang['subscribed_info'] = 'Otrzymujesz powiadomienia o zmianach w tym wątku.';
 
-$lang['not_subscribed_info'] = 'Nie otrzymujesz powiadomień o zmianach w tym problemie.';
+$lang['not_subscribed_info'] = 'Nie otrzymujesz powiadomień o zmianach w tym wątku.';
 
 $lang['task_subscribed_info'] = 'Otrzymujesz powiadomienia o zmianach w tym zadaniu.';
 
@@ -539,7 +548,7 @@ $lang['prev_open'] = 'Poprzedni otwarty';
 
 $lang['js']['remove_confirm'] = 'Czy na pewno chcesz usunąć ten element?';
 
-$lang['unsubscribed_com'] = 'Zostałeś wypisany z tego problemu.';
+$lang['unsubscribed_com'] = 'Zostałeś wypisany z tego wątku.';
 
 $lang['mail_comment_added'] = 'dodał(a) komentarz';
 $lang['mail_cause_added'] = 'dodał(a) przyczynę';
@@ -594,5 +603,7 @@ $lang['nav projects'] = 'Projekty';
 
 $lang['user_did_task'] = '%s wykonał(a) zadanie %s';
 
-$lang['user_closed_issue'] = '%s zamknął(eła) problem %s';
-$lang['user_rejected_issue'] = '%s odrzucił(a) problem %s';
+$lang['user_closed_issue'] = '%s zamknął(eła) wątek %s';
+$lang['user_rejected_issue'] = '%s odrzucił(a) wątek %s';
+
+$lang['private'] = 'Prywatny';

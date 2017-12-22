@@ -79,7 +79,7 @@
 <?php endif ?>
 
 
-<?php if ($tpl->get('thread')->state != 'opened'): ?>
+<?php if ($tpl->get('thread')->state == 'closed'): ?>
     <h2><?php echo $D++ ?>D - <?php echo $tpl->getLang('8d') ?></h2>
 	<?php echo  $tpl->get('thread')->closing_comment() ?>
     <table>

@@ -27,6 +27,13 @@ class Validator {
 	public function get_rules() {
 		return $this->rules;
 	}
+
+	public function get_rule($field) {
+	    if (!isset($this->rules[$field])) {
+            throw new \Exception("no rule exists for $field");
+        }
+        return $this->rules[$field];
+    }
 	
 	public function get_errors() {
 		return $this->errors;

@@ -16,7 +16,16 @@ $lang['reports'] = 'Registers';
 $lang['issue'] = 'Issue';
 $lang['task'] = 'Task';
 
-$lang['report_issue'] = "Report a problem";
+$lang['report_therads'] = "Report a problem";
+$lang['report_projects'] = "Add project";
+$lang['project'] = "projekt";
+$lang['kp_report'] = "Project Card";
+
+$lang['kp_team'] = "Team";
+$lang['kp_description'] = "Description";
+$lang['kp_schedule'] = "Schedule";
+$lang['kp_evaluation'] = "Evaluation";
+
 $lang['id'] = "No";
 $lang['_id'] = "No";
 $lang['type'] = "Type of problem";
@@ -558,3 +567,5 @@ $lang['user_did_task'] = '%s did task %s';
 
 $lang['user_closed_issue'] = '%s closed issue %s';
 $lang['user_rejected_issue'] = '%s rejected issue %s';
+
+$lang['private'] = 'Private';

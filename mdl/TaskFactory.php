@@ -8,6 +8,30 @@ class TaskFactory extends Factory {
         return 'task_view';
     }
 
+    public function get_years_scope() {
+        $r = $this->model->sqlite->query('SELECT
+                                        MIN(create_date),
+                                        MIN(plan_date),
+                                        DATE(),
+                                        MAX(close_date),
+                                        MAX(plan_date)
+                                        FROM task');
+        $data = $this->model->sqlite->res_fetch_array($r);
+
+        $min_date = min($data[0], $data[1], $data[2]);
+        $max_date = max($data[2], $data[3], $data[4]);
+
+        //get only year
+        $first =  (int) substr($min_date, 0, strpos($min_date, '-'));
+        $last = (int) substr($max_date, 0, strpos($max_date, '-'));
+
+        $years = array();
+        for ($year = $first; $year <= $last; $year++) {
+            $years[] = (string) $year;
+        }
+        return $years;
+    }
+
     public function get_from_thread(Thread $thread) {
         $tasks = $this->model->taskFactory->get_all(array('thread_id' => $thread->id),
                                             'thread_comment_id', false, array('thread' => $thread));
@@ -52,14 +76,14 @@ class TaskFactory extends Factory {
     }
 
     public function initial_save(Entity $task, $data) {
-        parent::initial_save($task, $data);
-
-        $task->set_data($data);
         try {
             $this->beginTransaction();
-            $this->save($task);
+            parent::initial_save($task, $data);
 
-            if ($task->thread) {
+            $task->set_participant_flags($task->original_poster, array('subscribent', 'original_poster'));
+            $task->set_participant_flags($task->assignee, array('subscribent', 'assignee'));
+
+            if ($task->thread_id != '') {
                 $task->thread->set_participant_flags($task->assignee, array('subscribent', 'task_assignee'));
                 $task->thread->update_last_activity();
             }
@@ -69,16 +93,21 @@ class TaskFactory extends Factory {
             $this->rollbackTransaction();
         }
 
-        //$task->mail_notify_add();
+        if ($task->thread_id != '') {
+            $users = $task->thread->get_participants('subscribent');
+            //don't notify current user
+            unset($users[$this->model->user_nick]);
+
+            $task->mail_notify_add($users);
+        } else {
+            $task->mail_notify_add();
+        }
     }
 
     public function update_save(Entity $task, $data) {
-        parent::update_save($task, $data);
-
-        $task->set_data($data);
         try {
             $this->beginTransaction();
-            $this->save($task);
+            parent::update_save($task, $data);
 
             if ($task->thread) {
             }

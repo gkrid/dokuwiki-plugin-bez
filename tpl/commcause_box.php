@@ -36,18 +36,13 @@
 
                 <?php if ($tpl->param('kid') != $tpl->get('thread_comment')->id): ?>
                     <div class="bez_comment_buttons">
-                        <?php if (
-                             $tpl->get('thread')->state == 'opened' &&
-                             (($tpl->get('thread_comment')->type == 'comment' &&
-                                     $tpl->get('thread_comment')->author == $tpl->current_user()) ||
-                                 $tpl->get('thread')->user_is_coordinator())
-                        ): ?>
-
+                        <?php if (  $tpl->get('thread')->can_add_comments() &&
+                                    $tpl->get('thread_comment')->acl_of('type') >= BEZ_PERMISSION_CHANGE): ?>
                             <a class="bez_comment_button"
                                href="<?php echo $tpl->url('thread', 'id', $tpl->get('thread')->id, 'action', 'commcause_edit', 'kid', $tpl->get('thread_comment')->id) ?>#k_">
                                 <span class="bez_awesome">&#xf040;</span>
                             </a>
-                            <?php if ($tpl->get('thread_comment')->task_count == '0'): ?>
+                            <?php if ($tpl->get('thread_comment')->task_count == 0): ?>
                                 <a class="bez_comment_button bez_commcause_delete_prompt"
                                    data-kid="<?php echo $tpl->get('thread_comment')->id ?>"
                                    href="<?php echo $tpl->url('thread', 'id', $tpl->get('thread')->id, 'action', 'commcause_delete', 'kid', $tpl->get('thread_comment')->id) ?>">

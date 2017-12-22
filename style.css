@@ -1237,3 +1237,9 @@ nav#plugin__bez li {
 	display: block;
 	clear: both;
 }
+
+.bez__plugin_thread_title svg {
+	fill: #999;
+	vertical-align: middle;
+	margin-left: 20px;
+}

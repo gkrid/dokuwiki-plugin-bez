@@ -1,6 +1,11 @@
 <?php
-
 /** @var action_plugin_bez $this */
+
+use \dokuwiki\plugin\bez;
+
+if ($this->model->acl->get_level() < BEZ_AUTH_USER) {
+    throw new bez\meta\PermissionDeniedException();
+}
 
 define('BEZ_THREAD_FILTERS_COOKIE_NAME', 'bez_task_filters');
 
@@ -31,11 +36,11 @@ if (isset($raw_filters)) {
 
 $this->tpl->set_values($filters);
 
-$years = $this->model->threadFactory->get_years_scope();
+$years = $this->model->taskFactory->get_years_scope();
 
 //some filters are just copied
 $db_filters = array_filter($filters, function ($k) {
-    return in_array($k, array('thread_id', 'state', 'type', 'task_program_id'));
+    return in_array($k, array('thread_id', 'state', 'type', 'assignee', 'original_poster', 'task_program_id'));
 }, ARRAY_FILTER_USE_KEY);
 
 //-none filters become empty filters
@@ -49,10 +54,22 @@ $db_filters = array_map(function($v) {
 if (isset($filters['year']) && $filters['year'] !== '-all') {
     $year = $filters['year'];
 
-    $start_day = "$year-01-01";
-    $end_day = "$year-12-31";
+    $start_month = '01';
+    $end_month = '12';
+    if (isset($filters['month']) && $filters['month'] !== '-all') {
+        $start_month = $end_month = sprintf("%02d", (int)$filters['month']);
+    }
 
-    $db_filters['create_date'] = array('BETWEEN', array($start_day, $end_day), array('date'));
+    $start_day = "$year-$start_month-01";
+    $end_day = "$year-$end_month-31";
+
+    $db_filters[$filters['date_type']] = array('BETWEEN', array($start_day, $end_day), array('date'));
+}
+
+if (isset($filters['original_poster']) &&
+    substr($filters['original_poster'], 0, 1) === '@') {
+    $group = substr($filters['original_poster'], 1);
+    $db_filters['original_poster'] = array('OR', $this->model->userFactory->users_of_group($group));
 }
 
 if (isset($filters['assignee']) &&
@@ -66,7 +83,7 @@ if (isset($filters['content'])) {
     $db_filters['content'] = array('LIKE', "%$content%");
 }
 
-$orderby = 'last_activity_date';
+$orderby = 'id';
 
 $tasks = $this->model->taskFactory->get_all($db_filters, $orderby);
 

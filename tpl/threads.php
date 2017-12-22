@@ -1,8 +1,8 @@
 <?php /* @var \dokuwiki\plugin\bez\meta\Tpl $tpl */ ?>
 
-<?php if ($tpl->static_acl('thread', 'id') >= BEZ_PERMISSION_CHANGE): ?>
-    <a href="<?php echo $tpl->url('thread_report') ?>" class="bez_start_button" id="bez_report_issue_button">
-        <?php echo $tpl->getLang('report_issue') ?>
+<?php if ($tpl->acl('thread', 'id') >= BEZ_PERMISSION_CHANGE): ?>
+    <a href="<?php echo $tpl->url('thread_report', 'type', $tpl->action() == 'projects' ? 'project' : 'issue') ?>" class="bez_start_button" id="bez_report_issue_button">
+        <?php echo $tpl->getLang('report_' . $tpl->action()) ?>
     </a>
 <?php endif ?>
 
@@ -10,6 +10,27 @@
 
 <div class="bez_filter_form">
 <form action="<?php echo $tpl->url('threads') ?>" method="post">
+
+    <label><?php echo $tpl->getLang('reporter') ?>:
+        <select name="original_poster">
+            <option <?php if ($tpl->value('original_poster') == '-all') echo 'selected' ?>
+                    value="-all">--- <?php echo $tpl->getLang('all') ?> ---</option>
+            <optgroup label="<?php echo $tpl->getLang('users') ?>">
+                <?php foreach ($tpl->get('users') as $nick => $name): ?>
+                    <option <?php if ($tpl->value('original_poster') == $nick) echo 'selected' ?>
+                            value="<?php echo $nick ?>"><?php echo $name ?></option>
+                <?php endforeach ?>
+            </optgroup>
+            <optgroup label="<?php echo $tpl->getLang('groups') ?>">
+                <?php foreach ($tpl->get('groups') as $name): ?>
+                    <?php $group = "@$name" ?>
+                    <option <?php if ($tpl->value('original_poster') == $group) echo 'selected' ?>
+                            value="<?php echo $group ?>"><?php echo $group ?></option>
+                <?php endforeach ?>
+            </optgroup>
+        </select>
+    </label>
+
 	<label><?php echo $tpl->getLang('state') ?>:
 		<select name="state">
 			<option <?php if ($tpl->value('state') === '-all') echo 'selected' ?>
@@ -71,6 +92,7 @@
 		<?php endforeach ?>
 		</select>
 	</label>
+
 	<label><?php echo $tpl->getLang('sort_by_open_date') ?>:
 			<input type="checkbox" name="sort_open"
 			<?php if ($tpl->value('sort_open') === 'on') echo 'checked="checked"' ?>>
@@ -95,10 +117,18 @@
     <?php $count = 0 ?>
     <?php $total_cost = 0.0 ?>
 	<?php foreach ($tpl->get('threads') as $thread): ?>
+        <?php if ($thread->acl_of('id') < BEZ_PERMISSION_VIEW) continue ?>
         <?php $count += 1 ?>
         <?php $total_cost += (float) $thread->task_sum_cost ?>
-        
-		<tr class="pr<?php echo $thread->state == 'opened' ? 'None' : '-1' ?>">
+		<tr class="pr<?php
+            if ($thread->state != 'opened') {
+                echo '-1';
+            } elseif($thread->priority != '') {
+                echo $thread->priority;
+            } else {
+                echo 'None';
+            }
+        ?>">
 			<td>
 				<a href="<?php echo $tpl->url('thread', 'id', $thread->id) ?>">
                     #<?php echo $thread->id ?>
@@ -147,13 +177,8 @@
 				<?php endif ?>
 			</td>
 			<td>
-		<a href="<?php echo $tpl->url('tasks', 'issue', $thread->id, 'state', 0) ?>">
-				<?php echo $thread->task_count_closed ?>
-		</a>
-			/
-		<a href="<?php echo $tpl->url('tasks', 'issue', $thread->id) ?>">
-				<?php echo $thread->task_count ?>
-		</a>
+                <?php echo $thread->task_count_closed ?> / <?php echo $thread->task_count ?>
+
 			</td>
 		</tr>
 	<?php endforeach ?>

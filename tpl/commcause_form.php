@@ -17,8 +17,8 @@
 			</span>
 			<div class="commcause_content">
 			<h2>
-				<?php if ($tpl->static_acl('thread_comment', 'type') >= BEZ_PERMISSION_CHANGE &&
-                          $tpl->get('thread')->state == 'opened'): ?>
+				<?php if ($tpl->acl('thread_comment', 'type') >= BEZ_PERMISSION_CHANGE &&
+                          $tpl->get('thread')->can_add_causes()): ?>
 				<ul class="bez_tabs">
 					<li
                         <?php if (  $tpl->value('type') == '' ||
@@ -45,8 +45,8 @@
 
                 <div class="plugin__bez_form_buttons">
 
-                <?php if ($tpl->static_acl('thread_comment', 'type') >= BEZ_PERMISSION_CHANGE &&
-                    $tpl->get('thread')->state == 'opened'): ?>
+                <?php if ($tpl->acl('thread_comment', 'type') >= BEZ_PERMISSION_CHANGE &&
+                    $tpl->get('thread')->can_add_causes()): ?>
                     <div class="bez_cause_type">
                         <div style="margin-bottom: 10px;">
                             <label for="potential">
@@ -75,12 +75,12 @@
                     </a>
                 <?php endif ?>
 
-                <?php if ($tpl->get('thread')->state == 'opened'): ?>
+                <?php if ($tpl->get('thread')->can_add_comments()): ?>
                     <button class="plugin__bez_button plugin__bez_button_green" name="fn" value="comment_add">
                         <?php echo $tpl->param('kid') != '' ? $tpl->getLang('correct') : $tpl->getLang('add') ?>
                     </button>
                 <?php endif ?>
-                <?php if ($tpl->param('kid') == ''): ?>
+                <?php if ($tpl->param('kid') == '' && $tpl->get('thread')->acl_of('state') >= BEZ_PERMISSION_CHANGE): ?>
                     <?php if ($tpl->get('thread')->can_be_closed()): ?>
                         <button class="plugin__bez_button plugin__bez_button_gray" name="fn" value="thread_close">
                             <?php echo $tpl->getLang('js')['close_issue'] ?>
@@ -89,7 +89,7 @@
                         <button class="plugin__bez_button plugin__bez_button_gray" name="fn" value="thread_reject">
                             <?php echo $tpl->getLang('js')['reject_issue'] ?>
                         </button>
-                    <?php else: ?>
+                    <?php elseif ($tpl->get('thread')->can_be_reopened()): ?>
                         <button class="plugin__bez_button plugin__bez_button_gray" name="fn" value="thread_reopen">
                             <?php echo $tpl->getLang('js')['reopen_issue'] ?>
                         </button>

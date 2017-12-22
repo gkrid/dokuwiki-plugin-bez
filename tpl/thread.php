@@ -24,7 +24,7 @@
 
 		<div class="bez_second_lv_buttons" style="margin-top: 10px">
 			<?php if (	$tpl->get('thread')->user_is_coordinator() &&
-                        $tpl->get('thread')->state == 'opened'): ?>
+                        $tpl->get('thread')->can_add_tasks()): ?>
 				<a href="<?php echo $tpl->url('thread', 'id', $tpl->get('thread')->id, 'action', 'task_add') ?>#z_" class="bez_subscribe_button">
 					<span class="bez_awesome">&#xf0fe;</span>&nbsp;&nbsp;<?php echo $tpl->getLang('correction_add') ?>
 				</a>
@@ -70,7 +70,9 @@
 
 
 <?php if (	!(strpos($tpl->param('action'), 'task') === 0) &&
-            $tpl->param('action') != 'commcause_edit'): ?>
+            $tpl->param('action') != 'commcause_edit' &&
+            !(in_array($tpl->get('thread')->state, array('closed', 'rejected')) &&
+                $tpl->get('thread')->acl_of('state') < BEZ_PERMISSION_CHANGE)): ?>
 
     <?php include 'commcause_form.php' ?>
 
@@ -158,7 +160,7 @@
 </ul>
 
 <?php if (	$tpl->get('thread')->user_is_coordinator() &&
-            $tpl->get('thread')->state == 'opened'): ?>
+            $tpl->get('thread')->can_add_participants()): ?>
     <h2><?php echo $tpl->getLang('issue_invite_header') ?></h2>
     <form action="<?php echo $tpl->url('thread', 'id', $tpl->get('thread')->id, 'action', 'invite') ?>" method="post" id="bez_invite_users_form">
     <div id="bez_invite_users" class="ui-widget">

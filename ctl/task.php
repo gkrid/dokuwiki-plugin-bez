@@ -1,7 +1,11 @@
 <?php
-/** @var action_plugin_bez_default $this */
+/** @var action_plugin_bez $this */
 
 use \dokuwiki\plugin\bez;
+
+if ($this->model->acl->get_level() < BEZ_AUTH_USER) {
+    throw new bez\meta\PermissionDeniedException();
+}
 
 if ($this->get_param('tid') == '') {
     header('Location: ' . $this->url('tasks'));
@@ -19,7 +23,7 @@ if ($this->get_param('action') == 'comment_add') {
     $task_comment = $this->model->task_commentFactory->create_object(array('task' => $task));
     $this->model->task_commentFactory->initial_save($task_comment, $_POST);
 
-    $anchor = 'k'.$task_comment->id;
+    $anchor = 'zk'.$task_comment->id;
     $redirect = true;
 
 } elseif ($this->get_param('action') == 'subscribe') {

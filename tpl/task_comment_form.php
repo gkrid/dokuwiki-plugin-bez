@@ -22,14 +22,16 @@
             </div>
             <div class="bez_content">
                 <textarea name="content" class="bez_textarea_content" id="content"><?php echo $tpl->value('content') ?></textarea>
+                 <div class="plugin__bez_form_buttons">
+                <div class="plugin__bez_form_buttons_container">
+
                 <?php if ($tpl->param('zkid') != ''): ?>
                     <a href="<?php echo $tpl->url('task', 'tid', $tpl->get('task')->id) ?><?php if ($tpl->param('zkid') != '') echo '#zk'.$tpl->param('zkid') ?>"
                        class="plugin__bez_button plugin__bez_button_red">
                         <?php echo $tpl->getLang('cancel') ?>
                     </a>
                 <?php endif ?>
-                <div class="plugin__bez_form_buttons">
-                <div class="plugin__bez_form_buttons_container">
+
                 <?php if ($tpl->get('task')->state == 'opened'): ?>
                     <button class="plugin__bez_button plugin__bez_button_green" name="fn" value="comment_add">
                         <?php echo $tpl->param('zkid') != '' ? $tpl->getLang('correct') : $tpl->getLang('comment') ?>

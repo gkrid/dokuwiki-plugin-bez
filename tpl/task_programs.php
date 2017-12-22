@@ -40,7 +40,7 @@
             <?php endif ?>
 
             <td>
-                <a href="<?php echo $tpl->url('tasks', 'task_program', $task_program->id) ?>">
+                <a href="<?php echo $tpl->url('tasks', 'task_program_id', $task_program->id) ?>">
                     <?php echo $task_program->count ?>
                 </a>
             </td>

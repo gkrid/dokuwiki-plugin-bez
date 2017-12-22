@@ -20,13 +20,7 @@ class Thread extends Entity {
 
     protected $title, $content, $content_html;
 
-    protected $priority;
-
     protected $task_count, $task_count_closed, $task_sum_cost;
-
-    /*new labels to add when object saved*/
-    //protected $new_label_ids;
-    protected $labels;
 
     public static function get_columns() {
         return array('id',
@@ -35,7 +29,6 @@ class Thread extends Entity {
                      'type', 'state',
                      'create_date', 'last_activity_date', 'last_modification_date', 'close_date',
                      'title', 'content', 'content_html',
-                     'priority',
                      'task_count', 'task_count_closed', 'task_sum_cost');
     }
 
@@ -47,6 +40,13 @@ class Thread extends Entity {
 
     public static function get_states() {
         return array('proposal', 'opened', 'done', 'closed', 'rejected');
+    }
+
+    public function __get($property) {
+        if($property == 'priority') {
+            return $this->$property;
+        }
+        return parent::__get($property);
     }
 
     public function user_is_coordinator() {
@@ -62,7 +62,8 @@ class Thread extends Entity {
         $this->validator->set_rules(array(
             'coordinator' => array(array('dw_user'), 'NULL'),
             'title' => array(array('length', 200), 'NOT NULL'),
-            'content' => array(array('length', 10000), 'NOT NULL')
+            'content' => array(array('length', 10000), 'NOT NULL'),
+            'type' => array(array('select', array('issue', 'project')), 'NULL')
         ));
 
 		//we've created empty object (new record)
@@ -86,14 +87,12 @@ class Thread extends Entity {
 	}
 	
 	public function set_data($data, $filter=NULL) {
-        $input = array('title', 'content', 'coordinator');
-        $val_data = $this->validator->validate($data, $input); 
+        $val_data = $this->validator->validate($data);
                 
 		if ($val_data === false) {
 			throw new ValidationException('thread',	$this->validator->get_errors());
         }
-        
-        
+
         //change coordinator at the end(!)
         if (isset($val_data['coordinator'])) {
             $val_coordinator = $val_data['coordinator'];
@@ -103,7 +102,12 @@ class Thread extends Entity {
         $this->set_property_array($val_data); 
         
         if (isset($val_coordinator)) {
-           $this->set_property('coordinator', $val_coordinator); 
+            $this->set_property('coordinator', $val_coordinator);
+
+            //if we add cooridnator, we change state
+            if ($this->state == 'proposal') {
+                $this->state = 'opened';
+            }
         }
 
 		$this->content_html = p_render('xhtml',p_get_instructions($this->content), $ignore);
@@ -119,7 +123,7 @@ class Thread extends Entity {
         }
 
         if (!in_array($state, array('opened', 'closed', 'rejected'))) {
-            throw new ValidationException('task', array('sholud be opened, closed or rejected'));
+            throw new ValidationException('thread', array('state should be opened, closed or rejected'));
         }
 
         //nothing to do
@@ -141,6 +145,20 @@ class Thread extends Entity {
         $this->state = $state;
     }
 
+    public function set_private_flag($flag) {
+        $private = '0';
+        if ($flag) {
+            $private = '1';
+        }
+
+        if ($private == $this->private) {
+            return;
+        }
+
+        $this->model->sqlite->query("UPDATE {$this->get_table_name()} SET private=? WHERE id=?", $private, $this->id);
+
+    }
+
 	public function update_last_activity() {
         $this->last_activity_date = date('c');
         $this->model->sqlite->query('UPDATE thread SET last_activity_date=? WHERE id=?',
@@ -148,9 +166,6 @@ class Thread extends Entity {
     }
 
     public function get_participants($filter='') {
-        if ($this->acl_of('participants') < BEZ_PERMISSION_VIEW) {
-            throw new PermissionDeniedException();
-        }
         if ($this->id === NULL) {
             return array();
         }
@@ -176,9 +191,6 @@ class Thread extends Entity {
     }
 
     public function get_participant($user_id) {
-        if ($this->acl_of('participants') < BEZ_PERMISSION_VIEW) {
-            throw new PermissionDeniedException();
-        }
         if ($this->id === NULL) {
             return array();
         }
@@ -204,10 +216,6 @@ class Thread extends Entity {
     }
 
     public function remove_participant_flags($user_id, $flags) {
-        if ($this->acl_of('participants') < BEZ_PERMISSION_CHANGE) {
-            throw new PermissionDeniedException();
-        }
-
         //thread not saved yet
         if ($this->id === NULL) {
             throw new \Exception('cannot remove flags from not saved thread');
@@ -226,10 +234,6 @@ class Thread extends Entity {
     }
 
 	public function set_participant_flags($user_id, $flags=array()) {
-        if ($this->acl_of('participants') < BEZ_PERMISSION_CHANGE) {
-            throw new PermissionDeniedException();
-        }
-
         //thread not saved yet
         if ($this->id === NULL) {
             throw new \Exception('cannot add flags to not saved thread');
@@ -270,10 +274,6 @@ class Thread extends Entity {
     }
 
     public function get_labels() {
-        if ($this->acl_of('labels') < BEZ_PERMISSION_VIEW) {
-            throw new PermissionDeniedException();
-        }
-
         //record not saved
         if ($this->id === NULL) {
            return array();
@@ -291,12 +291,7 @@ class Thread extends Entity {
     }
 
     public function add_label($label_id) {
-        if ($this->acl_of('labels') < BEZ_PERMISSION_CHANGE) {
-            throw new PermissionDeniedException();
-        }
-
-
-        //issue not saved yet
+         //issue not saved yet
         if ($this->id === NULL) {
             throw new \Exception('cannot add labels to not saved thread. use initial_save() instead');
         }
@@ -315,10 +310,6 @@ class Thread extends Entity {
     }
 
     public function remove_label($label_id) {
-        if ($this->acl_of('labels') < BEZ_PERMISSION_CHANGE) {
-            throw new PermissionDeniedException();
-        }
-
         //issue not saved yet
         if ($this->id === NULL) {
             throw new \Exception('cannot remove labels from not saved thread. use initial_save() instead');
@@ -344,6 +335,22 @@ class Thread extends Entity {
         return $causes;
     }
 
+    public function can_add_comments() {
+        return in_array($this->state, array('proposal', 'opened', 'done'));
+    }
+
+    public function can_add_causes() {
+        return $this->type == 'issue' && in_array($this->state, array('opened', 'done'));
+    }
+
+    public function can_add_tasks() {
+        return in_array($this->state, array('opened', 'done'));
+    }
+
+    public function can_add_participants() {
+        return in_array($this->state, array('opened', 'done'));
+    }
+
     public function can_be_closed() {
         $res = $this->model->sqlite->query("SELECT thread_comment.id FROM thread_comment
                                LEFT JOIN task ON thread_comment.id = task.thread_comment_id
@@ -351,16 +358,17 @@ class Thread extends Entity {
                                      thread_comment.type LIKE 'cause_%' AND task.id IS NULL", $this->id);
 
         $causes_without_tasks = $this->model->sqlite->res2row($res) ? true : false;
-        return $this->state == 'opened' &&
-            ($this->task_count - $this->task_count_closed == 0) &&
-            $this->state != 'proposal' &&
-            ! $causes_without_tasks &&
-            $this->task_count > 0;
+        return $this->state == 'done' &&
+            ! $causes_without_tasks;
 
     }
 
     public function can_be_rejected() {
-        return $this->state == 'opened' && $this->task_count == 0;
+        return $this->state != 'rejected' && $this->task_count == 0;
+    }
+
+    public function can_be_reopened() {
+        return in_array($this->state, array('closed', 'rejected'));
     }
 
     public function closing_comment() {
@@ -420,16 +428,14 @@ class Thread extends Entity {
         $mailer->setBody($plain, $rep, $rep, $html, false);
 
         if ($users == FALSE) {
-            $users = array_map(function($par) {
-                return $par['user_id'];
-            }, $this->get_participants('subscribent'));
 
+            $users = $this->get_participants('subscribent');
             //don't notify myself
             unset($users[$this->model->user_nick]);
         }
 
-        $emails = array_map(function($user_id) {
-            return $this->model->userFactory->get_user_email($user_id);
+        $emails = array_map(function($user) {
+            return $this->model->userFactory->get_user_email($user['user_id']);
         }, $users);
 
 

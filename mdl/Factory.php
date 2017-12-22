@@ -95,10 +95,14 @@ abstract class Factory {
                 if ($function !== '') {
                     array_unshift($function_args, $field);
                     $where_q[] = "$function(".implode(',', $function_args).") $operator :$filter";
+                    $execute[":$filter"] = $value;
+                } elseif (empty($value)) {
+                    $where_q[] = "($field IS NULL OR $field = '')";
                 } else {
                     $where_q[] = "$field $operator :$filter";
+                    $execute[":$filter"] = $value;
                 }
-                $execute[":$filter"] = $value;
+
             }
 		}
 		
@@ -218,48 +222,81 @@ abstract class Factory {
         $this->model->sqlite->query('ROLLBACK');
     }
 
-	public function save(Entity $obj) {
-        //if user can change id, he can modify record
-		$set = array();
-		$execute = array();
-		$columns = array();
-		foreach ($obj->get_columns() as $column) {
+	protected function insert(Entity $obj) {
+        if ($obj->id != NULL) {
+            throw new \Exception('row already saved');
+        }
+
+        $set = array();
+        $execute = array();
+        $columns = array();
+        foreach ($obj->get_columns() as $column) {
             if ($obj->$column === null) continue;
-			$set[] = ":$column";
-			$columns[] = $column;
+            $set[] = ":$column";
+            $columns[] = $column;
             $value = $obj->$column;
             if ($value === '') {
                 $execute[':'.$column] = null;
             } else {
                 $execute[':'.$column] = $value;
             }
-		}
-				
-		$query = 'REPLACE INTO '.$this->get_table_name().'
+        }
+
+        $query = 'INSERT INTO '.$this->get_table_name().'
 							('.implode(',', $columns).')
 							VALUES ('.implode(',', $set).')';
 
-		$sth = $this->model->db->prepare($query);
-		$res = $sth->execute($execute);
+        $sth = $this->model->db->prepare($query);
+        $sth->execute($execute);
 
-        //new object is created
-        if ($obj->id === NULL) {
-            $reflectionClass = new \ReflectionClass($obj);
-            $reflectionProperty = $reflectionClass->getProperty('id');
-            $reflectionProperty->setAccessible(true);
-            $reflectionProperty->setValue($obj, $this->model->db->lastInsertId());
-        }
-	}
+        $reflectionClass = new \ReflectionClass($obj);
+        $reflectionProperty = $reflectionClass->getProperty('id');
+        $reflectionProperty->setAccessible(true);
+        $reflectionProperty->setValue($obj, $this->model->db->lastInsertId());
 
-	public function initial_save(Entity $obj, $data) {
-        if ($obj->id != NULL) {
-            throw new \Exception('row already saved. use update_save');
+    }
+
+    protected function update(Entity $obj) {
+        if ($obj->id == NULL) {
+            throw new \Exception('row not inserted');
         }
+
+        $set = array();
+        $execute = array(':id' => $obj->id);
+        foreach ($obj->get_columns() as $column) {
+            if ($column == 'id') continue;
+            $set[] = "$column=:$column";
+            $value = $obj->$column;
+            if ($value === '') {
+                $execute[':'.$column] = null;
+            } else {
+                $execute[':'.$column] = $value;
+            }
+        }
+
+        $query = 'UPDATE ' . $this->get_table_name() .
+                    ' SET ' . implode(',', $set) .
+                    ' WHERE id=:id';
+
+        $sth = $this->model->db->prepare($query);
+        $sth->execute($execute);
+    }
+
+    public function initial_save(Entity $obj, $data) {
+	    $obj->set_data($data);
+	    $this->insert($obj);
     }
 
     public function update_save(Entity $obj, $data) {
-        if ($obj->id == NULL) {
-            throw new \Exception('row not saved. use initial_save()');
+	    $obj->set_data($data);
+	    $this->update($obj);
+    }
+
+    public function save(Entity $obj) {
+	    if ($obj->id == NULL) {
+	        $this->insert($obj);
+        } else {
+	        $this->update($obj);
         }
     }
 	

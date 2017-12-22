@@ -43,7 +43,10 @@ class Thread_comment extends Entity {
 		parent::__construct($model, $defaults);
 
         $this->validator->set_rules(array(
-            'content' => array(array('length', 10000), 'NOT NULL')
+            'content' => array(array('length', 10000), 'NOT NULL'),
+            'type' => array(
+                array('select', array('comment', 'cause_real', 'cause_potential')),
+                'NOT NULL')
         ));
 		
 		//new object
@@ -65,21 +68,13 @@ class Thread_comment extends Entity {
                 $this->thread = $defaults['thread'];
             }
         }
-
-
-		//set validation
-        if ($this->thread->user_is_coordinator()) {
-            $this->validator->set_rules(
-                array(
-                    'type' => array(
-                        array('select', array('comment', 'cause_real', 'cause_potential', 'closing_comment')),
-                        'NOT NULL')
-                )
-            );
-        }
 	}
 
     public function set_data($post) {
+	    //no all can change type
+        if ($this->acl_of('type') < BEZ_PERMISSION_CHANGE) {
+            unset($post['type']);
+        }
         parent::set_data($post);
         $this->content_html = p_render('xhtml',p_get_instructions($this->content), $ignore);
     }

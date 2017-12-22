@@ -35,13 +35,13 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
         $actions = array(
             //'start' => $this->getLang('nav my_activities'),
             'threads' => $this->getLang('issues'),
-            //'projects' => $this->getLang('nav projects'),
+            'projects' => $this->getLang('nav projects'),
             'tasks' => $this->getLang('tasks'),
             'activity_report' => $this->getLang('activity_report')
         );
         /** @var bez\mdl\Model $model */
         $model = new bez\mdl\Model($auth, $INFO['client'], $this, $conf);
-        if ($model->acl->get_level() >= BEZ_AUTH_LEADER) {
+        if ($model->acl->get_level() >= BEZ_AUTH_ADMIN) {
             $actions['types'] = $this->getLang('types_manage');
             $actions['task_programs'] = $this->getLang('task_types');
         }

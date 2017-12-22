@@ -21,8 +21,6 @@ CREATE TABLE thread (
   content                TEXT    NOT NULL,
   content_html           TEXT    NOT NULL,
 
-  priority               INTEGER NOT NULL  DEFAULT -1, -- dependent on tasks
-
   task_count             INTEGER NOT NULL  DEFAULT 0,
   task_count_closed      INTEGER NOT NULL  DEFAULT 0,
   task_sum_cost          REAL
@@ -30,6 +28,22 @@ CREATE TABLE thread (
 
 CREATE INDEX thread_ix_last_activity_date
   ON thread (last_activity_date); -- to speedup order by
+
+CREATE VIEW thread_view
+  AS
+    SELECT thread.id, thread.original_poster, thread.coordinator, thread.closed_by,
+      thread.private, thread.lock, thread.type,
+      thread.create_date, thread.last_activity_date, thread.last_modification_date, thread.close_date,
+      thread.title, thread.content, thread.content_html,
+      thread.task_count, thread.task_count_closed, thread.task_sum_cost,
+      label.id AS label_id,
+      label.name AS label_name,
+      (SELECT MIN(priority) FROM task_view WHERE task_view.thread_id = thread.id) AS priority,
+      CASE  WHEN thread.state = 'opened' AND thread.task_count > 0 AND thread.task_count = thread.task_count_closed THEN 'done'
+            ELSE thread.state END AS state
+    FROM thread
+      LEFT JOIN thread_label ON thread.id = thread_label.thread_id
+      LEFT JOIN label ON label.id = thread_label.label_id;
 
 CREATE TABLE thread_participant (
   thread_id       INTEGER NOT NULL REFERENCES thread (id),
@@ -64,6 +78,13 @@ CREATE TABLE thread_comment (
 
   task_count             INTEGER NOT NULL  DEFAULT 0
 );
+
+CREATE VIEW thread_comment_view
+  AS
+    SELECT thread_comment.*,
+      thread.coordinator AS coordinator
+    FROM thread_comment
+      JOIN thread ON thread_comment.thread_id = thread.id;
 
 CREATE INDEX thread_comment_ix_thread_id
   ON thread_comment (thread_id);
@@ -180,7 +201,7 @@ CREATE VIEW task_view
       LEFT JOIN task_program ON task.task_program_id = task_program.id
       LEFT JOIN thread ON task.thread_id = thread.id;
 
-CREATE TRIGGER task_tr_insert
+CREATE TRIGGER task_tr_insert_task_count
   INSERT
   ON task
   WHEN new.thread_id IS NOT NULL
@@ -188,27 +209,47 @@ BEGIN
   UPDATE thread
   SET task_count = task_count + 1
   WHERE id = new.thread_id;
+END;
+
+CREATE TRIGGER task_tr_insert_task_sum_cost
+  INSERT
+  ON task
+  WHEN new.thread_id IS NOT NULL AND new.cost IS NOT NULL
+BEGIN
   UPDATE thread
-  SET task_sum_cost = task_sum_cost + new.cost
+  SET task_sum_cost = coalesce(task_sum_cost, 0) + new.cost
   WHERE id = new.thread_id;
 END;
 
-CREATE TRIGGER task_tr_update_cost_count
-  UPDATE OF thread_id, cost
+CREATE TRIGGER task_tr_update_task_count
+  UPDATE OF thread_id
   ON task
 BEGIN
-  UPDATE thread
-  SET task_sum_cost = task_sum_cost - old.cost
-  WHERE id = old.thread_id;
-  UPDATE thread
-  SET task_sum_cost = task_sum_cost + new.cost
-  WHERE id = new.thread_id;
-
   UPDATE thread
   SET task_count = task_count - 1
   WHERE id = old.thread_id;
   UPDATE thread
   SET task_count = task_count + 1
+  WHERE id = new.thread_id;
+END;
+
+CREATE TRIGGER task_tr_update_task_sum_cost_old_cost_not_null
+  UPDATE OF thread_id, cost
+  ON task
+  WHEN old.cost IS NOT NULL
+BEGIN
+  UPDATE thread
+  SET task_sum_cost = task_sum_cost - old.cost
+  WHERE id = old.thread_id;
+END;
+
+CREATE TRIGGER task_tr_update_task_sum_cost_new_cost_not_null
+  UPDATE OF thread_id, cost
+  ON task
+  WHEN new.cost IS NOT NULL
+BEGIN
+  UPDATE thread
+  SET task_sum_cost = coalesce(task_sum_cost, 0) + new.cost
   WHERE id = new.thread_id;
 END;
 

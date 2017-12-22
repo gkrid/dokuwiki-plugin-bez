@@ -2,6 +2,8 @@
 
 namespace dokuwiki\plugin\bez\meta;
 
+use dokuwiki\plugin\bez\mdl\Entity;
+
 class Tpl {
 
     /** @var \action_plugin_bez */
@@ -50,12 +52,18 @@ class Tpl {
         return 'mailto:'.$to.'?subject='.rawurlencode($subject).'&body='.rawurlencode($body);
     }
 
-    public function static_acl($table, $field) {
+    public function acl($table, $field) {
+        if ($table instanceof Entity) {
+            return $table->acl_of($field);
+        }
         return $this->action->get_model()->acl->check_static_field($table, $field);
     }
     
     /*users info function for shorten the code*/
-    public function user_name($login=NULL) {
+    public function user_name($login='') {
+        if ($login == '') {
+            $login = $this->current_user();
+        }
         $name = $this->action->get_model()->userFactory->get_user_full_name($login);
         if ($name === '') {
             return $login;
@@ -134,5 +142,20 @@ class Tpl {
     public function date_diff_hours($rDate, $lDate='now') {
         $interval = date_diff(date_create($lDate), date_create($rDate));
         return $interval->format('%h:%I');
+    }
+
+    public function time_to_float($time) {
+        list($hour, $minute) = explode(':', $time);
+        $hour = (float) $hour;
+        $minute = (float) $minute;
+
+        return $hour + $minute/60;
+    }
+
+    public function float_to_time($float) {
+        $hours = floor($float);
+        $minutes = ($float - $hours) * 60;
+
+        return sprintf('%d:%02d', $hours, $minutes);
     }
 }

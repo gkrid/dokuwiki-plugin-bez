@@ -1,4 +1,11 @@
 <?php
+/** @var action_plugin_bez $this */
+
+use \dokuwiki\plugin\bez;
+
+if ($this->model->acl->get_level() < BEZ_AUTH_ADMIN) {
+    throw new bez\meta\PermissionDeniedException();
+}
 
 $task_programs = $this->model->task_programFactory->get_all();
 

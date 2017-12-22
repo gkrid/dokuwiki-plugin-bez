@@ -53,9 +53,8 @@ if ($tpl->action() == 'thread') {
 				<?php endforeach ?>
 				</select>
 			<?php else: ?>
-				<input type="hidden" name="assignee" value="<?php echo $tpl->value('assignee') ?>">
 				<strong>
-				<?php echo $tpl->user_name($tpl->value('assignee')) ?>
+				<?php echo $tpl->user_name() ?>
 				</strong>
 			<?php endif ?>
 			
@@ -123,9 +122,11 @@ if ($tpl->action() == 'thread') {
 			<label for="tasktype"><?php echo $tpl->getLang('task_type') ?>:</label>
 			<span>
                 <select id="task_program_id" name="task_program_id" <?php if ($tpl->get('task')->acl_of('task_program_id') < BEZ_PERMISSION_CHANGE) echo 'disabled' ?>>
-                    <?php if ($tpl->get('thread') != ''): ?>
-                    <option <?php if ($tpl->value('task_program_id') == '') echo 'selected' ?> value=""><?php echo $tpl->getLang('tasks_no_type') ?></option>
-                    <?php endif; ?>
+                    <?php if ($tpl->get('task')->can_be_null('task_program_id')): ?>
+                        <option <?php if ($tpl->value('task_program_id') == '') echo 'selected' ?> value="">
+                            <?php echo $tpl->getLang('tasks_no_type') ?>
+                        </option>
+                    <?php endif ?>
                     
                     <?php foreach ($tpl->get('task_programs') as $task_program): ?>
                         <option <?php if ($tpl->value('task_program_id') == $task_program->id) echo 'selected' ?> value="<?php echo $task_program->id ?>"><?php echo $task_program->name ?></option>

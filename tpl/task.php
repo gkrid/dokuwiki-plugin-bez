@@ -1,5 +1,5 @@
 <?php /* @var \dokuwiki\plugin\bez\meta\Tpl $tpl */ ?>
-<?php if ($tpl->get('task')->thread != null): ?>
+<?php if ($tpl->get('task')->thread_id != '' && $tpl->get('task')->thread->acl_of('id') > BEZ_PERMISSION_VIEW): ?>
     <div id="bds_issue_box" class="pr<?php echo $tpl->get('task')->thread->priority ?>">
         <div>
             <strong><?php echo $tpl->getLang('issue') ?>:</strong>
@@ -7,7 +7,9 @@
                 #<?php echo $tpl->get('task')->thread->id ?>
             </a>
             <strong>
-            <?php if (!empty($tpl->get('task')->thread->label_name)): ?>
+            <?php if ($tpl->get('task')->thread->type == 'project'): ?>
+                <?php echo $tpl->getLang('project') ?>
+            <?php elseif (!empty($tpl->get('task')->thread->label_name)): ?>
                 <?php echo $tpl->get('task')->thread->label_name ?>
             <?php else: ?>
                 <i style="color: #777"><?php echo $tpl->getLang('issue_type_no_specified') ?></i>
@@ -18,7 +20,7 @@
             <?php echo $tpl->get('task')->thread->title ?>
         </div>
 
-        <?php if ($tpl->get('task')->thread_comment != null): ?>
+        <?php if ($tpl->get('task')->thread_comment_id != ''): ?>
             <div style="margin-top: 12px;">
                 <h2>
                     <a href="<?php echo $tpl->url('thread', 'id', $tpl->get('task')->thread->id) ?>#k<?php echo $tpl->get('task')->thread_comment->id ?>">
@@ -67,10 +69,17 @@
         </div>
     <?php endif ?>
 
-    <?php if ($tpl->get('task')->thread->state == 'opened' &&
-              $tpl->param('action') != 'task_edit' &&
-              $tpl->param('action') != 'comment_edit'): ?>
-        <?php include 'task_comment_form.php' ?>
+    <?php if($tpl->param('action') != 'task_edit' && $tpl->param('action') != 'comment_edit'): ?>
+         <?php if (
+                 ($tpl->get('task')->thread_id != '' &&
+                    $tpl->get('task')->thread->can_add_tasks()) ||
+
+                 $tpl->get('task')->state == 'opened' ||
+
+                ($tpl->get('task')->state == 'done' &&
+                    $tpl->get('task')->acl_of('state') >= BEZ_PERMISSION_CHANGE)): ?>
+            <?php include 'task_comment_form.php' ?>
+        <?php endif?>
     <?php endif ?>
 
     </div>

@@ -26,7 +26,6 @@ if ($this->get_param('action') == 'edit') {
 
     header('Location: ?id='.$this->id('thread', 'id', $thread->id));
 } elseif ($this->get_param('action') == 'add') {
-    //$template['form_action'] = 'add';
 
     $defaults = array();
     if ($this->model->acl->get_level() >= BEZ_AUTH_LEADER) {

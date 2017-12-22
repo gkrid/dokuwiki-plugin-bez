@@ -63,16 +63,27 @@ class Acl {
     private function static_thread() {
         $acl = array_fill_keys(Thread::get_columns(), BEZ_PERMISSION_NONE);
 
-        //virtual columns
+        $acl['label_id'] = BEZ_PERMISSION_NONE;
         $acl['participants'] = BEZ_PERMISSION_NONE;
-        $acl['labels'] = BEZ_PERMISSION_NONE;
 
         //BEZ_AUTH_VIEWER is also token viewer
         if ($this->level >= BEZ_AUTH_VIEWER) {
-            //user can display everythig
+            //user can display everything
             $acl = array_map(function($value) {
                 return BEZ_PERMISSION_VIEW;
             }, $acl);
+        }
+
+        if ($this->level >= BEZ_AUTH_USER) {
+            $acl['id'] = BEZ_PERMISSION_CHANGE;
+        }
+
+        if ($this->level >= BEZ_AUTH_LEADER) {
+            $acl['title'] = BEZ_PERMISSION_CHANGE;
+            $acl['content'] = BEZ_PERMISSION_CHANGE;
+            $acl['coordinator'] = BEZ_PERMISSION_CHANGE;
+            $acl['label_id'] = BEZ_PERMISSION_CHANGE;
+            $acl['private'] = BEZ_PERMISSION_CHANGE;
         }
 
         if ($this->level >= BEZ_AUTH_ADMIN) {
@@ -80,9 +91,9 @@ class Acl {
             $acl = array_map(function($value) {
                 return BEZ_PERMISSION_DELETE;
             }, $acl);
-
-            return $acl;
         }
+
+        return $acl;
     }
         
 
@@ -94,22 +105,51 @@ class Acl {
             if ($this->level >= BEZ_AUTH_USER) {
                 $acl['title'] = BEZ_PERMISSION_CHANGE;
                 $acl['content'] = BEZ_PERMISSION_CHANGE;
+                $acl['type'] = BEZ_PERMISSION_CHANGE;
             }
             
             if ($this->level >= BEZ_AUTH_LEADER) {
                 $acl['coordinator'] = BEZ_PERMISSION_CHANGE;
+                $acl['label_id'] = BEZ_PERMISSION_CHANGE;
             }
             
             return $acl;
         }
+
+        //private threads
+        if ($this->level < BEZ_AUTH_ADMIN && $thread->private == '1') {
+            if ($thread->get_participant($this->model->user_nick) === false) {
+                return array_fill_keys(Thread::get_columns(), BEZ_PERMISSION_NONE);
+            }
+        }
+
+        if ($this->level <= BEZ_AUTH_LEADER) {
+            $acl['title']       = BEZ_PERMISSION_VIEW;
+            $acl['content']     = BEZ_PERMISSION_VIEW;
+            $acl['coordinator'] = BEZ_PERMISSION_VIEW;
+            $acl['label_id']    = BEZ_PERMISSION_VIEW;
+            $acl['private']     = BEZ_PERMISSION_VIEW;
+        }
+
         
-        if ($thread->state === 'proposal' &&
-            $thread->original_poster === $this->model->user_nick) {
+        if ($thread->state == 'proposal' &&
+            $thread->original_poster == $this->model->user_nick) {
             $acl['title'] = BEZ_PERMISSION_CHANGE;
             $acl['content'] = BEZ_PERMISSION_CHANGE;
         }
+
+        //leader can change coordinator
+        if ($thread->state == 'proposal' &&
+            $this->level >= BEZ_AUTH_LEADER) {
+
+            $acl['title'] = BEZ_PERMISSION_CHANGE;
+            $acl['content'] = BEZ_PERMISSION_CHANGE;
+
+            //coordinator can change coordinator
+            $acl['coordinator'] = BEZ_PERMISSION_CHANGE;
+        }
         
-        if ($thread->coordinator === $this->model->user_nick) {
+        if ($thread->coordinator == $this->model->user_nick) {
             $acl['title'] = BEZ_PERMISSION_CHANGE;
             $acl['content'] = BEZ_PERMISSION_CHANGE;
             
@@ -117,6 +157,10 @@ class Acl {
             $acl['coordinator'] = BEZ_PERMISSION_CHANGE;
             
             $acl['state'] = BEZ_PERMISSION_CHANGE;
+
+            $acl['label_id'] = BEZ_PERMISSION_CHANGE;
+
+            $acl['private']     = BEZ_PERMISSION_CHANGE;
         }
                 
         return $acl;
@@ -124,9 +168,6 @@ class Acl {
 
     private function static_task() {
         $acl = array_fill_keys(Task::get_columns(), BEZ_PERMISSION_NONE);
-
-        //virtual columns
-        $acl['participants'] = BEZ_PERMISSION_NONE;
 
         //BEZ_AUTH_VIEWER is also token viewer
         if ($this->level >= BEZ_AUTH_VIEWER) {
@@ -136,14 +177,19 @@ class Acl {
             }, $acl);
         }
 
+        //user can add tasks
+        if ($this->level >= BEZ_AUTH_USER) {
+            $acl['id'] = BEZ_PERMISSION_CHANGE;
+        }
+
         if ($this->level >= BEZ_AUTH_ADMIN) {
             //user can edit everythig
             $acl = array_map(function($value) {
                 return BEZ_PERMISSION_DELETE;
             }, $acl);
-
-            return $acl;
         }
+
+        return $acl;
     }
     
     //if user can chante id => he can delete record
@@ -183,14 +229,16 @@ class Acl {
         if ($task->coordinator == $this->model->user_nick ||
             ($task->thread_id == '' && $this->level >= BEZ_AUTH_LEADER)) {
             
-            //we can chante cause
+            //we can change cause
             $acl['thread_comment_id'] =  BEZ_PERMISSION_CHANGE;
+
+            $acl['state'] = BEZ_PERMISSION_CHANGE;
             
             $acl['content'] = BEZ_PERMISSION_CHANGE;
             $acl['task_program_id'] = BEZ_PERMISSION_CHANGE;
             $acl['assignee'] = BEZ_PERMISSION_CHANGE;
             $acl['cost'] = BEZ_PERMISSION_CHANGE;
-            //$acl['reason'] = BEZ_PERMISSION_CHANGE;
+
             $acl['plan_date'] = BEZ_PERMISSION_CHANGE;
             $acl['all_day_event'] = BEZ_PERMISSION_CHANGE;
             $acl['start_time'] = BEZ_PERMISSION_CHANGE;
@@ -211,7 +259,11 @@ class Acl {
             $acl['start_time'] = BEZ_PERMISSION_CHANGE;
             $acl['finish_time'] = BEZ_PERMISSION_CHANGE;
         }
-        
+
+        //user can solve his tasks
+        if ($task->assignee  == $this->model->user_nick) {
+            $acl['state'] = BEZ_PERMISSION_CHANGE;
+        }
 
         return $acl;
         
@@ -235,9 +287,9 @@ class Acl {
             $acl = array_map(function($value) {
                 return BEZ_PERMISSION_DELETE;
             }, $acl);
-
-            return $acl;
         }
+
+        return $acl;
     }
     
     private function check_thread_comment(Thread_comment $thread_comment) {
@@ -348,9 +400,9 @@ class Acl {
             $acl = array_map(function($value) {
                 return BEZ_PERMISSION_DELETE;
             }, $acl);
-
-            return $acl;
         }
+
+        return $acl;
     }
 
     private function check_task_comment(Task_comment $task_comment) {

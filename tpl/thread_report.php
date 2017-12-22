@@ -7,7 +7,19 @@
     <?php $url = $tpl->url('thread_report', 'action', 'add') ?>
 <?php endif ?>
 
+<?php if ($tpl->get('thread')): ?>
+    <?php $type = $tpl->get('thread')->type ?>
+<?php else: ?>
+    <?php $type = $tpl->param('type') ?>
+<?php endif ?>
+
 <form class="bez_form" action="<?php echo $url ?>" method="POST">
+
+<?php if ($type == 'project'): ?>
+    <input type="hidden" name="type" value="project" />
+<?php else: ?>
+    <input type="hidden" name="type" value="issue" />
+<?php endif ?>
 
 <input type="hidden" name="id" value="bez:threads">
 
@@ -24,7 +36,8 @@
 </div>
 <?php endif ?>
     
-<?php if ($tpl->static_acl('thread', 'labels') >= BEZ_PERMISSION_CHANGE): ?>
+<?php if ($type != 'project' &&
+    $tpl->acl($tpl->get('thread', 'thread'), 'label_id') >= BEZ_PERMISSION_CHANGE): ?>
 <div class="row">
 <label for="label_id"><?php echo $tpl->getLang('type') ?>:</label>
 <span>
@@ -40,7 +53,7 @@
 </div>
 <?php endif ?>
     
-<?php if ($tpl->static_acl('thread', 'coordinator') >= BEZ_PERMISSION_CHANGE): ?>
+<?php if ($tpl->acl($tpl->get('thread', 'thread'), 'coordinator') >= BEZ_PERMISSION_CHANGE): ?>
 <div class="row">
 <label for="coordinator"><?php echo $tpl->getLang('coordinator') ?>:</label>
 <span>
@@ -69,29 +82,15 @@
 	<textarea name="content" id="content" class="edit" data-validation="required"><?php echo $tpl->value('content') ?></textarea>
 </span>
 </div>
-<?php //if ($tpl->action() == 'update'): ?>
-<!--	<div class="row">-->
-<!--	<label for="state">--><?php //echo $bezlang['state'] ?><!--:</label>-->
-<!--	<span>-->
-<!--		<strong>--><?php //echo $template['issue']->state_string ?><!--</strong>-->
-<!--	</span>-->
-<!--	</div>-->
-<!--	--><?php //if ($template['issue']->state !== '0') : ?>
-<!--		<div class="row">-->
-<!--			<label for="opinion">-->
-<!--				--><?php //if ($template['issue']->assigned_tasks_count > 0): ?>
-<!--					--><?php //echo $bezlang['opinion'] ?><!--:-->
-<!--				--><?php //else: ?>
-<!--					--><?php //echo $bezlang['reason'] ?><!--:-->
-<!--				--><?php //endif ?>
-<!--			</label>-->
-<!--			<span>-->
-<!--				<div class="bez_opinion_toolbar"></div>-->
-<!--				<textarea name="opinion" id="opinion" class="edit" data-validation="required">--><?php //echo $value['opinion'] ?><!--</textarea>-->
-<!--			</span>-->
-<!--		</div>-->
-<!--	--><?php //endif ?>
-<?php //endif ?>
+
+<?php if ($tpl->acl($tpl->get('thread', 'thread'), 'private') >= BEZ_PERMISSION_CHANGE): ?>
+    <div class="row">
+        <label for="private"><?php echo $tpl->getLang('private') ?>:</label>
+        <span><input <?php if ($tpl->value('private') == '1') echo 'checked' ?>
+                    type="checkbox" name="private" value="1" id="private" /></span>
+    </div>
+<?php endif ?>
+
 <div class="row">
     <label></label>
     <span style="padding-top:0px;">

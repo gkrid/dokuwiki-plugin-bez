@@ -144,6 +144,16 @@ abstract class Entity {// extends BEZ_mdl_Dummy_Entity {
     public function acl_of($field) {
         return $this->model->acl->check_field($this, $field);
     }
+
+    public function can_be_null($field) {
+	    $rule = $this->validator->get_rule($field);
+	    $null = $rule[1];
+	    if (strtolower($null) == 'null') {
+	        return true;
+        }
+
+        return false;
+    }
         
     public function __construct($model) {
         $this->model = $model;

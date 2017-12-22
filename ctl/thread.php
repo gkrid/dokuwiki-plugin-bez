@@ -1,7 +1,11 @@
 <?php
-/** @var action_plugin_bez_default $this */
+/** @var action_plugin_bez $this */
 
 use \dokuwiki\plugin\bez;
+
+if ($this->model->acl->get_level() < BEZ_AUTH_USER) {
+    throw new bez\meta\PermissionDeniedException();
+}
 
 if ($this->get_param('id') == '') {
     header('Location: ' . $this->url('threads'));
@@ -9,6 +13,11 @@ if ($this->get_param('id') == '') {
 
 /** @var bez\mdl\Thread $thread */
 $thread = $this->model->threadFactory->get_one($this->get_param('id'));
+
+if ($thread->acl_of('id') < BEZ_PERMISSION_VIEW) {
+    throw new bez\meta\PermissionDeniedException();
+}
+
 $this->tpl->set('thread', $thread);
 $this->tpl->set('thread_comments', $this->model->thread_commentFactory->get_from_thread($thread));
 $this->tpl->set('tasks', $this->model->taskFactory->get_from_thread($thread));

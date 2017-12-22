@@ -67,7 +67,7 @@ class Task extends Entity {
                 return null;
             }
             if ($this->thread_comment == null) {
-                $this->thread = $this->model->thread_commentFactory->get_one($this->thread_comment_id);
+                $this->thread_comment = $this->model->thread_commentFactory->get_one($this->thread_comment_id);
             }
             return $this->thread_comment;
 
@@ -104,6 +104,7 @@ class Task extends Entity {
             if (isset($defaults['thread'])) {
                 $this->thread = $defaults['thread'];
                 $this->thread_id = $this->thread->id;
+                $this->coordinator = $this->thread->coordinator;
                 $this->type = 'correction';
 
                 if (isset($defaults['thread_comment'])) {
@@ -142,20 +143,24 @@ class Task extends Entity {
 	}
 	
 	
-	public function set_data($post, $filter=NULL) {        
+	public function set_data($post, $filter=NULL) {
+        //all day event
+        if (!isset($post['all_day_event'])) {
+            $post['all_day_event'] = '0';
+        }
+
         parent::set_data($post);
 
         $this->content_html = p_render('xhtml',p_get_instructions($this->content), $ignore);
+
+        if (!isset($post['assignee'])) {
+            $this->assignee = $this->model->user_nick;
+        }
 
         //update dates
         $this->last_modification_date = date('c');
         $this->last_activity_date = $this->last_modification_date;
 
-        //all day event
-        if (!isset($post['all_day_event'])) {
-            $post['all_day_event'] = '0';
-        }
-			
 		return true;
 	}
 
@@ -194,9 +199,6 @@ class Task extends Entity {
     }
 
     public function get_participants($filter='') {
-        if ($this->acl_of('participants') < BEZ_PERMISSION_VIEW) {
-            throw new PermissionDeniedException();
-        }
         if ($this->id === NULL) {
             return array();
         }
@@ -222,9 +224,6 @@ class Task extends Entity {
     }
 
     public function get_participant($user_id) {
-        if ($this->acl_of('participants') < BEZ_PERMISSION_VIEW) {
-            throw new PermissionDeniedException();
-        }
         if ($this->id === NULL) {
             return array();
         }
@@ -250,10 +249,6 @@ class Task extends Entity {
     }
 
     public function remove_participant_flags($user_id, $flags) {
-        if ($this->acl_of('participants') < BEZ_PERMISSION_CHANGE) {
-            throw new PermissionDeniedException();
-        }
-
         //thread not saved yet
         if ($this->id === NULL) {
             throw new \Exception('cannot remove flags from not saved thread');
@@ -272,10 +267,6 @@ class Task extends Entity {
     }
 
     public function set_participant_flags($user_id, $flags=array()) {
-        if ($this->acl_of('participants') < BEZ_PERMISSION_CHANGE) {
-            throw new PermissionDeniedException();
-        }
-
         //thread not saved yet
         if ($this->id === NULL) {
             throw new \Exception('cannot add flags to not saved thread');
@@ -356,7 +347,7 @@ class Task extends Entity {
         }
         
         $emails = array_map(function($user) {
-            return $this->model->userFactory->get_user_email($user);
+            return $this->model->userFactory->get_user_email($user['user_id']);
         }, $users);
 
         $mailer->to($emails);
@@ -496,12 +487,7 @@ class Task extends Entity {
         
         //$replacements can override $reps
         $rep = array_merge($rep, $replacements);
-        
-//        if ($this->thread == NULL) {
-//            $this->mail_notify($rep, $users);
-//        } else {
-//            $this->thread->mail_notify($rep);
-//        }
+
         $this->mail_notify($rep, $users);
     }
     

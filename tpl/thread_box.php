@@ -1,20 +1,34 @@
 <?php /* @var \dokuwiki\plugin\bez\meta\Tpl $tpl */ ?>
 <div    id="bds_issue_box"
-        class="pr<?php echo $tpl->get('thread')->state == 'opened' ? 'None' : '-1' ?>">
+        class="pr<?php
+        if ($tpl->get('thread')->state != 'opened') {
+            echo '-1';
+        } elseif($tpl->get('thread')->priority != '') {
+            echo $tpl->get('thread')->priority;
+        } else {
+            echo 'None';
+        }
+        ?>">
 
-<h1>
+<h1 class="bez__plugin_thread_title">
 
 <a href="<?php echo $tpl->url('thread', 'id', $tpl->get('thread')->id) ?>">
     #<?php echo $tpl->get('thread')->id ?>
 </a>
 
-<?php if (!empty($tpl->get('thread')->label_name)): ?>
+<?php if ($tpl->get('thread')->type == 'project'): ?>
+    <?php echo $tpl->getLang('project') ?>
+<?php elseif (!empty($tpl->get('thread')->label_name)): ?>
 	<?php echo $tpl->get('thread')->label_name ?>
 <?php else: ?>
 	<i style="color: #777"><?php echo $tpl->getLang('issue_type_no_specified') ?></i>
 <?php endif ?>
 
 (<?php echo $tpl->getLang('state_' . $tpl->get('thread')->state) ?>)
+
+<?php if ($tpl->get('thread')->private == '1'): ?>
+    <?php echo inlineSVG(DOKU_PLUGIN . 'bez/images/lock.svg') ?>
+<?php endif ?>
 </h1>
 
 <h1 id="bez_issue_title"><?php echo $tpl->get('thread')->title ?></h1>
@@ -60,8 +74,7 @@
 <?php echo $tpl->get('thread')->content_html ?>
     
 <div class="bez_buttons">
-
-	<?php if (count($tpl->get('thread')->changable_fields()) > 0): ?>
+	<?php if (count($tpl->get('thread')->changable_fields(array('label_id', 'title', 'content', 'coordinator'))) > 0): ?>
 		<a href="<?php echo $tpl->url('thread_report', 'action', 'edit', 'id', $tpl->get('thread')->id) ?>" class="bds_inline_button">
 		 	✎ <?php echo $tpl->getLang('edit') ?>
 		</a>
@@ -74,9 +87,15 @@
 		✉ <?php echo $tpl->getLang('send_mail') ?>
 	</a>
 
-	<a href="<?php echo $tpl->url('8d', 'id', $tpl->get('thread')->id) ?>" class="bds_inline_button bds_report_button">
-		⎙ <?php echo $tpl->getLang('8d_report') ?>
-	</a>
+    <?php if ($tpl->get('thread')->type == 'issue'): ?>
+        <a href="<?php echo $tpl->url('8d', 'id', $tpl->get('thread')->id) ?>" class="bds_inline_button bds_report_button">
+            ⎙ <?php echo $tpl->getLang('8d_report') ?>
+        </a>
+    <?php else: ?>
+        <a href="<?php echo $tpl->url('kp', 'id', $tpl->get('thread')->id) ?>" class="bds_inline_button bds_report_button">
+            ⎙ <?php echo $tpl->getLang('kp_report') ?>
+        </a>
+    <?php endif ?>
 </div>
 
 </div>

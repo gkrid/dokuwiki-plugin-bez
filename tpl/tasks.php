@@ -1,5 +1,5 @@
 <?php /* @var \dokuwiki\plugin\bez\meta\Tpl $tpl */ ?>
-<?php if ($tpl->static_acl('task', 'id') >= BEZ_PERMISSION_CHANGE): ?>
+<?php if ($tpl->acl('task', 'id') >= BEZ_PERMISSION_CHANGE): ?>
     <a href="<?php echo $tpl->url('task_form') ?>" class="bez_start_button" id="bez_report_task_button">
         <?php echo $tpl->getLang('add_task') ?>
     </a>
@@ -10,12 +10,33 @@
 <div class="bez_filter_form">
 <form action="<?php echo $tpl->url('tasks') ?>" method="POST">
 
+
+<label><?php echo $tpl->getLang('reporter') ?>:
+    <select name="original_poster">
+        <option <?php if ($tpl->value('original_poster') == '-all') echo 'selected' ?>
+                value="-all">--- <?php echo $tpl->getLang('all') ?> ---</option>
+        <optgroup label="<?php echo $tpl->getLang('users') ?>">
+            <?php foreach ($tpl->get('users') as $nick => $name): ?>
+                <option <?php if ($tpl->value('original_poster') == $nick) echo 'selected' ?>
+                        value="<?php echo $nick ?>"><?php echo $name ?></option>
+            <?php endforeach ?>
+        </optgroup>
+        <optgroup label="<?php echo $tpl->getLang('groups') ?>">
+            <?php foreach ($tpl->get('groups') as $name): ?>
+                <?php $group = "@$name" ?>
+                <option <?php if ($tpl->value('original_poster') == $group) echo 'selected' ?>
+                        value="<?php echo $group ?>"><?php echo $group ?></option>
+            <?php endforeach ?>
+        </optgroup>
+    </select>
+</label>
+
 <label><?php echo $tpl->getLang('class') ?>:
 	<select name="type">
 		<option <?php if ($tpl->value('type') == '-all') echo 'selected' ?>
 			value="-all">--- <?php echo $tpl->getLang('all') ?> ---</option>
 	<?php foreach (\dokuwiki\plugin\bez\mdl\Task::get_types() as $type): ?>
-		<option <?php if ($tpl->value('$type') == $type) echo 'selected' ?>
+		<option <?php if ($tpl->value('type') == $type) echo 'selected' ?>
 			value="<?php echo $type ?>"><?php echo $tpl->getLang('task_type_' . $type) ?></option>
 	<?php endforeach ?>
 	</select>
@@ -27,7 +48,7 @@
 			value="-all">--- <?php echo $tpl->getLang('all') ?> ---</option>
 	<?php foreach (\dokuwiki\plugin\bez\mdl\Task::get_states() as $state): ?>
 		<option <?php if ($tpl->value('state') == $state) echo 'selected' ?>
-			value="<?php echo $state ?>"><?php echo $tpl->getLang('task_' . $state) ?></option>
+			value="<?php echo $state ?>"><?php echo lcfirst($tpl->getLang('task_' . $state)) ?></option>
 	<?php endforeach ?>
 	</select>
 </label>
@@ -65,26 +86,6 @@
     </select>
 </label>
 
-<label><?php echo $tpl->getLang('reporter') ?>:
-    <select name="original_poster">
-        <option <?php if ($tpl->value('original_poster') == '-all') echo 'selected' ?>
-                value="-all">--- <?php echo $tpl->getLang('all') ?> ---</option>
-        <optgroup label="<?php echo $tpl->getLang('users') ?>">
-            <?php foreach ($tpl->get('users') as $nick => $name): ?>
-                <option <?php if ($tpl->value('original_poster') == $nick) echo 'selected' ?>
-                        value="<?php echo $nick ?>"><?php echo $name ?></option>
-            <?php endforeach ?>
-        </optgroup>
-        <optgroup label="<?php echo $tpl->getLang('groups') ?>">
-            <?php foreach ($tpl->get('groups') as $name): ?>
-                <?php $group = "@$name" ?>
-                <option <?php if ($tpl->value('original_poster') == $group) echo 'selected' ?>
-                        value="<?php echo $group ?>"><?php echo $group ?></option>
-            <?php endforeach ?>
-        </optgroup>
-    </select>
-</label>
-
 
 <label><?php echo $tpl->getLang('description') ?>:
 	<input name="content" value="<?php echo $tpl->value('content') ?>" />
@@ -94,12 +95,12 @@
 <div class="time_filter">
 	<label>
 		<select name="date_type">
-			<option <?php if ($tpl->value('date_type') == 'plan') echo 'selected' ?>
-				value="plan"><?php echo $tpl->getLang('plan_date') ?></option>
-			<option <?php if ($tpl->value('date_type') == 'open') echo 'selected' ?>
-				value="open"><?php echo $tpl->getLang('open_date') ?></option>
-			<option <?php if ($tpl->value('date_type') == 'closed') echo 'selected' ?>
-				value="closed"><?php echo $tpl->getLang('close_date') ?></option>
+			<option <?php if ($tpl->value('date_type') == 'plan_date') echo 'selected' ?>
+				value="plan_date"><?php echo $tpl->getLang('plan_date') ?></option>
+			<option <?php if ($tpl->value('date_type') == 'create_date') echo 'selected' ?>
+				value="create_date"><?php echo $tpl->getLang('open_date') ?></option>
+			<option <?php if ($tpl->value('date_type') == 'close_date') echo 'selected' ?>
+				value="close_date"><?php echo $tpl->getLang('close_date') ?></option>
 		</select>:
 	</label>
 	<label><?php echo $tpl->getLang('month') ?>:
@@ -107,7 +108,7 @@
 			<option <?php if ($tpl->value('month') == '-all') echo 'selected' ?>
 				value="-all">--- <?php echo $tpl->getLang('all') ?> ---</option>
 		<?php foreach ($tpl->get('months') as $nr => $month): ?>
-			<option <?php if ($value['month'] == $nr) echo 'selected' ?>
+			<option <?php if ($tpl->value('month') == $nr) echo 'selected' ?>
 				value="<?php echo $nr ?>"><?php echo $tpl->getLang($month) ?></option>
 		<?php endforeach ?>
 		</select>
@@ -147,6 +148,10 @@
 <?php $total_cost = 0.0 ?>
 <?php $total_hours = 0.0 ?>
 <?php foreach ($tpl->get('tasks') as $task): ?>
+    <?php $count += 1 ?>
+    <?php $total_cost += (float) $task->cost ?>
+    <?php $hours = $tpl->date_diff_hours($task->start_time, $task->finish_time) ?>
+    <?php $total_hours += $tpl->time_to_float($hours) ?>
 	<tr class="pr<?php echo $task->priority ?>" data-bez-row-id="<?php echo $task->id ?>">
 		<td>
             <a href="<?php echo $tpl->url('task', 'tid', $task->id) ?>">
@@ -197,14 +202,14 @@
 			<?php if ($task->state == 'opened'): ?>
 				<em>---</em>
 			<?php else: ?>
-				<?php echo $tpl->date_diff_days($tpl->get('task')->close_date) ?>
+				<?php echo $tpl->date($task->close_date) ?>
 			<?php endif ?>
 		</td>
 		<td>
 			<?php if ($task->start_time == ''): ?>
 				<em>---</em>
 			<?php else: ?>
-                <?php echo $tpl->date_diff_hours($task->start_time, $task->finish_time) ?>
+                <?php echo $hours ?>
 			<?php endif ?>
 		</td>
 		</tr>
@@ -218,7 +223,7 @@
 		<th><?php echo $tpl->getLang('report_total') ?></th>
 		<td colspan="5"><?php echo $count ?></td>
 		<td colspan="2"><?php echo $total_cost ?></td>
-		<td colspan="1"><?php echo $total_hours ?></td>
+		<td colspan="1"><?php echo $tpl->float_to_time($total_hours) ?></td>
 	</tr>
 </table>
 </div>

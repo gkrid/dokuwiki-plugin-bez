@@ -4,9 +4,8 @@ namespace dokuwiki\plugin\bez\mdl;
 
 class Thread_commentFactory extends Factory {
 
-    protected function select_query() {
-        return "SELECT thread_comment.*, thread.coordinator
-                FROM thread_comment JOIN thread ON thread_comment.thread_id=thread.id";
+    public function get_table_view() {
+        return 'thread_comment_view';
     }
 
     public function get_from_thread(Thread $thread, $filters=array(), $orderby='', $desc=true, $limit=false) {
@@ -20,16 +19,13 @@ class Thread_commentFactory extends Factory {
      * @throws \Exception
      */
     public function initial_save(Entity $thread_comment, $data) {
-        parent::initial_save($thread_comment, $data);
-
         try {
             $this->beginTransaction();
 
             if ($data['fn'] == 'comment_add' ||
                 $data['fn'] == 'thread_close' ||
                 $data['content'] != '') {
-                $thread_comment->set_data($data);
-                $this->save($thread_comment);
+                parent::initial_save($thread_comment, $data);
                 $thread_comment->thread->set_participant_flags($thread_comment->author, array('subscribent', 'commentator'));
             }
 
@@ -52,12 +48,9 @@ class Thread_commentFactory extends Factory {
     }
 
     public function update_save(Entity $thread_comment, $data) {
-        parent::update_save($thread_comment, $data);
-
-        $thread_comment->set_data($data);
         try {
             $this->beginTransaction();
-            $this->save($thread_comment);
+            parent::update_save($thread_comment, $data);
 
             $thread_comment->thread->update_last_activity();
 
