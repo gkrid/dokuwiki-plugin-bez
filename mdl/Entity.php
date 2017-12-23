@@ -88,9 +88,9 @@ abstract class Entity {// extends BEZ_mdl_Dummy_Entity {
         }
         
         //now only normal db columns has ACL, it should be fixed        
-        if ($this->acl_of($property) < BEZ_PERMISSION_VIEW) {
-            throw new PermissionDeniedException();
-        }
+//        if ($this->acl_of($property) < BEZ_PERMISSION_VIEW) {
+//            throw new PermissionDeniedException();
+//        }
 
         return $this->$property;
 

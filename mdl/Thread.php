@@ -435,7 +435,10 @@ class Thread extends Entity {
         }
 
         $emails = array_map(function($user) {
-            return $this->model->userFactory->get_user_email($user['user_id']);
+            if (is_array($user)) {
+                $user = $user['user_id'];
+            }
+            return $this->model->userFactory->get_user_email($user);
         }, $users);
 
 
