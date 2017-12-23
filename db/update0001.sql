@@ -29,6 +29,56 @@ CREATE TABLE thread (
 CREATE INDEX thread_ix_last_activity_date
   ON thread (last_activity_date); -- to speedup order by
 
+CREATE TABLE label (
+  id         INTEGER     NOT NULL PRIMARY KEY,
+  name       TEXT UNIQUE NOT NULL,
+  color      TEXT        NULL, -- color of the label, hex RGB: xxxxxx
+  count      INTEGER     NOT NULL DEFAULT 0,
+
+  added_by   TEXT        NOT NULL, -- user who added the label
+  added_date TEXT        NOT NULL -- ISO8601
+);
+
+CREATE INDEX label_ix_name
+  ON label (name);
+
+CREATE TABLE thread_label (
+  thread_id INTEGER NOT NULL,
+  label_id  INTEGER NOT NULL,
+  PRIMARY KEY (thread_id, label_id)
+);
+
+CREATE TRIGGER thread_label_tr_insert
+  INSERT
+  ON thread_label
+BEGIN
+  UPDATE label
+  SET count = count + 1
+  WHERE id = new.label_id;
+END;
+
+CREATE TRIGGER thread_label_tr_delete
+  DELETE
+  ON thread_label
+BEGIN
+  UPDATE label
+  SET count = count - 1
+  WHERE id = old.label_id;
+END;
+
+CREATE TRIGGER thread_label_tr_update_label_id
+  UPDATE OF label_id
+  ON thread_label
+BEGIN
+  UPDATE label
+  SET count = count - 1
+  WHERE id = old.label_id;
+
+  UPDATE label
+  SET count = count + 1
+  WHERE id = new.label_id;
+END;
+
 CREATE VIEW thread_view
   AS
     SELECT thread.id, thread.original_poster, thread.coordinator, thread.closed_by,
@@ -88,56 +138,6 @@ CREATE VIEW thread_comment_view
 
 CREATE INDEX thread_comment_ix_thread_id
   ON thread_comment (thread_id);
-
-CREATE TABLE label (
-  id         INTEGER     NOT NULL PRIMARY KEY,
-  name       TEXT UNIQUE NOT NULL,
-  color      TEXT        NULL, -- color of the label, hex RGB: xxxxxx
-  count      INTEGER     NOT NULL DEFAULT 0,
-
-  added_by   TEXT        NOT NULL, -- user who added the label
-  added_date TEXT        NOT NULL -- ISO8601
-);
-
-CREATE INDEX label_ix_name
-  ON label (name);
-
-CREATE TABLE thread_label (
-  thread_id INTEGER NOT NULL,
-  label_id  INTEGER NOT NULL,
-  PRIMARY KEY (thread_id, label_id)
-);
-
-CREATE TRIGGER thread_label_tr_insert
-  INSERT
-  ON thread_label
-BEGIN
-  UPDATE label
-  SET count = count + 1
-  WHERE id = new.label_id;
-END;
-
-CREATE TRIGGER thread_label_tr_delete
-  DELETE
-  ON thread_label
-BEGIN
-  UPDATE label
-  SET count = count - 1
-  WHERE id = old.label_id;
-END;
-
-CREATE TRIGGER thread_label_tr_update_label_id
-  UPDATE OF label_id
-  ON thread_label
-BEGIN
-  UPDATE label
-  SET count = count - 1
-  WHERE id = old.label_id;
-
-  UPDATE label
-  SET count = count + 1
-  WHERE id = new.label_id;
-END;
 
 CREATE TABLE task_program (
   id         INTEGER     NOT NULL PRIMARY KEY,
