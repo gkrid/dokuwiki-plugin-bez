@@ -70,14 +70,20 @@ class action_plugin_bez_migration extends DokuWiki_Action_Plugin {
             $res = $db->query($query);
             if($res === false) {
                 $err = $db->errorInfo();
-                msg($err[0].' '.$err[1].' '.$err[2].':<br /><pre>'.hsc($sql).'</pre>', -1);
+                msg($err[0].' '.$err[1].' '.$err[2].':<br /><pre>'.hsc($query).'</pre>', -1);
                 $db->rollBack();
                 return false;
             }
         }
 
+        $bez_file = DOKU_INC . 'data/meta/bez.sqlite3';
+        if (!file_exists($bez_file)) {
+            $db->commit();
+            return true;
+        }
+
         //import from bez
-        $bez = new \PDO('sqlite:' . DOKU_INC . 'data/meta/bez.sqlite3');
+        $bez = new \PDO('sqlite:' . $bez_file);
 
         $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
