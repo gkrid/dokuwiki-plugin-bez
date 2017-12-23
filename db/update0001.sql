@@ -29,6 +29,50 @@ CREATE TABLE thread (
 CREATE INDEX thread_ix_last_activity_date
   ON thread (last_activity_date); -- to speedup order by
 
+CREATE TABLE thread_participant (
+  thread_id       INTEGER NOT NULL REFERENCES thread (id),
+  user_id         TEXT    NOT NULL,
+
+  original_poster BOOLEAN NOT NULL DEFAULT 0,
+  coordinator     BOOLEAN NOT NULL DEFAULT 0,
+
+  commentator     BOOLEAN NOT NULL DEFAULT 0,
+  task_assignee   BOOLEAN NOT NULL DEFAULT 0,
+  subscribent     BOOLEAN NOT NULL DEFAULT 0,
+
+  added_by        TEXT    NOT NULL, -- user who added the participant. Equals user_id when user subscribed himself
+  added_date      TEXT    NOT NULL, -- ISO8601
+
+  PRIMARY KEY (thread_id, user_id)
+);
+
+CREATE TABLE thread_comment (
+  id                     INTEGER NOT NULL PRIMARY KEY,
+
+  thread_id              INTEGER NOT NULL REFERENCES thread (id),
+
+  type                   TEXT NOT NULL DEFAULT 'comment', -- comment, cause_real, cause_potential -- will be: comment, cause, risk
+
+  author                 TEXT    NOT NULL,
+  create_date            TEXT    NOT NULL, -- ISO8601
+  last_modification_date TEXT    NOT NULL, -- ISO8601
+
+  content                TEXT    NOT NULL,
+  content_html           TEXT    NOT NULL,
+
+  task_count             INTEGER NOT NULL  DEFAULT 0
+);
+
+CREATE VIEW thread_comment_view
+  AS
+    SELECT thread_comment.*,
+      thread.coordinator AS coordinator
+    FROM thread_comment
+      JOIN thread ON thread_comment.thread_id = thread.id;
+
+CREATE INDEX thread_comment_ix_thread_id
+  ON thread_comment (thread_id);
+
 CREATE TABLE label (
   id         INTEGER     NOT NULL PRIMARY KEY,
   name       TEXT UNIQUE NOT NULL,
@@ -79,66 +123,6 @@ BEGIN
   WHERE id = new.label_id;
 END;
 
-CREATE VIEW thread_view
-  AS
-    SELECT thread.id, thread.original_poster, thread.coordinator, thread.closed_by,
-      thread.private, thread.lock, thread.type,
-      thread.create_date, thread.last_activity_date, thread.last_modification_date, thread.close_date,
-      thread.title, thread.content, thread.content_html,
-      thread.task_count, thread.task_count_closed, thread.task_sum_cost,
-      label.id AS label_id,
-      label.name AS label_name,
-      (SELECT MIN(priority) FROM task_view WHERE task_view.thread_id = thread.id) AS priority,
-      CASE  WHEN thread.state = 'opened' AND thread.task_count > 0 AND thread.task_count = thread.task_count_closed THEN 'done'
-            ELSE thread.state END AS state
-    FROM thread
-      LEFT JOIN thread_label ON thread.id = thread_label.thread_id
-      LEFT JOIN label ON label.id = thread_label.label_id;
-
-CREATE TABLE thread_participant (
-  thread_id       INTEGER NOT NULL REFERENCES thread (id),
-  user_id         TEXT    NOT NULL,
-
-  original_poster BOOLEAN NOT NULL DEFAULT 0,
-  coordinator     BOOLEAN NOT NULL DEFAULT 0,
-
-  commentator     BOOLEAN NOT NULL DEFAULT 0,
-  task_assignee   BOOLEAN NOT NULL DEFAULT 0,
-  subscribent     BOOLEAN NOT NULL DEFAULT 0,
-
-  added_by        TEXT    NOT NULL, -- user who added the participant. Equals user_id when user subscribed himself
-  added_date      TEXT    NOT NULL, -- ISO8601
-
-  PRIMARY KEY (thread_id, user_id)
-);
-
-CREATE TABLE thread_comment (
-  id                     INTEGER NOT NULL PRIMARY KEY,
-
-  thread_id              INTEGER NOT NULL REFERENCES thread (id),
-
-  type                   TEXT NOT NULL DEFAULT 'comment', -- comment, cause_real, cause_potential -- will be: comment, cause, risk
-
-  author                 TEXT    NOT NULL,
-  create_date            TEXT    NOT NULL, -- ISO8601
-  last_modification_date TEXT    NOT NULL, -- ISO8601
-
-  content                TEXT    NOT NULL,
-  content_html           TEXT    NOT NULL,
-
-  task_count             INTEGER NOT NULL  DEFAULT 0
-);
-
-CREATE VIEW thread_comment_view
-  AS
-    SELECT thread_comment.*,
-      thread.coordinator AS coordinator
-    FROM thread_comment
-      JOIN thread ON thread_comment.thread_id = thread.id;
-
-CREATE INDEX thread_comment_ix_thread_id
-  ON thread_comment (thread_id);
-
 CREATE TABLE task_program (
   id         INTEGER     NOT NULL PRIMARY KEY,
   name       TEXT UNIQUE NOT NULL,
@@ -186,20 +170,6 @@ CREATE INDEX task_ix_thread_id_thread_comment_id
 
 CREATE INDEX task_ix_task_program_id
   ON task(task_program_id);
-
-CREATE VIEW task_view
-  AS
-    SELECT
-      task.*,
-      task_program.name AS task_program_name,
-      thread.coordinator AS coordinator,
-      CASE	WHEN task.state = 'done' THEN NULL
-       WHEN task.plan_date >= date('now', '+1 month') THEN '2'
-       WHEN task.plan_date >= date('now') THEN '1'
-       ELSE '0' END AS priority
-    FROM task
-      LEFT JOIN task_program ON task.task_program_id = task_program.id
-      LEFT JOIN thread ON task.thread_id = thread.id;
 
 CREATE TRIGGER task_tr_insert_task_count
   INSERT
@@ -393,3 +363,33 @@ CREATE TABLE authentication_token (
 
   PRIMARY KEY (page_id, token)
 );
+
+CREATE VIEW task_view
+  AS
+    SELECT
+      task.*,
+      task_program.name AS task_program_name,
+      thread.coordinator AS coordinator,
+      CASE	WHEN task.state = 'done' THEN NULL
+      WHEN task.plan_date >= date('now', '+1 month') THEN '2'
+      WHEN task.plan_date >= date('now') THEN '1'
+      ELSE '0' END AS priority
+    FROM task
+      LEFT JOIN task_program ON task.task_program_id = task_program.id
+      LEFT JOIN thread ON task.thread_id = thread.id;
+
+CREATE VIEW thread_view
+  AS
+    SELECT thread.id, thread.original_poster, thread.coordinator, thread.closed_by,
+      thread.private, thread.lock, thread.type,
+      thread.create_date, thread.last_activity_date, thread.last_modification_date, thread.close_date,
+      thread.title, thread.content, thread.content_html,
+      thread.task_count, thread.task_count_closed, thread.task_sum_cost,
+      label.id AS label_id,
+      label.name AS label_name,
+      (SELECT MIN(priority) FROM task_view WHERE task_view.thread_id = thread.id) AS priority,
+      CASE  WHEN thread.state = 'opened' AND thread.task_count > 0 AND thread.task_count = thread.task_count_closed THEN 'done'
+      ELSE thread.state END AS state
+    FROM thread
+      LEFT JOIN thread_label ON thread.id = thread_label.thread_id
+      LEFT JOIN label ON label.id = thread_label.label_id;
