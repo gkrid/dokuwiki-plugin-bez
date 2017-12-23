@@ -9,7 +9,7 @@
 <br /><br />
 
 <div class="bez_filter_form">
-<form action="<?php echo $tpl->url('threads') ?>" method="post">
+<form action="<?php echo $tpl->url($tpl->action()) ?>" method="post">
 
     <label><?php echo $tpl->getLang('reporter') ?>:
         <select name="original_poster">
@@ -41,19 +41,20 @@
 		<?php endforeach ?>
 		</select>
 	</label>
-
-	<label><?php echo $tpl->getLang('just_type') ?>:
-		<select name="label_id">
-			<option <?php if ($tpl->value('label_id') === '-all') echo 'selected' ?>
-				value="-all">--- <?php echo $tpl->getLang('all') ?> ---</option>
-			<option <?php if ($tpl->value('label_id') === '-none') echo 'selected' ?>
-			value="-none">--- <?php echo $tpl->getLang('issue_type_no_specified') ?> ---</option>
-		<?php foreach ($tpl->get('labels') as $label): ?>
-			<option <?php if ($tpl->value('label_id') === $label->id) echo 'selected' ?>
-				value="<?php echo $label->id ?>"><?php echo $label->name ?></option>
-		<?php endforeach ?>
-		</select>
-	</label>
+    <?php if ($tpl->action() != 'projects'): ?>
+        <label><?php echo $tpl->getLang('just_type') ?>:
+            <select name="label_id">
+                <option <?php if ($tpl->value('label_id') === '-all') echo 'selected' ?>
+                    value="-all">--- <?php echo $tpl->getLang('all') ?> ---</option>
+                <option <?php if ($tpl->value('label_id') === '-none') echo 'selected' ?>
+                value="-none">--- <?php echo $tpl->getLang('issue_type_no_specified') ?> ---</option>
+            <?php foreach ($tpl->get('labels') as $label): ?>
+                <option <?php if ($tpl->value('label_id') === $label->id) echo 'selected' ?>
+                    value="<?php echo $label->id ?>"><?php echo $label->name ?></option>
+            <?php endforeach ?>
+            </select>
+        </label>
+    <?php endif ?>
     
 	<label><?php echo $tpl->getLang('coordinator') ?>:
 		<select name="coordinator">
@@ -105,7 +106,9 @@
 	<tr>
 		<th><?php echo $tpl->getLang('id') ?></th>
 		<th><?php echo $tpl->getLang('state') ?></th>
-		<th><?php echo $tpl->getLang('type') ?></th>
+        <?php if ($tpl->action() != 'projects'): ?>
+		    <th><?php echo $tpl->getLang('type') ?></th>
+        <?php endif ?>
 		<th><?php echo $tpl->getLang('title')?></th>
 		<th><?php echo $tpl->getLang('coordinator') ?></th>
 		<th><?php echo $tpl->getLang('date') ?></th>
@@ -137,13 +140,15 @@
 			<td>
 			<?php echo $tpl->getLang('state_'.$thread->state) ?>
 			</td>
-			<td>
-				<?php if ($thread->label_name === NULL): ?>
-					<i style="color: #777"><?php echo $tpl->getLang('issue_type_no_specified') ?></i>
-				<?php else: ?>
-					<?php echo $thread->label_name ?>
-				<?php endif ?>
-			</td>
+            <?php if ($tpl->action() != 'projects'): ?>
+                <td>
+                    <?php if ($thread->label_name === NULL): ?>
+                        <i style="color: #777"><?php echo $tpl->getLang('issue_type_no_specified') ?></i>
+                    <?php else: ?>
+                        <?php echo $thread->label_name ?>
+                    <?php endif ?>
+                </td>
+            <?php endif ?>
 			<td><?php echo $thread->title ?></td>
 			<td>
                 <?php if ($thread->coordinator === NULL): ?>

@@ -7,7 +7,7 @@ if ($this->model->acl->get_level() < BEZ_AUTH_USER) {
     throw new bez\meta\PermissionDeniedException();
 }
 
-define('BEZ_THREAD_FILTERS_COOKIE_NAME', 'bez_thread_filters');
+define('BEZ_THREAD_FILTERS_COOKIE_NAME', 'bez_thread_filters_' . $this->tpl->action());
 
 if (count($_POST) > 0) {
 	$raw_filters = $_POST;

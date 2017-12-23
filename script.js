@@ -7,6 +7,7 @@ bez.ctl = {};
 /* DOKUWIKI:include scripts/task_form.js */
 /* DOKUWIKI:include scripts/task.js */
 /* DOKUWIKI:include scripts/tasks.js */
+/* DOKUWIKI:include scripts/projects.js */
 
 
 jQuery(function () {
