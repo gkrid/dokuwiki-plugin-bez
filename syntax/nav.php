@@ -41,7 +41,7 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
         );
         /** @var bez\mdl\Model $model */
         $model = new bez\mdl\Model($auth, $INFO['client'], $this, $conf);
-        if ($model->acl->get_level() >= BEZ_AUTH_ADMIN) {
+        if ($model->get_level() >= BEZ_AUTH_ADMIN) {
             $actions['types'] = $this->getLang('types_manage');
             $actions['task_programs'] = $this->getLang('task_types');
         }

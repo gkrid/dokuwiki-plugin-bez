@@ -2,12 +2,19 @@
 
 namespace dokuwiki\plugin\bez\mdl;
 
+use dokuwiki\plugin\bez\meta\PermissionDeniedException;
+
+define('BEZ_TABLE_PERMISSION_UNKNOWN', -1);
+define('BEZ_TABLE_PERMISSION_SELECT', 0);
+define('BEZ_TABLE_PERMISSION_INSERT', 1);
+
 abstract class Factory {
     /** @var Model */
 	protected $model;
 
-	/** @var array of Entity */
-	protected $objects = array();
+	public function permission() {
+	    return BEZ_TABLE_PERMISSION_INSERT;
+    }
 
 	protected function filter_field_map($field) {
         $table = $this->get_table_view();
@@ -117,11 +124,6 @@ abstract class Factory {
 		$this->model = $model;
 	}
 
-	public function acl_static($field) {
-        return $this->model->acl->check_static_field($this->get_table_name(), $field);
-    }
-
-    //chek acl
     public function get_all($filters=array(), $orderby='', $desc=true, $defaults=array(), $limit=false) {
 
         list($where_q, $execute) = $this->build_where($filters);
@@ -157,9 +159,6 @@ abstract class Factory {
         $table = $this->get_table_view();
         if (!$table) {
             $table = $this->get_table_name();
-        }
-        if ($this->acl_static('id') < BEZ_PERMISSION_VIEW) {
-            throw new PermissionDeniedException();
         }
 
         list($where_q, $execute) = $this->build_where($filters);
@@ -307,7 +306,9 @@ abstract class Factory {
 	}
 	
 	public function delete(Entity $obj) {
-        $this->model->acl->can($obj, 'id', BEZ_PERMISSION_DELETE);
+        if ($obj->acl_of('id') < BEZ_PERMISSION_DELETE) {
+            throw new PermissionDeniedException('cannot delete');
+        }
 		$this->delete_from_db($obj->id);
 	}
 }

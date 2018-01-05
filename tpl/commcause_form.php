@@ -17,7 +17,7 @@
 			</span>
 			<div class="commcause_content">
 			<h2>
-				<?php if ($tpl->acl('thread_comment', 'type') >= BEZ_PERMISSION_CHANGE &&
+				<?php if ($tpl->get('thread_comment')->acl_of('type') >= BEZ_PERMISSION_CHANGE &&
                           $tpl->get('thread')->can_add_causes()): ?>
 				<ul class="bez_tabs">
 					<li
@@ -45,7 +45,7 @@
 
                 <div class="plugin__bez_form_buttons">
 
-                <?php if ($tpl->acl('thread_comment', 'type') >= BEZ_PERMISSION_CHANGE &&
+                <?php if ($tpl->get('thread_comment')->acl_of('type') >= BEZ_PERMISSION_CHANGE &&
                     $tpl->get('thread')->can_add_causes()): ?>
                     <div class="bez_cause_type">
                         <div style="margin-bottom: 10px;">

@@ -63,9 +63,33 @@ class Thread_comment extends Entity {
             $this->thread = $defaults['thread'];
 			$this->thread_id = $this->thread->id;
             $this->coordinator = $this->thread->coordinator;
+
+            $this->acl->grant('content', BEZ_PERMISSION_CHANGE);
+            if ($this->coordinator == $this->model->user_nick) {
+                $this->acl->grant('type', BEZ_PERMISSION_CHANGE);
+            }
+
 		} else {
             if (isset($defaults['thread']) && $this->thread_id == $defaults['thread']->id) {
                 $this->thread = $defaults['thread'];
+            }
+
+            //we can change our own comments only when they are "comment"
+            if ($this->author == $this->model->user_nick && $this->type == 'comment') {
+                //we can only delete records when there is no tasks subscribed to issue
+                if ($this->task_count == '0') {
+                    $this->acl->grant('id', BEZ_PERMISSION_DELETE);
+                }
+                $this->acl->grant('content', BEZ_PERMISSION_CHANGE);
+            }
+
+            if ($this->coordinator == $this->model->user_nick) {
+                //we can only delete records when there is no tasks subscribed to issue
+                if ($this->task_count == '0') {
+                    $this->acl->grant('id', BEZ_PERMISSION_DELETE);
+                }
+                $this->acl->grant('content', BEZ_PERMISSION_CHANGE);
+                $this->acl->grant('type', BEZ_PERMISSION_CHANGE);
             }
         }
 	}
@@ -81,9 +105,12 @@ class Thread_comment extends Entity {
 
     public function mail_notify_add() {
 
+        $info = array();
+        $html =  p_render('bez_xhtmlmail', p_get_instructions($this->content), $info);
+
         $rep = array(
             'content' => $this->content,
-            'content_html' => $this->content_html,
+            'content_html' => $html,
             'who' => $this->author,
             'when' => $this->create_date
         );
@@ -98,6 +125,6 @@ class Thread_comment extends Entity {
             $rep['action_border_color'] = '#E5E5E5';
         }
         
-        $this->thread->mail_notify($rep);
+        $this->thread->mail_notify($rep, false, $info['img']);
     }
 }

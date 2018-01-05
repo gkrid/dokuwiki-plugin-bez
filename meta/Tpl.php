@@ -51,12 +51,16 @@ class Tpl {
     public function mailto($to, $subject, $body) {
         return 'mailto:'.$to.'?subject='.rawurlencode($subject).'&body='.rawurlencode($body);
     }
+//
+//    public function acl($table, $field) {
+//        if ($table instanceof Entity) {
+//            return $table->acl_of($field);
+//        }
+//        return $this->action->get_model()->factory($table)->permi
+//    }
 
-    public function acl($table, $field) {
-        if ($table instanceof Entity) {
-            return $table->acl_of($field);
-        }
-        return $this->action->get_model()->acl->check_static_field($table, $field);
+    public function factory($table) {
+        return $this->action->get_model()->factory($table);
     }
     
     /*users info function for shorten the code*/

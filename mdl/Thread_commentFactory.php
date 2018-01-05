@@ -2,6 +2,8 @@
 
 namespace dokuwiki\plugin\bez\mdl;
 
+use dokuwiki\plugin\bez\meta\ConsistencyViolationException;
+
 class Thread_commentFactory extends Factory {
 
     public function get_table_view() {
@@ -61,6 +63,11 @@ class Thread_commentFactory extends Factory {
     }
 
     public function delete(Entity $obj) {
+
+        if ($obj->task_count > 0) {
+            throw new ConsistencyViolationException('cannot delete when task are assigned');
+        }
+
         try {
             $this->beginTransaction();
 

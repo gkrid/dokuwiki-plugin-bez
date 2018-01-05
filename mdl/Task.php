@@ -80,6 +80,9 @@ class Task extends Entity {
 	public function __construct($model, $defaults=array()) {
 		parent::__construct($model, $defaults);
 
+		//virutal ACL columns (not in select)
+		$this->acl->add_column('participants');
+
 		$this->validator->set_rules(array(
             'assignee' => array(array('dw_user'), 'NOT NULL'),
             'cost' => array(array('numeric'), 'NULL'),
@@ -120,9 +123,38 @@ class Task extends Entity {
             } else {
                 $this->type = 'program';
             }
+
+            //everyone can report their own program tasks
+            if ($this->type == 'program') {
+                $this->acl->grant('content', BEZ_PERMISSION_CHANGE);
+                $this->acl->grant('plan_date', BEZ_PERMISSION_CHANGE);
+                $this->acl->grant('start_time', BEZ_PERMISSION_CHANGE);
+                $this->acl->grant('finish_time', BEZ_PERMISSION_CHANGE);
+                $this->acl->grant('all_day_event', BEZ_PERMISSION_CHANGE);
+                $this->acl->grant('task_program_id', BEZ_PERMISSION_CHANGE);
+                $this->acl->grant('cost', BEZ_PERMISSION_CHANGE);
+            }
+
+            if ($this->type == 'program' && $this->model->get_level() >= BEZ_AUTH_LEADER) {
+                $this->acl->grant('assignee', BEZ_PERMISSION_CHANGE);
+                $this->acl->grant('participants', BEZ_PERMISSION_CHANGE);
+            }
+
+            if ($this->type != 'program' && $this->coordinator == $this->model->user_nick) {
+                $this->acl->grant('content', BEZ_PERMISSION_CHANGE);
+                $this->acl->grant('plan_date', BEZ_PERMISSION_CHANGE);
+                $this->acl->grant('start_time', BEZ_PERMISSION_CHANGE);
+                $this->acl->grant('finish_time', BEZ_PERMISSION_CHANGE);
+                $this->acl->grant('all_day_event', BEZ_PERMISSION_CHANGE);
+                $this->acl->grant('task_program_id', BEZ_PERMISSION_CHANGE);
+                $this->acl->grant('cost', BEZ_PERMISSION_CHANGE);
+
+                $this->acl->grant('assignee', BEZ_PERMISSION_CHANGE);
+                $this->acl->grant('participants', BEZ_PERMISSION_CHANGE);
+            }
+
         //we get object form db
 		} else {
-
             if (isset($defaults['thread']) && $this->thread_id == $defaults['thread']->id) {
                 $this->thread = $defaults['thread'];
             }
@@ -131,6 +163,34 @@ class Task extends Entity {
                 $this->thread_comment = $defaults['thread_comment'];
             }
 
+            //user can close their tasks
+            if ($this->assignee == $this->model->user_nick || $this->model->get_level() >= BEZ_AUTH_LEADER) {
+                $this->acl->grant('state', BEZ_PERMISSION_CHANGE);
+            }
+
+            if ($this->type == 'program' && $this->original_poster == $this->model->user_nick) {
+                $this->acl->grant('content', BEZ_PERMISSION_CHANGE);
+                $this->acl->grant('plan_date', BEZ_PERMISSION_CHANGE);
+                $this->acl->grant('start_time', BEZ_PERMISSION_CHANGE);
+                $this->acl->grant('finish_time', BEZ_PERMISSION_CHANGE);
+                $this->acl->grant('all_day_event', BEZ_PERMISSION_CHANGE);
+                $this->acl->grant('task_program_id', BEZ_PERMISSION_CHANGE);
+                $this->acl->grant('cost', BEZ_PERMISSION_CHANGE);
+            }
+
+            if (($this->type != 'program' && $this->coordinator == $this->model->user_nick) ||
+                ($this->model->get_level() >= BEZ_AUTH_LEADER)) {
+                $this->acl->grant('content', BEZ_PERMISSION_CHANGE);
+                $this->acl->grant('plan_date', BEZ_PERMISSION_CHANGE);
+                $this->acl->grant('start_time', BEZ_PERMISSION_CHANGE);
+                $this->acl->grant('finish_time', BEZ_PERMISSION_CHANGE);
+                $this->acl->grant('all_day_event', BEZ_PERMISSION_CHANGE);
+                $this->acl->grant('task_program_id', BEZ_PERMISSION_CHANGE);
+                $this->acl->grant('cost', BEZ_PERMISSION_CHANGE);
+
+                $this->acl->grant('assignee', BEZ_PERMISSION_CHANGE);
+                $this->acl->grant('participants', BEZ_PERMISSION_CHANGE);
+            }
         }
 
 		if ($this->thread_id == '') {
@@ -140,7 +200,7 @@ class Task extends Entity {
 		    //this field is unused in program tasks
             $this->validator->delete_rule('thread_comment_id');
         }
-	}
+    }
 	
 	
 	public function set_data($post, $filter=NULL) {
@@ -196,6 +256,10 @@ class Task extends Entity {
         $this->last_activity_date = date('c');
         $this->model->sqlite->query('UPDATE task SET last_activity_date=? WHERE id=?',
                                     $this->last_activity_date, $this->id);
+    }
+
+    public function can_add_participants() {
+        return in_array($this->state, array('opened'));
     }
 
     public function get_participants($filter='') {
@@ -305,7 +369,7 @@ class Task extends Entity {
         $this->mail_notify_invite($client);
     }
     
-    private function mail_notify($replacements=array(), $users=false) {        
+    private function mail_notify($replacements=array(), $users=false, $attachedImages=array()) {
         $plain = io_readFile($this->model->action->localFN('task-notification'));
         $html = io_readFile($this->model->action->localFN('task-notification', 'html'));
         
@@ -355,6 +419,11 @@ class Task extends Entity {
 
         $mailer->to($emails);
         $mailer->subject($rep['subject']);
+
+        //add images
+        foreach ($attachedImages as $img) {
+            $mailer->attachFile($img['path'], $img['mime'], $img['name'], $img['embed']);
+        }
 
         $send = $mailer->send();
         if ($send === false) {
@@ -455,6 +524,10 @@ class Task extends Entity {
                 '<strong>'.$this->model->action->getLang('finish_time').': </strong>' . 
                 $this->finish_time;
         }
+
+        $info = array();
+        $content_html = p_render('bez_xhtmlmail', p_get_instructions($this->content), $info);
+        $attachedImages = $info['img'];
         
         $rep = array(
             'content' => $this->content,
@@ -479,7 +552,7 @@ class Task extends Entity {
                         'border-bottom' => '1px solid #8bbcbc',
                         'padding' => '.3em .5em'
                     )
-                ), $top_row, $bottom_row) . $this->content_html,
+                ), $top_row, $bottom_row) . $content_html,
             'who' => $this->model->user_nick,
             'when' => $this->create_date,
             'custom_content' => true
@@ -491,7 +564,7 @@ class Task extends Entity {
         //$replacements can override $reps
         $rep = array_merge($rep, $replacements);
 
-        $this->mail_notify($rep, $users);
+        $this->mail_notify($rep, $users, $attachedImages);
     }
     
     public function mail_notify_subscribents($replacements=array()) {

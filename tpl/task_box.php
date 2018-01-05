@@ -103,7 +103,7 @@
         </a>
 
         <?php if ($tpl->get('task')->task_program_id != '' &&
-                  $tpl->acl('task', 'id') >= BEZ_PERMISSION_CHANGE): ?>
+                  $tpl->factory('task')->permission() >= BEZ_TABLE_PERMISSION_INSERT): ?>
             <a class="bds_inline_button"
                     href="<?php echo $tpl->url('task_form', 'duplicate', $tpl->get('task')->id, 'task_program_id', $tpl->get('task')->task_program_id) ?>">
                     ⇲ <?php echo $tpl->getLang('duplicate') ?>

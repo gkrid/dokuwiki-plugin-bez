@@ -107,9 +107,16 @@ class TaskFactory extends Factory {
     public function update_save(Entity $task, $data) {
         try {
             $this->beginTransaction();
+            $prev_assignee = $task->assignee;
             parent::update_save($task, $data);
 
-            if ($task->thread) {
+            if ($task->thread_id != '' && $task->assignee != $prev_assignee) {
+                if ($this->model->taskFactory->count(array(
+                    'thread_id' => $task->thread_id,
+                    'assignee'  => $prev_assignee)) == 0) {
+                    $task->thread->remove_participant_flags($prev_assignee, array('task_assignee'));
+                }
+                $task->thread->set_participant_flags($task->assignee, array('subscribent', 'task_assignee'));
             }
 
             $this->commitTransaction();

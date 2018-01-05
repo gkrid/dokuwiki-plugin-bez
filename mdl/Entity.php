@@ -1,40 +1,4 @@
 <?php
- 
-//if(!defined('DOKU_INC')) die();
-
-
-//~ abstract class BEZ_mdl_Dummy_Entity {
-    
-    //~ protected $model;
-    
-    //~ protected $id = NULL;
-    
-    //~ public function __get($property) {
-		//~ if ($property === 'id') {
-            //~ return $this->id;
-        //~ }
-	//~ }
-    
-    //~ public function get_table_singular() {
-        //~ $class = get_class($this);
-		//~ $exp = explode('_', $class);
-		//~ $singular = array_pop($exp);
-		//~ return lcfirst($singular);
-    //~ }
-    
-    //~ public function get_table_name() {
-		//~ $singlar = $this->get_table_singular();
-		//~ return $singular.'s';
-	//~ }
-    
-    //~ public function acl_of($field) {
-        //~ return $this->model->acl->check_field($this, $field);
-    //~ }
-    
-    //~ public function __construct($model) {
-		//~ $this->model = $model;
-	//~ }
-//~ }
 
 namespace dokuwiki\plugin\bez\mdl;
 /*
@@ -48,13 +12,16 @@ namespace dokuwiki\plugin\bez\mdl;
 use dokuwiki\plugin\bez\meta\PermissionDeniedException;
 use dokuwiki\plugin\bez\meta\ValidationException;
 
-abstract class Entity {// extends BEZ_mdl_Dummy_Entity {
+abstract class Entity {
 
     /** @var  Model */
     protected $model;
 
     /** @var Validator */
     protected $validator;
+
+    /** @var Acl */
+    protected $acl;
 
 	abstract public static function get_columns();
 
@@ -81,13 +48,13 @@ abstract class Entity {// extends BEZ_mdl_Dummy_Entity {
         $class = (new \ReflectionClass($this))->getShortName();
 		return lcfirst($class);
 	}
-	
+
 	public function __get($property) {
         if (!property_exists($this, $property) || !in_array($property, $this->get_columns())) {
             throw new \Exception('there is no column: "'.$property. '"" in table: "' . $this->get_table_name() . '"');
         }
         
-        //now only normal db columns has ACL, it should be fixed        
+        //it slows down the execution and must be solved diffirently
 //        if ($this->acl_of($property) < BEZ_PERMISSION_VIEW) {
 //            throw new PermissionDeniedException();
 //        }
@@ -97,20 +64,12 @@ abstract class Entity {// extends BEZ_mdl_Dummy_Entity {
 	}
     
     protected function set_property($property, $value) {
-
-        if (!in_array($property, $this->get_columns())) {
-            throw new \Exception('trying to set not existing column');
+        if ($this->acl_of($property) < BEZ_PERMISSION_CHANGE) {
+            throw new PermissionDeniedException("cannot change field $property");
         }
-        
-        //throws ValidationException
-        $this->validator->validate_field($property, $value);
-        
-        //throws PermissionDeniedException
-        $this->model->acl->can($this, $property, BEZ_PERMISSION_CHANGE);
-        
         $this->$property = $value;
     }
-    
+
     protected function set_property_array($array) {
         foreach ($array as $k => $v) {
             $this->set_property($k, $v);
@@ -124,11 +83,10 @@ abstract class Entity {// extends BEZ_mdl_Dummy_Entity {
 		}
 
 		$this->set_property_array($val_data);
-
     }
     
     public function changable_fields($filter=NULL) {
-       $fields = $this->model->acl->check($this);
+       $fields = $this->acl->get_list();
 
        if ($filter !== NULL) {
            $fields = array_filter($fields, function ($k) use ($filter) {
@@ -141,10 +99,6 @@ abstract class Entity {// extends BEZ_mdl_Dummy_Entity {
        }));
     }
     
-    public function acl_of($field) {
-        return $this->model->acl->check_field($this, $field);
-    }
-
     public function can_be_null($field) {
 	    $rule = $this->validator->get_rule($field);
 	    $null = $rule[1];
@@ -158,5 +112,12 @@ abstract class Entity {// extends BEZ_mdl_Dummy_Entity {
     public function __construct($model) {
         $this->model = $model;
         $this->validator = new Validator($this->model);
-	}
+
+        $this->acl = new Acl($this->model->get_level(), $this->get_select_columns());
+    }
+
+    public function acl_of($field) {
+        return $this->acl->acl_of($field);
+    }
+
 }

@@ -7,7 +7,7 @@ use dokuwiki\plugin\bez\meta\PermissionDeniedException;
 class Authentication_tokenFactory extends Factory {
 
     public function get_token($page_id) {
-        if ($this->model->acl->get_level() < BEZ_AUTH_USER) {
+        if ($this->model->get_level() < BEZ_AUTH_USER) {
             throw new PermissionDeniedException();
         }
 
@@ -21,7 +21,7 @@ class Authentication_tokenFactory extends Factory {
 
     public function create_token($page_id, $expire_date='') {
 
-        if ($this->model->acl->get_level() < BEZ_AUTH_USER) {
+        if ($this->model->get_level() < BEZ_AUTH_USER) {
             throw new PermissionDeniedException();
         }
 

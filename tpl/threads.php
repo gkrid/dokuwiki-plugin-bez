@@ -1,6 +1,6 @@
 <?php /* @var \dokuwiki\plugin\bez\meta\Tpl $tpl */ ?>
 
-<?php if ($tpl->acl('thread', 'id') >= BEZ_PERMISSION_CHANGE): ?>
+<?php if ($tpl->factory('thread')->permission() >= BEZ_TABLE_PERMISSION_INSERT): ?>
     <a href="<?php echo $tpl->url('thread_report', 'type', $tpl->action() == 'projects' ? 'project' : 'issue') ?>" class="bez_start_button" id="bez_report_issue_button">
         <?php echo $tpl->getLang('report_' . $tpl->action()) ?>
     </a>

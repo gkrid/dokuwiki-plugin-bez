@@ -1,5 +1,5 @@
 <?php /* @var \dokuwiki\plugin\bez\meta\Tpl $tpl */ ?>
-<?php if ($tpl->acl('task', 'id') >= BEZ_PERMISSION_CHANGE): ?>
+<?php if ($tpl->factory('task')->permission() >= BEZ_TABLE_PERMISSION_INSERT): ?>
     <a href="<?php echo $tpl->url('task_form') ?>" class="bez_start_button" id="bez_report_task_button">
         <?php echo $tpl->getLang('add_task') ?>
     </a>

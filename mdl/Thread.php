@@ -51,7 +51,7 @@ class Thread extends Entity {
 
     public function user_is_coordinator() {
         if ($this->coordinator === $this->model->user_nick ||
-           $this->model->acl->get_level() >= BEZ_AUTH_ADMIN) {
+           $this->model->get_level() >= BEZ_AUTH_ADMIN) {
             return true;
         }
     }
@@ -62,8 +62,7 @@ class Thread extends Entity {
         $this->validator->set_rules(array(
             'coordinator' => array(array('dw_user'), 'NULL'),
             'title' => array(array('length', 200), 'NOT NULL'),
-            'content' => array(array('length', 10000), 'NOT NULL'),
-            'type' => array(array('select', array('issue', 'project')), 'NULL')
+            'content' => array(array('length', 10000), 'NOT NULL')
         ));
 
 		//we've created empty object (new record)
@@ -75,39 +74,49 @@ class Thread extends Entity {
 
 			$this->state = 'proposal';
 
+			$this->acl->grant('title', BEZ_PERMISSION_CHANGE);
+            $this->acl->grant('content', BEZ_PERMISSION_CHANGE);
+
             
-            if ($this->model->acl->get_level() >= BEZ_AUTH_LEADER) {
-                if (!$this->model->userFactory->exists($defaults['coordinator'])) {
-                    throw new ValidationException('thread', array('coordinator' => 'is_null'));
-                }
-                $this->coordinator = $defaults['coordinator'];
+            if ($this->model->get_level() >= BEZ_AUTH_LEADER) {
+
                 $this->state = 'opened';
+
+                $this->acl->grant('coordinator', BEZ_PERMISSION_CHANGE);
+                $this->acl->grant('label_id', BEZ_PERMISSION_CHANGE);
+                $this->acl->grant('private', BEZ_PERMISSION_CHANGE);
             }
-		}
+
+		} else {
+            //private threads
+            if ($this->model->level < BEZ_AUTH_ADMIN && $this->private == '1') {
+                if ($this->get_participant($this->model->user_nick) === false) {
+                    $this->acl->revoke(self::get_select_columns(), BEZ_AUTH_LEADER);
+                }
+            }
+
+		    if ($this->state == 'proposal' && $this->original_poster == $this->model->user_nick) {
+                $this->acl->grant('title', BEZ_PERMISSION_CHANGE);
+                $this->acl->grant('content', BEZ_PERMISSION_CHANGE);
+            }
+
+            if ($this->coordinator == $this->model->user_nick) {
+                $this->acl->grant('title', BEZ_PERMISSION_CHANGE);
+                $this->acl->grant('content', BEZ_PERMISSION_CHANGE);
+                $this->acl->grant('coordinator', BEZ_PERMISSION_CHANGE);
+                $this->acl->grant('label_id', BEZ_PERMISSION_CHANGE);
+                $this->acl->grant('private', BEZ_PERMISSION_CHANGE);
+
+                $this->acl->grant('state', BEZ_PERMISSION_CHANGE);
+            }
+        }
 	}
 	
 	public function set_data($data, $filter=NULL) {
-        $val_data = $this->validator->validate($data);
-                
-		if ($val_data === false) {
-			throw new ValidationException('thread',	$this->validator->get_errors());
-        }
+        parent::set_data($data, $filter=NULL);
 
-        //change coordinator at the end(!)
-        if (isset($val_data['coordinator'])) {
-            $val_coordinator = $val_data['coordinator'];
-            unset($val_data['coordinator']);
-        }
-        
-        $this->set_property_array($val_data); 
-        
-        if (isset($val_coordinator)) {
-            $this->set_property('coordinator', $val_coordinator);
-
-            //if we add cooridnator, we change state
-            if ($this->state == 'proposal') {
-                $this->state = 'opened';
-            }
+        if (isset($data['coordinator']) && $this->state == 'proposal') {
+            $this->state = 'opened';
         }
 
 		$this->content_html = p_render('xhtml',p_get_instructions($this->content), $ignore);
@@ -380,7 +389,7 @@ class Thread extends Entity {
 
     //http://data.agaric.com/capture-all-sent-mail-locally-postfix
     //https://askubuntu.com/questions/192572/how-do-i-read-local-email-in-thunderbird
-    public function mail_notify($replacements=array(), $users=false) {
+    public function mail_notify($replacements=array(), $users=false, $attachedImages=array()) {
         $plain = io_readFile($this->model->action->localFN('thread-notification'));
         $html = io_readFile($this->model->action->localFN('thread-notification', 'html'));
 
@@ -445,6 +454,10 @@ class Thread extends Entity {
         $mailer->to($emails);
         $mailer->subject($rep['subject']);
 
+        foreach ($attachedImages as $img) {
+            $mailer->attachFile($img['path'], $img['mime'], $img['name'], $img['embed']);
+        }
+
         $send = $mailer->send();
         if ($send === false) {
             //this may mean empty $emails
@@ -452,7 +465,7 @@ class Thread extends Entity {
         }
     }
 
-    protected function mail_issue_box_reps($replacements=array()) {
+    protected function mail_issue_box_reps(&$replacements, &$attachedImages) {
         $replacements['custom_content'] = true;
 
         $html =  '<h2 style="font-size: 1.2em;">';
@@ -483,7 +496,8 @@ class Thread extends Entity {
 
         $html .= '<h2 style="font-size: 1.2em;border-bottom: 1px solid @ACTION_BORDER_COLOR@">' . $this->title . '</h2>';
 
-        $html .= $this->content_html;
+        $html .= p_render('bez_xhtmlmail', p_get_instructions($this->content), $info);
+        $attachedImages = array_merge($attachedImages, $info['img']);
 
         $replacements['content_html'] = $html;
 
@@ -510,39 +524,46 @@ class Thread extends Entity {
                 $replacements['action_border_color'] = '#bbb';
                 break;
         }
-
-        return $replacements;
     }
 
     public function mail_notify_change_state() {
-        $this->mail_notify($this->mail_issue_box_reps(array(
+        $replacements = array(
             'who' => $this->model->user_nick,
-            'action' => $this->model->action->getLang('mail_mail_notify_change_state_action'),
-            //'subject' => $this->model->action->getLang('mail_mail_notify_change_state_subject') . ' #'.$this->id
-        )));
+            'action' => $this->model->action->getLang('mail_mail_notify_change_state_action')
+        );
+        $attachedImages = array();
+        $this->mail_issue_box_reps($replacements, $attachedImages);
+        $this->mail_notify($replacements, false, $attachedImages);
     }
 
     public function mail_notify_invite($client) {
-        $this->mail_notify($this->mail_issue_box_reps(array(
+        $replacements = array(
             'who' => $this->model->user_nick,
-            'action' => $this->model->action->getLang('mail_mail_notify_invite_action'),
-            //'subject' => $this->model->action->getLang('mail_mail_notify_invite_subject') . ' #'.$this->id
-        )), array($client));
+            'action' => $this->model->action->getLang('mail_mail_notify_invite_action')
+        );
+        $attachedImages = array();
+        $this->mail_issue_box_reps($replacements, $attachedImages);
+        $this->mail_notify($replacements, array($client), $attachedImages);
     }
 
     public function mail_inform_coordinator() {
-        $this->mail_notify($this->mail_issue_box_reps(array(
+        $replacements = array(
             'who' => $this->model->user_nick,
-            'action' => $this->model->action->getLang('mail_mail_inform_coordinator_action'),
-            //'subject' => $this->model->action->getLang('mail_mail_inform_coordinator_subject') . ' #'.$this->id
-        )), array($this->coordinator));
+            'action' => $this->model->action->getLang('mail_mail_inform_coordinator_action')
+        );
+        $attachedImages = array();
+        $this->mail_issue_box_reps($replacements, $attachedImages);
+        $this->mail_notify($replacements, array($this->coordinator), $attachedImages);
     }
 
     public function mail_notify_issue_inactive($users=false) {
-        $this->mail_notify($this->mail_issue_box_reps(array(
+        $replacements = array(
             'who' => '',
-            'action' => $this->model->action->getLang('mail_mail_notify_issue_inactive'),
-        )), $users);
+            'action' => $this->model->action->getLang('mail_mail_notify_issue_inactive')
+        );
+        $attachedImages = array();
+        $this->mail_issue_box_reps($replacements, $attachedImages);
+        $this->mail_notify($replacements, $users, $attachedImages);
     }
 
 }

@@ -3,7 +3,7 @@
 
 use \dokuwiki\plugin\bez;
 
-if ($this->model->acl->get_level() < BEZ_AUTH_USER) {
+if ($this->model->get_level() < BEZ_AUTH_USER) {
     throw new bez\meta\PermissionDeniedException();
 }
 
@@ -23,11 +23,12 @@ $this->tpl->set('thread_comments', $this->model->thread_commentFactory->get_from
 $this->tpl->set('tasks', $this->model->taskFactory->get_from_thread($thread));
 $this->tpl->set('task_programs',  $this->model->task_programFactory->get_all());
 
+/** @var bez\mdl\Thread_comment $thread_comment */
+$thread_comment = $this->model->thread_commentFactory->create_object(array('thread' => $thread));
+$this->tpl->set('thread_comment', $thread_comment);
 
 if ($this->get_param('action') == 'commcause_add') {
 
-    /** @var bez\mdl\Thread_comment $thread_comment */
-    $thread_comment = $this->model->thread_commentFactory->create_object(array('thread' => $thread));
     $this->model->thread_commentFactory->initial_save($thread_comment, $_POST);
 
     $anchor = 'k'.$thread_comment->id;

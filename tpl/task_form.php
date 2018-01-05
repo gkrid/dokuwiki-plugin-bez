@@ -42,7 +42,7 @@ if ($tpl->action() == 'thread') {
 				<?php endif ?>
 			<?php endif ?>
 			<div class="row">
-			<label for="executor"><?php echo $tpl->getLang('executor') ?>:</label>
+			<label for="assignee"><?php echo $tpl->getLang('executor') ?>:</label>
 			<span>
 			<?php if ($tpl->get('task')->acl_of('assignee') >= BEZ_PERMISSION_CHANGE): ?>
 				<select name="assignee" id="assignee" data-validation="required">

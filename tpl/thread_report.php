@@ -1,13 +1,13 @@
 <?php /* @var \dokuwiki\plugin\bez\meta\Tpl $tpl */ ?>
 <div class="bds_block">
 
-<?php if ($tpl->get('thread')): ?>
-    <?php $url = $tpl->url('thread_report', 'action', 'update', 'id', $tpl->get('thread')->id) ?>
+<?php if ($tpl->param('id') != ''): ?>
+    <?php $url = $tpl->url('thread_report', 'action', 'update', 'id', $tpl->param('id')) ?>
 <?php else: ?>
     <?php $url = $tpl->url('thread_report', 'action', 'add') ?>
 <?php endif ?>
 
-<?php if ($tpl->get('thread')): ?>
+<?php if ($tpl->param('id') != ''): ?>
     <?php $type = $tpl->get('thread')->type ?>
 <?php else: ?>
     <?php $type = $tpl->param('type') ?>
@@ -24,7 +24,7 @@
 <input type="hidden" name="id" value="bez:threads">
 
 <?php $class = 'prNone'; ?>
-<?php if ($tpl->get('thread')): ?>
+<?php if ($tpl->param('id') != ''): ?>
     <?php $class = 'pr' . $tpl->get('thread')->priority ?>
 <?php endif ?>
 <fieldset id="bds_issue_box"  class="bds_form <?php echo $class ?>">
@@ -37,7 +37,7 @@
 <?php endif ?>
     
 <?php if ($type != 'project' &&
-    $tpl->acl($tpl->get('thread', 'thread'), 'label_id') >= BEZ_PERMISSION_CHANGE): ?>
+    $tpl->get('thread')->acl_of('label_id') >= BEZ_PERMISSION_CHANGE): ?>
 <div class="row">
 <label for="label_id"><?php echo $tpl->getLang('type') ?>:</label>
 <span>
@@ -53,7 +53,7 @@
 </div>
 <?php endif ?>
     
-<?php if ($tpl->acl($tpl->get('thread', 'thread'), 'coordinator') >= BEZ_PERMISSION_CHANGE): ?>
+<?php if ($tpl->get('thread')->acl_of('coordinator') >= BEZ_PERMISSION_CHANGE): ?>
 <div class="row">
 <label for="coordinator"><?php echo $tpl->getLang('coordinator') ?>:</label>
 <span>
@@ -83,7 +83,7 @@
 </span>
 </div>
 
-<?php if ($tpl->acl($tpl->get('thread', 'thread'), 'private') >= BEZ_PERMISSION_CHANGE): ?>
+<?php if ($tpl->get('thread')->acl_of('private') >= BEZ_PERMISSION_CHANGE): ?>
     <div class="row">
         <label for="private"><?php echo $tpl->getLang('private') ?>:</label>
         <span><input <?php if ($tpl->value('private') == '1') echo 'checked' ?>
@@ -96,7 +96,7 @@
     <span style="padding-top:0px;">
         <input type="submit" value="<?php echo $tpl->getLang('save') ?>">&nbsp;&nbsp;
 
-        <?php if ($tpl->get('thread')): ?>
+        <?php if ($tpl->param('id') != ''): ?>
             <?php $url = $tpl->url('thread', 'id', $tpl->get('thread')->id) ?>
         <?php else: ?>
             <?php $url = $tpl->url('threads') ?>

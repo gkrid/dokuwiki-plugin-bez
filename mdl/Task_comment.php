@@ -48,9 +48,21 @@ class Task_comment extends Entity {
             }
             $this->task = $defaults['task'];
             $this->task_id = $this->task->id;
+
+            //we can change our own comments
+            if ($this->author == $this->model->user_nick || $this->model->get_level() >= BEZ_AUTH_LEADER) {
+                $this->acl->grant('content', BEZ_PERMISSION_CHANGE);
+            }
+
         } else {
             if (isset($defaults['task']) && $this->task_id == $defaults['task']->id) {
                 $this->task = $defaults['task'];
+            }
+
+            //we can change our own comments
+            if ($this->author == $this->model->user_nick || $this->model->get_level() >= BEZ_AUTH_LEADER) {
+                $this->acl->grant('id', BEZ_PERMISSION_DELETE);
+                $this->acl->grant('content', BEZ_PERMISSION_CHANGE);
             }
         }
 

@@ -267,15 +267,6 @@ BEGIN
   WHERE id = new.thread_comment_id;
 END;
 
-CREATE TRIGGER thread_comment_tr_delete
-  DELETE
-  ON task
-BEGIN
-  UPDATE thread_comment
-  SET task_count = task_count - 1
-  WHERE id = old.thread_comment_id;
-END;
-
 CREATE TRIGGER thread_comment_tr_thread_comment_id
   UPDATE OF thread_comment_id
   ON task

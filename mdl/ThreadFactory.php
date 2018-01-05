@@ -47,6 +47,12 @@ class ThreadFactory extends Factory {
         }
         try {
             $this->beginTransaction();
+
+            //save thread as project
+            if ($data['type'] == 'project') {
+                $thread->type = 'project';
+            }
+
             parent::initial_save($thread, $data);
 
             foreach($label_ids as $label_id) {
@@ -58,7 +64,7 @@ class ThreadFactory extends Factory {
                 $thread->set_participant_flags($thread->coordinator, array('coordinator', 'subscribent'));
             }
 
-            if ($this->model->acl->get_level() >= BEZ_AUTH_LEADER) {
+            if ($this->model->get_level() >= BEZ_AUTH_LEADER) {
                 $private = false;
                 if (isset($data['private'])) {
                     $private = true;
