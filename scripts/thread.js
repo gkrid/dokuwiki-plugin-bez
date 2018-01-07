@@ -71,6 +71,10 @@ bez.ctl.thread = function() {
 
         $textarea.on('input', function() {
             "use strict";
+            var suffix = "";
+            if (jQuery("#bds_issue_box").data('type') == 'project') {
+                suffix = "_project";
+            }
             if (jQuery(this).val().length > 0) {
                 if ($close_button.length > 0) {
                     $close_button.text(LANG.plugins.bez.comment_and_close_issue);
@@ -81,11 +85,11 @@ bez.ctl.thread = function() {
                 }
             } else {
                 if ($close_button.length > 0) {
-                    $close_button.text(LANG.plugins.bez.close_issue);
+                    $close_button.text(LANG.plugins.bez['close_issue' + suffix]);
                 } else if($reopen_button.length > 0) {
-                    $reopen_button.text(LANG.plugins.bez.reopen_issue);
+                    $reopen_button.text(LANG.plugins.bez['reopen_issue' + suffix]);
                 } else {
-                    $reject_button.text(LANG.plugins.bez.reject_issue);
+                    $reject_button.text(LANG.plugins.bez['reject_issue' + suffix]);
                 }
             }
         });

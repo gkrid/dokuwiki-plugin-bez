@@ -62,7 +62,8 @@ class Thread extends Entity {
         $this->validator->set_rules(array(
             'coordinator' => array(array('dw_user'), 'NULL'),
             'title' => array(array('length', 200), 'NOT NULL'),
-            'content' => array(array('length', 10000), 'NOT NULL')
+            'content' => array(array('length', 10000), 'NOT NULL'),
+            'type' => array(array('select', array('issue', 'project')), 'NULL')
         ));
 
 		//we've created empty object (new record)
@@ -76,6 +77,7 @@ class Thread extends Entity {
 
 			$this->acl->grant('title', BEZ_PERMISSION_CHANGE);
             $this->acl->grant('content', BEZ_PERMISSION_CHANGE);
+            $this->acl->grant('type', BEZ_PERMISSION_CHANGE);
 
             
             if ($this->model->get_level() >= BEZ_AUTH_LEADER) {
@@ -98,6 +100,7 @@ class Thread extends Entity {
 		    if ($this->state == 'proposal' && $this->original_poster == $this->model->user_nick) {
                 $this->acl->grant('title', BEZ_PERMISSION_CHANGE);
                 $this->acl->grant('content', BEZ_PERMISSION_CHANGE);
+                $this->acl->grant('type', BEZ_PERMISSION_CHANGE);
             }
 
             if ($this->coordinator == $this->model->user_nick) {
@@ -108,6 +111,7 @@ class Thread extends Entity {
                 $this->acl->grant('private', BEZ_PERMISSION_CHANGE);
 
                 $this->acl->grant('state', BEZ_PERMISSION_CHANGE);
+                $this->acl->grant('type', BEZ_PERMISSION_CHANGE);
             }
         }
 	}

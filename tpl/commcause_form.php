@@ -83,15 +83,15 @@
                 <?php if ($tpl->param('kid') == '' && $tpl->get('thread')->acl_of('state') >= BEZ_PERMISSION_CHANGE): ?>
                     <?php if ($tpl->get('thread')->can_be_closed()): ?>
                         <button class="plugin__bez_button plugin__bez_button_gray" name="fn" value="thread_close">
-                            <?php echo $tpl->getLang('js')['close_issue'] ?>
+                            <?php echo $tpl->getLang('js')['close_issue' . $tpl->get('lang_suffix')] ?>
                         </button>
                     <?php elseif ($tpl->get('thread')->can_be_rejected()): ?>
                         <button class="plugin__bez_button plugin__bez_button_gray" name="fn" value="thread_reject">
-                            <?php echo $tpl->getLang('js')['reject_issue'] ?>
+                            <?php echo $tpl->getLang('js')['reject_issue' . $tpl->get('lang_suffix')] ?>
                         </button>
                     <?php elseif ($tpl->get('thread')->can_be_reopened()): ?>
                         <button class="plugin__bez_button plugin__bez_button_gray" name="fn" value="thread_reopen">
-                            <?php echo $tpl->getLang('js')['reopen_issue'] ?>
+                            <?php echo $tpl->getLang('js')['reopen_issue'. $tpl->get('lang_suffix')]  ?>
                         </button>
                     <?php endif ?>
                 <?php endif ?>

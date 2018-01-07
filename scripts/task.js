@@ -127,6 +127,11 @@ bez.ctl.task = function() {
             return content;
         }
     });
+
+    jQuery("#plugin__bez_do_task_button").click(function() {
+        "use strict";
+        jQuery("button[value=task_do], button[value=task_reopen]").effect("highlight");
+    });
     
     //INVITE USERS
     jQuery.widget( "custom.combobox", {

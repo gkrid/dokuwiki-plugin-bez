@@ -78,16 +78,16 @@
 
     <br>
     <?php if ($tpl->get('thread')->task_count - $tpl->get('thread')->task_count_closed > 0): ?>
-        <div class="info"><?php echo $tpl->getLang('issue_unclosed_tasks') ?></div>
+        <div class="info"><?php echo $tpl->getLang('issue_unclosed_tasks' . $tpl->get('lang_suffix')) ?></div>
     <?php endif ?>
     <?php if ($tpl->get('thread')->state == 'proposal'): ?>
-        <div class="info"><?php echo $tpl->getLang('issue_is_proposal') ?></div>
+        <div class="info"><?php echo $tpl->getLang('issue_is_proposal' . $tpl->get('lang_suffix')) ?></div>
     <?php endif ?>
     <?php if ($tpl->get('causes_without_tasks')): ?>
         <div class="info"><?php echo $tpl->getLang('cause_without_task') ?></div>
     <?php endif ?>
     <?php if ($tpl->get('thread')->state == 'opened' && $tpl->get('thread')->task_count == 0): ?>
-        <div class="info"><?php echo $tpl->getLang('issue_no_tasks') ?></div>
+        <div class="info"><?php echo $tpl->getLang('issue_no_tasks' . $tpl->get('lang_suffix')) ?></div>
     <?php endif ?>
 <?php endif ?>
 
@@ -107,10 +107,10 @@
 <h2><?php echo $tpl->getLang('norifications') ?></h2>
 <?php if ($tpl->get('thread')->is_subscribent()): ?>
 	<a href="<?php echo $tpl->url('thread', 'id', $tpl->get('thread')->id, 'action', 'unsubscribe') ?>" class="bez_subscribe_button"><span class="bez_awesome">&#xf1f6;</span>&nbsp;&nbsp;<?php echo $tpl->getLang('unsubscribe') ?></a>
-	<p><?php echo $tpl->getLang('subscribed_info') ?></p>
+	<p><?php echo $tpl->getLang('subscribed_info' . $tpl->get('lang_suffix')) ?></p>
 <?php else: ?>
 	<a href="<?php echo $tpl->url('thread', 'id', $tpl->get('thread')->id, 'action', 'subscribe') ?>" class="bez_subscribe_button"><span class="bez_awesome">&#xf0f3;</span>&nbsp;&nbsp;<?php echo $tpl->getLang('subscribe') ?></a>
-	<p><?php echo $tpl->getLang('subscribed_info') ?></p>
+	<p><?php echo $tpl->getLang('not_subscribed_info' . $tpl->get('lang_suffix')) ?></p>
 <?php endif ?>
 
 </div>

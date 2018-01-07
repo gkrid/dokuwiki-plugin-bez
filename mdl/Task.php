@@ -190,6 +190,7 @@ class Task extends Entity {
 
                 $this->acl->grant('assignee', BEZ_PERMISSION_CHANGE);
                 $this->acl->grant('participants', BEZ_PERMISSION_CHANGE);
+                $this->acl->grant('state', BEZ_PERMISSION_CHANGE);
             }
         }
 
@@ -256,6 +257,20 @@ class Task extends Entity {
         $this->last_activity_date = date('c');
         $this->model->sqlite->query('UPDATE task SET last_activity_date=? WHERE id=?',
                                     $this->last_activity_date, $this->id);
+    }
+
+    public function can_add_comments() {
+        if ($this->thread_id != '' && $this->thread->state == 'closed') {
+            return false;
+        }
+
+        if ($this->state == 'opened' ||
+            ($this->state == 'done' &&
+                $this->acl_of('state') >= BEZ_PERMISSION_CHANGE)) {
+            return true;
+        }
+
+        return false;
     }
 
     public function can_add_participants() {

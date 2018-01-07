@@ -2,6 +2,8 @@
 
 namespace dokuwiki\plugin\bez\mdl;
 
+use dokuwiki\plugin\bez\meta\ConsistencyViolationException;
+
 class Task_commentFactory extends Factory {
 
     public function get_from_task(Task $task) {
@@ -14,6 +16,11 @@ class Task_commentFactory extends Factory {
      * @throws \Exception
      */
     public function initial_save(Entity $task_comment, $data) {
+
+        if ($task_comment->task->thread_id != '' && $task_comment->task->thread->state == 'closed') {
+            throw new ConsistencyViolationException('cannot add comments to closed threads');
+        }
+
         try {
             $this->beginTransaction();
 
@@ -42,6 +49,11 @@ class Task_commentFactory extends Factory {
     }
 
     public function update_save(Entity $task_comment, $data) {
+
+        if ($task_comment->task->thread_id != '' && $task_comment->task->thread->state == 'closed') {
+            throw new ConsistencyViolationException('cannot add comments to closed threads');
+        }
+
         try {
             $this->beginTransaction();
             parent::update_save($task_comment, $data);
@@ -55,11 +67,20 @@ class Task_commentFactory extends Factory {
     }
 
     public function delete(Entity $obj) {
+
+        if ($obj->task->thread_id != '' && $obj->task->thread->state == 'closed') {
+            throw new ConsistencyViolationException('delete comments of closed threads');
+        }
+
         try {
             $this->beginTransaction();
 
             parent::delete($obj);
             $obj->task->update_last_activity();
+            //remove commentator flag
+            if ($this->count(array('task_id' => $obj->task_id, 'author' => $obj->author)) == 0) {
+                $obj->task->remove_participant_flags($obj->author, array('commentator'));
+            }
 
             $this->commitTransaction();
         } catch(Exception $exception) {

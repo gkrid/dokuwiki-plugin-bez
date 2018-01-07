@@ -1,5 +1,6 @@
 <?php /* @var \dokuwiki\plugin\bez\meta\Tpl $tpl */ ?>
 <div    id="bds_issue_box"
+        data-type="<?php echo $tpl->get('thread')->type ?>"
         class="pr<?php
         if ($tpl->get('thread')->state != 'opened') {
             echo '-1';

@@ -148,15 +148,15 @@ $lang['state_done'] = 'wykonane';
 $lang['state_rejected'] = 'odrzucona';
 $lang['state_closed'] = 'zamknięta';
 
-$lang['reject_issue'] = 'Odrzuć wątek';
+$lang['reject_issue'] = 'Odrzuć problem';
 
-$lang['js']['close_issue'] = 'Zamknij wątek';
+$lang['js']['close_issue'] = 'Zamknij problem';
 $lang['js']['comment_and_close_issue'] = 'Zamknij i skomentuj';
 
-$lang['js']['reject_issue'] = 'Odrzuć wątek';
+$lang['js']['reject_issue'] = 'Odrzuć problem';
 $lang['js']['comment_and_reject_issue'] = 'Odrzuć i i skomentuj';
 
-$lang['js']['reopen_issue'] = 'Otwórz ponownie wątek';
+$lang['js']['reopen_issue'] = 'Otwórz ponownie problem';
 $lang['js']['comment_and_reopen_issue'] = 'Otwórz ponownie i skomentuj';
 
 $lang['js']['do_task'] = 'Wykonaj zadanie';
@@ -527,9 +527,9 @@ $lang['subscribent'] = 'Subskrybent';
 
 $lang['unsubscribe'] = 'Wypisz';
 
-$lang['subscribed_info'] = 'Otrzymujesz powiadomienia o zmianach w tym wątku.';
+$lang['subscribed_info'] = 'Otrzymujesz powiadomienia o zmianach w tym problemie.';
 
-$lang['not_subscribed_info'] = 'Nie otrzymujesz powiadomień o zmianach w tym wątku.';
+$lang['not_subscribed_info'] = 'Nie otrzymujesz powiadomień o zmianach w tym problemie.';
 
 $lang['task_subscribed_info'] = 'Otrzymujesz powiadomienia o zmianach w tym zadaniu.';
 
@@ -548,7 +548,7 @@ $lang['prev_open'] = 'Poprzedni otwarty';
 
 $lang['js']['remove_confirm'] = 'Czy na pewno chcesz usunąć ten element?';
 
-$lang['unsubscribed_com'] = 'Zostałeś wypisany z tego wątku.';
+$lang['unsubscribed_com'] = 'Zostałeś wypisany z tego problemu.';
 
 $lang['mail_comment_added'] = 'dodał(a) komentarz';
 $lang['mail_cause_added'] = 'dodał(a) przyczynę';
@@ -603,7 +603,21 @@ $lang['nav projects'] = 'Projekty';
 
 $lang['user_did_task'] = '%s wykonał(a) zadanie %s';
 
-$lang['user_closed_issue'] = '%s zamknął(eła) wątek %s';
-$lang['user_rejected_issue'] = '%s odrzucił(a) wątek %s';
+$lang['user_closed_issue'] = '%s zamknął(eła) problem %s';
+$lang['user_rejected_issue'] = '%s odrzucił(a) problem %s';
 
 $lang['private'] = 'Prywatny';
+
+$lang['issue_unclosed_tasks_project'] = 'Nie można zamknąć projektu, dopóki zawiera on nierozwiązane zadania.';
+$lang['issue_is_proposal_project'] = 'Nie można dodawać zadań, dopóki projekt jest propozycją.';
+$lang['issue_no_tasks_project'] = 'Nie można zamknąć projektu, dopóki nie posiada żadnego przypisanego zadania.';
+
+$lang['js']['close_issue_project'] = 'Zamknij projekt';
+$lang['js']['reject_issue_project'] = 'Odrzuć projekt';
+$lang['js']['reopen_issue_project'] = 'Otwórz ponownie projekt';
+
+$lang['user_closed_issue_project'] = '%s zamknął(eła) projekt %s';
+$lang['user_rejected_issue_project'] = '%s odrzucił(a) projekt %s';
+
+$lang['subscribed_info_project'] = 'Otrzymujesz powiadomienia o zmianach w tym projekcie.';
+$lang['not_subscribed_info_project'] = 'Nie otrzymujesz powiadomień o zmianach w tym projekcie.';

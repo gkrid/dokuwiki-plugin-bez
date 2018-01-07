@@ -73,6 +73,10 @@ class Thread_commentFactory extends Factory {
 
             parent::delete($obj);
             $obj->thread->update_last_activity();
+            //remove commentator flag
+            if ($this->count(array('thread_id' => $obj->thread_id, 'author' => $obj->author)) == 0) {
+                $obj->thread->remove_participant_flags($obj->author, array('commentator'));
+            }
 
             $this->commitTransaction();
         } catch(Exception $exception) {

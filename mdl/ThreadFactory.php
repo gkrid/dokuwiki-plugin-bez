@@ -48,11 +48,6 @@ class ThreadFactory extends Factory {
         try {
             $this->beginTransaction();
 
-            //save thread as project
-            if ($data['type'] == 'project') {
-                $thread->type = 'project';
-            }
-
             parent::initial_save($thread, $data);
 
             foreach($label_ids as $label_id) {

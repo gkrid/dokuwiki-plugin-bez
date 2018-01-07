@@ -569,3 +569,17 @@ $lang['user_closed_issue'] = '%s closed issue %s';
 $lang['user_rejected_issue'] = '%s rejected issue %s';
 
 $lang['private'] = 'Private';
+
+$lang['issue_unclosed_tasks_project'] = 'You cannot close project until some tasks are not closed.';
+$lang['issue_is_proposal_project'] = 'You cannot add tasks until the project is proposal.';
+$lang['issue_no_tasks_project'] = 'You cannot close the project until it has no tasks.';
+
+$lang['js']['close_issue_project'] = 'Close project';
+$lang['js']['reject_issue_project'] = 'Reject project';
+$lang['js']['reopen_issue_project'] = 'Reopen project';
+
+$lang['user_closed_issue_project'] = '%s closed project %s';
+$lang['user_rejected_issue_project'] = '%s rejected project %s';
+
+$lang['subscribed_info_project'] = 'You\'re receiving notifications about changes in this project.';
+$lang['not_subscribed_info_project'] = 'You aren\'t receiving notifications about changes in this project.';

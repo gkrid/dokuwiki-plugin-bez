@@ -79,6 +79,17 @@
 <?php echo $tpl->get('task')->content_html ?>
 
     <div class="bez_buttons">
+        <?php if ($tpl->get('task')->acl_of('state') >= BEZ_PERMISSION_CHANGE): ?>
+            <a class="bds_inline_button"
+               id="plugin__bez_do_task_button"
+               href="<?php echo $tpl->url('task', 'tid', $tpl->get('task')->id) ?>#zk_">
+                <?php if ($tpl->get('task')->state == 'opened'): ?>
+                    ↬ <?php echo $tpl->getLang('js')['do_task'] ?>
+                <?php else: ?>
+                    ↻ <?php echo $tpl->getLang('js')['reopen_task'] ?>
+                <?php endif?>
+            </a>
+        <?php endif ?>
 
         <?php if (count($tpl->get('task')->changable_fields(
                 array('content', 'plan_date', 'all_day_event', 'start_time', 'finish_time', 'task_program_id', 'cost')

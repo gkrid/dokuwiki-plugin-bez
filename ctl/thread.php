@@ -19,6 +19,9 @@ if ($thread->acl_of('id') < BEZ_PERMISSION_VIEW) {
 }
 
 $this->tpl->set('thread', $thread);
+if ($thread->type == 'project') {
+    $this->tpl->set('lang_suffix', '_project');
+}
 $this->tpl->set('thread_comments', $this->model->thread_commentFactory->get_from_thread($thread));
 $this->tpl->set('tasks', $this->model->taskFactory->get_from_thread($thread));
 $this->tpl->set('task_programs',  $this->model->task_programFactory->get_all());

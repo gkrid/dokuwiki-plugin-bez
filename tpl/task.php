@@ -69,17 +69,8 @@
         </div>
     <?php endif ?>
 
-    <?php if($tpl->param('action') != 'task_edit' && $tpl->param('action') != 'comment_edit'): ?>
-         <?php if (
-                 ($tpl->get('task')->thread_id != '' &&
-                    $tpl->get('task')->thread->can_add_tasks()) ||
-
-                 $tpl->get('task')->state == 'opened' ||
-
-                ($tpl->get('task')->state == 'done' &&
-                    $tpl->get('task')->acl_of('state') >= BEZ_PERMISSION_CHANGE)): ?>
-            <?php include 'task_comment_form.php' ?>
-        <?php endif?>
+    <?php if($tpl->param('action') != 'task_edit' && $tpl->param('action') != 'comment_edit' && $tpl->get('task')->can_add_comments()): ?>
+        <?php include 'task_comment_form.php' ?>
     <?php endif ?>
 
     </div>
