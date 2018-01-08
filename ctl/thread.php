@@ -22,8 +22,20 @@ $this->tpl->set('thread', $thread);
 if ($thread->type == 'project') {
     $this->tpl->set('lang_suffix', '_project');
 }
-$this->tpl->set('thread_comments', $this->model->thread_commentFactory->get_from_thread($thread));
-$this->tpl->set('tasks', $this->model->taskFactory->get_from_thread($thread));
+
+$thread_comments = iterator_to_array($this->model->thread_commentFactory->get_from_thread($thread));
+$tasks = $this->model->taskFactory->get_from_thread($thread);
+
+$timeline = array_merge($thread_comments, $tasks['corrections']);
+usort($timeline, function($a, $b) {
+    if ($a->create_date == $b->create_date) {
+        return 0;
+    }
+    return ($a->create_date < $b->create_date) ? -1 : 1;
+});
+
+$this->tpl->set('timeline', $timeline);
+$this->tpl->set('tasks', $tasks);
 $this->tpl->set('task_programs',  $this->model->task_programFactory->get_all());
 
 /** @var bez\mdl\Thread_comment $thread_comment */

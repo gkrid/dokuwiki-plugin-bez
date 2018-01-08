@@ -1,54 +1,39 @@
 <?php /* @var \dokuwiki\plugin\bez\meta\Tpl $tpl */ ?>
 <?php include "thread_box.php" ?>
 
-<!-- Comments -->
 <div class="bez_comments">
 	<div class="bez_left_col">
-		<!-- Correction -->
-		<div style="margin-top: 10px">
-			<?php foreach ($tpl->get('tasks')['corrections'] as $task): ?>
-				<?php $tpl->set('task', $task) ?>
-				<?php if (	$tpl->param('action') == 'task_edit' &&
-                            $tpl->param('tid') == $task->id): ?>
-					<?php include 'task_form.php' ?>
-				<?php else: ?>
-					<?php include 'task_box.php' ?>
-				<?php endif ?>
-				
-			<?php endforeach ?>
-			<?php if (  $tpl->param('action') == 'task_add' &&
-                        $tpl->param('kid') == ''): ?>
-				<?php include 'task_form.php' ?>
-			<?php endif ?>
-		</div>
-
-		<div class="bez_second_lv_buttons" style="margin-top: 10px">
-			<?php if (	$tpl->get('thread')->user_is_coordinator() &&
-                        $tpl->get('thread')->can_add_tasks()): ?>
-				<a href="<?php echo $tpl->url('thread', 'id', $tpl->get('thread')->id, 'action', 'task_add') ?>#z_" class="bez_subscribe_button">
-					<span class="bez_awesome">&#xf0fe;</span>&nbsp;&nbsp;<?php echo $tpl->getLang('correction_add') ?>
-				</a>
-			<?php endif ?>
-			<a href="#" class="bez_subscribe_button bez_hide_comments">
-				<span class="bez_awesome">&#xf070;</span>&nbsp;&nbsp;<?php echo $tpl->getLang('hide_comments') ?>
-			</a>
-			<a href="#" class="bez_subscribe_button bez_show_comments">
-				<span class="bez_awesome">&#xf06e;</span>&nbsp;&nbsp;<?php echo $tpl->getLang('show_comments') ?>
-			</a>
-		</div>
-		
-		<?php foreach ($tpl->get('thread_comments') as $thread_comment): ?>
-            <?php $tpl->set('thread_comment', $thread_comment) ?>
-			<?php if (	$tpl->param('action') == 'commcause_edit' &&
-						$tpl->param('kid') == $thread_comment->id): ?>
-				<?php include 'commcause_form.php' ?>
-			<?php else: ?>
-                <?php //$tpl->set('causes_without_tasks') ?>
-				<?php include 'commcause_box.php' ?>
-			<?php endif ?>
+		<?php foreach ($tpl->get('timeline') as $entity): ?>
+            <?php if ($entity->get_table_name() == 'thread_comment'): ?>
+                <?php $tpl->set('thread_comment', $entity) ?>
+                <?php if (	$tpl->param('action') == 'commcause_edit' &&
+                            $tpl->param('kid') == $entity->id): ?>
+                    <?php include 'commcause_form.php' ?>
+                <?php else: ?>
+                    <?php include 'commcause_box.php' ?>
+                <?php endif ?>
+            <?php elseif($entity->get_table_name() == 'task'): ?>
+                <br>
+                <?php $tpl->set('task', $entity) ?>
+                <?php if (	$tpl->param('action') == 'task_edit' &&
+                    $tpl->param('tid') == $entity->id): ?>
+                    <?php include 'task_form.php' ?>
+                <?php else: ?>
+                    <?php include 'task_box.php' ?>
+                <?php endif ?>
+            <?php endif ?>
 		<?php endforeach ?>
 
-        <?php if ($tpl->get('thread')->state == 'closed'): ?>
+        <?php if ($tpl->param('action') == '' && $tpl->get('thread')->user_is_coordinator() && $tpl->get('thread')->can_add_tasks()): ?>
+            <div class="bez_second_lv_buttons" style="margin-top: 10px">
+                <a href="<?php echo $tpl->url('thread', 'id', $tpl->get('thread')->id, 'action', 'task_add') ?>#z_" class="bez_subscribe_button">
+                    <span class="bez_awesome">&#xf0fe;</span>&nbsp;&nbsp;<?php echo $tpl->getLang('correction_add') ?>
+                </a>
+            </div>
+        <?php elseif ($tpl->param('action') == 'task_add' && $tpl->param('kid') == ''): ?>
+            <br>
+            <?php include 'task_form.php' ?>
+        <?php elseif ($tpl->get('thread')->state == 'closed'): ?>
             <div class="plugin__bez_status_label">
             <span class="icon icon_green">
                 <?php echo inlineSVG(DOKU_PLUGIN . 'bez/images/tick.svg') ?>
