@@ -322,6 +322,15 @@ class action_plugin_bez_migration extends DokuWiki_Action_Plugin {
                 $participants[$user_id]['subscribent'] = '1';
             }
 
+            $stmt_i = $bez->query('SELECT reporter FROM commcauses WHERE issue=' . $row['id']);
+            while ($commcause = $stmt_i->fetch(\PDO::FETCH_ASSOC)) {
+                $user_id = $commcause['reporter'];
+                if (!isset($participants[$user_id])) {
+                    $participants[$user_id] = array('user_id' => $user_id);
+                }
+                $participants[$user_id]['commentator'] = '1';
+            }
+
             if (is_array($task_assignee[$row['id']])) foreach ($task_assignee[$row['id']] as $user_id) {
                 if (!isset($participants[$user_id])) {
                     $participants[$user_id] = array('user_id' => $user_id);
