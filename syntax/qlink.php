@@ -43,7 +43,7 @@ class syntax_plugin_bez_qlink extends DokuWiki_Syntax_Plugin {
 			if ($link[0] === 'z') {
 				$renderer->doc .= '<a href="?id='.$lang_code.'bez:task:tid:'.$nr.'">#z'.$nr.'</a>';
 			} else {
-				$renderer->doc .= '<a href="?id='.$lang_code.'bez:issue:id:'.$nr.'">#'.$nr.'</a>';
+				$renderer->doc .= '<a href="?id='.$lang_code.'bez:thread:id:'.$nr.'">#'.$nr.'</a>';
 			}
 			return true;
 		}
