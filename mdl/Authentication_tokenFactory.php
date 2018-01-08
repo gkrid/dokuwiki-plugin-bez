@@ -6,23 +6,28 @@ use dokuwiki\plugin\bez\meta\PermissionDeniedException;
 
 class Authentication_tokenFactory extends Factory {
 
-    public function get_token($page_id) {
-        if ($this->model->get_level() < BEZ_AUTH_USER) {
-            throw new PermissionDeniedException();
-        }
+    public function can_create_token() {
+        return $this->model->get_level() >= BEZ_AUTH_USER;
+    }
 
+    public function get_token($page_id) {
         $r = $this->model->sqlite->query("SELECT token FROM {$this->get_table_name()} WHERE page_id=?", $page_id);
         $token = $this->model->sqlite->res2single($r);
         if (!$token) {
-            return $this->create_token($page_id);
+            return false;
         }
         return $token;
     }
 
     public function create_token($page_id, $expire_date='') {
 
-        if ($this->model->get_level() < BEZ_AUTH_USER) {
+        if (!$this->can_create_token()) {
             throw new PermissionDeniedException();
+        }
+
+        $token = $this->get_token($page_id);
+        if ($token) {
+            return $token;
         }
 
         if ($expire_date == '') {

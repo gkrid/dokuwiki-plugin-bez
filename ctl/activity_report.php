@@ -3,7 +3,7 @@
 
 use \dokuwiki\plugin\bez;
 
-if ($this->model->acl->get_level() < BEZ_AUTH_USER) {
+if ($this->model->get_level() < BEZ_AUTH_USER) {
     throw new bez\meta\PermissionDeniedException();
 }
 

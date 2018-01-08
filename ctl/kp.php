@@ -1,8 +1,16 @@
 <?php
+/** @var action_plugin_bez $this */
+
+use \dokuwiki\plugin\bez;
+
 //if we don't have a token, generate a new one and redirect
-if (!isset($_GET['t'])) {
-    $token = $this->model->authentication_tokenFactory->get_token($this->id());
+if (!isset($_GET['t']) && $this->model->authentication_tokenFactory->can_create_token()) {
+    $token = $this->model->authentication_tokenFactory->create_token($this->id());
     header('Location: ' . $this->url() . '&t=' . $token);
+}
+
+if ($this->model->get_level() < BEZ_AUTH_VIEWER) {
+    throw new bez\meta\PermissionDeniedException();
 }
 
 /** @var bez\mdl\Thread $thread */
