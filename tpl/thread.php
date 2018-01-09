@@ -3,6 +3,14 @@
 
 <div class="bez_comments">
 	<div class="bez_left_col">
+        <?php if ($tpl->param('action') == '' && $tpl->get('thread')->user_is_coordinator() && $tpl->get('thread')->can_add_tasks()): ?>
+        <div class="bez_second_lv_buttons" style="margin-top: 10px">
+            <a href="<?php echo $tpl->url('thread', 'id', $tpl->get('thread')->id, 'action', 'task_add') ?>#z_" class="bez_subscribe_button">
+                <span class="bez_awesome">&#xf0fe;</span>&nbsp;&nbsp;<?php echo $tpl->getLang('correction_add' . $tpl->get('lang_suffix')) ?>
+            </a>
+        </div>
+        <?php endif ?>
+
 		<?php foreach ($tpl->get('timeline') as $entity): ?>
             <?php if ($entity->get_table_name() == 'thread_comment'): ?>
                 <?php $tpl->set('thread_comment', $entity) ?>
@@ -24,13 +32,7 @@
             <?php endif ?>
 		<?php endforeach ?>
 
-        <?php if ($tpl->param('action') == '' && $tpl->get('thread')->user_is_coordinator() && $tpl->get('thread')->can_add_tasks()): ?>
-            <div class="bez_second_lv_buttons" style="margin-top: 10px">
-                <a href="<?php echo $tpl->url('thread', 'id', $tpl->get('thread')->id, 'action', 'task_add') ?>#z_" class="bez_subscribe_button">
-                    <span class="bez_awesome">&#xf0fe;</span>&nbsp;&nbsp;<?php echo $tpl->getLang('correction_add') ?>
-                </a>
-            </div>
-        <?php elseif ($tpl->param('action') == 'task_add' && $tpl->param('kid') == ''): ?>
+        <?php if ($tpl->param('action') == 'task_add' && $tpl->param('kid') == ''): ?>
             <br>
             <?php include 'task_form.php' ?>
         <?php elseif ($tpl->get('thread')->state == 'closed'): ?>

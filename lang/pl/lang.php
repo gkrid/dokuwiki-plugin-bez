@@ -226,7 +226,7 @@ $lang['correction_h'] = 'Działania korekcyjne';
 $lang['corrective_action_h'] = 'Działania korygujące';
 $lang['preventive_action_h'] = 'Działania zapobiegawcze';
 
-$lang['correction_add'] = 'Dodaj zadanie';
+$lang['correction_add'] = 'Dodaj korekcję';
 $lang['corrective_action_add'] = 'Dodaj działanie korygujące';
 $lang['preventive_action_add'] = 'Dodaj działanie zapobiegawcze';
 
@@ -621,3 +621,5 @@ $lang['user_rejected_issue_project'] = '%s odrzucił(a) projekt %s';
 
 $lang['subscribed_info_project'] = 'Otrzymujesz powiadomienia o zmianach w tym projekcie.';
 $lang['not_subscribed_info_project'] = 'Nie otrzymujesz powiadomień o zmianach w tym projekcie.';
+
+$lang['correction_add_project'] = 'Dodaj zadanie';

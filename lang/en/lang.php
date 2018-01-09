@@ -226,7 +226,7 @@ $lang['correction_h'] = 'Correction';
 $lang['corrective_action'] = "Corrective action";
 $lang['preventive_action'] = "Preventive action";
 
-$lang['correction_add'] = 'Add task';
+$lang['correction_add'] = 'Add correction';
 $lang['corrective_action_add'] = 'Add corrective action';
 $lang['preventive_action_add'] = 'Add preventive action';
 
@@ -583,3 +583,5 @@ $lang['user_rejected_issue_project'] = '%s rejected project %s';
 
 $lang['subscribed_info_project'] = 'You\'re receiving notifications about changes in this project.';
 $lang['not_subscribed_info_project'] = 'You aren\'t receiving notifications about changes in this project.';
+
+$lang['correction_add_project'] = 'Add task';
