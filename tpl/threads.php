@@ -169,8 +169,7 @@
 				<?php else: ?>
 					<?php echo $tpl->date($thread->close_date) ?><br />
 					<?php $s = $tpl->getLang('report_priority').': ' .
-                        $tpl->date_diff_days($tpl->get('thread')->create_date,
-                                             $tpl->get('thread')->close_date, '%a') ?>
+                        $tpl->date_diff_days($thread->create_date, $thread->close_date, '%a') ?>
 					<?php echo str_replace(' ', '&nbsp;', $s) ?>
 				<?php endif ?>
 			</td>
@@ -189,7 +188,7 @@
 	<?php endforeach ?>
 	<tr>
 		<th><?php echo $tpl->getLang('report_total') ?></th>
-		<td colspan="6"><?php echo $count ?></td>
+		<td colspan="7"><?php echo $count ?></td>
 		<td colspan="3"><?php echo $total_cost ?></td>
 	</tr>
 </table>

@@ -7,19 +7,17 @@ if ($this->model->get_level() < BEZ_AUTH_USER) {
     throw new bez\meta\PermissionDeniedException();
 }
 
-define('BEZ_THREAD_FILTERS_COOKIE_NAME', 'bez_thread_filters_' . $this->tpl->action());
+define('BEZ_THREAD_FILTERS_COOKIE_NAME', 'plugin__bez_thread_filters_' . $this->tpl->action());
 
 if (count($_POST) > 0) {
-	$raw_filters = $_POST;
+    $raw_filters = $_POST;
 } elseif (empty($this->params) && isset($_COOKIE[BEZ_THREAD_FILTERS_COOKIE_NAME])) {
-	$raw_filters = $_COOKIE[BEZ_THREAD_FILTERS_COOKIE_NAME];
+	$raw_filters = json_decode($_COOKIE[BEZ_THREAD_FILTERS_COOKIE_NAME], true);
 }
 
 if (isset($raw_filters)) {
     //save filters
-    foreach ($raw_filters as $k => $v) {
-        setcookie(BEZ_THREAD_FILTERS_COOKIE_NAME."[$k]", $v);
-    }
+    setcookie(BEZ_THREAD_FILTERS_COOKIE_NAME, json_encode($raw_filters));
 
     $filters = array_filter($raw_filters, function($v) {
        return $v !== '-all' && $v !== '';
@@ -77,9 +75,9 @@ if (isset($filters['title'])) {
     $db_filters['title'] = array('LIKE', "%$title%");
 }
 
-$orderby = 'last_activity_date';
+$orderby = array('sort', 'priority DESC', 'create_date DESC');
 if (isset($filters['sort_open']) && $filters['sort_open'] == 'on') {
-    $orderby = 'id';
+    $orderby = 'id DESC';
 }
 
 if ($this->get_action() == 'threads') {

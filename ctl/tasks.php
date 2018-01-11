@@ -7,19 +7,17 @@ if ($this->model->get_level() < BEZ_AUTH_USER) {
     throw new bez\meta\PermissionDeniedException();
 }
 
-define('BEZ_THREAD_FILTERS_COOKIE_NAME', 'bez_task_filters');
+define('BEZ_THREAD_FILTERS_COOKIE_NAME', 'plugin__bez_task_filters');
 
 if (count($_POST) > 0) {
     $raw_filters = $_POST;
 } elseif (empty($this->params) && isset($_COOKIE[BEZ_THREAD_FILTERS_COOKIE_NAME])) {
-    $raw_filters = $_COOKIE[BEZ_THREAD_FILTERS_COOKIE_NAME];
+    $raw_filters = json_decode($_COOKIE[BEZ_THREAD_FILTERS_COOKIE_NAME], true);;
 }
 
 if (isset($raw_filters)) {
     //save filters
-    foreach ($raw_filters as $k => $v) {
-        setcookie(BEZ_THREAD_FILTERS_COOKIE_NAME."[$k]", $v);
-    }
+    setcookie(BEZ_THREAD_FILTERS_COOKIE_NAME, json_encode($raw_filters));
 
     $filters = array_filter($raw_filters, function($v) {
         return $v !== '-all' && $v !== '';
@@ -83,7 +81,7 @@ if (isset($filters['content'])) {
     $db_filters['content'] = array('LIKE', "%$content%");
 }
 
-$orderby = 'id';
+$orderby = array('priority DESC', 'plan_date');
 
 $tasks = $this->model->taskFactory->get_all($db_filters, $orderby);
 

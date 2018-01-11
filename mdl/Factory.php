@@ -124,21 +124,15 @@ abstract class Factory {
 		$this->model = $model;
 	}
 
-    public function get_all($filters=array(), $orderby='', $desc=true, $defaults=array(), $limit=false) {
+    public function get_all($filters=array(), $orderby='', $defaults=array(), $limit=false) {
 
         list($where_q, $execute) = $this->build_where($filters);
 		
 		$q = $this->select_query() . $where_q;
 
 		if ($orderby != '') {
-		    $fields = call_user_func(array($this->get_object_class_name(), 'get_columns'));
-		    if (!in_array($orderby, $fields)) {
-		        throw new \Exception('unknown field '.$orderby);
-            }
+		    if (is_array($orderby)) $orderby = implode(', ', $orderby);
 		    $q .= " ORDER BY $orderby";
-		    if ($desc) {
-		        $q .= " DESC";
-            }
         }
 
         if (is_int($limit)) {

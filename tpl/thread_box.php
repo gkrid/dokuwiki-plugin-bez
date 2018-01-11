@@ -49,7 +49,7 @@
     
 	<span>
 		<strong><?php echo $tpl->getLang('report_priority') ?>: </strong>
-        <?php echo $tpl->date_diff_days($tpl->get('task')->create_date, $tpl->get('task')->close_date, '%a') ?>
+        <?php echo $tpl->date_diff_days($tpl->get('thread')->create_date, $tpl->get('thread')->close_date, '%a') ?>
 	</span>
 <?php endif ?>
 </div>

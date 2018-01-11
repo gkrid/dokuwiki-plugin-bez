@@ -293,9 +293,6 @@ class action_plugin_bez_migration extends DokuWiki_Action_Plugin {
                         throw new Exception($db->errorInfo());
                     }
                 }
-
-            } elseif ($row['task_count'] != '0' && $row['task_count'] == $row['task_closed_count']) {
-                $data['state'] = 'done';
             } else {
                 $data['state'] = 'opened';
             }

@@ -10,9 +10,9 @@ class Thread_commentFactory extends Factory {
         return 'thread_comment_view';
     }
 
-    public function get_from_thread(Thread $thread, $filters=array(), $orderby='', $desc=true, $limit=false) {
+    public function get_from_thread(Thread $thread, $filters=array(), $orderby='', $limit=false) {
         $filters['thread_id'] = $thread->id;
-        return $this->get_all($filters, $orderby, $desc, array('thread' => $thread), $limit);
+        return $this->get_all($filters, $orderby, array('thread' => $thread), $limit);
     }
 
     /**

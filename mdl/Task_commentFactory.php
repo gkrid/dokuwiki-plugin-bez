@@ -7,7 +7,7 @@ use dokuwiki\plugin\bez\meta\ConsistencyViolationException;
 class Task_commentFactory extends Factory {
 
     public function get_from_task(Task $task) {
-        return $this->get_all(array('task_id' => $task->id), $orderby='', $desc=true, array('task' => $task));
+        return $this->get_all(array('task_id' => $task->id), '', array('task' => $task));
     }
 
     /**

@@ -16,14 +16,14 @@
 	padding: 0.5em 1em;
 }
 
-#bds_issue_box.pr2 {
+#bds_issue_box.pr0 {
 	border-color: #B0D2B6;
 	background-color: #EEF6F0;
 }
-table.bez .pr2, #bds_timeline dt.pr2 {
+table.bez .pr0, #bds_timeline dt.pr0 {
 	background-color: #EEF6F0;
 }
-#bds_issue_box.pr2 table, #bds_issue_box.pr2 td, #bds_issue_box.pr2 th,#bds_issue_box.pr2 h2, #bds_issue_box.pr2 h1#bez_issue_title {
+#bds_issue_box.pr0 table, #bds_issue_box.pr0 td, #bds_issue_box.pr0 th,#bds_issue_box.pr0 h2, #bds_issue_box.pr0 h1#bez_issue_title {
 	border-color: #B0D2B6;
 }
 
@@ -38,11 +38,11 @@ table.bez .pr1 , #bds_timeline dt.pr1 {
 	border-color: #dd9;
 }
 
-#bds_issue_box.pr0 {
+#bds_issue_box.pr2 {
 	border-color: #F0AFAD;
 	background-color: #F8E8E8;
 }
-table.bez .pr0 , #bds_timeline dt.pr0 {
+table.bez .pr2 , #bds_timeline dt.pr2 {
 	background-color: #F8E8E8;
 }
 
@@ -52,7 +52,7 @@ table.bez .prRejected {
 }
 
 
-#bds_issue_box.pr0 table, #bds_issue_box.pr0 td, #bds_issue_box.pr0 th,#bds_issue_box.pr0 h2, #bds_issue_box.pr0 h1#bez_issue_title {
+#bds_issue_box.pr2 table, #bds_issue_box.pr2 td, #bds_issue_box.pr2 th,#bds_issue_box.pr2 h2, #bds_issue_box.pr2 h1#bez_issue_title {
 	border-color: #F0AFAD;
 }
 
