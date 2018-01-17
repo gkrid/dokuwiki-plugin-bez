@@ -35,7 +35,7 @@ if ($this->get_param('action') == 'comment_add') {
 
     $task->remove_participant_flags($this->model->user_nick, array('subscribent'));
 
-    $this->add_notification($this->getLang('unsubscribed_com'));
+    $this->add_notification($this->getLang('task_unsubscribed_com'));
     $redirect = true;
 
 } elseif ($this->get_param('action') == 'invite') {

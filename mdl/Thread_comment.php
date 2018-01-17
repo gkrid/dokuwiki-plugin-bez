@@ -104,27 +104,23 @@ class Thread_comment extends Entity {
     }
 
     public function mail_notify_add() {
+        $tpl = $this->model->action->get_tpl();
 
         $info = array();
         $html =  p_render('bez_xhtmlmail', p_get_instructions($this->content), $info);
-
-        $rep = array(
-            'content' => $this->content,
-            'content_html' => $html,
-            'who' => $this->author,
-            'when' => $this->create_date
-        );
-        
-        if ($this->type > 0) {
-            $rep['action'] = $this->model->action->getLang('mail_cause_added');
-            $rep['action_color'] = '#ffeedc';
-            $rep['action_border_color'] = '#ddb68d';
+        $tpl->set('content', $html);
+        $tpl->set('who', $this->author);
+        $tpl->set('when', $this->create_date);
+        if ($this->type == 'comment') {
+            $action = 'mail_comment_added';
         } else {
-            $rep['action'] = $this->model->action->getLang('mail_comment_added');
-            $rep['action_color'] = 'transparent';
-            $rep['action_border_color'] = '#E5E5E5';
+            $action = 'mail_cause_added';
+            $tpl->set('action_border_color', '#ddb68d');
+            $tpl->set('action_background_color', '#ffeedc');
         }
-        
-        $this->thread->mail_notify($rep, false, $info['img']);
+        $tpl->set('action', $action);
+        $content = $this->model->action->bez_tpl_include('mail/thread_comment', true);
+
+        $this->thread->mail_notify($content, false, $info['img']);
     }
 }

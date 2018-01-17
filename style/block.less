@@ -1,0 +1,92 @@
+@import "var.less";
+
+.bez_block {
+    position: relative;
+
+    border: 1px solid #bbb;
+    background: #fff;
+
+    border-radius: 0.4em;
+    padding: 0.5em 1em;
+
+    h1 {
+        margin: 0 0 0.4em;
+    }
+
+    h2 {
+        margin: 0 0 0.6em;
+    }
+
+    a:link, a:visited {
+        text-decoration: none;
+        color: #2b73b7;
+    }
+
+    table.data {
+        border-collapse:collapse;
+        border:0;
+
+        border-top: 1px solid #bbb;
+        width: 100%;
+        margin-top: 1.5em;
+        padding: .3em .5em;
+
+        th, td {
+            margin: 0;
+            padding: .3em .5em;
+            text-align: left;
+
+            border:0;
+            background: none;
+            border-bottom: 1px solid #bbb;
+            font-size: 90%;
+        }
+    }
+
+    &.priority_0 {
+        border-color: @priority_0-border-color;
+        background-color: @priority_0-background-color;
+
+        table.data {
+            border-color: @priority_0-border-color;
+            td, th {
+                border-color: @priority_0-border-color;
+            }
+        }
+    }
+
+    &.priority_1 {
+        border-color: @priority_1-border-color;
+        background-color: @priority_1-background-color;
+
+        table.data {
+            border-color: @priority_1-border-color;
+            td, th {
+                border-color: @priority_1-border-color;
+            }
+        }
+    }
+
+    &.priority_2 {
+        border-color: @priority_2-border-color;
+        background-color: @priority_2-background-color;
+
+        table.data {
+            border-color: @priority_2-border-color;
+            td, th {
+                border-color: @priority_2-border-color;
+            }
+        }
+    }
+
+    .timebox {
+        position: absolute;
+        top: 2px;
+        right: 5px;
+        font-size: 0.8em;
+
+        span {
+            display: block;
+        }
+    }
+}

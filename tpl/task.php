@@ -1,6 +1,11 @@
 <?php /* @var \dokuwiki\plugin\bez\meta\Tpl $tpl */ ?>
 <?php if ($tpl->get('task')->thread_id != '' && $tpl->get('task')->thread->acl_of('id') >= BEZ_PERMISSION_VIEW): ?>
-    <div id="bds_issue_box" class="pr<?php echo $tpl->get('task')->thread->priority ?>">
+    <div class="bez_thread
+        <?php
+    if ($tpl->get('task')->thread->state == 'opened') {
+        echo 'priority_' . $tpl->get('task')->thread->priority;
+    }
+    ?>">
         <div>
             <strong><?php echo $tpl->getLang('issue') ?>:</strong>
             <a href="<?php echo $tpl->url('thread', 'id', $tpl->get('task')->thread->id) ?>">

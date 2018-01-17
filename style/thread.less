@@ -1,0 +1,37 @@
+@import "block.less";
+
+.bez_thread {
+    .bez_block();
+
+    h1.thread_box_header, h1.thread_header {
+        font-size: 1.3em;
+        padding-bottom: 10px;
+
+        a {
+            font-size: 1.5em;
+            padding-right: 0.5em;
+        }
+    }
+
+    h1.thread_box_header {
+        svg {
+            fill: #999;
+            vertical-align: middle;
+            margin-left: 20px;
+        }
+    }
+
+    //no task assigned
+    &.priority_ {
+        border-color: @priority_-border-color;
+        background-color: @priority_-background-color;
+
+        table.data {
+            border-color: @priority_-border-color;
+            td, th {
+                border-color: @priority_-border-color;
+            }
+        }
+    }
+
+}

@@ -123,13 +123,9 @@
         <?php if ($thread->acl_of('id') < BEZ_PERMISSION_VIEW) continue ?>
         <?php $count += 1 ?>
         <?php $total_cost += (float) $thread->task_sum_cost ?>
-		<tr class="pr<?php
-            if ($thread->state != 'opened') {
-                echo '-1';
-            } elseif($thread->priority != '') {
-                echo $thread->priority;
-            } else {
-                echo 'None';
+		<tr class="<?php
+            if ($thread->state == 'opened') {
+                echo 'priority_' . $thread->priority;
             }
         ?>">
 			<td>

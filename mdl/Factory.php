@@ -95,7 +95,7 @@ abstract class Factory {
                     $where_array[] = "$field = $exec";
                     $execute[$exec] = $v;
                 }
-                $where_q[] = '('.implode('OR', $where_array).')';
+                $where_q[] = '('.implode(' OR ', $where_array).')';
                 
                 
             } else {

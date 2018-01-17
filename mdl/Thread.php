@@ -2,7 +2,6 @@
 
 namespace dokuwiki\plugin\bez\mdl;
 
-use dokuwiki\plugin\bez\meta\Mailer;
 use dokuwiki\plugin\bez\meta\PermissionDeniedException;
 use dokuwiki\plugin\bez\meta\ValidationException;
 
@@ -393,56 +392,13 @@ class Thread extends Entity {
 
     //http://data.agaric.com/capture-all-sent-mail-locally-postfix
     //https://askubuntu.com/questions/192572/how-do-i-read-local-email-in-thunderbird
-    public function mail_notify($replacements=array(), $users=false, $attachedImages=array()) {
-        $plain = io_readFile($this->model->action->localFN('thread-notification'));
-        $html = io_readFile($this->model->action->localFN('thread-notification', 'html'));
-
-        $thread_reps = array(
-                                'thread_id' => $this->id,
-                                'thread_link' => $this->model->action->url('thread', 'id', $this->id),
-                                'thread_unsubscribe' =>
-                                    $this->model->action->url('thread', 'id', $this->id, 'action', 'unsubscribe'),
-                                'custom_content' => false,
-                                'action_border_color' => 'transparent',
-                                'action_color' => 'transparent',
-                           );
-
-        //$replacements can override $issue_reps
-        $rep = array_merge($thread_reps, $replacements);
-        //auto title
-        if (!isset($rep['subject'])) {
-            $rep['subject'] =  '#'.$this->id. ' ' .$this->title;
-        }
-        if (!isset($rep['content_html'])) {
-            $rep['content_html'] = $rep['content'];
-        }
-        if (!isset($rep['who_full_name'])) {
-            $rep['who_full_name'] =
-                $this->model->userFactory->get_user_full_name($rep['who']);
-        }
-
-        //format when
-        $rep['when'] =  dformat(strtotime($rep['when']), '%Y-%m-%d %H:%M');
-
-        if ($rep['custom_content'] === false) {
-            $html = str_replace('@CONTENT_HTML@', '
-                <div style="margin: 5px 0;">
-                    <strong>@WHO_FULL_NAME@</strong> <br>
-                    <span style="color: #888">@WHEN@</span>
-                </div>
-                @CONTENT_HTML@
-            ', $html);
-        }
-
-        //we must do it manually becouse Mailer uses htmlspecialchars()
-        $html = str_replace('@CONTENT_HTML@', $rep['content_html'], $html);
-
-        $mailer = new Mailer();
-        $mailer->setBody($plain, $rep, $rep, $html, false);
+    public function mail_notify($content, $users=false, $attachedImages=array()) {
+        $mailer = new \Mailer();
+        $mailer->setBody($content, array(), array(), $content, false);
 
         if ($users == FALSE) {
-
             $users = $this->get_participants('subscribent');
+
             //don't notify myself
             unset($users[$this->model->user_nick]);
         }
@@ -456,7 +412,7 @@ class Thread extends Entity {
 
 
         $mailer->to($emails);
-        $mailer->subject($rep['subject']);
+        $mailer->subject('#'.$this->id. ' ' .$this->title);
 
         foreach ($attachedImages as $img) {
             $mailer->attachFile($img['path'], $img['mime'], $img['name'], $img['embed']);
@@ -469,105 +425,119 @@ class Thread extends Entity {
         }
     }
 
-    protected function mail_issue_box_reps(&$replacements, &$attachedImages) {
-        $replacements['custom_content'] = true;
+    public function mail_thread_box(&$attachedImages) {
+        $tpl = $this->model->action->get_tpl();
 
-        $html =  '<h2 style="font-size: 1.2em;">';
-	    $html .=    '<a style="font-size:115%" href="@THREAD_LINK@">#@THREAD_ID@</a> ';
+        //render style
+        $less = new \lessc();
+        $less->addImportDir(DOKU_PLUGIN . 'bez/style/');
+        $style = $less->compileFile(DOKU_PLUGIN . 'bez/style/thread.less');
 
-        if ( ! empty($this->type_string)) {
-            $html .= $this->type_string;
-        } else {
-            $html .= '<i style="color: #777"> '.
-                        $this->model->action->getLang('issue_type_no_specified').
-                    '</i>';
-        }
-
-        $html .= ' ('. $this->model->action->getLang('state_' . $this->state ) .') ';
-
-        $html .= '<span style="color: #777; font-weight: normal; font-size: 90%;">';
-        $html .= $this->model->action->getLang('coordinator') . ': ';
-        $html .= '<span style="font-weight: bold;">';
-
-        if ($this->state == 'proposal') {
-            $html .= '<i style="font-weight: normal;">' .
-                $this->model->action->getLang('proposal') .
-                '</i>';
-        } else {
-            $html .= $this->model->userFactory->get_user_full_name($this->coordinator);
-        }
-        $html .= '</span></span></h2>';
-
-        $html .= '<h2 style="font-size: 1.2em;border-bottom: 1px solid @ACTION_BORDER_COLOR@">' . $this->title . '</h2>';
-
-        $html .= p_render('bez_xhtmlmail', p_get_instructions($this->content), $info);
+        //render content for mail
+        $old_content_html = $this->content_html;
+        $this->content_html = p_render('bez_xhtmlmail', p_get_instructions($this->content), $info);
         $attachedImages = array_merge($attachedImages, $info['img']);
 
-        $replacements['content_html'] = $html;
+        $tpl->set('thread', $this);
+        $tpl->set('style', $style);
+        $tpl->set('no_actions', true);
+        $thread_box = $this->model->action->bez_tpl_include('thread_box', true);
 
+        $this->content_html = $old_content_html;
 
-         switch ($this->priority) {
-            case '0':
-                $replacements['action_color'] = '#F8E8E8';
-                $replacements['action_border_color'] = '#F0AFAD';
-                break;
-            case '1':
-                $replacements['action_color'] = '#ffd';
-                $replacements['action_border_color'] = '#dd9';
-                break;
-            case '2':
-                $replacements['action_color'] = '#EEF6F0';
-                $replacements['action_border_color'] = '#B0D2B6';
-                break;
-            case 'None':
-                $replacements['action_color'] = '#e7f1ff';
-                $replacements['action_border_color'] = '#a3c8ff';
-                break;
-            default:
-                $replacements['action_color'] = '#fff';
-                $replacements['action_border_color'] = '#bbb';
-                break;
-        }
+        return $thread_box;
     }
 
-    public function mail_notify_change_state() {
-        $replacements = array(
-            'who' => $this->model->user_nick,
-            'action' => $this->model->action->getLang('mail_mail_notify_change_state_action')
-        );
+    public function mail_thread(&$attachedImages) {
+        $tpl = $this->model->action->get_tpl();
+
+        $thread_box = $this->mail_thread_box($attachedImages);
+
+        $tpl->set('content', $thread_box);
+        $content = $this->model->action->bez_tpl_include('mail/thread', true);
+
+        return $content;
+    }
+
+    public function mail_notify_change_state($action='') {
+        if (!$action) {
+            $action = 'mail_mail_notify_change_state_action';
+        }
+        $tpl = $this->model->action->get_tpl();
+
+        $tpl->set('who', $this->model->user_nick);
+        $tpl->set('action', $action);
         $attachedImages = array();
-        $this->mail_issue_box_reps($replacements, $attachedImages);
-        $this->mail_notify($replacements, false, $attachedImages);
+        $content = $this->mail_thread($attachedImages);
+        $this->mail_notify($content, false, $attachedImages);
     }
 
     public function mail_notify_invite($client) {
-        $replacements = array(
-            'who' => $this->model->user_nick,
-            'action' => $this->model->action->getLang('mail_mail_notify_invite_action')
-        );
+        $tpl = $this->model->action->get_tpl();
+
+        $tpl->set('who', $this->model->user_nick);
+        $tpl->set('action', 'mail_mail_notify_invite_action');
         $attachedImages = array();
-        $this->mail_issue_box_reps($replacements, $attachedImages);
-        $this->mail_notify($replacements, array($client), $attachedImages);
+        $content = $this->mail_thread($attachedImages);
+        $this->mail_notify($content, array($client), $attachedImages);
     }
 
     public function mail_inform_coordinator() {
-        $replacements = array(
-            'who' => $this->model->user_nick,
-            'action' => $this->model->action->getLang('mail_mail_inform_coordinator_action')
-        );
+        $tpl = $this->model->action->get_tpl();
+
+        $tpl->set('who', $this->model->user_nick);
+        $tpl->set('action', 'mail_mail_inform_coordinator_action');
         $attachedImages = array();
-        $this->mail_issue_box_reps($replacements, $attachedImages);
-        $this->mail_notify($replacements, array($this->coordinator), $attachedImages);
+        $content = $this->mail_thread($attachedImages);
+        $this->mail_notify($content, array($this->coordinator), $attachedImages);
     }
 
-    public function mail_notify_issue_inactive($users=false) {
-        $replacements = array(
-            'who' => '',
-            'action' => $this->model->action->getLang('mail_mail_notify_issue_inactive')
-        );
+    public function mail_notify_inactive($users=false) {
+        $tpl = $this->model->action->get_tpl();
+
+        $tpl->set('who', $this->model->user_nick);
+        $tpl->set('action', 'mail_mail_notify_issue_inactive');
         $attachedImages = array();
-        $this->mail_issue_box_reps($replacements, $attachedImages);
-        $this->mail_notify($replacements, $users, $attachedImages);
+        $content = $this->mail_thread($attachedImages);
+        $this->mail_notify($content, $users, $attachedImages);
+    }
+
+    public function mail_notify_task_added(Task $task) {
+        $tpl = $this->model->action->get_tpl();
+
+        //we don't want who
+        $tpl->set('who', $this->model->user_nick);
+        $tpl->set('action', 'mail_thread_task_added');
+        $attachedImages = array();
+        $task_box = $task->mail_task_box($attachedImages);
+
+        $tpl->set('thread', $this);
+        $tpl->set('content', $task_box);
+        $content = $this->model->action->bez_tpl_include('mail/thread', true);
+
+        $this->mail_notify($content, false, $attachedImages);
+    }
+
+    public function mail_notify_task_state_changed(Task $task) {
+        $tpl = $this->model->action->get_tpl();
+
+        if ($task->state == 'done') {
+            $action = 'mail_thread_task_done';
+        } else {
+            $action = 'mail_thread_task_reopened';
+        }
+
+        //we don't want who
+        $tpl->set('who', $this->model->user_nick);
+        $tpl->set('action', $action);
+        $attachedImages = array();
+        $task_box = $task->mail_task_box($attachedImages);
+
+        $tpl->set('thread', $this);
+        $tpl->set('content', $task_box);
+        $content = $this->model->action->bez_tpl_include('mail/thread', true);
+
+        $this->mail_notify($content, false, $attachedImages);
     }
 
 }

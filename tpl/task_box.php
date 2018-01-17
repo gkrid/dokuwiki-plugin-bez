@@ -1,10 +1,14 @@
 <?php /* @var \dokuwiki\plugin\bez\meta\Tpl $tpl */ ?>
 
-<a name="z<?php echo $tpl->get('task')->id ?>"></a>
 <div id="z<?php echo $tpl->get('task')->id ?>"
-	class="bds_block task <?php echo 'state_' . $tpl->get('task')->state ?>">
+	class="bez_task
+    <?php
+        if($tpl->get('task')->state == 'opened') {
+            echo 'priority_' . $tpl->get('task')->priority;
+        }
+    ?>">
 
-<div class="bez_timebox">
+<div class="timebox">
     <span>
         <strong><?php echo $tpl->getLang('open') ?>:</strong>
         <?php echo $tpl->date($tpl->get('task')->create_date) ?>
@@ -34,7 +38,7 @@
 	(<?php echo lcfirst($tpl->getLang('task_' . $tpl->get('task')->state)) ?>)
 </h2>
 
-<table class="bez_box_data_table">
+<table class="data">
 <tr>
     <th><?php echo $tpl->getLang('reporter') ?>:</th>
     <td>
@@ -77,7 +81,7 @@
 </table>
 
 <?php echo $tpl->get('task')->content_html ?>
-
+<?php if (!$tpl->get('no_actions')): ?>
     <div class="bez_buttons">
         <?php if ($tpl->get('task')->acl_of('state') >= BEZ_PERMISSION_CHANGE): ?>
             <a class="bds_inline_button"
@@ -121,4 +125,6 @@
             </a>
         <?php endif ?>
 	</div>
+<?php endif ?>
+
 </div>

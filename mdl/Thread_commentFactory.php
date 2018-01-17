@@ -29,24 +29,33 @@ class Thread_commentFactory extends Factory {
                 $data['content'] != '') {
                 parent::initial_save($thread_comment, $data);
                 $thread_comment->thread->set_participant_flags($thread_comment->author, array('subscribent', 'commentator'));
+                $notify = 'comment_added';
             }
 
             if ($data['fn'] == 'thread_close') {
                 $thread_comment->thread->set_state('closed');
+                $notify = 'mail_thread_closed';
             } elseif ($data['fn'] == 'thread_reject') {
                 $thread_comment->thread->set_state('rejected');
+                $notify = 'mail_thread_rejected';
             } elseif ($data['fn'] == 'thread_reopen') {
                 $thread_comment->thread->set_state('opened');
+                $notify = 'mail_thread_reopened';
             }
 
             $thread_comment->thread->update_last_activity();
 
             $this->commitTransaction();
+
+            if ($notify == 'comment_added') {
+                $thread_comment->mail_notify_add();
+            } elseif (isset($notify)) {
+                $thread_comment->thread->mail_notify_change_state($notify);
+            }
+
         } catch(Exception $exception) {
             $this->rollbackTransaction();
         }
-
-        $thread_comment->mail_notify_add();
     }
 
     public function update_save(Entity $thread_comment, $data) {

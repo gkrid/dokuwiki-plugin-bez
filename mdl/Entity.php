@@ -53,11 +53,10 @@ abstract class Entity {
         if (!property_exists($this, $property) || !in_array($property, $this->get_columns())) {
             throw new \Exception('there is no column: "'.$property. '"" in table: "' . $this->get_table_name() . '"');
         }
-        
-        //it slows down the execution and must be solved diffirently
-//        if ($this->acl_of($property) < BEZ_PERMISSION_VIEW) {
-//            throw new PermissionDeniedException();
-//        }
+
+        if ($this->acl_of($property) < BEZ_PERMISSION_VIEW) {
+            throw new PermissionDeniedException();
+        }
 
         return $this->$property;
 

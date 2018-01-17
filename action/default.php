@@ -1,28 +1,15 @@
 <?php
 
 use \dokuwiki\plugin\bez;
- 
-if(!defined('DOKU_INC')) die();
 
-function bez_tpl_include(bez\meta\Tpl $tpl) {
-    $file = DOKU_PLUGIN."bez/tpl/".str_replace('/', '', $tpl->action()).".php";
-    if (file_exists($file)) {
-        include $file;
-    }
-}
+if(!defined('DOKU_INC')) die();
 
 define('BEZ_NOTIFICATIONS_COOKIE_NAME', 'bez_notifications');
 
-class action_plugin_bez_default extends DokuWiki_Action_Plugin {
+class action_plugin_bez_default extends action_plugin_bez_base {
 
 	protected $action = '';
     protected $params = array();
-
-    /** @var  bez\mdl\Model */
-    protected $model;
-
-    /** @var  bez\meta\Tpl */
-    protected $tpl;
 
     protected $notifications = array();
 
@@ -34,56 +21,6 @@ class action_plugin_bez_default extends DokuWiki_Action_Plugin {
     
     public function get_param($id, $default='') {
         return (isset($this->params[$id]) ? $this->params[$id] : $default);
-    }
-    
-    public static function id() {
-        global $conf;
-
-		$args = func_get_args();
-
-        if (count($args) === 0) {
-            return $_GET['id'];
-        }
-
-        $elms = array();
-        foreach ($args as $arg) {
-            if (is_array($arg)) {
-                foreach ($arg as $k => $v) {
-                    $elms[] = $k;
-                    $elms[] = $v;
-                }
-            } else {
-                $elms[] = $arg;
-            }
-        }
-		array_unshift($elms, 'bez');
-        
-        
-		if ($conf['lang'] != '') {
-			array_unshift($elms, $conf['lang']);
-        }
-
-		return implode(':', $elms);
-    }
-    
-    public static function url() {
-        $args = func_get_args();
-        if (count($args) > 0) {
-            $id = call_user_func_array('action_plugin_bez_default::id', $args);
-            return DOKU_URL . 'doku.php?id=' . $id;
-        } else {
-            //https://stackoverflow.com/questions/6768793/get-the-full-url-in-php
-            return (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
-        }
-        
-
-    }
-
-    /**
-     * @return mixed
-     */
-    public function get_model() {
-        return $this->model;
     }
 
     private function add_notification($value, $header=NULL) {
@@ -207,10 +144,7 @@ class action_plugin_bez_default extends DokuWiki_Action_Plugin {
         }
         
         $this->setupLocale();
-        
-        $this->model = new bez\mdl\Model($auth, $INFO['client'], $this, $conf);
-        $this->tpl = new bez\meta\Tpl($this, $conf);
-		
+        $this->createObjects();
     }
 
 	/**
@@ -226,8 +160,6 @@ class action_plugin_bez_default extends DokuWiki_Action_Plugin {
 		$event->preventDefault();
 
 	}
-	
-
 
 	public function tpl_pagetools_display(Doku_Event $event, $param) {
 		if ($this->action !== '') {
@@ -313,7 +245,7 @@ class action_plugin_bez_default extends DokuWiki_Action_Plugin {
 				echo '</div>';
             }
 
-			bez_tpl_include($this->tpl);
+			$this->bez_tpl_include(str_replace('/', '', $this->get_action()));
             
         } catch(bez\meta\PermissionDeniedException $e) {
             dbglog('plugin_bez', $e);

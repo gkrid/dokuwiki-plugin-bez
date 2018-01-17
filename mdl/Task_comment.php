@@ -73,17 +73,16 @@ class Task_comment extends Entity {
     }
 
     public function mail_notify_add() {
-        $rep = array(
-            'content' => $this->content,
-            'content_html' => $this->content_html,
-            'who' => $this->author,
-            'when' => $this->create_date
-        );
+        $tpl = $this->model->action->get_tpl();
 
-        $rep['action'] = $this->model->action->getLang('mail_comment_added');
-        $rep['action_color'] = 'transparent';
-        $rep['action_border_color'] = '#E5E5E5';
+        $info = array();
+        $html =  p_render('bez_xhtmlmail', p_get_instructions($this->content), $info);
+        $tpl->set('content', $html);
+        $tpl->set('who', $this->author);
+        $tpl->set('when', $this->create_date);
+        $tpl->set('action', 'mail_task_comment_added');
+        $content = $this->model->action->bez_tpl_include('mail/task_comment', true);
 
-        //$this->thread->mail_notify($rep);
+        $this->task->mail_notify($content, false, $info['img']);
     }
 }

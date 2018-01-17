@@ -5,6 +5,7 @@ namespace dokuwiki\plugin\bez\mdl;
 use dokuwiki\plugin\bez\meta\Mailer;
 use dokuwiki\plugin\bez\meta\PermissionDeniedException;
 use dokuwiki\plugin\bez\meta\ValidationException;
+use dokuwiki\plugin\struct\types\DateTime;
 
 class Task extends Entity {
 
@@ -202,7 +203,23 @@ class Task extends Entity {
             $this->validator->delete_rule('thread_comment_id');
         }
     }
-	
+
+    public function update_virutal() {
+        if ($this->state == 'done') {
+            $this->priority = '';
+        } else {
+            $now = date('Y-m-d');
+            $plus_1_month = date('Y-m-d', strtotime('+1 month'));
+
+            if ($this->plan_date >= $plus_1_month) {
+                $this->priority = '0';
+            } elseif ($this->plan_date >= $now) {
+                $this->priority = '1';
+            } else {
+                $this->priority = '2';
+            }
+        }
+    }
 	
 	public function set_data($post, $filter=NULL) {
         //all day event
@@ -221,6 +238,9 @@ class Task extends Entity {
         //update dates
         $this->last_modification_date = date('c');
         $this->last_activity_date = $this->last_modification_date;
+
+        //update virtual
+        $this->update_virutal();
 
 		return true;
 	}
@@ -384,39 +404,9 @@ class Task extends Entity {
         $this->mail_notify_invite($client);
     }
     
-    private function mail_notify($replacements=array(), $users=false, $attachedImages=array()) {
-        $plain = io_readFile($this->model->action->localFN('task-notification'));
-        $html = io_readFile($this->model->action->localFN('task-notification', 'html'));
-        
-        $task_link = $this->model->action->url('task', 'tid', $this->id);
-        
-        $reps = array(
-                        'task_id' => $this->id,
-                        'task_link' => $task_link,
-                        'who' => $this->original_poster
-                     );
-        
-        //$replacements can override $reps
-        $rep = array_merge($reps, $replacements);
-
-        if (!isset($rep['who_full_name'])) {
-            $rep['who_full_name'] =
-                $this->model->userFactory->get_user_full_name($rep['who']);
-        }
-        
-        //auto title
-        if (!isset($rep['subject'])) {
-//            if (isset($rep['content'])) {
-//                $rep['subject'] =  array_shift(explode('.', $rep['content'], 2));
-//            }
-            $rep['subject'] = '#z'.$this->id. ' ' . $this->task_program_name;
-        }
-       
-        //we must do it manually becouse Mailer uses htmlspecialchars()
-        $html = str_replace('@TASK_TABLE@', $rep['task_table'], $html);
-        
+    public function mail_notify($content, $users=false, $attachedImages=array()) {
         $mailer = new Mailer();
-        $mailer->setBody($plain, $rep, $rep, $html, false);
+        $mailer->setBody($content, array(), array(), $content, false);
         
         if ($users === FALSE) {
             $users = $this->get_participants('subscribent');
@@ -433,7 +423,7 @@ class Task extends Entity {
         }, $users);
 
         $mailer->to($emails);
-        $mailer->subject($rep['subject']);
+        $mailer->subject('#z'.$this->id. ' ' . $this->task_program_name);
 
         //add images
         foreach ($attachedImages as $img) {
@@ -447,167 +437,81 @@ class Task extends Entity {
         }
     }
 
-    protected function bez_html_array_to_style_list($arr) {
-        $output = '';
-        foreach ($arr as $k => $v) {
-            $output .= $k.': '. $v . ';';
-        }
-        return $output;
+    public function mail_task_box(&$attachedImages) {
+        $tpl = $this->model->action->get_tpl();
+
+        //render style
+        $less = new \lessc();
+        $less->addImportDir(DOKU_PLUGIN . 'bez/style/');
+        $style = $less->compileFile(DOKU_PLUGIN . 'bez/style/task.less');
+
+        //render content for mail
+        $old_content_html = $this->content_html;
+        $this->content_html = p_render('bez_xhtmlmail', p_get_instructions($this->content), $info);
+        $attachedImages = array_merge($attachedImages, $info['img']);
+
+        $tpl->set('task', $this);
+        $tpl->set('style', $style);
+        $tpl->set('no_actions', true);
+        $task_box = $this->model->action->bez_tpl_include('task_box', true);
+
+        $this->content_html = $old_content_html;
+
+        return $task_box;
     }
 
-    protected function bez_html_irrtable($style) {
-        $argv = func_get_args();
-        $argc = func_num_args();
-        if (isset($style['table'])) {
-            $output = '<table style="'.self::bez_html_array_to_style_list($style['table']).'">';
-        } else {
-            $output = '<table>';
-        }
+    public function mail_task(&$attachedImages) {
+        $tpl = $this->model->action->get_tpl();
 
-        $tr_style  = '';
-        if (isset($style['tr'])) {
-            $tr_style = 'style="'.self::bez_html_array_to_style_list($style['tr']).'"';
-        }
+        $task_box = $this->mail_task_box($attachedImages);
+        $tpl->set('content', $task_box);
+        $content = $this->model->action->bez_tpl_include('mail/task', true);
 
-        $td_style  = '';
-        if (isset($style['td'])) {
-            $td_style = 'style="'.self::bez_html_array_to_style_list($style['td']).'"';
-        }
-
-        $row_max = 0;
-
-        for ($i = 1; $i < $argc; $i++) {
-            $row = $argv[$i];
-            $c = count($row);
-            if ($c > $row_max) {
-                $row_max = $c;
-            }
-        }
-
-        for ($j = 1; $j < $argc; $j++) {
-            $row = $argv[$j];
-            $output .= '<tr '.$tr_style.'>' . NL;
-            $c = count($row);
-            for ($i = 0; $i < $c; $i++) {
-                //last element
-                if ($i === $c - 1 && $c < $row_max) {
-                    $output .= '<td '.$td_style.' colspan="' . ( $row_max - $c + 1 ) . '">' . NL;
-                } else {
-                    $output .= '<td '.$td_style.'>' . NL;
-                }
-                $output .= $row[$i] . NL;
-                $output .= '</td>' . NL;
-            }
-            $output .= '</tr>' . NL;
-        }
-        $output .= '</table>' . NL;
-        return $output;
+        return $content;
     }
-    
-    public function mail_notify_task_box($users=false, $replacements=array()) {
-       $top_row = array(
-            '<strong>'.$this->model->action->getLang('executor').': </strong>' . 
-            $this->model->userFactory->get_user_full_name($this->assignee),
 
-            '<strong>'.$this->model->action->getLang('reporter').': </strong>' . 
-            $this->model->userFactory->get_user_full_name($this->original_poster)
-        );
+    public function mail_notify_assignee() {
+        $tpl = $this->model->action->get_tpl();
 
-        if ($this->task_program_name != '') {
-            $top_row[] =
-                '<strong>'.$this->model->action->getLang('task_type').': </strong>' . 
-                $this->task_program_name;
-        }
-
-        if ($this->cost != '') {
-            $top_row[] =
-                '<strong>'.$this->model->action->getLang('cost').': </strong>' . 
-                $this->cost;
-        }
-
-        //BOTTOM ROW
-        $bottom_row = array(
-            '<strong>'.$this->model->action->getLang('plan_date').': </strong>' . 
-            $this->plan_date
-        );			
-
-        if ($this->all_day_event == '0') {
-            $bottom_row[] =
-                '<strong>'.$this->model->action->getLang('start_time').': </strong>' . 
-                $this->start_time;
-            $bottom_row[] =
-                '<strong>'.$this->model->action->getLang('finish_time').': </strong>' . 
-                $this->finish_time;
-        }
-
-        $info = array();
-        $content_html = p_render('bez_xhtmlmail', p_get_instructions($this->content), $info);
-        $attachedImages = $info['img'];
-        
-        $rep = array(
-            'content' => $this->content,
-            'content_html' =>
-                '<h2 style="font-size: 1.2em;">'.
-	               '<a href="'.$this->model->action->url('task', 'tid', $this->id).'">' .
-		              '#z'.$this->id . 
-	               '</a> ' . 
-	lcfirst($this->model->action->getLang('task_type_' . $this->type)) . ' ' .
-    '(' . 
-        lcfirst($this->model->action->getLang('task_' . $this->state)) .
-    ')' .      
-                '</h2>' . 
-                self::bez_html_irrtable(array(
-                    'table' => array(
-                        'border-collapse' => 'collapse',
-                        'font-size' => '0.8em',
-                        'width' => '100%'
-                    ),
-                    'td' => array(
-                        'border-top' => '1px solid #8bbcbc',
-                        'border-bottom' => '1px solid #8bbcbc',
-                        'padding' => '.3em .5em'
-                    )
-                ), $top_row, $bottom_row) . $content_html,
-            'who' => $this->model->user_nick,
-            'when' => $this->create_date,
-            'custom_content' => true
-        );
-        
-        $rep['action_color'] = '#e4f4f4';
-        $rep['action_border_color'] = '#8bbcbc';
-        
-        //$replacements can override $reps
-        $rep = array_merge($rep, $replacements);
-
-        $this->mail_notify($rep, $users, $attachedImages);
+        //we don't want who
+        $tpl->set('who', $this->model->user_nick);
+        $tpl->set('action', 'mail_task_assignee');
+        $attachedImages = array();
+        $content = $this->mail_task($attachedImages);
+        $this->mail_notify($content, array($this->assignee), $attachedImages);
     }
-    
-    public function mail_notify_subscribents($replacements=array()) {
-        $this->mail_notify_task_box(false, $replacements);
-    }
-    
-    public function mail_notify_add($users=false, $replacements=array()) {
-        $replacements['action'] = $this->model->action->getLang('mail_task_added');
-        $this->mail_notify_task_box($users, $replacements);
-    }
-    
+
     public function mail_notify_remind($users=false) {
-        $replacements = array();
-        
-        $replacements['action'] = $this->model->action->getLang('mail_task_remind');
-        //we don't want any who
-        $replacements['who_full_name'] = '';
-        
-        //$users = array($this->executor);
-        $this->mail_notify_task_box($users, $replacements);
+        $tpl = $this->model->action->get_tpl();
+
+        //we don't want who
+        $tpl->set('who', '');
+        $tpl->set('action', 'mail_task_remind');
+        $attachedImages = array();
+        $content = $this->mail_task($attachedImages);
+        $this->mail_notify($content, $users, $attachedImages);
     }
     
     public function mail_notify_invite($client) {       
-        $replacements = array();
-        
-        $replacements['action'] = $this->model->action->getLang('mail_task_invite');
-        
         $users = array($client);
-        $this->mail_notify_task_box($users, $replacements);
+        $tpl = $this->model->action->get_tpl();
+
+        //we don't want who
+        $tpl->set('who', $this->model->user_nick);
+        $tpl->set('action', 'mail_task_invite');
+        $attachedImages = array();
+        $content = $this->mail_task($attachedImages);
+        $this->mail_notify($content, $users, $attachedImages);
     }
+
+    public function mail_notify_change_state($action='') {
+        $tpl = $this->model->action->get_tpl();
+
+        $tpl->set('who', $this->model->user_nick);
+        $tpl->set('action', $action);
+        $attachedImages = array();
+        $content = $this->mail_task($attachedImages);
+        $this->mail_notify($content, false, $attachedImages);
+    }
+
 }

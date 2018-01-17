@@ -533,10 +533,9 @@ $lang['timeline_comment_added'] = 'Comment added';
 $lang['issue_invite_header'] = 'Invite user';
 $lang['issue_invite_button'] = 'Invite';
 
-$lang['mail_mail_notify_invite_action'] = 'invited you to take part in the discussion';
+$lang['mail_mail_notify_invite_action'] = 'invited you to take part in the discussion in issue';
 $lang['mail_mail_notify_invite_subject'] = 'Problem invitation';
 
-$lang['mail_mail_inform_coordinator_action'] = 'has assigned you as coordinator';
 $lang['mail_mail_inform_coordinator_subject'] = 'Assignment to the problem';
 
 $lang['mail_mail_notify_change_state_action'] = 'has changed state';
@@ -585,3 +584,22 @@ $lang['subscribed_info_project'] = 'You\'re receiving notifications about change
 $lang['not_subscribed_info_project'] = 'You aren\'t receiving notifications about changes in this project.';
 
 $lang['correction_add_project'] = 'Add task';
+
+$lang['task_unsubscribed_com'] = 'You’ve been unsubscribed from this task';
+
+$lang['mail_task_comment_added'] = 'has added comment in task';
+
+
+$lang['mail_thread_closed'] = 'closed issue';
+$lang['mail_thread_rejected'] = 'rejected issue';
+$lang['mail_thread_reopened'] = 'reopened';
+$lang['mail_mail_notify_invite_action'] = 'invited you to take part in the discussion in issue';
+$lang['mail_mail_inform_coordinator_action'] = 'has assigned you as coordinator in issue';
+$lang['mail_mail_notify_issue_inactive'] = 'No activity in issue';
+$lang['mail_thread_task_added'] = 'added task in issue';
+$lang['mail_thread_task_done'] = 'closed task in issue';
+$lang['mail_thread_task_reopened'] = 'reopened task in issue';
+$lang['mail_task_done'] = 'closed task';
+$lang['mail_task_repened'] = 'reopened task';
+
+$lang['mail_task_assignee'] = 'assigned you to task';

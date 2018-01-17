@@ -27,25 +27,38 @@ class Task_commentFactory extends Factory {
             //if empty content and task_do, do not save the comment
             if ($data['fn'] == 'comment_add' || $data['content'] != '') {
                 parent::initial_save($task_comment, $data);
+                $notify = 'comment_added';
                 $task_comment->task->set_participant_flags($task_comment->author, array('subscribent', 'commentator'));
             }
 
             if ($data['fn'] == 'task_do') {
                 $task_comment->task->set_state('done');
+                $notify = 'mail_task_done';
             } elseif ($data['fn'] == 'task_reopen') {
                 $task_comment->task->set_state('opened');
+                $notify = 'mail_task_repened';
             }
+            //update prioirty
+            $task_comment->task->update_virutal();
 
             if ($task_comment->task->thread_id != '') {
                 $task_comment->task->thread->update_last_activity();
             }
-
             $this->commitTransaction();
+
+            if ($notify == 'comment_added') {
+                $task_comment->mail_notify_add();
+            } elseif (isset($notify)) {
+                $task_comment->task->mail_notify_change_state($notify);
+                if ($task_comment->task->thread_id != '') {
+                    $task_comment->task->thread->mail_notify_task_state_changed($task_comment->task);
+                }
+            }
         } catch(Exception $exception) {
             $this->rollbackTransaction();
         }
 
-        $task_comment->mail_notify_add();
+
     }
 
     public function update_save(Entity $task_comment, $data) {

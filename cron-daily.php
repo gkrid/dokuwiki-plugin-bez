@@ -45,10 +45,13 @@ define('DOKU_INC', $inc.'/');
 
 // load and initialize the core system
 require_once(DOKU_INC.'inc/init.php');
+
+$INFO = array();
+$INFO['client'] = $dw_user;
 require_once 'cron/functions.php';
 
 if (date('l') === $conf['plugin']['bez']['weekly_cron_day_of_the_week']) {
-    //send_weekly_message(false);
+    send_weekly_message();
 }
 
 send_one_day_task_reminder();

@@ -21,7 +21,6 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
     }
 
     public function render($mode, Doku_Renderer $r, $data) {
-        global $auth, $INFO, $conf;
         if ($mode != 'xhtml') return;
 
         $r->info['cache'] = false;
@@ -39,21 +38,23 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
             'tasks' => $this->getLang('tasks'),
             'activity_report' => $this->getLang('activity_report')
         );
-        /** @var bez\mdl\Model $model */
-        $model = new bez\mdl\Model($auth, $INFO['client'], $this, $conf);
-        if ($model->get_level() >= BEZ_AUTH_ADMIN) {
+        /** @var bez\meta\BEZ_DokuWiki_Action_Plugin $action */
+        $bez_action = new action_plugin_bez_base();
+        $bez_action->createObjects();
+
+        if ($bez_action->get_level() >= BEZ_AUTH_ADMIN) {
             $actions['types'] = $this->getLang('types_manage');
             $actions['task_programs'] = $this->getLang('task_types');
         }
 
         foreach ($actions as $action => $label) {
-            $r->doc .= $this->_list($action, $label);
+            $r->doc .= $this->_list($bez_action, $action, $label);
         }
         $r->doc .= '</ul>';
         $r->doc .= '</nav>';
     }
 
-    protected function _list($action, $label) {
+    protected function _list(action_plugin_bez_base $bez_action, $action, $label) {
         global $INFO;
 
         $matches = array();
@@ -65,7 +66,7 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
 
         $ret = '<li>';
         if ($cur_action == $action) $ret .= '<strong>';
-        $ret .= '<a href="' . action_plugin_bez_default::url($action) . '">' . $label . '</a>';
+        $ret .= '<a href="' . $bez_action->url($action) . '">' . $label . '</a>';
         if ($cur_action == $action) $ret .= '</strong>';
         $ret .= '</li>';
 

@@ -68,12 +68,13 @@ class ThreadFactory extends Factory {
             }
 
             $this->commitTransaction();
+
+            if ($thread->state != 'proposal' && $this->model->user_nick != $thread->coordinator) {
+                $thread->mail_inform_coordinator();
+            }
+
         } catch(Exception $exception) {
             $this->rollbackTransaction();
-        }
-
-        if ($thread->state != 'proposal' && $this->model->user_nick != $thread->coordinator) {
-            $thread->mail_inform_coordinator();
         }
     }
 

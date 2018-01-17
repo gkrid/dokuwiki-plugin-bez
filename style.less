@@ -1,0 +1,22 @@
+@import "style/task.less";
+@import "style/thread.less";
+
+.bez_sumarise tr {
+
+    &.priority_0 {
+        background-color: @priority_0-background-color;
+    }
+
+    &.priority_1 {
+        background-color: @priority_1-background-color;
+    }
+
+    &.priority_2 {
+        background-color: @priority_2-background-color;
+    }
+
+    //no task assigned
+    &.priority_ {
+        background-color: @priority_-background-color;
+    }
+}

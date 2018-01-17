@@ -1,7 +1,7 @@
 base bez
 author Szymon Olewniczak
 email solewniczak@rid.pl
-date 2018-01-08
+date 2018-01-17
 name bez
 desc SQLite based application helping in managing nonconformities and customers complaints.
 url http://www.dokuwiki.org/plugin:bez

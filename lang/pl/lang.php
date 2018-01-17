@@ -552,7 +552,7 @@ $lang['unsubscribed_com'] = 'Zostałeś wypisany z tego problemu.';
 
 $lang['mail_comment_added'] = 'dodał(a) komentarz';
 $lang['mail_cause_added'] = 'dodał(a) przyczynę';
-$lang['mail_task_added'] = 'dodał(a) zadanie';
+
 $lang['mail_task_added_programme'] = 'przypisał(a) ci zadanie';
 $lang['mail_task_reopened'] = 'otworzył(a) ponownie zadanie';
 $lang['mail_task_remind'] = 'Jutro upłynie termin realizacji zadania';
@@ -574,8 +574,6 @@ $lang['mail_mail_inform_coordinator_subject'] = 'Przypisanie do problemu';
 
 $lang['mail_mail_notify_change_state_action'] = 'zmienił status';
 $lang['mail_mail_notify_change_state_subject'] = 'Zmiana statusu problemu';
-
-$lang['mail_mail_notify_issue_inactive'] = 'Brak aktywności';
 
 $lang['js']['combobox_show_all_items'] = 'Pokaż wszystkie';
 $lang['js']['combobox_did_not_match'] = 'nie pasuje do żadnego elementu';
@@ -623,3 +621,22 @@ $lang['subscribed_info_project'] = 'Otrzymujesz powiadomienia o zmianach w tym p
 $lang['not_subscribed_info_project'] = 'Nie otrzymujesz powiadomień o zmianach w tym projekcie.';
 
 $lang['correction_add_project'] = 'Dodaj zadanie';
+
+$lang['task_unsubscribed_com'] = 'Zostałeś wypisany z tego zadania';
+
+$lang['mail_task_comment_added'] = 'dodał(a) komentarz w zadaniu';
+
+
+$lang['mail_thread_closed'] = 'zamknął(ęła) problem';
+$lang['mail_thread_rejected'] = 'odrzucił(a) problem';
+$lang['mail_thread_reopened'] = 'otworzył(a) ponownie problem';
+$lang['mail_mail_notify_invite_action'] = 'zaprosił cię do wzięcia udziału w dyskusji w problemie';
+$lang['mail_mail_inform_coordinator_action'] = 'przypisał cię jako koordynatora w problemie';
+$lang['mail_mail_notify_issue_inactive'] = 'Brak aktywności w problemie';
+$lang['mail_thread_task_added'] = 'dodał(a) zadanie w problemie';
+$lang['mail_thread_task_done'] = 'zamkną zadanie w problemie';
+$lang['mail_thread_task_reopened'] = 'otworzył ponownie zadanie w problemie';
+$lang['mail_task_done'] = 'zamknął(a) zdanie';
+$lang['mail_task_repened'] = 'otworzył(a) ponownie zdanie';
+
+$lang['mail_task_assignee'] = 'przypisał cię do zadania';

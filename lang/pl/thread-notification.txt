@@ -1,4 +1,0 @@
---
-Otrzymujesz tą wiadomość, ponieważ jesteś subskrybentem tego problemu.
-Przejdź do problemu: @THREAD_LINK@
-Wyłącz subskrypcję: @THREAD_UNSUBSCRIBE@

@@ -65,7 +65,7 @@ class Model {
 	    return $this->$prop;
     }
 
-    private function update_level($level) {
+    protected function update_level($level) {
         if ($level > $this->level) {
             $this->level = $level;
         }
@@ -75,19 +75,17 @@ class Model {
         return $this->level;
     }
 	
-	public function __construct($dw_auth, $user_nick, $action, $conf) {
+	public function __construct($dw_auth, $user_nick, $action) {
 		$this->dw_auth = $dw_auth;
 		$this->user_nick = $user_nick;
 		$this->action = $action;
-        $this->conf = $conf;
+        $this->conf = $action->getGlobalConf();
 
         $this->db_helper =  plugin_load('helper', 'bez_db');
 
         $this->sqlite = $this->db_helper->getDB();
         $this->db = $this->sqlite->getAdapter()->getDb();
         $this->db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-
-        //$this->acl = new Acl($this);
 
         $this->userFactory = new UserFactory($this);
 

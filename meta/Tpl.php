@@ -16,16 +16,18 @@ class Tpl {
     //form values from $_POST or from database
     private $values = array();
     
-    public function __construct(\action_plugin_bez_default $action, $conf) {
+    public function __construct(\action_plugin_bez_base $action) {
         
         $this->action = $action;
-        $this->conf = $conf;
+        $this->conf = $action->getGlobalConf();
         
         //constas
         $this->set('client', $this->model->user_nick);
         
         $info = $action->getInfo();
         $this->set('version', $info['date']);
+
+        $this->set('wiki_title', $this->conf['title']);
         
         //common one
         $this->set('users', $this->action->get_model()->userFactory->get_all());
@@ -51,21 +53,14 @@ class Tpl {
     public function mailto($to, $subject, $body) {
         return 'mailto:'.$to.'?subject='.rawurlencode($subject).'&body='.rawurlencode($body);
     }
-//
-//    public function acl($table, $field) {
-//        if ($table instanceof Entity) {
-//            return $table->acl_of($field);
-//        }
-//        return $this->action->get_model()->factory($table)->permi
-//    }
 
     public function factory($table) {
         return $this->action->get_model()->factory($table);
     }
     
     /*users info function for shorten the code*/
-    public function user_name($login='') {
-        if ($login == '') {
+    public function user_name($login=false) {
+        if ($login === false) {
             $login = $this->current_user();
         }
         $name = $this->action->get_model()->userFactory->get_user_full_name($login);
@@ -79,11 +74,7 @@ class Tpl {
         return $this->action->get_model()->userFactory->get_user_email($login);
     }
     /*end users info functions*/
-    
-    public function prevent_rendering() {
-        
-    }
-    
+
     public function set($id, $value) {
         $this->variables[$id] = $value;
     }

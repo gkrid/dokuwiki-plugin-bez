@@ -1,34 +1,12 @@
 <?php
 
-class Cron_dummy_action extends DokuWiki_Action_Plugin {
-    public function getPluginName() {
-        return 'bez';
-    }
-
-    public static function id() {
-        $args = func_get_args();
-        array_unshift($args, 'bez');
-
-        return implode(':', $args);
-    }
-
-    public static function url() {
-        $args = func_get_args();
-
-        $id = call_user_func_array('Cron_dummy_action::id', $args);
-        return DOKU_URL . 'doku.php?id=' . $id;
-
-
-    }
-};
-
-$dummy_action = new Cron_dummy_action();
-$model = new \dokuwiki\plugin\bez\mdl\Model($auth, $dw_user, $dummy_action, $conf);
+$action = new action_plugin_bez_base();
+$action->createObjects();
 
 function send_inactive_issue() {
-    global $model;
+    global $action;
     
-    $threads = $model->threadFactory->get_all(array(
+    $threads = $action->get_model()->threadFactory->get_all(array(
         'last_activity_date' => array('<=', date('c', strtotime('-26 days'))),
         'state' => 'opened'
     ));
@@ -44,9 +22,9 @@ function send_inactive_issue() {
 }
 
 function send_one_day_task_reminder() {
-    global $model;
+    global $action;
     
-    $tasks = $model->taskFactory->get_all(array(
+    $tasks = $action->get_model()->taskFactory->get_all(array(
         'plan_date' => date('Y-m-d', strtotime('+1 day')),
         'state'     => 'opened'
     ));
@@ -56,88 +34,85 @@ function send_one_day_task_reminder() {
     }
 }
 
-//function send_weekly_message($simulate=true) {
-//    global $conf, $auth;
-//
-//    //$helper = new helper_plugin_bez();
-//
-//   //email => array('user' => array('issues' => array(), 'tasks' => array()))
-//    $msg = array();
-//    $output = array();
-//
-//    try {
-//        $isso = new Issues();
-//        $tasko = new Tasks();
-//    } catch (Exception $e) {
-//        echo $e->getMessage().': '.$e->getFile();
-//    }
-//
-//    $issues = $isso->cron_get_unsolved();
-//
-//    foreach ($issues as $issue) {
-//        $key = $issue['coordinator'];
-//        if (!isset($msg[$key]))
-//            $msg[$key] = array('issues' => array(), 'coming_tasks' => array(),
-//                                'outdated_tasks' => array());
-//
-//        $msg[$key]['issues'][] = $issue;
-//    }
-//
-//    $coming_tasks_all  = $tasko->cron_get_coming_tasks();
-//
-//    foreach ($coming_tasks_all as $task) {
-//        $key = $task['executor'];
-//        if (!isset($msg[$key]))
-//            $msg[$key] = array('issues' => array(), 'coming_tasks' => array(),
-//                                'outdated_tasks' => array());
-//
-//        $msg[$key]['coming_tasks'][] = $task;
-//    }
-//
-//    $outdated_tasks_all  = $tasko->cron_get_outdated_tasks();
-//
-//    foreach ($outdated_tasks_all as $task) {
-//        $key = $task['executor'];
-//        if (!isset($msg[$key]))
-//            $msg[$key] = array('issues' => array(), 'coming_tasks' => array(),
-//                                'outdated_tasks' => array());
-//
-//        $msg[$key]['outdated_tasks'][] = $task;
-//    }
-//
-//    //outdated_tasks, coming_tasks, open_tasks
-//
-//
-//    foreach ($msg as $user => $data) {
-//        $udata = $auth->getUserData($user);
-//
-//        $his_issues = $data['issues'];
-//        $outdated_tasks = $data['outdated_tasks'];
-//        $coming_tasks = $data['coming_tasks'];
-//
-//
-//        if (count($his_issues) + count($outdated_tasks) + count($coming_tasks) == 0)
-//            continue;
-//
-//        $to = $udata['name'].' <'.$udata['mail'].'>';
-//
-//        ob_start();
-//        include 'tpl/weekly-message.php';
-//        $body = ob_get_clean();
-//
-//        $mailer = new \dokuwiki\plugin\bez\meta\Mailer();
-//        $rep = array();
-//        $mailer->setBody('', $rep, NULL, $body, false);
-//
-//        $mailer->to($to);
-//        $subject = 'Nadchodzące zadania';
-//        $mailer->subject($subject);
-//
-//        if ($simulate === false) {
-//            $send = $mailer->send();
-//        }
-//        $output[] = array($to, $subject, $body, array());
-//    }
-//
-//    return $output;
-//}
+function send_weekly_message() {
+    global $action;
+    global $auth;
+
+    //email => array('user' => array('issues' => array(), 'tasks' => array()))
+    $msg = array();
+    $output = array();
+
+    $threads = $action->get_model()->threadFactory->get_all(array(
+          'type' => 'issue',
+          'priority' => array('OR', array('2', '1'))
+      ));
+
+    foreach ($threads as $thread) {
+        $key = $thread->coordinator;
+        if (!isset($msg[$key])) {
+            $msg[$key] = array(
+                'issues'          => array(),
+                'coming_tasks'    => array(),
+                'outdated_tasks'  => array()
+            );
+        }
+        $msg[$key]['issues'][] = $thread;
+    }
+
+    $tasks  = $action->get_model()->taskFactory->get_all(array(
+        'priority' => array('OR', array('2', '1'))
+    ));
+
+    foreach ($tasks as $task) {
+        $key = $task->assignee;
+        if (!isset($msg[$key])) {
+            $msg[$key] = array(
+                'issues'          => array(),
+                'coming_tasks'    => array(),
+                'outdated_tasks'  => array()
+            );
+        }
+
+        if ($task->priority == '1') {
+            $msg[$key]['coming_tasks'][] = $task;
+        } else {
+            $msg[$key]['outdated_tasks'][] = $task;
+        }
+    }
+
+    //outdated_tasks, coming_tasks, open_tasks
+
+
+    foreach ($msg as $user => $data) {
+        $udata = $auth->getUserData($user);
+
+        $issues = $data['issues'];
+        $outdated_tasks = $data['outdated_tasks'];
+        $coming_tasks = $data['coming_tasks'];
+
+
+        if (count($issues) + count($outdated_tasks) + count($coming_tasks) == 0)
+            continue;
+
+        $to = $udata['name'].' <'.$udata['mail'].'>';
+
+        $tpl = $action->get_tpl();
+        $tpl->set('issues', $issues);
+        $tpl->set('outdated_tasks', $outdated_tasks);
+        $tpl->set('coming_tasks', $coming_tasks);
+        $body = $action->bez_tpl_include('cron/weekly-message', true);
+
+        $mailer = new \dokuwiki\plugin\bez\meta\Mailer();
+        $rep = array();
+        $mailer->setBody('', $rep, NULL, $body, false);
+
+        $mailer->to($to);
+        $subject = 'Nadchodzące zadania';
+        $mailer->subject($subject);
+
+        $mailer->send();
+        $output[] = array($to, $subject, $body, array());
+    }
+
+    return $output;
+}

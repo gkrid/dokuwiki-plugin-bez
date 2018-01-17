@@ -152,7 +152,7 @@
     <?php $total_cost += (float) $task->cost ?>
     <?php $hours = $tpl->date_diff_hours($task->start_time, $task->finish_time) ?>
     <?php $total_hours += $tpl->time_to_float($hours) ?>
-	<tr class="pr<?php echo $task->priority ?>" data-bez-row-id="<?php echo $task->id ?>">
+	<tr class="priority_<?php echo $task->priority ?>" data-bez-row-id="<?php echo $task->id ?>">
 		<td>
             <a href="<?php echo $tpl->url('task', 'tid', $task->id) ?>">
                <?php if ($task->thread_id != '') echo '#'.$task->thread_id ?>

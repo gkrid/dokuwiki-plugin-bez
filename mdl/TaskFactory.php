@@ -89,18 +89,16 @@ class TaskFactory extends Factory {
             }
 
             $this->commitTransaction();
+
+            //notifications
+            if ($this->model->user_nick != $task->assignee) {
+                $task->mail_notify_assignee();
+            }
+            if ($task->thread_id != '') {
+                $task->thread->mail_notify_task_added($task);
+            }
         } catch(Exception $exception) {
             $this->rollbackTransaction();
-        }
-
-        if ($task->thread_id != '') {
-            $users = $task->thread->get_participants('subscribent');
-            //don't notify current user
-            unset($users[$this->model->user_nick]);
-
-            $task->mail_notify_add($users);
-        } else {
-            $task->mail_notify_add();
         }
     }
 
@@ -120,6 +118,10 @@ class TaskFactory extends Factory {
             }
 
             $this->commitTransaction();
+            //notifications
+            if ($prev_assignee != $task->assignee && $this->model->user_nick != $task->assignee) {
+                $task->mail_notify_assignee();
+            }
         } catch(Exception $exception) {
             $this->rollbackTransaction();
         }
