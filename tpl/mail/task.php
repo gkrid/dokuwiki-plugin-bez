@@ -18,7 +18,7 @@
 
 <p>
     <?php echo $tpl->user_name($tpl->get('who')) ?> <?php echo $tpl->getLang($tpl->get('action')) ?>
-    <a href="<?php $tpl->url('task', 'tid', $tpl->get('task')->id) ?>">
+    <a href="<?php echo $tpl->url('task', 'tid', $tpl->get('task')->id) ?>">
         #z<?php echo $tpl->get('task')->id ?>
     </a>.
 </p>
@@ -26,13 +26,13 @@
 <?php echo $tpl->get('content') ?>
 
 <div style="margin-top: 5px; padding: 20px; background: #F2F2F2;">
-    <a href="<?php $tpl->url('task', 'tid', $tpl->get('thread')->id) ?>#k_" style="text-decoration: none; color: #444; font-weight: bold;">Dodaj komentarz</a>
+    <a href="<?php echo $tpl->url('task', 'tid', $tpl->get('thread')->id) ?>#k_" style="text-decoration: none; color: #444; font-weight: bold;">Dodaj komentarz</a>
 </div>
 
 <p style="font-size:small;color:#666;">&mdash;<br />
     Otrzymujesz tą wiadomość, ponieważ jesteś subskrybentem tego zadania.<br />
-    <a href="<?php $tpl->url('task', 'tid', $tpl->get('task')->id) ?>">Przejdź do zadania</a>,
-    albo <a href="<?php $tpl->url('task', 'tid', $tpl->get('task')->id, 'action', 'unsubscribe') ?>">
+    <a href="<?php echo $tpl->url('task', 'tid', $tpl->get('task')->id) ?>">Przejdź do zadania</a>,
+    albo <a href="<?php echo $tpl->url('task', 'tid', $tpl->get('task')->id, 'action', 'unsubscribe') ?>">
         wyłącz subskrypcję
     </a>.
 </p>

@@ -603,3 +603,4 @@ $lang['mail_task_done'] = 'closed task';
 $lang['mail_task_repened'] = 'reopened task';
 
 $lang['mail_task_assignee'] = 'assigned you to task';
+$lang['mail_mail_inform_admins_action'] = 'reported proposal';

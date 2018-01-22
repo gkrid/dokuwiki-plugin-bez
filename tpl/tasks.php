@@ -153,11 +153,14 @@
     <?php $hours = $tpl->date_diff_hours($task->start_time, $task->finish_time) ?>
     <?php $total_hours += $tpl->time_to_float($hours) ?>
 	<tr class="priority_<?php echo $task->priority ?>" data-bez-row-id="<?php echo $task->id ?>">
-		<td>
+		<td style="white-space: nowrap">
             <a href="<?php echo $tpl->url('task', 'tid', $task->id) ?>">
                <?php if ($task->thread_id != '') echo '#'.$task->thread_id ?>
 		       #z<?php echo $task->id ?>
 	       </a>
+            <?php if($task->private == '1'): ?>
+                <?php echo inlineSVG(DOKU_PLUGIN . 'bez/images/lock-small.svg') ?>
+            <?php endif ?>
 		</td>
 		<td>
 			<?php echo lcfirst($tpl->getLang('task_' . $task->state)) ?>

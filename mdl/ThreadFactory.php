@@ -71,6 +71,8 @@ class ThreadFactory extends Factory {
 
             if ($thread->state != 'proposal' && $this->model->user_nick != $thread->coordinator) {
                 $thread->mail_inform_coordinator();
+            } elseif ($thread->state == 'proposal') {
+                $thread->mail_inform_admins();
             }
 
         } catch(Exception $exception) {

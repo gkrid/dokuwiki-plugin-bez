@@ -18,7 +18,7 @@
 
 <p>
     <?php echo $tpl->user_name($tpl->get('who')) ?> <?php echo $tpl->getLang($tpl->get('action')) ?>
-    <a href="<?php $tpl->url('task', 'tid', $tpl->get('task')->id) ?>">
+    <a href="<?php echo $tpl->url('task', 'tid', $tpl->get('task')->id) ?>">
         #z<?php echo $tpl->get('task')->id ?>
     </a>.
 </p>
@@ -38,8 +38,8 @@
 
 <p style="font-size:small;color:#666;">&mdash;<br />
     Otrzymujesz tą wiadomość, ponieważ jesteś subskrybentem tego problemu.<br />
-    <a href="<?php $tpl->url('thread', 'id', $tpl->get('thread')->id) ?>">Przejdź do problemu</a>,
-    albo <a href="<?php $tpl->url('thread', 'id', $tpl->get('thread')->id, 'action', 'unsubscribe') ?>">
+    <a href="<?php echo $tpl->url('thread', 'id', $tpl->get('thread')->id) ?>">Przejdź do problemu</a>,
+    albo <a href="<?php echo $tpl->url('thread', 'id', $tpl->get('thread')->id, 'action', 'unsubscribe') ?>">
         wyłącz subskrypcję
     </a>.
 </p>

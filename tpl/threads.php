@@ -128,10 +128,11 @@
                 echo 'priority_' . $thread->priority;
             }
         ?>">
-			<td>
-				<a href="<?php echo $tpl->url('thread', 'id', $thread->id) ?>">
-                    #<?php echo $thread->id ?>
-                </a>
+			<td style="white-space: nowrap">
+                <a href="<?php echo $tpl->url('thread', 'id', $thread->id) ?>">#<?php echo $thread->id ?></a>
+                <?php if($thread->private == '1'): ?>
+                    <?php echo inlineSVG(DOKU_PLUGIN . 'bez/images/lock-small.svg') ?>
+                <?php endif ?>
 			</td>
 			<td>
 			<?php echo $tpl->getLang('state_'.$thread->state) ?>

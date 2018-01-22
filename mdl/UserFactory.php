@@ -48,11 +48,14 @@ class UserFactory {
 		return $groups;
 	}
     
-    public function users_of_group($group) {
+    public function users_of_group($groups) {
 		$wikiusers = $this->model->dw_auth->retrieveUsers();
+		if (is_string($groups)) {
+		    $groups = array($groups);
+        }
 
-		return array_keys(array_filter($wikiusers, function($data) use ($group) {
-           return in_array($group, $data['grps']);
+		return array_keys(array_filter($wikiusers, function($data) use ($groups) {
+           return count(array_intersect($groups, $data['grps'])) > 0;
         }));
 	}
 	
@@ -78,9 +81,4 @@ class UserFactory {
 		$wikiusers = $this->model->dw_auth->retrieveUsers();
 		return $wikiusers[$nick]['mail'];
 	}
-    
-    public function get_user_nick($full_name) {
-        $users = $this->get_all();
-        return array_search($full_name, $users);
-    }
 }

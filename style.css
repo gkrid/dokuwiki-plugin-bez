@@ -1034,3 +1034,9 @@ nav#plugin__bez li {
 	display: block;
 	clear: both;
 }
+
+/*SVG lock in tables*/
+table.bez_sumarise svg {
+	fill: #555;
+	vertical-align: middle;
+}

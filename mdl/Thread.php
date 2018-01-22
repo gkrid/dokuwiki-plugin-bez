@@ -492,6 +492,16 @@ class Thread extends Entity {
         $this->mail_notify($content, array($this->coordinator), $attachedImages);
     }
 
+    public function mail_inform_admins() {
+        $tpl = $this->model->action->get_tpl();
+
+        $tpl->set('who', $this->model->user_nick);
+        $tpl->set('action', 'mail_mail_inform_admins_action');
+        $attachedImages = array();
+        $content = $this->mail_thread($attachedImages);
+        $this->mail_notify($content, $this->model->userFactory->users_of_group(array('admin', 'bez_admin')), $attachedImages);
+    }
+
     public function mail_notify_inactive($users=false) {
         $tpl = $this->model->action->get_tpl();
 
