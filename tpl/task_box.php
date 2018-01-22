@@ -36,6 +36,10 @@
 	    <?php echo lcfirst($tpl->getLang('task_type_' . $tpl->get('task')->type)) ?>
     <?php endif ?>
 	(<?php echo lcfirst($tpl->getLang('task_' . $tpl->get('task')->state)) ?>)
+
+    <?php if ($tpl->get('task')->private == '1'): ?>
+        <?php echo inlineSVG(DOKU_PLUGIN . 'bez/images/lock.svg') ?>
+    <?php endif ?>
 </h2>
 
 <table class="data">
@@ -82,6 +86,14 @@
 
 <?php echo $tpl->get('task')->content_html ?>
 <?php if (!$tpl->get('no_actions')): ?>
+    <?php if ($tpl->action() == 'thread'): ?>
+        <a style="display:block; position: absolute"
+           href="<?php echo $tpl->url('task', 'tid', $tpl->get('task')->id) ?>">
+            <?php echo $tpl->getLang('comments') ?>:
+            <?php echo $tpl->factory('task_comment')->count(array('task_id' => $tpl->get('task')->id)) ?>
+        </a>
+    <?php endif ?>
+
     <div class="bez_buttons">
         <?php if ($tpl->get('task')->acl_of('state') >= BEZ_PERMISSION_CHANGE): ?>
             <a class="bds_inline_button"
@@ -108,6 +120,19 @@
                     ?>#z_">
                     ✎ <?php echo $tpl->getLang('edit') ?>
                 </a>
+        <?php endif ?>
+
+        <?php if ($tpl->get('task')->acl_of('id') >= BEZ_PERMISSION_DELETE): ?>
+            <a class="bds_inline_button bez_commcause_delete_prompt"
+               href="<?php
+               if ($tpl->action() == 'thread') {
+                   echo $tpl->url('thread', 'id', $tpl->get('thread')->id, 'tid', $tpl->get('task')->id, 'action', 'task_delete');
+               } else {
+                   echo $tpl->url('task', 'tid', $tpl->get('task')->id, 'action', 'task_delete');
+               }
+               ?>#z_">
+                ✕ <?php echo $tpl->getLang('delete') ?>
+            </a>
         <?php endif ?>
 
         <a class="bds_inline_button" href="

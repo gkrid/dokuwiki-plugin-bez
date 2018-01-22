@@ -159,7 +159,7 @@ $lang['js']['comment_and_reject_issue'] = 'Odrzuć i i skomentuj';
 $lang['js']['reopen_issue'] = 'Otwórz ponownie problem';
 $lang['js']['comment_and_reopen_issue'] = 'Otwórz ponownie i skomentuj';
 
-$lang['js']['do_task'] = 'Wykonaj zadanie';
+$lang['js']['do_task'] = 'Zamknij zadanie';
 $lang['js']['comment_and_do_task'] = 'Wykonaj i skomentuj';
 $lang['js']['reopen_task'] = 'Otwórz ponownie zadanie';
 $lang['js']['comment_and_reopen_task'] = 'Otwórz ponownie i skomentuj';
@@ -246,7 +246,7 @@ $lang['communication'] = "Komunikacja";
 
 $lang['task_opened'] = 'Otwarte';
 $lang ['task_outdated'] = 'Przeterminowane';
-$lang ['task_done'] = 'Wykonane';
+$lang ['task_done'] = 'Zamknięte';
 $lang ['task_plan'] = "Zaplanuj";
 $lang ['task_rejected'] = 'Odrzucone';
 
@@ -599,12 +599,12 @@ $lang['task_type_program'] = 'Programowe';
 $lang['nav my_activities'] = 'Moje aktywności';
 $lang['nav projects'] = 'Projekty';
 
-$lang['user_did_task'] = '%s wykonał(a) zadanie %s';
+$lang['user_did_task'] = '%s zamknął(eła) zadanie %s';
 
 $lang['user_closed_issue'] = '%s zamknął(eła) problem %s';
 $lang['user_rejected_issue'] = '%s odrzucił(a) problem %s';
 
-$lang['private'] = 'Prywatny';
+$lang['private'] = 'Poufny';
 
 $lang['issue_unclosed_tasks_project'] = 'Nie można zamknąć projektu, dopóki zawiera on nierozwiązane zadania.';
 $lang['issue_is_proposal_project'] = 'Nie można dodawać zadań, dopóki projekt jest propozycją.';

@@ -71,6 +71,14 @@ if ($this->get_param('action') == 'comment_add') {
         $this->model->taskFactory->update_save($task, $_POST);
         $redirect = true;
     }
+} elseif ($this->get_param('action') == 'task_delete') {
+    $this->model->taskFactory->delete($task);
+    if ($task->thread_id != '') {
+        header('Location: ' . $this->url('thread', 'id', $task->thread_id));
+    } else {
+        header("Location: " . $this->url('tasks'));
+    }
+
 }
 
 if (isset($redirect) && $redirect == true) {

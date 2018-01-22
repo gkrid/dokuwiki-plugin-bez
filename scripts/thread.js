@@ -68,31 +68,6 @@ bez.ctl.thread = function() {
 
 		var $header = $bez_comment_form.find(".bez_toolbar");
 		bez.rich_text_editor($textarea, $header);
-
-        $textarea.on('input', function() {
-            "use strict";
-            var suffix = "";
-            if (jQuery("#bds_issue_box").data('type') == 'project') {
-                suffix = "_project";
-            }
-            if (jQuery(this).val().length > 0) {
-                if ($close_button.length > 0) {
-                    $close_button.text(LANG.plugins.bez.comment_and_close_issue);
-                } else if($reopen_button.length > 0) {
-                    $reopen_button.text(LANG.plugins.bez.comment_and_reopen_issue);
-                } else {
-                    $reject_button.text(LANG.plugins.bez.comment_and_reject_issue);
-                }
-            } else {
-                if ($close_button.length > 0) {
-                    $close_button.text(LANG.plugins.bez['close_issue' + suffix]);
-                } else if($reopen_button.length > 0) {
-                    $reopen_button.text(LANG.plugins.bez['reopen_issue' + suffix]);
-                } else {
-                    $reject_button.text(LANG.plugins.bez['reject_issue' + suffix]);
-                }
-            }
-        });
     }
 
 	//show/hide comments
@@ -122,6 +97,11 @@ bez.ctl.thread = function() {
 	
 	$show_comments.on('click', function(e) { e.preventDefault(); bez_show_comments() });
 	$hide_comments.on('click', function(e) { e.preventDefault(); bez_hide_comments() });
+
+    jQuery("#plugin__bez_thread_change_state_button").click(function() {
+        "use strict";
+        jQuery("button[value=thread_close], button[value=thread_reject], button[value=thread_reopen]").effect("highlight");
+    });
 	
 	if (jQuery('.bez_task_form').length > 0) {
 		var $task_form = jQuery('.bez_task_form');
@@ -146,70 +126,11 @@ bez.ctl.thread = function() {
 				'timeFormat': 'H:i'
 			});
 		var timeDatepair = new Datepair(jQuery('#task_datapair').get(0));
-		
-		//cost
-		//~ jQuery('input[name=cost]').spinner({
-			//~ min: 0,
-			//~ max: 100000,
-			//~ step: 50
-		//~ });
-		
-		bez.rich_text_editor($task_form.find('textarea'), $task_form.find('.bez_toolbar'));
-		
-		//~ $task_form.validetta({
-			
-		//~ });
-	}
-    
-    if (jQuery('.bez_metaform').length > 0) {
-        var tooltips = jQuery('.bez_metaform').find("input, select").tooltip({
-                position: {
-                    my: "left top",
-                    at: "right+5 top-5",
-                    collision: "none"
-                }
-            });
-        jQuery.validate({
-            form: '.bez_metaform',
-            inlineErrorMessageCallback:  function($input, errorMessage, config) {
-                if ($input.tooltip("instance") === undefined) {
-                    return false;
-                }
-    
-                if (errorMessage) {
-                    //customDisplayInlineErrorMessage($input, errorMessage);
-                    $input.attr('title', errorMessage);
-                    $input.tooltip("open");
-                } else {
-                    //customRemoveInlineError($input);
-                    $input.tooltip("disable");
-                }
-                return false; // prevent default behaviour
-            }
-        });
-        
-        //~ if (jQuery('input[name="close_date"]').length > 0) {
-            //~ console.log(jQuery('.bez_timebox'));
-            //~ //https://github.com/jonthornton/Datepair.js#jquery-plugin
-            //~ jQuery('.bez_timebox').datepair({
-                //~ parseDate: function (el) {
-                    //~ var val = jQuery(el).datepicker('getDate');
-                    //~ if (!val) {
-                        //~ return null;
-                    //~ }
-                    //~ var utc = new Date(val);
-                    //~ return utc && new Date(utc.getTime() + (utc.getTimezoneOffset() * 60000));
-                //~ },
-                //~ updateDate: function (el, v) {
-                    //~ jQuery(el).datepicker('setDate', new Date(v.getTime() - (v.getTimezoneOffset() * 60000)));
-                //~ }
-            //~ });
-        //~ }
 
-        jQuery("input[name=date], input[name=close_date], input[name=last_mod], input[name=last_activity_date]").datepicker({
-			dateFormat: "yy-mm-dd"
-        });
-    }
+		bez.rich_text_editor($task_form.find('textarea'), $task_form.find('.bez_toolbar'));
+
+	}
+
 	
 	if (jQuery('#opinion').length > 0) {
 		bez.rich_text_editor(jQuery('#opinion'), jQuery('.bez_opinion_toolbar'));

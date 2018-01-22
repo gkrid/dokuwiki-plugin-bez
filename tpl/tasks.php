@@ -148,11 +148,12 @@
 <?php $total_cost = 0.0 ?>
 <?php $total_hours = 0.0 ?>
 <?php foreach ($tpl->get('tasks') as $task): ?>
+    <?php if ($task->acl_of('id') < BEZ_PERMISSION_VIEW) continue ?>
     <?php $count += 1 ?>
     <?php $total_cost += (float) $task->cost ?>
     <?php $hours = $tpl->date_diff_hours($task->start_time, $task->finish_time) ?>
     <?php $total_hours += $tpl->time_to_float($hours) ?>
-	<tr class="priority_<?php echo $task->priority ?>" data-bez-row-id="<?php echo $task->id ?>">
+	<tr class="<?php if ($task->state == 'opened') echo 'priority_' . $task->priority ?>" data-bez-row-id="<?php echo $task->id ?>">
 		<td style="white-space: nowrap">
             <a href="<?php echo $tpl->url('task', 'tid', $task->id) ?>">
                <?php if ($task->thread_id != '') echo '#'.$task->thread_id ?>

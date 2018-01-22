@@ -126,6 +126,8 @@
 		<tr class="<?php
             if ($thread->state == 'opened') {
                 echo 'priority_' . $thread->priority;
+            } elseif ($thread->state == 'proposal') {
+                echo 'priority_';
             }
         ?>">
 			<td style="white-space: nowrap">

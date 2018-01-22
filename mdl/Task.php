@@ -109,6 +109,11 @@ class Task extends Entity {
                 $this->thread = $defaults['thread'];
                 $this->thread_id = $this->thread->id;
                 $this->coordinator = $this->thread->coordinator;
+
+                if ($this->thread->private == '1') {
+                    $this->private = '1';
+                }
+
                 $this->type = 'correction';
 
                 if (isset($defaults['thread_comment'])) {
@@ -123,6 +128,15 @@ class Task extends Entity {
                 }
             } else {
                 $this->type = 'program';
+            }
+
+
+            if ($this->thread_id == '') {
+                $this->validator->set_rules(array(
+                                                'task_program_id' => array(array('numeric'), 'NOT NULL'),
+                                            ));
+                //this field is unused in program tasks
+                $this->validator->delete_rule('thread_comment_id');
             }
 
             //everyone can report their own program tasks
@@ -164,6 +178,23 @@ class Task extends Entity {
                 $this->thread_comment = $defaults['thread_comment'];
             }
 
+            if ($this->thread_id == '') {
+                $this->validator->set_rules(array(
+                                                'task_program_id' => array(array('numeric'), 'NOT NULL'),
+                                            ));
+                //this field is unused in program tasks
+                $this->validator->delete_rule('thread_comment_id');
+            }
+
+            //private tasks
+            if ($this->model->level < BEZ_AUTH_ADMIN && $this->private == '1') {
+                if ($this->get_participant($this->model->user_nick) === false &&
+                    ($this->thread_id != '' && $this->__get('thread')->get_participant($this->model->user_nick) === false)) {
+                    $this->acl->revoke(self::get_select_columns(), BEZ_AUTH_LEADER);
+                    return;
+                }
+            }
+
             //user can close their tasks
             if ($this->assignee == $this->model->user_nick || $this->model->get_level() >= BEZ_AUTH_LEADER) {
                 $this->acl->grant('state', BEZ_PERMISSION_CHANGE);
@@ -193,14 +224,6 @@ class Task extends Entity {
                 $this->acl->grant('participants', BEZ_PERMISSION_CHANGE);
                 $this->acl->grant('state', BEZ_PERMISSION_CHANGE);
             }
-        }
-
-		if ($this->thread_id == '') {
-			$this->validator->set_rules(array(
-				'task_program_id' => array(array('numeric'), 'NOT NULL'),
-			));
-		    //this field is unused in program tasks
-            $this->validator->delete_rule('thread_comment_id');
         }
     }
 
@@ -405,7 +428,7 @@ class Task extends Entity {
     }
     
     public function mail_notify($content, $users=false, $attachedImages=array()) {
-        $mailer = new Mailer();
+        $mailer = new \Mailer();
         $mailer->setBody($content, array(), array(), $content, false);
         
         if ($users === FALSE) {

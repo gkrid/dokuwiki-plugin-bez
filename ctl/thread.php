@@ -119,6 +119,11 @@ if ($this->get_param('action') == 'commcause_add') {
         $anchor   = 'z' . $task->id;
         $redirect = true;
     }
+} elseif ($this->get_param('action') == 'task_delete') {
+    /** @var bez\mdl\Task $task */
+    $task = $this->model->taskFactory->get_one($this->get_param('tid'), array('thread' => $thread));
+    $this->model->taskFactory->delete($task);
+    $redirect = true;
 }
 
 if (isset($redirect) && $redirect == true) {

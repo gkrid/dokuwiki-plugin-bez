@@ -88,23 +88,6 @@ bez.ctl.task = function() {
 
         var $header = $bez_comment_form.find(".bez_toolbar");
         bez.rich_text_editor($textarea, $header);
-
-        $textarea.on('input', function() {
-            "use strict";
-            if (jQuery(this).val().length > 0) {
-                if ($do_button.length > 0) {
-                    $do_button.text(LANG.plugins.bez.comment_and_do_task);
-                } else {
-                    $reopen_button.text(LANG.plugins.bez.comment_and_reopen_task);
-                }
-            } else {
-                if ($do_button.length > 0) {
-                    $do_button.text(LANG.plugins.bez.do_task);
-                } else {
-                    $reopen_button.text(LANG.plugins.bez.reopen_task);
-                }
-            }
-        });
     }
 
     //tooltips

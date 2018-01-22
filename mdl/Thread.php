@@ -93,6 +93,7 @@ class Thread extends Entity {
             if ($this->model->level < BEZ_AUTH_ADMIN && $this->private == '1') {
                 if ($this->get_participant($this->model->user_nick) === false) {
                     $this->acl->revoke(self::get_select_columns(), BEZ_AUTH_LEADER);
+                    return;
                 }
             }
 

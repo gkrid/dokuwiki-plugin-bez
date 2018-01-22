@@ -79,7 +79,7 @@
 				<?php elseif (	$tpl->get('thread_comment')->type != 'comment' &&
                                 $tpl->get('thread')->state == 'opened' &&
                                 $tpl->param('action') != 'task_edit'): ?>
-						<div class="bez_second_lv_buttons">
+						<div class="bez_second_lv_buttons" style="margin-top:10px">
 							<a href="<?php echo $tpl->url('thread', 'id', $tpl->get('thread')->id, 'kid', $tpl->get('thread_comment')->id, 'action', 'task_add') ?>#z_" class="bez_subscribe_button">
 								<span class="bez_awesome">&#xf0fe;</span>&nbsp;&nbsp;
 								<?php if ($tpl->get('thread_comment')->type == 'cause_real'): ?>

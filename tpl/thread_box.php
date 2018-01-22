@@ -71,6 +71,26 @@
 <?php echo $tpl->get('thread')->content_html ?>
 <?php if (!$tpl->get('no_actions')): ?>
     <div class="bez_buttons">
+
+        <?php if ($tpl->param('kid') == '' &&
+            $tpl->get('thread')->acl_of('state') >= BEZ_PERMISSION_CHANGE &&
+            ($tpl->get('thread')->can_be_closed() ||
+                $tpl->get('thread')->can_be_rejected() ||
+                $tpl->get('thread')->can_be_reopened())): ?>
+
+            <a class="bds_inline_button"
+               id="plugin__bez_thread_change_state_button"
+               href="<?php echo $tpl->url('thread', 'id', $tpl->get('thread')->id) ?>#k_">
+                <?php if ($tpl->get('thread')->can_be_closed()): ?>
+                    ↬ <?php echo $tpl->getLang('js')['close_issue' . $tpl->get('lang_suffix')] ?>
+                <?php elseif ($tpl->get('thread')->can_be_rejected()): ?>
+                    ↛ <?php echo $tpl->getLang('js')['reject_issue' . $tpl->get('lang_suffix')] ?>
+                <?php elseif ($tpl->get('thread')->can_be_reopened()): ?>
+                    ↻ <?php echo $tpl->getLang('js')['reopen_issue'. $tpl->get('lang_suffix')]  ?>
+                <?php endif?>
+            </a>
+        <?php endif ?>
+
         <?php if (count($tpl->get('thread')->changable_fields(array('label_id', 'title', 'content', 'coordinator'))) > 0): ?>
             <a href="<?php echo $tpl->url('thread_report', 'action', 'edit', 'id', $tpl->get('thread')->id) ?>" class="bds_inline_button">
                 ✎ <?php echo $tpl->getLang('edit') ?>
