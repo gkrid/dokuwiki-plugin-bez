@@ -2,6 +2,7 @@
 
 namespace dokuwiki\plugin\bez\mdl;
 
+use dokuwiki\plugin\bez\meta\ConsistencyViolationException;
 use dokuwiki\plugin\bez\meta\PermissionDeniedException;
 use dokuwiki\plugin\bez\meta\ValidationException;
 
@@ -191,7 +192,7 @@ class Thread extends Entity {
             }
             $sql .= " $filter=1 AND";
         }
-        $sql .= ' thread_id=? ORDER BY user_id';
+        $sql .= ' thread_id=? AND removed=0 ORDER BY user_id';
 
         $r = $this->model->sqlite->query($sql, $this->id);
         $pars = $this->model->sqlite->res2arr($r);
@@ -203,12 +204,16 @@ class Thread extends Entity {
         return $participants;
     }
 
-    public function get_participant($user_id) {
+    public function get_participant($user_id, $can_be_removed=false) {
         if ($this->id === NULL) {
             return array();
         }
 
-        $r = $this->model->sqlite->query('SELECT * FROM thread_participant WHERE thread_id=? AND user_id=?', $this->id, $user_id);
+        $q = 'SELECT * FROM thread_participant WHERE thread_id=? AND user_id=?';
+        if (!$can_be_removed) {
+            $q .= ' AND removed=0';
+        }
+        $r = $this->model->sqlite->query($q, $this->id, $user_id);
         $par = $this->model->sqlite->res2row($r);
         if (!is_array($par)) {
             return false;
@@ -232,6 +237,11 @@ class Thread extends Entity {
         //thread not saved yet
         if ($this->id === NULL) {
             throw new \Exception('cannot remove flags from not saved thread');
+        }
+
+        $participant = $this->get_participant($user_id, true);
+        if ($participant === false) {
+            throw new ConsistencyViolationException("$user_id isn't participant");
         }
 
         $possible_flags = array('original_poster', 'coordinator', 'commentator', 'task_assignee', 'subscribent');
@@ -262,7 +272,7 @@ class Thread extends Entity {
             throw new \Exception('unknown flags');
         }
 
-        $participant = $this->get_participant($user_id);
+        $participant = $this->get_participant($user_id, true);
         if ($participant == false) {
             $participant = array_fill_keys($possible_flags, 0);
 
@@ -270,16 +280,46 @@ class Thread extends Entity {
             $participant['user_id'] = $user_id;
             $participant['added_by'] = $this->model->user_nick;
             $participant['added_date'] = date('c');
+
+            $values = array_merge($participant, array_fill_keys($flags, 1));
+
+            $this->model->sqlite->storeEntry('thread_participant', $values);
+        } else {
+            $set = implode(',', array_map(function($flag) { return "$flag=1"; }, $flags));
+
+            if ($participant['removed'] == '1') {
+                $set .= ',removed=0';
+            }
+
+            $q = "UPDATE thread_participant SET $set WHERE thread_id=? AND user_id=?";
+            $this->model->sqlite->query($q, $this->id, $user_id);
         }
-        $values = array_merge($participant, array_fill_keys($flags, 1));
 
-        $keys = join(',', array_keys($values));
-        $vals = join(',', array_fill(0,count($values),'?'));
-
-        $sql = "REPLACE INTO thread_participant ($keys) VALUES ($vals)";
-        $this->model->sqlite->query($sql, array_values($values));
 	}
 
+	public function remove_participant($user_id) {
+        //thread not saved yet
+        if ($this->id === NULL) {
+            throw new \Exception('cannot remove flags from not saved thread');
+        }
+
+        $participant = $this->get_participant($user_id);
+        if ($participant === false) {
+            throw new ConsistencyViolationException("$user_id isn't participant");
+        }
+
+        if ($participant['coordinator'] == '1') {
+            throw new ConsistencyViolationException("cannot remove coordinator");
+        }
+
+        if ($participant['task_assignee'] == '1') {
+            throw new ConsistencyViolationException("cannot remove task_assignee");
+        }
+
+        $q = "UPDATE thread_participant SET removed=1 WHERE thread_id=? AND user_id=?";
+        $this->model->sqlite->query($q, $this->id, $user_id);
+
+    }
 
     public function invite($client) {
         $this->set_participant_flags($client, array('subscribent'));

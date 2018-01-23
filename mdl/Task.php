@@ -45,6 +45,10 @@ class Task extends Entity {
             'thread_id', 'thread_comment_id', 'task_program_id');
 	}
 
+	public static function get_acl_columns() {
+	    return array_merge(parent::get_acl_columns(), array('participants'));
+    }
+
 	public static function get_types() {
 	    return array('correction', 'corrective', 'preventive', 'program');
     }
@@ -80,9 +84,6 @@ class Task extends Entity {
 
 	public function __construct($model, $defaults=array()) {
 		parent::__construct($model, $defaults);
-
-		//virutal ACL columns (not in select)
-		$this->acl->add_column('participants');
 
 		$this->validator->set_rules(array(
             'assignee' => array(array('dw_user'), 'NOT NULL'),
@@ -333,7 +334,7 @@ class Task extends Entity {
             }
             $sql .= " $filter=1 AND";
         }
-        $sql .= ' task_id=? ORDER BY user_id';
+        $sql .= ' task_id=? AND removed=0 ORDER BY user_id';
 
         $r = $this->model->sqlite->query($sql, $this->id);
         $pars = $this->model->sqlite->res2arr($r);
@@ -345,12 +346,16 @@ class Task extends Entity {
         return $participants;
     }
 
-    public function get_participant($user_id) {
+    public function get_participant($user_id, $can_be_removed=false) {
         if ($this->id === NULL) {
             return array();
         }
 
-        $r = $this->model->sqlite->query('SELECT * FROM task_participant WHERE task_id=? AND user_id=?', $this->id, $user_id);
+        $q = 'SELECT * FROM task_participant WHERE task_id=? AND user_id=?';
+        if (!$can_be_removed) {
+            $q .= ' AND removed=0';
+        }
+        $r = $this->model->sqlite->query($q, $this->id, $user_id);
         $par = $this->model->sqlite->res2row($r);
         if (!is_array($par)) {
             return false;
@@ -374,6 +379,11 @@ class Task extends Entity {
         //thread not saved yet
         if ($this->id === NULL) {
             throw new \Exception('cannot remove flags from not saved thread');
+        }
+
+        $participant = $this->get_participant($user_id, true);
+        if ($participant === false) {
+            throw new ConsistencyViolationException("$user_id isn't participant");
         }
 
         $possible_flags = array('original_poster', 'assignee', 'commentator', 'subscribent');
@@ -404,7 +414,7 @@ class Task extends Entity {
             throw new \Exception('unknown flags');
         }
 
-        $participant = $this->get_participant($user_id);
+        $participant = $this->get_participant($user_id, true);
         if ($participant == false) {
             $participant = array_fill_keys($possible_flags, 0);
 
@@ -412,14 +422,39 @@ class Task extends Entity {
             $participant['user_id'] = $user_id;
             $participant['added_by'] = $this->model->user_nick;
             $participant['added_date'] = date('c');
+
+            $values = array_merge($participant, array_fill_keys($flags, 1));
+            $this->model->sqlite->storeEntry('task_participant', $values);
+        } else {
+            $set = implode(',', array_map(function($flag) { return "$flag=1"; }, $flags));
+
+            if ($participant['removed'] == '1') {
+                $set .= ',removed=0';
+            }
+
+            $q = "UPDATE task_participant SET $set WHERE task_id=? AND user_id=?";
+            $this->model->sqlite->query($q, $this->id, $user_id);
         }
-        $values = array_merge($participant, array_fill_keys($flags, 1));
+    }
 
-        $keys = join(',', array_keys($values));
-        $vals = join(',', array_fill(0,count($values),'?'));
+    public function remove_participant($user_id) {
+        //thread not saved yet
+        if ($this->id === NULL) {
+            throw new \Exception('cannot remove flags from not saved thread');
+        }
 
-        $sql = "REPLACE INTO task_participant ($keys) VALUES ($vals)";
-        $this->model->sqlite->query($sql, array_values($values));
+        $participant = $this->get_participant($user_id);
+        if ($participant === false) {
+            throw new ConsistencyViolationException("$user_id isn't participant");
+        }
+
+        if ($participant['assignee'] == '1') {
+            throw new ConsistencyViolationException("cannot remove assignee");
+        }
+
+        $q = "UPDATE task_participant SET removed=1 WHERE task_id=? AND user_id=?";
+        $this->model->sqlite->query($q, $this->id, $user_id);
+
     }
 
     public function invite($client) {

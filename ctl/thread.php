@@ -68,6 +68,16 @@ if ($this->get_param('action') == 'commcause_add') {
     $this->add_notification($this->model->userFactory->get_user_email($client), $this->getLang('invitation_has_been_send'));
 
     $redirect = true;
+} elseif ($this->get_param('action') == 'participant_remove') {
+    $user_id = $this->get_param('user_id');
+    $thread->remove_participant($user_id);
+
+    $name = $this->model->userFactory->get_user_full_name($user_id);
+    $notif = sprintf($this->getLang('participant_removed'), $name);
+    $this->add_notification($notif);
+
+    $redirect = true;
+
 } elseif ($this->get_param('action') == 'commcause_delete') {
     /** @var bez\mdl\Thread_comment $thread_comment */
     $thread_comment = $this->model->thread_commentFactory->get_one($this->get_param('kid'), array('thread' => $thread));

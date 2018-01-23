@@ -199,12 +199,7 @@ class action_plugin_bez_default extends action_plugin_bez_base {
             
         } catch(bez\meta\PermissionDeniedException $e) {
             dbglog('plugin_bez', $e);
-            if ($conf['allowdebug']) {
-                dbg($e);
-                $this->tpl->prevent_rendering();
-            } else {
-                header('Location: ' . DOKU_URL . 'doku.php?id=' . $_GET['id'] . '&do=login');
-            }
+            header('Location: ' . DOKU_URL . 'doku.php?id=' . $_GET['id'] . '&do=login');
 		} catch(Exception $e) {
             dbglog('plugin_bez', $e);
             if ($conf['allowdebug']) {

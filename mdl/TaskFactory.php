@@ -108,6 +108,11 @@ class TaskFactory extends Factory {
             $prev_assignee = $task->assignee;
             parent::update_save($task, $data);
 
+            if($task->assignee != $prev_assignee) {
+                $task->remove_participant_flags($prev_assignee, array('assignee'));
+                $task->set_participant_flags($task->assignee, array('subscribent', 'assignee'));
+            }
+
             if ($task->thread_id != '' && $task->assignee != $prev_assignee) {
                 if ($this->model->taskFactory->count(array(
                     'thread_id' => $task->thread_id,

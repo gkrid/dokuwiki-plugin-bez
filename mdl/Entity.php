@@ -29,6 +29,11 @@ abstract class Entity {
         $class = get_called_class();
 	    return $class::get_columns();
     }
+
+    public static function get_acl_columns() {
+        $class = get_called_class();
+        return $class::get_select_columns();
+    }
 	
 	public function get_assoc($filter=NULL) {
 		$assoc = array();
@@ -112,7 +117,7 @@ abstract class Entity {
         $this->model = $model;
         $this->validator = new Validator($this->model);
 
-        $this->acl = new Acl($this->model->get_level(), $this->get_select_columns());
+        $this->acl = new Acl($this->model->get_level(), $this->get_acl_columns());
     }
 
     public function acl_of($field) {

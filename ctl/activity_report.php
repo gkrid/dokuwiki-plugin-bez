@@ -7,5 +7,13 @@ if ($this->model->get_level() < BEZ_AUTH_USER) {
     throw new bez\meta\PermissionDeniedException();
 }
 
-$this->tpl->set('thread_involvement', $this->model->threadFactory->users_involvement());
-$this->tpl->set('task_involvement', $this->model->taskFactory->users_involvement());
+$range = array();
+if(count($_POST) > 0) {
+    $this->tpl->set_values($_POST);
+    $from = date('Y-m-d', strtotime($_POST['from']));
+    $to = date('Y-m-d', strtotime($_POST['to']));
+    $range = array($from, $to);
+}
+
+$this->tpl->set('thread_involvement', $this->model->threadFactory->users_involvement($range));
+$this->tpl->set('task_involvement', $this->model->taskFactory->users_involvement($range));

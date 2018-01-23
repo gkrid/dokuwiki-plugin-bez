@@ -604,3 +604,5 @@ $lang['mail_task_repened'] = 'reopened task';
 
 $lang['mail_task_assignee'] = 'assigned you to task';
 $lang['mail_mail_inform_admins_action'] = 'reported proposal';
+
+$lang['participant_removed'] = '<strong>%s</strong> has been removed.';

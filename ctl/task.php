@@ -45,6 +45,15 @@ if ($this->get_param('action') == 'comment_add') {
     $this->add_notification($this->model->userFactory->get_user_email($client), $this->getLang('invitation_has_been_send'));
 
     $redirect = true;
+} elseif ($this->get_param('action') == 'participant_remove') {
+    $user_id = $this->get_param('user_id');
+    $task->remove_participant($user_id);
+
+    $name = $this->model->userFactory->get_user_full_name($user_id);
+    $notif = sprintf($this->getLang('participant_removed'), $name);
+    $this->add_notification($notif);
+
+    $redirect = true;
 } elseif ($this->get_param('action') == 'comment_delete') {
     /** @var bez\mdl\Task_comment $task_comment */
     $task_comment = $this->model->task_commentFactory->get_one($this->get_param('zkid'), array('task' => $task));

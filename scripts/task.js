@@ -115,6 +115,22 @@ bez.ctl.task = function() {
         "use strict";
         jQuery("button[value=task_do], button[value=task_reopen]").effect("highlight");
     });
+
+    jQuery('#issue_participants .participant_remove').hide().click('on', function (event) {
+        if (!window.confirm(LANG.plugins.bez.remove_confirm)) {
+            event.preventDefault();
+        }
+    });
+    jQuery('#issue_participants li').hover(
+        function() {
+            "use strict";
+            jQuery(this).find('.participant_remove').show();
+        },
+        function() {
+            "use strict";
+            jQuery(this).find('.participant_remove').hide();
+        }
+    );
     
     //INVITE USERS
     jQuery.widget( "custom.combobox", {

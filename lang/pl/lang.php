@@ -641,3 +641,5 @@ $lang['mail_task_repened'] = 'otworzył(a) ponownie zdanie';
 
 $lang['mail_task_assignee'] = 'przypisał cię do zadania';
 $lang['mail_mail_inform_admins_action'] = 'zgłosił propozycję';
+
+$lang['participant_removed'] = '<strong>%s</strong> został wypisany.';

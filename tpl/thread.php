@@ -106,7 +106,18 @@
 <h2><?php echo $tpl->getLang('comment_participants') ?></h2>
 <ul id="issue_participants">
 <?php foreach ($tpl->get('thread')->get_participants() as $participant): ?>
-	<li><a href="<?php echo $tpl->mailto($tpl->user_email($participant['user_id']),
+	<li>
+        <?php if ($tpl->get('thread')->user_is_coordinator() &&
+                  $tpl->get('thread')->can_add_participants() &&
+                  $participant['coordinator'] == '0' && $participant['task_assignee'] == '0'): ?>
+            <a href="<?php echo $tpl->url('thread', 'id', $tpl->get('thread')->id, 'action', 'participant_remove', 'user_id', $participant['user_id']) ?>"
+               class="participant_remove">
+                <span class="bez_awesome">
+				    &#xf00d;
+			    </span>
+            </a>
+        <?php endif ?>
+        <a href="<?php echo $tpl->mailto($tpl->user_email($participant['user_id']),
 		'#'.$tpl->get('thread')->id.' '.$tpl->get('thread')->title,
 		$tpl->url('thread', 'id', $tpl->get('thread')->id)) ?>"  title="<?php echo $participant['user_id'] ?>">
 		<span class="bez_name"><?php echo $tpl->user_name($participant['user_id']) ?></span>
@@ -142,7 +153,8 @@
 			</span>
 		<?php endif ?>
 		</span>
-	</a></li>
+	</a>
+    </li>
 <?php endforeach ?>
 </ul>
 

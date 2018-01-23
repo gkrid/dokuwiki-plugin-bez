@@ -98,7 +98,17 @@
         <h2><?php echo $tpl->getLang('comment_participants') ?></h2>
         <ul id="issue_participants">
             <?php foreach ($tpl->get('task')->get_participants() as $participant): ?>
-                <li><a href="<?php echo $tpl->mailto($tpl->user_email($participant['user_id']),
+                <li>
+                    <?php if ($tpl->get('task')->acl_of('participants') >= BEZ_PERMISSION_CHANGE &&
+                        $participant['assignee'] == '0'): ?>
+                        <a href="<?php echo $tpl->url('task', 'tid', $tpl->get('task')->id, 'action', 'participant_remove', 'user_id', $participant['user_id']) ?>"
+                           class="participant_remove">
+                            <span class="bez_awesome">
+                                &#xf00d;
+                            </span>
+                        </a>
+                    <?php endif ?>
+                    <a href="<?php echo $tpl->mailto($tpl->user_email($participant['user_id']),
                                                      '#z'.$tpl->get('task')->id,
                                                      $tpl->url('task', 'tid', $tpl->get('task')->id)) ?>"
                        title="<?php echo $participant['user_id'] ?>">

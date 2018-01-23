@@ -8,6 +8,8 @@ bez.ctl = {};
 /* DOKUWIKI:include scripts/task.js */
 /* DOKUWIKI:include scripts/tasks.js */
 /* DOKUWIKI:include scripts/projects.js */
+/* DOKUWIKI:include scripts/activity_report.js */
+
 
 jQuery(function () {
     'use strict';

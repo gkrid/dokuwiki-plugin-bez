@@ -25,7 +25,7 @@ class ThreadFactory extends Factory {
 		return $years;
     }
 
-    public function users_involvement() {
+    public function users_involvement($range=array()) {
         $sql = 'SELECT user_id,
                        SUM(original_poster),
                        SUM(coordinator),

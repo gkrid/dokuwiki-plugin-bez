@@ -2,7 +2,19 @@
 <?php echo $tpl->getLang('activity_report') ?>
 </h1>
 
+<div class="bez_filter_form" style="display:none">
+    <form action="<?php echo $tpl->url('activity_report') ?>" method="post">
+        <span class="datepair">
+            <label>od: <input name="from" value="<?php echo $tpl->value('from') ?>" class="date start" style="width: 90px"></label>
+            <label>do: <input name="to" value="<?php echo $tpl->value('to') ?>" class="date end" style="width: 90px"></label>
+        </span>
+        <button>Pokaż</button>
+    </form>
+
+</div>
+
 <h2><?php echo $tpl->getLang('activity_in_issues') ?></h2>
+
 <table class="bez_sumarise">
 	<tr>
 		<th><?php echo $tpl->getLang('user') ?></th>
