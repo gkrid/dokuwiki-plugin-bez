@@ -10,9 +10,9 @@ if ($this->model->get_level() < BEZ_AUTH_USER) {
 $range = array();
 if(count($_POST) > 0) {
     $this->tpl->set_values($_POST);
-    $from = date('Y-m-d', strtotime($_POST['from']));
-    $to = date('Y-m-d', strtotime($_POST['to']));
-    $range = array($from, $to);
+    if ($_POST['from'] != '' && $_POST['to'] != '') {
+        $range = array($_POST['from'], $_POST['to']);
+    }
 }
 
 $this->tpl->set('thread_involvement', $this->model->threadFactory->users_involvement($range));

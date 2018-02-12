@@ -354,6 +354,8 @@ $lang['close_issues'] = 'Moje problemy';
 $lang['close_tasks'] = 'Moje zadania';
 
 $lang['proposals'] = 'Propozycje';
+$lang['my_reported_threads'] = 'Problemy zgłoszone przeze mnie';
+$lang['my_reported_tasks'] = 'Zadania zgłoszone przeze mnie';
 
 $lang['show_tasks_hidden'] = 'Pokaż zadania wykonane i odrzucone';
 $lang['add_task'] = 'Dodaj zadanie';

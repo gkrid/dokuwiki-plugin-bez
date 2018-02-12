@@ -114,7 +114,7 @@ class Tpl {
     }
 
     public function user_acl_level() {
-        return $this->action->get_model()->acl->get_level();
+        return $this->action->get_model()->get_level();
     }
 
     public function date($date) {

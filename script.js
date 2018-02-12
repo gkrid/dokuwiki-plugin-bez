@@ -9,7 +9,7 @@ bez.ctl = {};
 /* DOKUWIKI:include scripts/tasks.js */
 /* DOKUWIKI:include scripts/projects.js */
 /* DOKUWIKI:include scripts/activity_report.js */
-
+/* DOKUWIKI:include scripts/start.js */
 
 jQuery(function () {
     'use strict';

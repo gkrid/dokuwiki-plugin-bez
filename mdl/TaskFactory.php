@@ -61,17 +61,34 @@ class TaskFactory extends Factory {
         return $by_type;
     }
 
-    public function users_involvement() {
-        $sql = 'SELECT user_id,
-                       SUM(original_poster),
-                       SUM(assignee),
-                       SUM(commentator),
-                       COUNT(*)
+    public function users_involvement($range=array()) {
+        if (count($range) > 0) {
+            $from = date('Y-m-d', strtotime($range[0]));
+            if (count($range) == 1) {
+                $to = date('Y-m-d');
+            } else {
+                $to = date('Y-m-d', strtotime($range[1]));
+            }
+            $sql = "SELECT task_participant.user_id,
+                       SUM(task_participant.original_poster) AS original_poster_sum,
+                       SUM(task_participant.assignee) AS assignee_sum,
+                       SUM(task_participant.commentator) AS commentator_sum
+                       FROM task_participant JOIN task ON task_participant.task_id = task.id
+                       WHERE task.create_date BETWEEN ? AND ?
+                       GROUP BY user_id
+                       ORDER BY user_id";
+            $r = $this->model->sqlite->query($sql, $from, $to);
+        } else {
+            $sql = "SELECT user_id,
+                       SUM(original_poster) AS original_poster_sum,
+                       SUM(assignee) AS assignee_sum,
+                       SUM(commentator) AS commentator_sum
                        FROM task_participant
                        GROUP BY user_id
-                       ORDER BY user_id';
+                       ORDER BY user_id";
+            $r = $this->model->sqlite->query($sql);
+        }
 
-        $r = $this->model->sqlite->query($sql);
         return $r;
     }
 

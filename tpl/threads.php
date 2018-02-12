@@ -1,5 +1,7 @@
 <?php /* @var \dokuwiki\plugin\bez\meta\Tpl $tpl */ ?>
 
+<?php if (!$tpl->get('no_filters', false)): ?>
+
 <?php if ($tpl->factory('thread')->permission() >= BEZ_TABLE_PERMISSION_INSERT): ?>
     <a href="<?php echo $tpl->url('thread_report', 'type', $tpl->action() == 'projects' ? 'project' : 'issue') ?>" class="bez_start_button" id="bez_report_issue_button">
         <?php echo $tpl->getLang('report_' . $tpl->action()) ?>
@@ -101,6 +103,8 @@
 	<label><input type="submit" value="<?php echo $tpl->getLang('filter') ?>" /></label>
 </form>
 </div>
+<?php endif ?>
+
 
 <table class="bez bez_sumarise">
 	<tr>

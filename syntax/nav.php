@@ -32,7 +32,7 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
             '</div>';
         $r->doc .= '<ul>';
         $actions = array(
-            //'start' => $this->getLang('nav my_activities'),
+            'start' => $this->getLang('nav my_activities'),
             'threads' => $this->getLang('issues'),
             'projects' => $this->getLang('nav projects'),
             'tasks' => $this->getLang('tasks'),

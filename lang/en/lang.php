@@ -342,6 +342,8 @@ $lang['filter'] = 'Filter';
 
 $lang['close_issues'] = 'My issues';
 $lang['close_tasks'] = 'My tasks';
+$lang['my_reported_threads'] = 'Threads reported by me';
+$lang['my_reported_tasks'] = 'Tasks reported by me';
 
 $lang['proposals'] = 'Proposals';
 

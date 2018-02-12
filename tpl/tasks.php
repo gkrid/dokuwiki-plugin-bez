@@ -1,4 +1,7 @@
 <?php /* @var \dokuwiki\plugin\bez\meta\Tpl $tpl */ ?>
+
+<?php if (!$tpl->get('no_filters', false)): ?>
+
 <?php if ($tpl->factory('task')->permission() >= BEZ_TABLE_PERMISSION_INSERT): ?>
     <a href="<?php echo $tpl->url('task_form') ?>" class="bez_start_button" id="bez_report_task_button">
         <?php echo $tpl->getLang('add_task') ?>
@@ -128,6 +131,7 @@
 </form>
 </div>
 
+<?php endif ?>
 
 <table class="bez bez_sumarise">
 <tr>
@@ -230,4 +234,3 @@
 		<td colspan="1"><?php echo $tpl->float_to_time($total_hours) ?></td>
 	</tr>
 </table>
-</div>

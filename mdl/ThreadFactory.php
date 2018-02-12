@@ -26,17 +26,35 @@ class ThreadFactory extends Factory {
     }
 
     public function users_involvement($range=array()) {
-        $sql = 'SELECT user_id,
-                       SUM(original_poster),
-                       SUM(coordinator),
-                       SUM(commentator),
-                       SUM(task_assignee),
-                       COUNT(*)
-                       FROM thread_participant
+        if (count($range) > 0) {
+            $from = date('c	', strtotime($range[0]));
+            if (count($range) == 1) {
+                $to = date('c');
+            } else {
+                $to = date('c', strtotime($range[1]));
+            }
+            $sql = "SELECT thread_participant.user_id,
+                       SUM(thread_participant.original_poster) AS original_poster_sum,
+                       SUM(thread_participant.coordinator) AS coordinator_sum,
+                       SUM(thread_participant.commentator) AS commentator_sum,
+                       SUM(thread_participant.task_assignee) AS task_assignee_sum
+                       FROM thread_participant JOIN thread ON thread_participant.thread_id = thread.id
+                       WHERE thread.create_date BETWEEN ? AND ?
                        GROUP BY user_id
-                       ORDER BY user_id';
+                       ORDER BY user_id";
+            $r = $this->model->sqlite->query($sql, $from, $to);
+        } else {
+            $sql = "SELECT user_id,
+                           SUM(original_poster) AS original_poster_sum,
+                           SUM(coordinator) AS coordinator_sum,
+                           SUM(commentator) AS commentator_sum,
+                           SUM(task_assignee) AS task_assignee_sum
+                           FROM thread_participant
+                           GROUP BY user_id
+                           ORDER BY user_id";
 
-        $r = $this->model->sqlite->query($sql);
+            $r = $this->model->sqlite->query($sql);
+        }
         return $r;
     }
 
@@ -103,8 +121,10 @@ class ThreadFactory extends Factory {
                 $thread->remove_label($label_id);
             }
 
-            if($thread->coordinator != null && $thread->coordinator != $prev_coordinator) {
-                $thread->remove_participant_flags($prev_coordinator, array('coordinator'));
+            if ($thread->coordinator != null && $thread->coordinator != $prev_coordinator) {
+                if ($prev_coordinator != null) {
+                    $thread->remove_participant_flags($prev_coordinator, array('coordinator'));
+                }
                 $thread->set_participant_flags($thread->coordinator, array('subscribent', 'coordinator'));
             }
 

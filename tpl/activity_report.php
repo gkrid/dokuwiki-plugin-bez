@@ -2,7 +2,7 @@
 <?php echo $tpl->getLang('activity_report') ?>
 </h1>
 
-<div class="bez_filter_form" style="display:none">
+<div class="bez_filter_form">
     <form action="<?php echo $tpl->url('activity_report') ?>" method="post">
         <span class="datepair">
             <label>od: <input name="from" value="<?php echo $tpl->value('from') ?>" class="date start" style="width: 90px"></label>
@@ -34,17 +34,18 @@
 			<td>
                 <?php echo $tpl->user_name($involvement['user_id']) ?>
 			</td>
-			<td><?php echo $involvement['SUM(original_poster)'] ?></td>
-			<td><?php echo $involvement['SUM(coordinator)'] ?></td>
-			<td><?php echo $involvement['SUM(commentator)'] ?></td>
-			<td><?php echo $involvement['SUM(task_assignee)'] ?></td>
-			<td><?php echo $involvement['COUNT(*)'] ?></td>
+			<td><?php echo $involvement['original_poster_sum'] ?></td>
+			<td><?php echo $involvement['coordinator_sum'] ?></td>
+			<td><?php echo $involvement['commentator_sum'] ?></td>
+			<td><?php echo $involvement['task_assignee_sum'] ?></td>
+            <?php $total = $involvement['original_poster_sum'] + $involvement['coordinator_sum'] + $involvement['commentator_sum'] + $involvement['task_assignee_sum'] ?>
+            <td><?php echo $total ?></td>
 		</tr>
-		<?php $reporter += $involvement['SUM(original_poster)'] ?>
-		<?php $coordinator += $involvement['SUM(coordinator)'] ?>
-        <?php $commentator += $involvement['SUM(commentator)'] ?>
-		<?php $executor += $involvement['SUM(task_assignee)'] ?>
-		<?php $total_total += $involvement['COUNT(*)'] ?>
+		<?php $reporter += $involvement['original_poster_sum'] ?>
+		<?php $coordinator += $involvement['coordinator_sum'] ?>
+        <?php $commentator += $involvement['commentator_sum'] ?>
+		<?php $executor += $involvement['task_assignee_sum'] ?>
+		<?php $total_total += $total ?>
 	<?php endforeach ?>
 	<tr>
 		<th><?php echo $tpl->getLang('report_total') ?></th>
@@ -83,14 +84,15 @@
 			<td>
                 <?php echo $tpl->user_name($involvement['user_id']) ?>
 			</td>
-			<td><?php echo $involvement['SUM(original_poster)'] ?></td>
-			<td><?php echo $involvement['SUM(commentator)'] ?></td>
-			<td><?php echo $involvement['SUM(assignee)'] ?></td>
-			<td><?php echo $involvement['COUNT(*)'] ?></td>
-			<?php $reporter += $involvement['SUM(original_poster)'] ?>
-			<?php $commentator += $involvement['SUM(commentator)'] ?>
-			<?php $executor += $involvement['SUM(assignee)'] ?>
-            <?php $total_total += $involvement['COUNT(*)'] ?>
+			<td><?php echo $involvement['original_poster_sum'] ?></td>
+			<td><?php echo $involvement['commentator_sum'] ?></td>
+			<td><?php echo $involvement['assignee_sum'] ?></td>
+            <?php $total = $involvement['original_poster_sum'] + $involvement['commentator_sum'] + $involvement['assignee_sum'] ?>
+			<td><?php echo $total ?></td>
+			<?php $reporter += $involvement['original_poster_sum'] ?>
+			<?php $commentator += $involvement['commentator_sum'] ?>
+			<?php $executor += $involvement['assignee_sum'] ?>
+            <?php $total_total += $total ?>
 		</tr>
 	<?php endforeach ?>
 	<tr>
