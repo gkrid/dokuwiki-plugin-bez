@@ -56,14 +56,7 @@
         <td><?php echo $total_total ?></td>
 	</tr>
 </table>
-<?php
-    if ($reporter !== 0) {
-        $kpi = $total_total/$reporter;
-    } else {
-        $kpi = 0;
-    }
-?>
-<p style="font-weight: bold">KPI = <?php echo sprintf("%.2f", $kpi) ?></p>
+<p style="font-weight: bold">KPI = <?php echo sprintf("%.2f", $tpl->get('kpi')) ?></p>
 
 
 <h2><?php echo $tpl->getLang('activity_in_tasks') ?></h2>

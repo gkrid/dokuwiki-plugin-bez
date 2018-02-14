@@ -58,6 +58,29 @@ class ThreadFactory extends Factory {
         return $r;
     }
 
+    public function kpi($range=array()) {
+        if (count($range) > 0) {
+            $from = date('c	', strtotime($range[0]));
+            if (count($range) == 1) {
+                $to = date('c');
+            } else {
+                $to = date('c', strtotime($range[1]));
+            }
+            $sql = "SELECT COUNT(*)*1.0/COUNT(DISTINCT thread_id) AS kpi
+                       FROM thread_participant JOIN thread ON thread_participant.thread_id = thread.id
+                       WHERE thread.create_date BETWEEN ? AND ?
+                       GROUP BY thread_id";
+            $r = $this->model->sqlite->query($sql, $from, $to);
+        } else {
+            $sql = "SELECT COUNT(*)*1.0/COUNT(DISTINCT thread_id) AS kpi
+                      FROM thread_participant";
+
+            $r = $this->model->sqlite->query($sql);
+        }
+
+        return $r->fetchColumn();
+    }
+
     public function initial_save(Entity $thread, $data) {
         $label_ids = array();
         if (isset($data['label_id']) && $data['label_id'] != '') {

@@ -17,3 +17,4 @@ if(count($_POST) > 0) {
 
 $this->tpl->set('thread_involvement', $this->model->threadFactory->users_involvement($range));
 $this->tpl->set('task_involvement', $this->model->taskFactory->users_involvement($range));
+$this->tpl->set('kpi', $this->model->threadFactory->kpi($range));

@@ -70,6 +70,7 @@
 					<?php include 'task_form.php' ?>
 				<?php else: ?>
 					<?php include 'task_box.php' ?>
+                    <br>
 				<?php endif ?>
 			<?php endforeach ?>
 			<?php if ($tpl->get('thread')->user_is_coordinator()): ?>
@@ -77,7 +78,7 @@
                             $tpl->param('kid') == $tpl->get('thread_comment')->id): ?>
 					<?php include 'task_form.php' ?>
 				<?php elseif (	$tpl->get('thread_comment')->type != 'comment' &&
-                                $tpl->get('thread')->state == 'opened' &&
+                                $tpl->get('thread')->can_add_tasks() &&
                                 $tpl->param('action') != 'task_edit'): ?>
 						<div class="bez_second_lv_buttons" style="margin-top:10px">
 							<a href="<?php echo $tpl->url('thread', 'id', $tpl->get('thread')->id, 'kid', $tpl->get('thread_comment')->id, 'action', 'task_add') ?>#z_" class="bez_subscribe_button">
