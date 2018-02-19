@@ -608,3 +608,11 @@ $lang['mail_task_assignee'] = 'assigned you to task';
 $lang['mail_mail_inform_admins_action'] = 'reported proposal';
 
 $lang['participant_removed'] = '<strong>%s</strong> has been removed.';
+
+$lang['pin_to_the_issue'] = 'Pin to the issue';
+$lang['unpin_from_the_issue'] = 'Unpin from the issue';
+
+$lang['validate_pin_task'] = "Thread doesn't exists or isn't opened.";
+$lang['thread_id'] = "Thread id";
+$lang['confirm_unpin_task'] = "Do you really want to unpin this task?";
+$lang['pin_button'] = 'Pin';

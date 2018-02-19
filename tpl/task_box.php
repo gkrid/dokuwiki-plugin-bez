@@ -32,7 +32,7 @@
 	<a href="<?php echo $tpl->url('task', 'tid', $tpl->get('task')->id) ?>">
 		#z<?php echo $tpl->get('task')->id ?>
 	</a>
-    <?php if ($tpl->get('task')->thread_id != '' && $tpl->get('task')->thread->type != 'project'): ?>
+    <?php if ($tpl->get('task')->thread_id == '' || $tpl->get('task')->thread->type != 'project'): ?>
 	    <?php echo lcfirst($tpl->getLang('task_type_' . $tpl->get('task')->type)) ?>
     <?php endif ?>
 	(<?php echo lcfirst($tpl->getLang('task_' . $tpl->get('task')->state)) ?>)
@@ -95,6 +95,35 @@
     <?php endif ?>
 
     <div class="bez_buttons">
+        <?php if ($tpl->get('task')->acl_of('thread_id') >= BEZ_PERMISSION_CHANGE): ?>
+            <?php if ($tpl->get('task')->thread_id == ''): ?>
+                <form   id="plugin__bez_task_pin_form"
+                        action="<?php echo $tpl->url('task', 'tid', $tpl->get('task')->id, 'action', 'pin') ?>"
+                        method="post">
+                    <label>
+                        <?php echo $tpl->getLang('thread_id') ?>:
+                        <input name="thread_id" type="number" style="width: 50px"
+                               value="<?php echo $tpl->value('thread_id') ?>" />
+                        <button style="display:none">
+                            <?php echo $tpl->getLang('pin_button') ?>
+                        </button>
+                    </label>
+                    <button id="plugin__bez_pin_to_the_issue" class="bds_inline_button"
+                       href="<?php echo $tpl->url('task', 'tid', $tpl->get('task')->id) ?>#zk_">
+                        <span style="bez_awesome">&#xf0c6;</span>
+                        <?php echo $tpl->getLang('pin_to_the_issue') ?>
+                    </button>
+                </form>
+            <?php else: ?>
+                <a class="bds_inline_button"
+                   href="<?php echo $tpl->url('task', 'tid', $tpl->get('task')->id, 'action', 'unpin') ?>"
+                   onclick="return confirm('<?php echo $tpl->getLang('confirm_unpin_task') ?>')">
+                    <span style="bez_awesome">&#xf0c6;</span>
+                    <?php echo $tpl->getLang('unpin_from_the_issue') ?>
+                </a>
+            <?php endif ?>
+        <?php endif ?>
+
         <?php if ($tpl->get('task')->acl_of('state') >= BEZ_PERMISSION_CHANGE): ?>
             <a class="bds_inline_button"
                id="plugin__bez_do_task_button"

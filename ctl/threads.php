@@ -49,6 +49,11 @@ $db_filters = array_map(function($v) {
     return $v;
 }, $db_filters);
 
+//don't show rejecetd by default
+if (!isset($db_filters['state'])) {
+    $db_filters['state'] = array('!=', 'rejected');
+}
+
 if (isset($filters['year']) && $filters['year'] !== '-all') {
     $year = $filters['year'];
     

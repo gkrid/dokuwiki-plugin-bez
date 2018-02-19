@@ -267,4 +267,21 @@ bez.ctl.task = function() {
  
     jQuery( "#bez_invite_users select" ).combobox();
     //INVITE
+
+    if (jQuery('#plugin__bez_task_pin_form').length > 0) {
+        var $form = jQuery('#plugin__bez_task_pin_form'),
+            $label = $form.find('label'),
+            $org_button = $form.find('#plugin__bez_pin_to_the_issue');
+
+        //this button is hidden by default
+        $label.find('button').show();
+
+        //hide entire form
+        $label.hide();
+        $org_button.click(function (e) {
+            e.preventDefault();
+            jQuery(this).hide();
+            $label.show();
+        })
+    }
 };

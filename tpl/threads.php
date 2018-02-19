@@ -100,6 +100,7 @@
 			<input type="checkbox" name="sort_open"
 			<?php if ($tpl->value('sort_open') === 'on') echo 'checked="checked"' ?>>
 	</label>
+
 	<label><input type="submit" value="<?php echo $tpl->getLang('filter') ?>" /></label>
 </form>
 </div>
@@ -167,13 +168,13 @@
                 <?php echo $tpl->date($thread->last_activity_date) ?>
             </td>
 			<td>
-				<?php if ($thread->close_date === NULL): ?>
-					<em>---</em>
-				<?php else: ?>
-					<?php echo $tpl->date($thread->close_date) ?><br />
-					<?php $s = $tpl->getLang('report_priority').': ' .
+				<?php if (in_array($thread->state, array('closed', 'rejected'))): ?>
+                    <?php echo $tpl->date($thread->close_date) ?><br />
+                    <?php $s = $tpl->getLang('report_priority').': ' .
                         $tpl->date_diff_days($thread->create_date, $thread->close_date, '%a') ?>
-					<?php echo str_replace(' ', '&nbsp;', $s) ?>
+                    <?php echo str_replace(' ', '&nbsp;', $s) ?>
+				<?php else: ?>
+                    <em>---</em>
 				<?php endif ?>
 			</td>
 			<td>

@@ -645,3 +645,10 @@ $lang['mail_task_assignee'] = 'przypisał cię do zadania';
 $lang['mail_mail_inform_admins_action'] = 'zgłosił propozycję';
 
 $lang['participant_removed'] = '<strong>%s</strong> został wypisany.';
+
+$lang['pin_to_the_issue'] = 'Przypnij do problemu';
+$lang['unpin_from_the_issue'] = 'Odepnij od problemu';
+$lang['validate_pin_task'] = "Wątek nie istnieje lub nie jest otwarty.";
+$lang['thread_id'] = "Nr problemu";
+$lang['confirm_unpin_task'] = "Czy na pewno chcesz odpiąć to zadanie?";
+$lang['pin_button'] = 'Przypnij';

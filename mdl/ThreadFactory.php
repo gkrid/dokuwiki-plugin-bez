@@ -68,8 +68,7 @@ class ThreadFactory extends Factory {
             }
             $sql = "SELECT COUNT(*)*1.0/COUNT(DISTINCT thread_id) AS kpi
                        FROM thread_participant JOIN thread ON thread_participant.thread_id = thread.id
-                       WHERE thread.create_date BETWEEN ? AND ?
-                       GROUP BY thread_id";
+                       WHERE thread.create_date BETWEEN ? AND ?";
             $r = $this->model->sqlite->query($sql, $from, $to);
         } else {
             $sql = "SELECT COUNT(*)*1.0/COUNT(DISTINCT thread_id) AS kpi
@@ -79,6 +78,37 @@ class ThreadFactory extends Factory {
         }
 
         return $r->fetchColumn();
+    }
+
+    public function bez_activity($range=array()) {
+        if (count($range) > 0) {
+            $from = date('c	', strtotime($range[0]));
+            if (count($range) == 1) {
+                $to = date('c');
+            } else {
+                $to = date('c', strtotime($range[1]));
+            }
+            $sql = "SELECT COUNT(DISTINCT user_id)
+                      FROM (SELECT user_id
+                              FROM thread_participant JOIN thread ON thread_participant.thread_id = thread.id
+                              WHERE create_date BETWEEN ? AND ?
+                            UNION
+                            SELECT user_id
+                              FROM task_participant JOIN task ON task_participant.task_id = task.id
+                              WHERE create_date BETWEEN ? AND ?)";
+            $r = $this->model->sqlite->query($sql, $from, $to, $from, $to);
+        } else {
+            $sql = "SELECT COUNT(DISTINCT user_id)
+                      FROM (SELECT user_id FROM thread_participant
+                            UNION
+                            SELECT user_id FROM task_participant)";
+
+            $r = $this->model->sqlite->query($sql);
+        }
+        $active_users = $r->fetchColumn();
+        $wiki_users = count($this->model->userFactory->get_all());
+
+        return $active_users/$wiki_users * 100;
     }
 
     public function initial_save(Entity $thread, $data) {

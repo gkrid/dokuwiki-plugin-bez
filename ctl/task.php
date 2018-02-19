@@ -87,8 +87,15 @@ if ($this->get_param('action') == 'comment_add') {
     } else {
         header("Location: " . $this->url('tasks'));
     }
-
+} elseif ($this->get_param('action') == 'pin') {
+    $thread_id = $_POST['thread_id'];
+    $task->pin($thread_id);
+    $redirect = true;
+} elseif ($this->get_param('action') == 'unpin') {
+    $task->unpin();
+    $redirect = true;
 }
+
 
 if (isset($redirect) && $redirect == true) {
     if (isset($anchor)) {

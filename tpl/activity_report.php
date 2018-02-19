@@ -57,6 +57,7 @@
 	</tr>
 </table>
 <p style="font-weight: bold">KPI = <?php echo sprintf("%.2f", $tpl->get('kpi')) ?></p>
+<p style="font-weight: bold">% = <?php echo sprintf("%.2f", $tpl->get('bez_activity')) ?></p>
 
 
 <h2><?php echo $tpl->getLang('activity_in_tasks') ?></h2>

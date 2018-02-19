@@ -2,6 +2,7 @@
 
 namespace dokuwiki\plugin\bez\mdl;
 
+use dokuwiki\plugin\bez\meta\ConsistencyViolationException;
 use dokuwiki\plugin\bez\meta\Mailer;
 use dokuwiki\plugin\bez\meta\PermissionDeniedException;
 use dokuwiki\plugin\bez\meta\ValidationException;
@@ -455,6 +456,33 @@ class Task extends Entity {
         $q = "UPDATE task_participant SET removed=1 WHERE task_id=? AND user_id=?";
         $this->model->sqlite->query($q, $this->id, $user_id);
 
+    }
+
+    public function pin($thread_id) {
+        if ($this->acl_of('thread_id') < BEZ_PERMISSION_CHANGE) {
+            throw new PermissionDeniedException();
+        }
+        if ($this->thread_id != '') {
+            throw new ConsistencyViolationException('task already pinned to thread');
+        }
+
+        //check if thread exists and isn't closed
+        $q = "SELECT id FROM thread_view WHERE id = ? AND state IN ('opened', 'done')";
+        $r = $this->model->sqlite->query($q, $thread_id);
+        if ($this->model->sqlite->res2count($r) == 0) {
+            throw new ValidationException("task", array('thread_id' => 'pin_task'));
+        }
+        $q = "UPDATE task SET type='correction', thread_id=? WHERE id=?";
+        $this->model->sqlite->query($q, $thread_id, $this->id);
+    }
+
+    public function unpin() {
+        if ($this->acl_of('thread_id') < BEZ_PERMISSION_CHANGE) {
+            throw new PermissionDeniedException();
+        }
+
+        $q = "UPDATE task SET type='program', thread_id='' WHERE id=?";
+        $this->model->sqlite->query($q, $this->id);
     }
 
     public function invite($client) {
