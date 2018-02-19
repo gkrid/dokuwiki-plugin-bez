@@ -425,7 +425,7 @@ class Thread extends Entity {
     }
 
     public function closing_comment() {
-        $r = $this->model->thread_commentFactory->get_from_thread($this, array(), 'id', 1);
+        $r = $this->model->thread_commentFactory->get_from_thread($this, array(), 'id DESC', 1);
         $thread_comment = $r->fetch();
 
         return $thread_comment->content_html;
