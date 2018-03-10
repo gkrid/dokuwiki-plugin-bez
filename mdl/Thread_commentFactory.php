@@ -61,7 +61,22 @@ class Thread_commentFactory extends Factory {
     public function update_save(Entity $thread_comment, $data) {
         try {
             $this->beginTransaction();
+
+            $prev_type = $thread_comment->type;
+
             parent::update_save($thread_comment, $data);
+
+            //update task types
+            if ($thread_comment->type != 'comment' && $thread_comment->type != $prev_type) {
+                if ($thread_comment->type == 'cause_real') {
+                    $task_type = 'corrective';
+                } else {
+                    $task_type = 'preventive';
+                }
+                $this->model->sqlite->query('UPDATE task SET type=? WHERE thread_comment_id=?',
+                                            $task_type, $thread_comment->id);
+
+            }
 
             $thread_comment->thread->update_last_activity();
 

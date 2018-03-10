@@ -63,7 +63,7 @@ class Task extends Entity {
             if ($this->thread_id == null) {
                 return null;
             }
-            if ($this->thread == null) {
+            if ($this->thread == null || $this->thread_id != $this->thread->id) {
                 $this->thread = $this->model->threadFactory->get_one($this->thread_id);
             }
             return $this->thread;
@@ -72,7 +72,7 @@ class Task extends Entity {
             if ($this->thread_comment_id == null) {
                 return null;
             }
-            if ($this->thread_comment == null) {
+            if ($this->thread_comment == null || $this->thread_comment_id != $this->thread_comment->id) {
                 $this->thread_comment = $this->model->thread_commentFactory->get_one($this->thread_comment_id);
             }
             return $this->thread_comment;
@@ -255,6 +255,16 @@ class Task extends Entity {
         parent::set_data($post);
 
         $this->content_html = p_render('xhtml',p_get_instructions($this->content), $ignore);
+
+        if ($this->thread_id == '') {
+            $this->type = 'program';
+        } elseif ($this->thread_comment_id == '') {
+            $this->type = 'correction';
+        } elseif ($this->__get('thread_comment')->type == 'cause_real') {
+            $this->type = 'corrective';
+        } else {
+            $this->type = 'preventive';
+        }
 
         if (!isset($post['assignee'])) {
             $this->assignee = $this->model->user_nick;
