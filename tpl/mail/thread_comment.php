@@ -6,7 +6,7 @@
 </head>
 <style type="text/css">
     body {
-        font-family: Arial, sans-serif;
+        font: normal 87.5%/1.4 Arial, sans-serif;
     }
     <?php echo $tpl->get('style') ?>
 </style>

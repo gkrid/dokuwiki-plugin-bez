@@ -272,6 +272,7 @@ $lang['task_for'] = 'dla';
 $lang['content'] = 'Opis';
 
 $lang['8d_report'] = 'Raport 8D';
+$lang['8d_report_header'] = 'Raport %dD';
 $lang['8d_report_for'] = 'dla';
 $lang['open_date'] = 'Data otwarcia';
 $lang['close_date'] = 'Data zamknięcia';

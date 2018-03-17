@@ -26,7 +26,7 @@
 <?php echo $tpl->get('content') ?>
 
 <div style="margin-top: 5px; padding: 20px; background: #F2F2F2;">
-    <a href="<?php echo $tpl->url('task', 'tid', $tpl->get('thread')->id) ?>#k_" style="text-decoration: none; color: #444; font-weight: bold;">Dodaj komentarz</a>
+    <a href="<?php echo $tpl->url('task', 'tid', $tpl->get('task')->id) ?>#k_" style="text-decoration: none; color: #444; font-weight: bold;">Dodaj komentarz</a>
 </div>
 
 <p style="font-size:small;color:#666;">&mdash;<br />

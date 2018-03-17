@@ -271,6 +271,7 @@ $lang['task_for'] = "for";
 $lang['content'] = "Description";
 
 $lang['8d_report'] = "8D Report";
+$lang['8d_report_header'] = "%dD Report";
 $lang['8d_report_for'] = "for";
 $lang['open_date'] = "Open date";
 $lang['1d'] = "Team";

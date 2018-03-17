@@ -1,6 +1,14 @@
 <?php /* @var \dokuwiki\plugin\bez\meta\Tpl $tpl */ ?>
+<?php $D = 2 ?>
+<?php if (count($tpl->get('8d_tasks')['correction']) > 0) $D++ ?>
+<?php if (count($tpl->get('causes_real')) > 0) $D++ ?>
+<?php if (count($tpl->get('8d_tasks')['corrective']) > 0) $D++ ?>
+<?php if (count($tpl->get('causes_potential')) > 0) $D++ ?>
+<?php if (count($tpl->get('8d_tasks')['preventive']) > 0) $D++ ?>
+<?php if ($tpl->get('thread')->state == 'closed') $D++ ?>
+
 <h1>
-	<?php echo $tpl->getLang('8d_report') ?>
+	<?php printf($tpl->getLang('8d_report_header'), $D); ?>
 	<span id="bez_8d_send_button">[<a href="
 		<?php echo $tpl->mailto('',
    $tpl->getLang('8d_report').': #'.$tpl->get('thread')->id.' '.$tpl->get('thread')->title,

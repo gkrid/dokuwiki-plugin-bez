@@ -175,8 +175,11 @@ class Thread extends Entity {
             return;
         }
 
+        //update thread
         $this->model->sqlite->query("UPDATE {$this->get_table_name()} SET private=? WHERE id=?", $private, $this->id);
 
+        //update task
+        $this->model->sqlite->query("UPDATE task SET private=? WHERE thread_id=?", $private, $this->id);
     }
 
 	public function update_last_activity() {

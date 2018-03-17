@@ -295,10 +295,14 @@ class Task extends Entity {
         }
 
         if ($state == 'done') {
+            $this->state = $state;
+            $this->closed_by = $this->model->user_nick;
+            $this->close_date = date('c');
+
             $this->model->sqlite->query("UPDATE {$this->get_table_name()} SET state=?, closed_by=?, close_date=? WHERE id=?",
-                $state,
-                $this->model->user_nick,
-                date('c'),
+                $this->state,
+                $this->closed_by,
+                $this->close_date,
                 $this->id);
         //reopen the task
         } else {
