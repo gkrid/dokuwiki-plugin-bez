@@ -165,6 +165,20 @@ abstract class Factory {
         return $count;
     }
 
+    public function exists($id) {
+        $table = $this->get_table_name();
+        $q = "SELECT id FROM $table WHERE id = ?";
+
+        $sth = $this->model->db->prepare($q);
+        $sth->execute(array($id));
+
+        if ($sth->fetch()) {
+            return true;
+        }
+
+        return false;
+    }
+
     public function get_one($id, $defaults=array()) {
         $table = $this->get_table_view();
         if (!$table) {

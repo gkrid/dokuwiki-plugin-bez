@@ -144,7 +144,7 @@ $lang['type_threat'] = 'zagrożenie';
 
 $lang['state_proposal'] = 'propozycja';
 $lang['state_opened'] = 'otwarta';
-$lang['state_done'] = 'wykonane';
+$lang['state_done'] = 'zamknięte';
 $lang['state_rejected'] = 'odrzucona';
 $lang['state_closed'] = 'zamknięta';
 
