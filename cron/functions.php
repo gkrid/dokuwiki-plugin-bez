@@ -1,7 +1,7 @@
 <?php
 
 $action = new action_plugin_bez_base();
-$action->createObjects();
+$action->createObjects(true);
 
 function send_inactive_issue() {
     global $action;

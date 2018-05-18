@@ -13,3 +13,5 @@ $meta['weekly_cron_day_of_the_week'] = array(
         'Saturday',
         )
     );
+
+$meta['url'] = array('string');

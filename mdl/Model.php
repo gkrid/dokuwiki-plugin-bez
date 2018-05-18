@@ -75,9 +75,9 @@ class Model {
         return $this->level;
     }
 	
-	public function __construct($dw_auth, $user_nick, $action) {
-		$this->dw_auth = $dw_auth;
-		$this->user_nick = $user_nick;
+	public function __construct($dw_auth, $user_nick, $action, $skip_acl=false) {
+        $this->dw_auth = $dw_auth;
+        $this->user_nick = $user_nick;
 		$this->action = $action;
         $this->conf = $action->getGlobalConf();
 
@@ -103,22 +103,26 @@ class Model {
 
         $this->authentication_tokenFactory = new Authentication_tokenFactory($this);
 
-        $userd = $this->dw_auth->getUserData($this->user_nick);
-        if ($userd !== false && is_array($userd['grps'])) {
-            $grps = $userd['grps'];
-            if (in_array('admin', $grps ) || in_array('bez_admin', $grps )) {
-                $this->update_level(BEZ_AUTH_ADMIN);
-            } elseif (in_array('bez_leader', $grps )) {
-                $this->update_level(BEZ_AUTH_LEADER);
-            } else {
-                $this->update_level(BEZ_AUTH_USER);
-            }
-        } elseif (isset($_GET['t'])) {
-            $page_id = $this->action->id();
+        if ($skip_acl) {
+            $this->update_level(BEZ_AUTH_ADMIN);
+        } else {
+            $userd = $this->dw_auth->getUserData($this->user_nick);
+            if ($userd !== false && is_array($userd['grps'])) {
+                $grps = $userd['grps'];
+                if (in_array('admin', $grps ) || in_array('bez_admin', $grps )) {
+                    $this->update_level(BEZ_AUTH_ADMIN);
+                } elseif (in_array('bez_leader', $grps )) {
+                    $this->update_level(BEZ_AUTH_LEADER);
+                } else {
+                    $this->update_level(BEZ_AUTH_USER);
+                }
+            } elseif (isset($_GET['t'])) {
+                $page_id = $this->action->id();
 
-            $user_tok = trim($_GET['t']);
-            if ($this->authentication_tokenFactory->get_token($page_id) == $user_tok) {
-                $this->update_level(BEZ_AUTH_VIEWER);
+                $user_tok = trim($_GET['t']);
+                if ($this->authentication_tokenFactory->get_token($page_id) == $user_tok) {
+                    $this->update_level(BEZ_AUTH_VIEWER);
+                }
             }
         }
     }

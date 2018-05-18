@@ -1,20 +1,17 @@
 <?php
 
-function usage() {
-    echo "usage: cron-daily.php url user\n";
+//include base config
+$inc = realpath(__DIR__.'/../../..');
+define('DOKU_INC', $inc.'/');
+
+include DOKU_INC . 'conf/local.php';
+
+if (!isset($conf['plugin']['bez']['url'])) {
+    echo "set the plugin wiki URL in bez config\n";
     exit(1);
 }
 
-if (count($argv) < 3) {
-    usage();
-}
-
-$url = $argv[1];
-
-$dw_user = $argv[2];
-
-$url_p = parse_url($url);
-
+$url_p = parse_url($conf['plugin']['bez']['url']);
 if (!isset($url_p['scheme'])) {
     $_SERVER['HTTPS'] = 'on';
     
@@ -40,14 +37,11 @@ if (!isset($url_p['scheme'])) {
 //in case of $conf['basedir'] is empty
 $_SERVER['SCRIPT_NAME'] = $_SERVER['DOCUMENT_ROOT'].'doku.php';
 
-$inc = realpath(__DIR__.'/../../..');
-define('DOKU_INC', $inc.'/');
-
 // load and initialize the core system
 require_once(DOKU_INC.'inc/init.php');
 
 $INFO = array();
-$INFO['client'] = $dw_user;
+$INFO['client'] = false;
 require_once 'cron/functions.php';
 
 if (date('l') === $conf['plugin']['bez']['weekly_cron_day_of_the_week']) {

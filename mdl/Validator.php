@@ -5,7 +5,7 @@ namespace dokuwiki\plugin\bez\mdl;
 use dokuwiki\plugin\bez\meta\ValidationException;
 
 class Validator {
-	private $rules=array(), $errors, $model;
+	private $rules=array(), $errors=array(), $model;
 	public function __construct($model) {
 		$this->model = $model;
 	}

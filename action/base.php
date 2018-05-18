@@ -10,6 +10,20 @@ class action_plugin_bez_base extends DokuWiki_Action_Plugin {
     /** @var  bez\meta\Tpl */
     protected $tpl;
 
+    public function loadConfig() {
+        global $conf;
+
+        if (! isset($conf['plugin']['bez']['url'])) {
+            include DOKU_PLUGIN . 'config/settings/config.class.php';
+            $datafile = DOKU_PLUGIN . 'config/settings/config.metadata.php';
+            $configuration = new configuration($datafile);
+            $configuration->setting['plugin____bez____url']->update(DOKU_URL);
+            $configuration->save_settings('config');
+            $conf['plugin']['bez']['url'] = DOKU_URL;
+        }
+        parent::loadConfig();
+    }
+
 
     public function getPluginName() {
         return 'bez';
@@ -56,11 +70,11 @@ class action_plugin_bez_base extends DokuWiki_Action_Plugin {
 
     }
 
-    public function createObjects() {
+    public function createObjects($skip_acl=false) {
         global $auth;
         global $INFO;
 
-        $this->model = new bez\mdl\Model($auth, $INFO['client'], $this);
+        $this->model = new bez\mdl\Model($auth, $INFO['client'], $this, $skip_acl);
         $this->tpl = new bez\meta\Tpl($this);
     }
 
