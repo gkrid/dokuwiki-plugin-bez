@@ -6,7 +6,8 @@ use \dokuwiki\plugin\bez;
 //if we don't have a token, generate a new one and redirect
 if (!isset($_GET['t']) && $this->model->authentication_tokenFactory->can_create_token()) {
     $token = $this->model->authentication_tokenFactory->create_token($this->id());
-    header('Location: ' . $this->url() . '&t=' . $token);
+    header('Location: ' .
+           wl($this->id('kp', 'id', $this->get_param('id')), array('t' => $token), false, '&'));
 }
 
 if ($this->model->get_level() < BEZ_AUTH_VIEWER) {
