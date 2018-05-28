@@ -111,9 +111,6 @@ class action_plugin_bez_base extends DokuWiki_Action_Plugin {
         if (count($args) > 0) {
             $id = call_user_func_array(array($this, 'id'), $args);
             return DOKU_URL . 'doku.php?id=' . $id;
-        } else {
-            //https://stackoverflow.com/questions/6768793/get-the-full-url-in-php
-            return (isset($_SERVER['HTTPS']) ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
         }
     }
 }
