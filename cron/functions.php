@@ -16,7 +16,7 @@ function send_inactive_issue() {
         $day_of_issue_last_activity = date('d', strtotime($thread->last_activity_date));
         if ($day_of_issue_last_activity == date('d')) {
             //send message to all
-            $thread->mail_notify_issue_inactive($thread->get_participants('subscribent'));
+            $thread->mail_notify_inactive($thread->get_participants('subscribent'));
         }
     }
 }
