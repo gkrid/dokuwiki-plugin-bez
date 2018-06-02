@@ -581,12 +581,13 @@ class Task extends Entity {
         $this->mail_notify($content, array($this->assignee), $attachedImages);
     }
 
-    public function mail_notify_remind($users=false) {
+    public function mail_notify_remind($users=false, $days=1) {
         $tpl = $this->model->action->get_tpl();
 
         //we don't want who
         $tpl->set('who', '');
         $tpl->set('action', 'mail_task_remind');
+        $tpl->set('action_replacements', array($days));
         $attachedImages = array();
         $content = $this->mail_task($attachedImages);
         $this->mail_notify($content, $users, $attachedImages);

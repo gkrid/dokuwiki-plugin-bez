@@ -558,7 +558,7 @@ $lang['mail_cause_added'] = 'dodał(a) przyczynę';
 
 $lang['mail_task_added_programme'] = 'przypisał(a) ci zadanie';
 $lang['mail_task_reopened'] = 'otworzył(a) ponownie zadanie';
-$lang['mail_task_remind'] = 'Jutro upłynie termin realizacji zadania';
+$lang['mail_task_remind'] = 'Za %d dni upłynie termin realizacji zadania';
 
 
 $lang['issue_added'] = 'Problem dodany';

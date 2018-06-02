@@ -18,6 +18,6 @@ if (date('l') === $conf['plugin']['bez']['weekly_cron_day_of_the_week']) {
     send_weekly_message();
 }
 
-send_one_day_task_reminder();
+send_task_reminder();
 
 send_inactive_issue();

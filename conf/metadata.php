@@ -14,4 +14,4 @@ $meta['weekly_cron_day_of_the_week'] = array(
         )
     );
 
-$meta['url'] = array('string');
+$meta['task_remaind_days_before'] = array('string');

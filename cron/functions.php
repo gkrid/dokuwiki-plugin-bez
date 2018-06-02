@@ -21,16 +21,29 @@ function send_inactive_issue() {
     }
 }
 
-function send_one_day_task_reminder() {
+function send_task_reminder() {
     global $action;
+
+    $filters = array('state' => 'opened', 'plan_date' => array('OR', array()));
+
+    $days_before = $action->getConf('task_remaind_days_before');
+    $days_before = array_map('trim', explode(',', $days_before));
+
+    if (count($days_before) == 0) {
+        return;
+    }
+
+    foreach($days_before as $day) {
+        $filters['plan_date'][1][] = date('Y-m-d', strtotime("+$day day"));
+    }
+
     
-    $tasks = $action->get_model()->taskFactory->get_all(array(
-        'plan_date' => date('Y-m-d', strtotime('+1 day')),
-        'state'     => 'opened'
-    ));
-       
+    $tasks = $action->get_model()->taskFactory->get_all($filters);
+
+    $now = new DateTime(date('Y-m-d'));
     foreach ($tasks as $task) {
-        $task->mail_notify_remind($task->get_participants('subscribent'));
+        $plan_date = new DateTime($task->plan_date);
+        $task->mail_notify_remind($task->get_participants('subscribent'), $plan_date->diff($now)->format('%a'));
     }
 }
 
