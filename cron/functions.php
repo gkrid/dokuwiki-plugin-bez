@@ -115,7 +115,7 @@ function send_weekly_message() {
         $tpl->set('coming_tasks', $coming_tasks);
         $body = $action->bez_tpl_include('cron/weekly-message', true);
 
-        $mailer = new \dokuwiki\plugin\bez\meta\Mailer();
+        $mailer = new Mailer();
         $rep = array();
         $mailer->setBody('', $rep, NULL, $body, false);
 
