@@ -205,10 +205,19 @@ class action_plugin_bez_base extends DokuWiki_Action_Plugin {
     }
 
     public function url() {
+        global $conf;
+
         $args = func_get_args();
         if (count($args) > 0) {
             $id = call_user_func_array(array($this, 'id'), $args);
-            return DOKU_URL . 'doku.php?id=' . $id;
+            if ($conf['userewrite'] == '1') {
+                return DOKU_URL . $id;
+            } elseif ($conf['userewrite'] == '2') {
+                return DOKU_URL . 'doku.php/' . $id;
+            } else {
+                return DOKU_URL . 'doku.php?id=' . $id;
+            }
+
         }
     }
 }
