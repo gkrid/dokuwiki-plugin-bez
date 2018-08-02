@@ -198,6 +198,9 @@ class action_plugin_bez_base extends DokuWiki_Action_Plugin {
             array_unshift($elms, $this->getGlobalConf('lang'));
         }
 
+        $elms = array_map(function ($elm) {
+            return str_replace(':', '', $elm);
+        }, $elms);
         return implode(':', $elms);
     }
 
