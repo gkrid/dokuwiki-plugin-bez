@@ -55,8 +55,21 @@ jQuery(function () {
         form: '.bez_form, .bez_form_blank',
 		lang: 'pl'
 	});
+
+
+
+	var urlParams = getUrlVars();
+
+    //userewrite == '0'
+	if ('id' in urlParams) {
+		var id = urlParams['id'];
+	//userewrite == '1', '2'
+	} else {
+		var split = window.location.href.split('/'),
+			id = split.pop();
+	}
 	
-	var nparams = getNparams(getUrlVars()['id']),
+	var nparams = getNparams(id),
 		ctl = nparams['bez'];
     
 	if (typeof bez.ctl[ctl] === 'function') {
