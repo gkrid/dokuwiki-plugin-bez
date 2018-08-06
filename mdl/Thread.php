@@ -124,11 +124,16 @@ class Thread extends Entity {
             $this->state = 'opened';
         }
 
-		$this->content_html = p_render('xhtml',p_get_instructions($this->content), $ignore);
+        //update cache
+		$this->purge();
 
         //update dates
         $this->last_modification_date = date('c');
         $this->last_activity_date = $this->last_modification_date;
+    }
+
+    public function purge() {
+        $this->content_html = p_render('xhtml',p_get_instructions($this->content), $ignore);
     }
 
     public function set_state($state) {

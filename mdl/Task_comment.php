@@ -69,6 +69,10 @@ class Task_comment extends Entity {
     }
     public function set_data($post) {
         parent::set_data($post);
+        $this->purge();
+    }
+
+    public function purge() {
         $this->content_html = p_render('xhtml',p_get_instructions($this->content), $ignore);
     }
 

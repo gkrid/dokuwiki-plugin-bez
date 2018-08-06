@@ -100,6 +100,10 @@ class Thread_comment extends Entity {
             unset($post['type']);
         }
         parent::set_data($post);
+        $this->purge();
+    }
+
+    public function purge() {
         $this->content_html = p_render('xhtml',p_get_instructions($this->content), $ignore);
     }
 
