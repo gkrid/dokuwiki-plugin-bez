@@ -184,6 +184,12 @@ class action_plugin_bez_base extends DokuWiki_Action_Plugin {
         foreach ($args as $arg) {
             if (is_array($arg)) {
                 foreach ($arg as $k => $v) {
+                    //replace special chars
+                    list($k, $v) = str_replace(array(':', '#'), '', array($k, $v));
+                    //don't create id with empty value
+                    if (empty($k) || empty($v)) {
+                        continue;
+                    }
                     $elms[] = $k;
                     $elms[] = $v;
                 }
@@ -198,9 +204,9 @@ class action_plugin_bez_base extends DokuWiki_Action_Plugin {
             array_unshift($elms, $this->getGlobalConf('lang'));
         }
 
-        $elms = array_map(function ($elm) {
-            return str_replace(':', '', $elm);
-        }, $elms);
+//        $elms = array_map(function ($elm) {
+//            return str_replace(array(':', '#'), '', $elm);
+//        }, $elms);
         return implode(':', $elms);
     }
 

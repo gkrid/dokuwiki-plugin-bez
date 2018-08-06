@@ -280,10 +280,6 @@ class Task extends Entity {
 		return true;
 	}
 
-    public function purge() {
-        $this->content_html = p_render('xhtml',p_get_instructions($this->content), $ignore);
-    }
-
     public function set_state($state) {
 	    if ($this->acl_of('state') < BEZ_PERMISSION_CHANGE) {
 	        throw new PermissionDeniedException();

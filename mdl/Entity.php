@@ -88,6 +88,22 @@ abstract class Entity {
 
 		$this->set_property_array($val_data);
     }
+
+
+    public function purge() {
+	    if (property_exists($this, 'content') && property_exists($this, 'content_html')) {
+            $rule = $this->validator->get_rule('content');
+
+            $html = p_render('xhtml',p_get_instructions($this->content), $ignore);
+
+            //probably content contains only white spaces
+            if (empty($html) && $rule[1] == 'NOT NULL') {
+                $html = '<p></p>';
+            }
+            $this->content_html = $html;
+        }
+
+    }
     
     public function changable_fields($filter=NULL) {
        $fields = $this->acl->get_list();

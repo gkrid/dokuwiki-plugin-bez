@@ -72,10 +72,6 @@ class Task_comment extends Entity {
         $this->purge();
     }
 
-    public function purge() {
-        $this->content_html = p_render('xhtml',p_get_instructions($this->content), $ignore);
-    }
-
     public function mail_notify_add() {
         $tpl = $this->model->action->get_tpl();
 
