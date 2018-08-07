@@ -6,10 +6,9 @@ define('DOKU_INC', $inc.'/');
 // load and initialize the core system
 require_once(DOKU_INC.'inc/init.php');
 
-if (empty($conf['baseurl']) || empty($conf['basedir'])) {
-    echo "set baseurl and basedir in dokuwiki config\n";
-    exit(-1);
-}
+echo "baseurl: " . $conf['baseurl'] . "\n";
+echo "basedir: " . $conf['basedir'] . "\n";
+
 
 function help() {
     echo "cli.php purge\n";
