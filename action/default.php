@@ -167,6 +167,8 @@ class action_plugin_bez_default extends action_plugin_bez_base {
         }
 	}
 
+	protected $prevent_rendering = false;
+
 	public function action_act_preprocess(Doku_Event $event, $param)
 	{
         global $conf;
@@ -204,8 +206,10 @@ class action_plugin_bez_default extends action_plugin_bez_base {
             dbglog('plugin_bez', $e);
             if ($conf['allowdebug']) {
                dbg($e);
+            } else {
+                msg($e->getMessage(), -1);
             }
-            $this->tpl->prevent_rendering();
+            $this->prevent_rendering = true;
 		}
 	}
 
@@ -217,6 +221,8 @@ class action_plugin_bez_default extends action_plugin_bez_base {
             return false;
         }
         $event->preventDefault();
+
+        if ($this->prevent_rendering) return;
         
 		try {
 
