@@ -11,12 +11,6 @@ if (empty($conf['baseurl']) || empty($conf['basedir'])) {
     exit(-1);
 }
 
-//setup hostbased
-$reflectionClass = new ReflectionClass('DokuWikiFarmCore');
-$reflectionProperty = $reflectionClass->getProperty('hostbased');
-$reflectionProperty->setAccessible(true);
-$reflectionProperty->setValue($FARMCORE, true);
-
 function help() {
     echo "cli.php purge\n";
     exit(0);
@@ -58,7 +52,6 @@ function purge() {
     }
 
 }
-
 
 switch ($argv[1]) {
     case 'purge':
