@@ -1,0 +1,1 @@
+UPDATE thread SET state='opened' WHERE state='done';

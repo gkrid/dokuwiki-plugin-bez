@@ -151,6 +151,21 @@ class ThreadFactory extends Factory {
         }
     }
 
+    protected function update(Entity $obj) {
+        $prev_state = $obj->state;
+        if ($obj->state == 'done') {
+            $reflectionClass = new \ReflectionClass('dokuwiki\plugin\bez\mdl\Thread');
+            $reflectionProperty = $reflectionClass->getProperty('state');
+            $reflectionProperty->setAccessible(true);
+            $reflectionProperty->setValue($obj, 'opened');
+        }
+        try {
+            parent::update($obj);
+        } finally {
+            $reflectionProperty->setValue($obj, $prev_state);
+        }
+    }
+
     public function update_save(Entity $thread, $data) {
         $prev_coordinator = $thread->coordinator;
 
