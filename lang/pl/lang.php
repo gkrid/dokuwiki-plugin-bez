@@ -656,7 +656,7 @@ $lang['timeline thread_proposal'] = 'Propozycja dodana przez <strong>%s</strong>
 $lang['timeline thread_opened'] = 'Problem otwarty. Koordynator: <strong>%s</strong>';
 $lang['timeline thread_done'] = 'Problem wykonany. Koordynator: <strong>%s</strong>';
 $lang['timeline thread_closed'] = 'Problem zamknięty. Koordynator: <strong>%s</strong>';
-$lang['timeline thread_comment_cause_added'] = 'Problem odrzucony. Koordynator: <strong>%s</strong>';
+$lang['timeline thread_rejected'] = 'Problem odrzucony. Koordynator: <strong>%s</strong>';
 
 $lang['timeline thread_comment_cause_added'] = 'Przyczyna dodana przez <strong>%s</strong>';
 $lang['timeline thread_comment_added'] = 'Komentarz dodany przez <strong>%s</strong>';
@@ -670,4 +670,4 @@ $lang['timeline thread_proposal_project'] = 'Propozycja dodana przez <strong>%s<
 $lang['timeline thread_opened_project'] = 'Projekt otwarty. Koordynator: <strong>%s</strong>';
 $lang['timeline thread_done_project'] = 'Projekt wykonany. Koordynator: <strong>%s</strong>';
 $lang['timeline thread_closed_project'] = 'Projekt zamknięty. Koordynator: <strong>%s</strong>';
-$lang['timeline thread_comment_cause_added_project'] = 'Projekt odrzucony. Koordynator: <strong>%s</strong>';
+$lang['timeline thread_rejected_project'] = 'Projekt odrzucony. Koordynator: <strong>%s</strong>';

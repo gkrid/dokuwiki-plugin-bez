@@ -15,7 +15,7 @@ class Timeline {
     protected function datetime($iso8601) {
         $timestamp = strtotime($iso8601);
         $date = date('Y-m-d', $timestamp);
-        $time = date('H:m', $timestamp);
+        $time = date('H:i', $timestamp);
 
         return array($date, $time);
     }
