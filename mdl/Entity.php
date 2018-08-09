@@ -140,4 +140,23 @@ abstract class Entity {
         return $this->acl->acl_of($field);
     }
 
+    protected function html_link_url() {
+	    return '#';
+    }
+
+    protected function html_link_content() {
+	    echo $this->id;
+    }
+
+    public function html_link($pre='', $post='', $print=true) {
+        $ret = '<a href="'.$this->html_link_url().'">';
+        $ret .= $pre . $this->html_link_content() . $post;
+        $ret .= '</a>';
+
+        if ($print) {
+            echo $ret;
+        }
+        return $ret;
+	}
+
 }

@@ -503,6 +503,19 @@ class Task extends Entity {
         $this->set_participant_flags($client, array('subscribent'));
         $this->mail_notify_invite($client);
     }
+
+    protected function html_link_url() {
+        $tpl = $this->model->action->get_tpl();
+        return $tpl->url('task', 'tid', $this->id);
+    }
+
+    protected function html_link_content() {
+        $ret = '';
+        if ($this->thread_id != '') {
+            $ret .= '#'.$this->thread_id . ' ';
+        }
+        return $ret . '#z' . $this->id;
+    }
     
     public function mail_notify($content, $users=false, $attachedImages=array()) {
         $mailer = new \Mailer();

@@ -338,6 +338,7 @@ $lang['types_manage'] = 'Typy problemów';
 $lang['sort'] = 'Sortuj';
 $lang['cancel'] = 'Anuluj';
 
+$lang['menu_activity'] = 'Aktywność';
 $lang['menu_close_task'] = 'Moje zadania (%d)';
 $lang['menu_close_issue'] = 'Moje problemy (%d)';
 $lang['menu_comment_issue'] = 'Otwarte problemy (%d)';
@@ -563,9 +564,6 @@ $lang['mail_task_remind'] = 'Za %d dni upłynie termin realizacji zadania';
 
 $lang['issue_added'] = 'Problem dodany';
 
-$lang['timeline_cause_added'] = 'Przyczyna dodana';
-$lang['timeline_comment_added'] = 'Komentarz dodany';
-
 $lang['issue_invite_header'] = 'Zaproś użytkownika';
 $lang['issue_invite_button'] = 'Zaproś';
 
@@ -653,3 +651,23 @@ $lang['validate_pin_task'] = "Wątek nie istnieje lub nie jest otwarty.";
 $lang['thread_id'] = "Nr problemu";
 $lang['confirm_unpin_task'] = "Czy na pewno chcesz odpiąć to zadanie?";
 $lang['pin_button'] = 'Przypnij';
+
+$lang['timeline thread_proposal'] = 'Propozycja dodana przez <strong>%s</strong>';
+$lang['timeline thread_opened'] = 'Problem otwarty. Koordynator: <strong>%s</strong>';
+$lang['timeline thread_done'] = 'Problem wykonany. Koordynator: <strong>%s</strong>';
+$lang['timeline thread_closed'] = 'Problem zamknięty. Koordynator: <strong>%s</strong>';
+$lang['timeline thread_comment_cause_added'] = 'Problem odrzucony. Koordynator: <strong>%s</strong>';
+
+$lang['timeline thread_comment_cause_added'] = 'Przyczyna dodana przez <strong>%s</strong>';
+$lang['timeline thread_comment_added'] = 'Komentarz dodany przez <strong>%s</strong>';
+
+$lang['timeline task_opened'] = 'Zadanie otwarte. Wykonawca: <strong>%s</strong>';
+$lang['timeline task_done'] = 'Zadanie zamknięte. Wykonawca: <strong>%s</strong>';
+
+$lang['timeline task_comment_added'] = 'Komentarz dodany przez <strong>%s</strong>';
+
+$lang['timeline thread_proposal_project'] = 'Propozycja dodana przez <strong>%s</strong>';
+$lang['timeline thread_opened_project'] = 'Projekt otwarty. Koordynator: <strong>%s</strong>';
+$lang['timeline thread_done_project'] = 'Projekt wykonany. Koordynator: <strong>%s</strong>';
+$lang['timeline thread_closed_project'] = 'Projekt zamknięty. Koordynator: <strong>%s</strong>';
+$lang['timeline thread_comment_cause_added_project'] = 'Projekt odrzucony. Koordynator: <strong>%s</strong>';

@@ -328,6 +328,7 @@ $lang['types_manage'] = 'Types of issues';
 $lang['sort'] = 'Sort';
 $lang['cancel'] = 'Cancel';
 
+$lang['menu_activity'] = 'Activity';
 $lang['menu_close_task'] = 'My tasks (%d)';
 $lang['menu_close_issue'] = 'My issues(%d)';
 $lang['menu_comment_issue'] = 'Opened issues (%d)';

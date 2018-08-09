@@ -441,6 +441,15 @@ class Thread extends Entity {
         return $thread_comment->content_html;
     }
 
+    protected function html_link_url() {
+        $tpl = $this->model->action->get_tpl();
+        return $tpl->url('thread', 'id', $this->id);
+    }
+
+    protected function html_link_content() {
+        return '#' . $this->id;
+    }
+
     //http://data.agaric.com/capture-all-sent-mail-locally-postfix
     //https://askubuntu.com/questions/192572/how-do-i-read-local-email-in-thunderbird
     public function mail_notify($content, $users=false, $attachedImages=array()) {

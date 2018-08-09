@@ -72,6 +72,16 @@ class Task_comment extends Entity {
         $this->purge();
     }
 
+    protected function html_link_url() {
+        $tpl = $this->model->action->get_tpl();
+
+        return $tpl->url('task', 'tid', $this->task_id) . '#zk' . $this->id;
+    }
+
+    protected function html_link_content() {
+        return '#zk' . $this->id;
+    }
+
     public function mail_notify_add() {
         $tpl = $this->model->action->get_tpl();
 

@@ -152,8 +152,8 @@ class ThreadFactory extends Factory {
     }
 
     protected function update(Entity $obj) {
-        $prev_state = $obj->state;
         if ($obj->state == 'done') {
+            $prev_state = $obj->state;
             $reflectionClass = new \ReflectionClass('dokuwiki\plugin\bez\mdl\Thread');
             $reflectionProperty = $reflectionClass->getProperty('state');
             $reflectionProperty->setAccessible(true);
@@ -162,7 +162,9 @@ class ThreadFactory extends Factory {
         try {
             parent::update($obj);
         } finally {
-            $reflectionProperty->setValue($obj, $prev_state);
+            if (isset($prev_state)) {
+                $reflectionProperty->setValue($obj, $prev_state);
+            }
         }
     }
 

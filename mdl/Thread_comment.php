@@ -103,6 +103,15 @@ class Thread_comment extends Entity {
         $this->purge();
     }
 
+    protected function html_link_url() {
+        $tpl = $this->model->action->get_tpl();
+        return $tpl->url('thread', 'id', $this->thread_id) . '#k' . $this->id;
+    }
+
+    protected function html_link_content() {
+        return '#k' . $this->id;
+    }
+
     public function mail_notify_add() {
         $tpl = $this->model->action->get_tpl();
 

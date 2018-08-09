@@ -21,6 +21,9 @@
 
 <div id="plugin__bez_start_tabs">
     <ul>
+        <li><a href="#plugin__bez_tabs-0">
+                <?php echo $tpl->getLang('menu_activity') ?>
+            </a></li>
         <?php if ($tpl->user_acl_level() >= BEZ_AUTH_ADMIN): ?>
         <li><a href="#plugin__bez_tabs-1">
                 <?php echo $tpl->getLang('proposals') ?>
@@ -44,6 +47,9 @@
                 (<span class="count"><?php echo $tpl->get('reported_tasks_count') ?></span>)
             </a></li>
     </ul>
+    <div id="plugin__bez_tabs-0">
+        <?php include 'activity.php' ?>
+    </div>
     <?php $tpl->set('no_filters', true) ?>
     <?php if ($tpl->user_acl_level() >= BEZ_AUTH_ADMIN): ?>
     <div id="plugin__bez_tabs-1">
