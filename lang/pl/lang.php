@@ -679,4 +679,4 @@ $lang['report threads cost'] = 'Koszt całkowity';
 $lang['report threads cost closed'] = 'Koszt tylko zamkniętych';
 $lang['report threads rejected'] = 'Odrzucone';
 
-$lang['info set baseurl'] = 'Ustaw "baseurl" i "basedir" w konfiguracji wiki aby włączyć automatyczne powiadomienia z BEZ.';
+$lang['info set baseurl'] = 'Ustaw "baseurl" w konfiguracji wiki aby włączyć automatyczne powiadomienia z BEZ.';
