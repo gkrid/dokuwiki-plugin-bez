@@ -25,14 +25,11 @@ class ThreadFactory extends Factory {
 		return $years;
     }
 
-    public function users_involvement($range=array()) {
-        if (count($range) > 0) {
-            $from = date('c	', strtotime($range[0]));
-            if (count($range) == 1) {
-                $to = date('c');
-            } else {
-                $to = date('c', strtotime($range[1]));
-            }
+    public function users_involvement(\DatePeriod $period=NULL) {
+        if ($period) {
+            $from = $period->getStartDate()->format(\DateTime::ISO8601);
+            $to = $period->getEndDate()->format(\DateTime::ISO8601);
+
             $sql = "SELECT thread_participant.user_id,
                        SUM(thread_participant.original_poster) AS original_poster_sum,
                        SUM(thread_participant.coordinator) AS coordinator_sum,
@@ -58,14 +55,11 @@ class ThreadFactory extends Factory {
         return $r;
     }
 
-    public function kpi($range=array()) {
-        if (count($range) > 0) {
-            $from = date('c	', strtotime($range[0]));
-            if (count($range) == 1) {
-                $to = date('c');
-            } else {
-                $to = date('c', strtotime($range[1]));
-            }
+    public function kpi(\DatePeriod $period=NULL) {
+        if ($period) {
+            $from = $period->getStartDate()->format(\DateTime::ISO8601);
+            $to = $period->getEndDate()->format(\DateTime::ISO8601);
+
             $sql = "SELECT COUNT(*)*1.0/COUNT(DISTINCT thread_id) AS kpi
                        FROM thread_participant JOIN thread ON thread_participant.thread_id = thread.id
                        WHERE thread.create_date BETWEEN ? AND ?";
@@ -80,14 +74,11 @@ class ThreadFactory extends Factory {
         return $r->fetchColumn();
     }
 
-    public function bez_activity($range=array()) {
-        if (count($range) > 0) {
-            $from = date('c	', strtotime($range[0]));
-            if (count($range) == 1) {
-                $to = date('c');
-            } else {
-                $to = date('c', strtotime($range[1]));
-            }
+    public function bez_activity(\DatePeriod $period=NULL) {
+        if ($period) {
+            $from = $period->getStartDate()->format(\DateTime::ISO8601);
+            $to = $period->getEndDate()->format(\DateTime::ISO8601);
+
             $sql = "SELECT COUNT(DISTINCT user_id)
                       FROM (SELECT user_id
                               FROM thread_participant JOIN thread ON thread_participant.thread_id = thread.id
@@ -109,6 +100,95 @@ class ThreadFactory extends Factory {
         $wiki_users = count($this->model->userFactory->get_all());
 
         return $active_users/$wiki_users * 100;
+    }
+
+
+    public function report_issue(\DatePeriod $period=NULL) {
+        if ($period) {
+            $from = $period->getStartDate()->format(\DateTime::ISO8601);
+            $to = $period->getEndDate()->format(\DateTime::ISO8601);
+
+            $sql = "SELECT label_name,
+                           COUNT(CASE WHEN state = 'proposal' THEN 1 END) AS proposal,
+                           COUNT(CASE WHEN state = 'opened' THEN 1 END) AS opened,
+                           COUNT(CASE WHEN state = 'done' THEN 1 END) AS done,
+                           COUNT(CASE WHEN state = 'closed' THEN 1 END) AS closed,
+                           COUNT(CASE WHEN state = 'rejected' THEN 1 END) AS rejected,
+                           COUNT(*) AS count_all,
+                           SUM(task_sum_cost) AS sum_all,
+                           SUM(CASE WHEN state = 'closed' THEN task_sum_cost END) AS sum_closed,
+                           (CASE WHEN state = 'closed' THEN 
+                            AVG(julianday(close_date) - julianday(create_date))
+                            END) AS avg_closed
+                      FROM thread_view
+                      WHERE type = 'issue' AND create_date BETWEEN ? AND ?
+                      GROUP BY label_name
+                      ORDER BY label_name";
+
+            $r = $this->model->sqlite->query($sql, $from, $to);
+        } else {
+            $sql = "SELECT label_name,
+                           COUNT(CASE WHEN state = 'proposal' THEN 1 END) AS proposal,
+                           COUNT(CASE WHEN state = 'opened' THEN 1 END) AS opened,
+                           COUNT(CASE WHEN state = 'done' THEN 1 END) AS done,
+                           COUNT(CASE WHEN state = 'closed' THEN 1 END) AS closed,
+                           COUNT(CASE WHEN state = 'rejected' THEN 1 END) AS rejected,
+                           COUNT(*) AS count_all,
+                           SUM(task_sum_cost) AS sum_all,
+                           SUM(CASE WHEN state = 'closed' THEN task_sum_cost END) AS sum_closed,
+                           (CASE WHEN state = 'closed' THEN 
+                            AVG(julianday(close_date) - julianday(create_date))
+                            END) AS avg_closed
+                      FROM thread_view
+                      WHERE type = 'issue'
+                      GROUP BY label_name
+                      ORDER BY label_name";
+
+            $r = $this->model->sqlite->query($sql);
+        }
+        return $r;
+    }
+
+    public function report_project(\DatePeriod $period=NULL) {
+        if ($period) {
+            $from = $period->getStartDate()->format(\DateTime::ISO8601);
+            $to = $period->getEndDate()->format(\DateTime::ISO8601);
+
+            $sql = "SELECT label_name,
+                           COUNT(CASE WHEN state = 'proposal' THEN 1 END) AS proposal,
+                           COUNT(CASE WHEN state = 'opened' THEN 1 END) AS opened,
+                           COUNT(CASE WHEN state = 'done' THEN 1 END) AS done,
+                           COUNT(CASE WHEN state = 'closed' THEN 1 END) AS closed,
+                           COUNT(CASE WHEN state = 'rejected' THEN 1 END) AS rejected,
+                           COUNT(*) AS count_all,
+                           SUM(task_sum_cost) AS sum_all,
+                           SUM(CASE WHEN state = 'closed' THEN task_sum_cost END) AS sum_closed,
+                           (CASE WHEN state = 'closed' THEN 
+                            AVG(julianday(close_date) - julianday(create_date))
+                            END) AS avg_closed
+                      FROM thread_view
+                      WHERE type = 'project' AND create_date BETWEEN ? AND ?";
+
+            $r = $this->model->sqlite->query($sql, $from, $to);
+        } else {
+            $sql = "SELECT label_name,
+                           COUNT(CASE WHEN state = 'proposal' THEN 1 END) AS proposal,
+                           COUNT(CASE WHEN state = 'opened' THEN 1 END) AS opened,
+                           COUNT(CASE WHEN state = 'done' THEN 1 END) AS done,
+                           COUNT(CASE WHEN state = 'closed' THEN 1 END) AS closed,
+                           COUNT(CASE WHEN state = 'rejected' THEN 1 END) AS rejected,
+                           COUNT(*) AS count_all,
+                           SUM(task_sum_cost) AS sum_all,
+                           SUM(CASE WHEN state = 'closed' THEN task_sum_cost END) AS sum_closed,
+                           (CASE WHEN state = 'closed' THEN 
+                            AVG(julianday(close_date) - julianday(create_date))
+                            END) AS avg_closed
+                      FROM thread_view
+                      WHERE type = 'project'";
+
+            $r = $this->model->sqlite->query($sql);
+        }
+        return $r;
     }
 
     public function initial_save(Entity $thread, $data) {

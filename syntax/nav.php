@@ -36,6 +36,7 @@ class syntax_plugin_bez_nav extends DokuWiki_Syntax_Plugin {
             'threads' => $this->getLang('issues'),
             'projects' => $this->getLang('nav projects'),
             'tasks' => $this->getLang('tasks'),
+            'report' => $this->getLang('report'),
             'activity_report' => $this->getLang('activity_report')
         );
         /** @var bez\meta\BEZ_DokuWiki_Action_Plugin $action */

@@ -618,3 +618,34 @@ $lang['validate_pin_task'] = "Thread doesn't exists or isn't opened.";
 $lang['thread_id'] = "Thread id";
 $lang['confirm_unpin_task'] = "Do you really want to unpin this task?";
 $lang['pin_button'] = 'Pin';
+
+$lang['timeline thread_proposal'] = 'Proposal added by <strong>%s</strong>';
+$lang['timeline thread_opened'] = 'Problem opened. Coordinator: <strong>%s</strong>';
+$lang['timeline thread_done'] = 'Problem done. Coordinator: <strong>%s</strong>';
+$lang['timeline thread_closed'] = 'Problem closed. Coordinator: <strong>%s</strong>';
+$lang['timeline thread_rejected'] = 'Problem rejected. Coordinator: <strong>%s</strong>';
+
+$lang['timeline thread_comment_cause_added'] = 'Cause added by <strong>%s</strong>';
+$lang['timeline thread_comment_added'] = 'Comment added by <strong>%s</strong>';
+
+$lang['timeline task_opened'] = 'Task opened. Performer: <strong>%s</strong>';
+$lang['timeline task_done'] = 'Task closed. Performer: <strong>%s</strong>';
+
+$lang['timeline task_comment_added'] = 'Komentarz dodany przez <strong>%s</strong>';
+
+$lang['timeline thread_proposal_project'] = 'Proposal added by <strong>%s</strong>';
+$lang['timeline thread_opened_project'] = 'Project opened. Coordinator: <strong>%s</strong>';
+$lang['timeline thread_done_project'] = 'Project done. Coordinator: <strong>%s</strong>';
+$lang['timeline thread_closed_project'] = 'Project closed. Coordinator: <strong>%s</strong>';
+$lang['timeline thread_rejected_project'] = 'Project rejected. Coordinator: <strong>%s</strong>';
+
+$lang['report from'] = 'from';
+$lang['report to'] = 'to';
+
+$lang['report threads done'] = 'Done';
+$lang['report threads cost'] = 'Total cost';
+$lang['report threads cost closed'] = 'Total closed cost';
+
+$lang['report threads rejected'] = 'Rejected';
+
+$lang['info set baseurl'] = 'Set "baseurl" and "basedir" to enable bez mail notifications.';

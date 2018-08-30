@@ -1,5 +1,4 @@
 <?php
-/** @var action_plugin_bez $this */
 
 use \dokuwiki\plugin\bez;
 
@@ -13,14 +12,13 @@ if(count($_POST) > 0 && ($_POST['from'] != '' || $_POST['to'] != '')) {
     $to = new DateTime($_POST['to']);
 
     $this->tpl->set_values(array(
-        'from' => $from->format('Y-m-d'),
-        'to' => $to->format('Y-m-d')));
+                               'from' => $from->format('Y-m-d'),
+                               'to' => $to->format('Y-m-d')));
 
     $to->modify('+1 day');//add one day extra
     $period = new DatePeriod($from, new DateInterval('P1D'), $to);
 }
 
-$this->tpl->set('thread_involvement', $this->model->threadFactory->users_involvement($period));
-$this->tpl->set('task_involvement', $this->model->taskFactory->users_involvement($period));
-$this->tpl->set('kpi', $this->model->threadFactory->kpi($period));
-$this->tpl->set('bez_activity', $this->model->threadFactory->bez_activity($period));
+$this->tpl->set('issues', $this->model->threadFactory->report_issue($period)->fetchAll(PDO::FETCH_ASSOC));
+$this->tpl->set('projects', $this->model->threadFactory->report_project($period)->fetchAll(PDO::FETCH_ASSOC));
+$this->tpl->set('tasks', $this->model->taskFactory->report($period)->fetchAll(PDO::FETCH_ASSOC));

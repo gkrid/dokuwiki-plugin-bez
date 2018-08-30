@@ -5,10 +5,10 @@
 <div class="bez_filter_form">
     <form action="<?php echo $tpl->url('activity_report') ?>" method="post">
         <span class="datepair">
-            <label>od: <input name="from" value="<?php echo $tpl->value('from') ?>" class="date start" style="width: 90px"></label>
-            <label>do: <input name="to" value="<?php echo $tpl->value('to') ?>" class="date end" style="width: 90px"></label>
+            <label><?php echo $tpl->getLang('report from') ?>: <input name="from" value="<?php echo $tpl->value('from') ?>" class="date start" style="width: 90px"></label>
+            <label><?php echo $tpl->getLang('report to') ?>: <input name="to" value="<?php echo $tpl->value('to') ?>" class="date end" style="width: 90px"></label>
         </span>
-        <button>Pokaż</button>
+        <button><?php echo $tpl->getLang('show') ?></button>
     </form>
 
 </div>

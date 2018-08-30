@@ -410,8 +410,8 @@ $lang['cause_without_task'] = 'Nie możesz zamknąć problemu jeżeli posiada on
 
 $lang['number_of_open'] = 'Ilość otwartych';
 $lang['number_of_close'] = 'W tym zamkniętych';
-$lang['number_of_close_on_time'] = 'W tym zamkniętych na czas';
-$lang['number_of_close_off_time'] = 'W tym zamkniętych po terminie';
+$lang['number_of_close_on_time'] = 'Zamknięte na czas';
+$lang['number_of_close_off_time'] = 'Zamknięte po terminie';
 $lang['diffirence'] = 'Różnica';
 
 $lang['cost_of_open'] = 'Koszt otwartych';
@@ -671,3 +671,12 @@ $lang['timeline thread_opened_project'] = 'Projekt otwarty. Koordynator: <strong
 $lang['timeline thread_done_project'] = 'Projekt wykonany. Koordynator: <strong>%s</strong>';
 $lang['timeline thread_closed_project'] = 'Projekt zamknięty. Koordynator: <strong>%s</strong>';
 $lang['timeline thread_rejected_project'] = 'Projekt odrzucony. Koordynator: <strong>%s</strong>';
+
+$lang['report from'] = 'od';
+$lang['report to'] = 'do';
+$lang['report threads done'] = 'Wykonane';
+$lang['report threads cost'] = 'Koszt całkowity';
+$lang['report threads cost closed'] = 'Koszt tylko zamkniętych';
+$lang['report threads rejected'] = 'Odrzucone';
+
+$lang['info set baseurl'] = 'Ustaw "baseurl" i "basedir" w konfiguracji wiki aby włączyć automatyczne powiadomienia z BEZ.';

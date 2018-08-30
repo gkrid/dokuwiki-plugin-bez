@@ -61,14 +61,11 @@ class TaskFactory extends Factory {
         return $by_type;
     }
 
-    public function users_involvement($range=array()) {
-        if (count($range) > 0) {
-            $from = date('Y-m-d', strtotime($range[0]));
-            if (count($range) == 1) {
-                $to = date('Y-m-d');
-            } else {
-                $to = date('Y-m-d', strtotime($range[1]));
-            }
+    public function users_involvement(\DatePeriod $period=NULL) {
+        if ($period) {
+            $from = $period->getStartDate()->format(\DateTime::ISO8601);
+            $to = $period->getEndDate()->format(\DateTime::ISO8601);
+
             $sql = "SELECT task_participant.user_id,
                        SUM(task_participant.original_poster) AS original_poster_sum,
                        SUM(task_participant.assignee) AS assignee_sum,
@@ -86,6 +83,48 @@ class TaskFactory extends Factory {
                        FROM task_participant
                        GROUP BY user_id
                        ORDER BY user_id";
+            $r = $this->model->sqlite->query($sql);
+        }
+
+        return $r;
+    }
+
+    public function report(\DatePeriod $period=NULL) {
+        if ($period) {
+            $from = $period->getStartDate()->format(\DateTime::ISO8601);
+            $to = $period->getEndDate()->format(\DateTime::ISO8601);
+
+            $sql = "SELECT task_program_name,
+                        COUNT(CASE WHEN state = 'opened' THEN 1 END) AS opened,
+                        COUNT(CASE WHEN state = 'done' AND close_date <= plan_date THEN 1 END)
+                          AS closed_on_time,
+                        COUNT(CASE WHEN state = 'done' AND close_date > plan_date THEN 1 END)
+                          AS closed_after_the_dedline,
+                        SUM(cost) AS total_cost,
+                        (CASE WHEN state = 'done' THEN 
+                            SUM(cost)
+                            END) AS cost_of_closed,
+                        COUNT(*) AS 'count_all'
+                       FROM task_view
+                       WHERE create_date BETWEEN ? AND ?
+                       GROUP BY task_program_name
+                       ORDER BY task_program_name";
+            $r = $this->model->sqlite->query($sql, $from, $to);
+        } else {
+            $sql = "SELECT task_program_name,
+                        COUNT(CASE WHEN state = 'opened' THEN 1 END) AS opened,
+                        COUNT(CASE WHEN state = 'done' AND close_date <= plan_date THEN 1 END)
+                          AS closed_on_time,
+                        COUNT(CASE WHEN state = 'done' AND close_date > plan_date THEN 1 END)
+                          AS closed_after_the_dedline,
+                        SUM(cost) AS total_cost,
+                        (CASE WHEN state = 'done' THEN 
+                            SUM(cost)
+                            END) AS cost_of_closed,
+                        COUNT(*) AS 'count_all'
+                       FROM task_view
+                       GROUP BY task_program_name
+                       ORDER BY task_program_name";
             $r = $this->model->sqlite->query($sql);
         }
 
