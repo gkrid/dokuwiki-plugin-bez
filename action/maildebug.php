@@ -17,7 +17,7 @@ class action_plugin_bez_maildebug extends DokuWiki_Action_Plugin {
      */
     public function register(Doku_Event_Handler $controller)
     {
-        $controller->register_hook('MAIL_MESSAGE_SEND', 'BEFORE', $this, 'handle_debug');
+        $controller->register_hook('MAIL_MESSAGE_SEND', 'BEFORE', $this, 'handle_debug', null, -3999);
     }
 
     /**
