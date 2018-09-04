@@ -33,6 +33,7 @@ class action_plugin_bez_maildebug extends DokuWiki_Action_Plugin {
 
         if ($dryrun) {
             $event->preventDefault();
+            $event->stopPropagation();
 
             $mail = $event->data['mail'];
             $reflection = new \ReflectionClass($mail);
