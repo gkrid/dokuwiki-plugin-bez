@@ -6,22 +6,12 @@ use dokuwiki\plugin\struct\meta\ValidationException;
 use dokuwiki\plugin\struct\types\AbstractMultiBaseType;
 
 class BezType extends AbstractMultiBaseType {
-    /** @var \action_plugin_bez_base */
-    protected $bez_action;
 
     protected $config = array(
         'autocomplete' => array(
             'maxresult' => 10
         ),
     );
-
-    public function __construct($config = null, $label = '', $ismulti = false, $tid = 0) {
-        parent::__construct($config, $label, $ismulti, $tid);
-
-
-        $this->bez_action = new \action_plugin_bez_base();
-        $this->bez_action->createObjects();
-    }
 
     /**
      * Output the stored data
@@ -68,7 +58,12 @@ class BezType extends AbstractMultiBaseType {
             throw new ValidationException('Invalid BEZ reference');
         }
 
-        if (!$this->bez_action->get_model()->factory($table)->exists($id)) {
+
+        /** @var helper_plugin_sqlite $sqlite */
+        $sqlite = plugin_load('helper', 'bez_db')->getDB();
+        $res = $sqlite->query("SELECT COUNT(*) FROM $table WHERE id=?", $id);
+        $count = $res->fetchColumn();
+        if ($count == 0) {
             throw new ValidationException(ucfirst($table) . " with id: $id doesn't exists.");
         }
 
@@ -103,15 +98,16 @@ class BezType extends AbstractMultiBaseType {
         $max = (int)$this->config['autocomplete']['maxresult'];
         if($max <= 0) return array();
 
-        // this basically duplicates what we do in ajax_qsearch()
-        $q = "SELECT id, state FROM $table WHERE id LIKE :id LIMIT $max";
-        $stmt = $this->bez_action->get_model()->db->prepare($q);
-        $stmt->bindValue(':id', "{$id}%");
-        $stmt->execute();
+        $bez_db_helper = plugin_load('helper', 'bez_db');
+
+        /** @var helper_plugin_sqlite $sqlite */
+        $sqlite = $bez_db_helper->getDB();
+        $sql = "SELECT id, state FROM $table WHERE id LIKE ? LIMIT $max";
+        $res = $sqlite->query($sql, $id . '%');
 
         $result = array();
-        while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-            $state = $this->bez_action->getLang('state_' . $row['state']);
+        while ($row = $res->fetch(\PDO::FETCH_ASSOC)) {
+            $state = $bez_db_helper->getLang('state_' . $row['state']);
 
             $name = $row['id'] . ' (' . $state . ')';
             if ($table == 'task') {
