@@ -50,11 +50,18 @@ class TaskFactory extends Factory {
     }
 
     public function get_by_type($thread) {
-        $tasks = $this->model->taskFactory->get_all(array('thread_id' => $thread->id),
-                                            'thread_comment_id', false, array('thread' => $thread));
+        $sql = "SELECT task.id, task.type, task.content_html, task.state, task.cost, task.plan_date, task.close_date,
+                        task_comment.content_html AS task_comment_content_html
+                        FROM task LEFT JOIN task_comment ON task.id = task_comment.task_id
+                        WHERE task.thread_id = ?
+                        GROUP BY task.id, task.content_html, task.state, task.cost, task.plan_date, task.close_date,
+                        task_comment.content_html
+                        ORDER BY task_comment.id, thread_comment_id";
+        $stmt = $this->model->sqlite->query($sql, $thread->id);
+        $stmt->setFetchMode(\PDO::FETCH_OBJ);
 
         $by_type = array('correction' => array(), 'corrective' => array(), 'preventive' => array());
-        foreach ($tasks as $task) {
+        foreach ($stmt as $task) {
             $by_type[$task->type][$task->id] = $task;
         }
 

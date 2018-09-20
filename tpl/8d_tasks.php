@@ -16,6 +16,10 @@
         </td>
         <td>
             <?php echo $task->content_html ?>
+            <?php if($task->task_comment_content_html != ''): ?>
+                <hr />
+                <?php echo $task->task_comment_content_html ?>
+            <?php endif ?>
         </td>
         <td><?php echo lcfirst($tpl->getLang('task_' . $task->state)) ?></td>
         <td>
