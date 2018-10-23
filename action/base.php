@@ -96,7 +96,8 @@ class action_plugin_bez_base extends DokuWiki_Action_Plugin {
         array_unshift($elms, 'bez');
 
 
-        if ($this->getGlobalConf('lang') != '') {
+        //pl is default language
+        if ($this->getGlobalConf('lang') != '' && $this->getGlobalConf('lang') != 'pl') {
             array_unshift($elms, $this->getGlobalConf('lang'));
         }
 

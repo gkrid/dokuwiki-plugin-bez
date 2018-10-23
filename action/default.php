@@ -52,7 +52,7 @@ class action_plugin_bez_default extends action_plugin_bez_base {
 	 */
 	public function register(Doku_Event_Handler $controller)
 	{
-        $controller->register_hook('DOKUWIKI_STARTED', 'BEFORE', $this, 'setup_enviroment');
+        $controller->register_hook('DOKUWIKI_STARTED', 'AFTER', $this, 'setup_enviroment');
 		$controller->register_hook('ACTION_ACT_PREPROCESS', 'BEFORE', $this, 'action_act_preprocess');
 		$controller->register_hook('TPL_ACT_RENDER', 'BEFORE', $this, 'tpl_act_render');
 		$controller->register_hook('TEMPLATE_PAGETOOLS_DISPLAY', 'BEFORE', $this, 'tpl_pagetools_display');
@@ -123,11 +123,20 @@ class action_plugin_bez_default extends action_plugin_bez_base {
         if ($ex[0] !== 'bez' && $ex[1] !== 'bez') {
             return;
         }
-        
+
 
         if ($ex[1] === 'bez') {
+            //pl is default language
+            if ($ex[0] == 'pl') {
+                //throw out "pl" and "bez"
+                array_shift($ex);
+                array_shift($ex);
+
+                $url = call_user_func_array(array($this, 'url'), $ex);
+                header("Location: $url");
+            }
             $conf['lang'] = array_shift($ex);
-            //$this->lang_code = $conf['lang'];
+
             $this->localised = false;
         }
         //throw out "bez"
