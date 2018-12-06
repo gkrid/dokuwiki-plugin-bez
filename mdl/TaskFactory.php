@@ -64,7 +64,7 @@ class TaskFactory extends Factory {
     }
 
     public function get_by_type($thread) {
-        $stmt = $this->get_by_type($thread);
+        $stmt = $this->get_with_closing_comment($thread);
 
         $by_type = array('correction' => array(), 'corrective' => array(), 'preventive' => array());
         foreach ($stmt as $task) {
