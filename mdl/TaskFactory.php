@@ -49,7 +49,7 @@ class TaskFactory extends Factory {
         return $by_thread_comment;
     }
 
-    public function get_by_type($thread) {
+    public function get_with_closing_comment($thread) {
         $sql = "SELECT task.id, task.type, task.content_html, task.state, task.cost, task.plan_date, task.close_date,
                         task_comment.content_html AS task_comment_content_html
                         FROM task LEFT JOIN task_comment ON task.id = task_comment.task_id
@@ -59,6 +59,12 @@ class TaskFactory extends Factory {
                         ORDER BY task_comment.id, thread_comment_id";
         $stmt = $this->model->sqlite->query($sql, $thread->id);
         $stmt->setFetchMode(\PDO::FETCH_OBJ);
+
+        return $stmt;
+    }
+
+    public function get_by_type($thread) {
+        $stmt = $this->get_by_type($thread);
 
         $by_type = array('correction' => array(), 'corrective' => array(), 'preventive' => array());
         foreach ($stmt as $task) {

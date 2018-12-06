@@ -18,5 +18,5 @@ if ($this->model->get_level() < BEZ_AUTH_VIEWER) {
 $thread = $this->model->threadFactory->get_one($this->get_param('id'));
 $this->tpl->set('thread', $thread);
 
-$tasks = $this->model->taskFactory->get_all(array('thread_id' => $thread->id))->fetchAll();
+$tasks = $this->model->taskFactory->get_with_closing_comment($thread)->fetchAll();
 $this->tpl->set('tasks', $tasks);
