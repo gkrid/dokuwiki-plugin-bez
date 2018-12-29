@@ -15,3 +15,4 @@ $meta['weekly_cron_day_of_the_week'] = array(
     );
 
 $meta['task_remaind_days_before'] = array('string');
+$meta['busy_timeout'] = array('numeric', '_min' => 0);

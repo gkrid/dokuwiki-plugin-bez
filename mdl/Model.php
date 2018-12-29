@@ -86,6 +86,9 @@ class Model {
         $this->sqlite = $this->db_helper->getDB();
         $this->db = $this->sqlite->getAdapter()->getDb();
         $this->db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+        $this->db->exec("PRAGMA journal_mode=WAL");
+        $busy_timeout = 1000 * (int)$this->action->getConf('busy_timeout');
+        $this->db->exec("PRAGMA busy_timeout = $busy_timeout");
 
         $this->userFactory = new UserFactory($this);
 
