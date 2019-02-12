@@ -33,9 +33,16 @@ class Task_commentFactory extends Factory {
 
             if ($data['fn'] == 'task_do') {
                 $task_comment->task->set_state('done');
+                if ($task_comment->id) {
+                    $this->model->sqlite->query("UPDATE {$this->get_table_name()} SET closing=1 WHERE id=?",
+                        $task_comment->id);
+                }
                 $notify = 'mail_task_done';
             } elseif ($data['fn'] == 'task_reopen') {
                 $task_comment->task->set_state('opened');
+                //clean closing flags
+                $this->model->sqlite->query("UPDATE {$this->get_table_name()} SET closing=0 WHERE task_id=?",
+                    $task_comment->task_id);
                 $notify = 'mail_task_repened';
             }
             //update prioirty

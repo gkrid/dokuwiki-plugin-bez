@@ -193,6 +193,7 @@ $lang['task_rejected_header'] = "Task has been rejected";
 $lang['task_closed'] = "Task has been completed";
 $lang['task_reopened'] = "Task has been reopend";
 $lang['comment_added'] = "commented";
+$lang['closing_comment_added'] = 'has added closing comment';
 $lang['comment_changed'] = "Comment has been changed";
 
 $lang['cause_added'] = 'added cause';

@@ -19,7 +19,12 @@
             <h2>
                 <a href="#zk<?php echo $tpl->get('task_comment')->id ?>">#zk<?php echo $tpl->get('task_comment')->id ?></a>
                 <strong><?php echo $tpl->user_name($tpl->get('task_comment')->author) ?></strong>
-                <?php echo $tpl->getLang('comment_added') ?>
+
+                <?php if ($tpl->get('task_comment')->closing === '1'): ?>
+                    <?php echo $tpl->getLang('closing_comment_added') ?>
+                <?php else: ?>
+                    <?php echo $tpl->getLang('comment_added') ?>
+                <?php endif ?>
                 <?php echo $tpl->datetime($tpl->get('task_comment')->create_date) ?>
 
                 <?php if ($tpl->param('zkid') != $tpl->get('task_comment')->id): ?>

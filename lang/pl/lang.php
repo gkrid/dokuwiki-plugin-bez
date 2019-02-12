@@ -194,6 +194,7 @@ $lang['task_rejected_header'] = 'Zadanie odrzucone';
 $lang['task_closed'] = 'Zadanie zakończone';
 $lang['task_reopened'] = 'Zadanie ponownie otwarte';
 $lang['comment_added'] = 'dodał(a) komentarz';
+$lang['closing_comment_added'] = 'dodał(a) komentarz <u>zamykający</u>';
 $lang['comment_changed'] = 'Komentarz zmieniony';
 
 $lang['cause_added'] = 'dodał(a) przyczynę';

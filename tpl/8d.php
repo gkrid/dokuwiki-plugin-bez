@@ -12,7 +12,7 @@
 	<span id="bez_8d_send_button">[<a href="
 		<?php echo $tpl->mailto('',
    $tpl->getLang('8d_report').': #'.$tpl->get('thread')->id.' '.$tpl->get('thread')->title,
-		$tpl->url()) ?>">
+            $tpl->url('8d', 'id', $tpl->get('thread')->id) . '?t=' . $_GET['t']) ?>">
 		✉ <?php echo $tpl->getLang('send_mail') ?>
 	</a>]</span>
 </h1>
