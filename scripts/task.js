@@ -133,10 +133,10 @@ bez.ctl.task = function() {
     );
     
     //INVITE USERS
-    jQuery.widget( "custom.combobox", {
+    jQuery.widget( "custom.inviteUsersCombobox", {
       _create: function() {
         this.wrapper = jQuery( "<span>" )
-          .addClass( "custom-combobox" )
+          .addClass( "custom-inviteUsersCombobox" )
           .insertAfter( this.element );
  
         this.element.hide();
@@ -152,7 +152,7 @@ bez.ctl.task = function() {
           .appendTo( this.wrapper )
           .val( value )
           .attr( "title", "" )
-          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .addClass( "custom-inviteUsersCombobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
           .autocomplete({
             delay: 0,
             minLength: 0,
@@ -192,7 +192,7 @@ bez.ctl.task = function() {
             text: false
           })
           .removeClass( "ui-corner-all" )
-          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .addClass( "custom-inviteUsersCombobox-toggle ui-corner-right" )
           .on( "mousedown", function() {
             wasOpen = input.autocomplete( "widget" ).is( ":visible" );
           })
@@ -265,7 +265,7 @@ bez.ctl.task = function() {
       }
     });
  
-    jQuery( "#bez_invite_users select" ).combobox();
+    jQuery( "#bez_invite_users select" ).inviteUsersCombobox();
     //INVITE
 
     if (jQuery('#plugin__bez_task_pin_form').length > 0) {
