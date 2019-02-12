@@ -159,7 +159,7 @@ bez.ctl.thread = function() {
 			collision: "flipfit"
 		},
 		content: function() {
-			var $this = jQuery(this);
+			var $this = jQuery(this),
 				name = $this.find('.bez_name').text(),
 				content = '<div style="margin-bottom: 3px;">'+name+'</div>';
 			$this.find('.bez_awesome').each(function() {
@@ -189,10 +189,10 @@ bez.ctl.thread = function() {
 
     
     //INVITE USERS
-    jQuery.widget( "custom.combobox", {
+    jQuery.widget( "custom.inviteUsersCombobox", {
       _create: function() {
         this.wrapper = jQuery( "<span>" )
-          .addClass( "custom-combobox" )
+          .addClass( "custom-inviteUsersCombobox" )
           .insertAfter( this.element );
  
         this.element.hide();
@@ -208,7 +208,7 @@ bez.ctl.thread = function() {
           .appendTo( this.wrapper )
           .val( value )
           .attr( "title", "" )
-          .addClass( "custom-combobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
+          .addClass( "custom-inviteUsersCombobox-input ui-widget ui-widget-content ui-state-default ui-corner-left" )
           .autocomplete({
             delay: 0,
             minLength: 0,
@@ -248,7 +248,7 @@ bez.ctl.thread = function() {
             text: false
           })
           .removeClass( "ui-corner-all" )
-          .addClass( "custom-combobox-toggle ui-corner-right" )
+          .addClass( "custom-inviteUsersCombobox-toggle ui-corner-right" )
           .on( "mousedown", function() {
             wasOpen = input.autocomplete( "widget" ).is( ":visible" );
           })
@@ -321,6 +321,6 @@ bez.ctl.thread = function() {
       }
     });
  
-    jQuery( "#bez_invite_users select" ).combobox();
+    jQuery( "#bez_invite_users select" ).inviteUsersCombobox();
     //INVITE
 };

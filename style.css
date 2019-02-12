@@ -852,16 +852,16 @@ input.days {
 }
 
 
-.custom-combobox {
+.custom-inviteUsersCombobox {
     display: flex;
     margin-right: 5px;
 }
 
-.custom-combobox-toggle {
+.custom-inviteUsersCombobox-toggle {
     margin-left: -1px;
 }
 
-.custom-combobox-input {
+.custom-inviteUsersCombobox-input {
     margin: 0;
     padding: 6px 10px;
     max-width: 90px;

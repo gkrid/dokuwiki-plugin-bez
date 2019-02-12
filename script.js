@@ -12,6 +12,7 @@ bez.ctl = {};
 /* DOKUWIKI:include scripts/start.js */
 /* DOKUWIKI:include scripts/report.js */
 
+
 jQuery(function () {
     'use strict';
     
