@@ -518,7 +518,11 @@ class Task extends Entity {
     }
     
     public function mail_notify($content, $users=false, $attachedImages=array()) {
+	    global $conf;
         $mailer = new \Mailer();
+        if (!empty($conf['mailfrom'])) {
+            $mailer->setParameters("-f {$conf['mailfrom']}");
+        }
         $mailer->setBody($content, array(), array(), $content, false);
         
         if ($users === FALSE) {

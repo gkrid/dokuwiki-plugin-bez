@@ -453,7 +453,11 @@ class Thread extends Entity {
     //http://data.agaric.com/capture-all-sent-mail-locally-postfix
     //https://askubuntu.com/questions/192572/how-do-i-read-local-email-in-thunderbird
     public function mail_notify($content, $users=false, $attachedImages=array()) {
+        global $conf;
         $mailer = new \Mailer();
+        if (!empty($conf['mailfrom'])) {
+            $mailer->setParameters("-f {$conf['mailfrom']}");
+        }
         $mailer->setBody($content, array(), array(), $content, false);
 
         if ($users == FALSE) {
