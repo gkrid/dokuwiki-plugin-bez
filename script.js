@@ -68,8 +68,8 @@ jQuery(function () {
 		var id = urlParams['id'];
 	//userewrite == '1', '2'
 	} else {
-		var split = window.location.href.split('/'),
-			id = split.pop();
+		var found = window.location.href.match(/([^?\/]*)\??[^?\/]*$/);
+		var id = found[1];
 	}
 	
 	var nparams = getNparams(id),

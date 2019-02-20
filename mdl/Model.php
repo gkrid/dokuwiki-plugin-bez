@@ -55,8 +55,11 @@ class Model {
     /** @var Authentication_tokenFactory */
     protected $authentication_tokenFactory;
 
+    /** @var SubscriptionFactory */
+    protected $subscriptionFactory;
+
 	public function __get($property) {
-        $models = array('userFactory', 'threadFactory', 'labelFactory', 'thread_commentFactory', 'taskFactory', 'task_programFactory', 'task_commentFactory', 'authentication_tokenFactory');
+        $models = array('userFactory', 'threadFactory', 'labelFactory', 'thread_commentFactory', 'taskFactory', 'task_programFactory', 'task_commentFactory', 'authentication_tokenFactory', 'subscriptionFactory');
 		if (in_array($property, $models) ||
             in_array($property, array('sqlite', 'db', 'acl', 'dw_auth', 'user_nick', 'action', 'conf'))) {
 			return $this->$property;
@@ -108,6 +111,8 @@ class Model {
         $this->task_commentFactory = new Task_commentFactory($this);
 
         $this->authentication_tokenFactory = new Authentication_tokenFactory($this);
+
+        $this->subscriptionFactory = new SubscriptionFactory($this);
 
         if ($skip_acl) {
             $this->update_level(BEZ_AUTH_ADMIN);

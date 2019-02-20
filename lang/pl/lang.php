@@ -681,3 +681,6 @@ $lang['report threads cost closed'] = 'Koszt tylko zamkniętych';
 $lang['report threads rejected'] = 'Odrzucone';
 
 $lang['info set baseurl'] = 'Ustaw "baseurl" w konfiguracji wiki aby włączyć automatyczne powiadomienia z BEZ.';
+
+$lang['mute_notifications'] = 'Wyłącz powiadomienia BEZ dla <strong>%s</strong>';
+$lang['unmute_notifications'] = 'Włącz powiadomienia BEZ dla <strong>%s</strong>';

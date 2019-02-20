@@ -173,6 +173,7 @@ abstract class Entity {
 
         $mailer = new PHPMailer(true);
         $mailer->CharSet = 'utf-8';
+        $mailer->isHTML(true);
 
         if (!empty($conf['mailfrom'])) {
             $mailer->setFrom($conf['mailfrom']);
@@ -185,8 +186,6 @@ abstract class Entity {
             $mailer->AddEmbeddedImage($img['path'], $img['cid']);
         }
 
-        $mailer->msgHTML($content);
-
         if ($users == FALSE) {
             $users = $this->get_participants('subscribent');
 
@@ -194,16 +193,27 @@ abstract class Entity {
             unset($users[$this->model->user_nick]);
         }
 
+        $muted_users = $this->model->factory('subscription')->getMutedUsers();
         foreach ($users as $user) {
             if (is_array($user)) {
                 $user = $user['user_id'];
             }
+            //omit muted users
+            if (in_array($user, $muted_users)) continue;
+
             $email = $this->model->userFactory->get_user_email($user);
             $name = $this->model->userFactory->get_user_full_name($user);
             $mailer->addAddress($email, $name);
 
+            $token = $this->model->factory('subscription')->getUserToken($user);
+            $resign_link = $this->model->action->url('unsubscribe', array( 't' => $token));
+            $oneClickUnsubscribe = $this->model->action->url('unsubscribe', array( 't' => $token, 'oneclick' => '1'));
+            $mailer->AddCustomHeader("List-Unsubscribe: <$oneClickUnsubscribe>");
+            $mailer->Body = str_replace('%%resign_link%%', $resign_link, $content);
+
             $mailer->send();
             $mailer->clearAddresses();
+            $mailer->clearCustomHeaders();
         }
     }
 

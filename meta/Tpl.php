@@ -60,7 +60,7 @@ class Tpl {
     
     /*users info function for shorten the code*/
     public function user_name($login=false) {
-        if ($login === false) {
+        if (!$login) {
             $login = $this->current_user();
         }
         $name = $this->action->get_model()->userFactory->get_user_full_name($login);
@@ -70,7 +70,10 @@ class Tpl {
         return $name;
     }
     
-    public function user_email($login=NULL) {
+    public function user_email($login=false) {
+        if (!$login) {
+            $login = $this->current_user();
+        }
         return $this->action->get_model()->userFactory->get_user_email($login);
     }
     /*end users info functions*/

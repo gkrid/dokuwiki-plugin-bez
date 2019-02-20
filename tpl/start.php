@@ -17,6 +17,17 @@
     </a>
 <?php endif ?>
 
+<?php if ($tpl->factory('subscription')->isMuted()): ?>
+    <a href="<?php echo $tpl->url('start', array('action' => 'unmute')) ?>" class="bez_start_button">
+        <span class="bez_awesome">&#xf0f3;</span>
+        <?php printf($tpl->getLang('unmute_notifications'), $tpl->user_email()) ?>
+    </a>
+<?php else: ?>
+    <a href="<?php echo $tpl->url('start', array('action' => 'mute')) ?>" class="bez_start_button">
+        <span class="bez_awesome">&#xf1f6;</span>
+        <?php printf($tpl->getLang('mute_notifications'), $tpl->user_email()) ?>
+    </a>
+<?php endif ?>
 </div>
 
 <div id="plugin__bez_start_tabs">

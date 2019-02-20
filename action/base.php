@@ -112,13 +112,25 @@ class action_plugin_bez_base extends DokuWiki_Action_Plugin {
 
         $args = func_get_args();
         if (count($args) > 0) {
-            $id = call_user_func_array(array($this, 'id'), $args);
+            $id_parts = array_filter($args, 'is_string');
+            $id = call_user_func_array(array($this, 'id'), $id_parts);
+
+            $get_parts = array_filter($args, 'is_array');
+            $get = '';
+            if ($get_parts) {
+                $get = call_user_func_array('array_merge', $get_parts);
+                $get = http_build_query($get);
+            }
+
             if ($conf['userewrite'] == '1') {
-                return DOKU_URL . $id;
+                if ($get) $get = "?$get";
+                return DOKU_URL . $id. $get;
             } elseif ($conf['userewrite'] == '2') {
-                return DOKU_URL . 'doku.php/' . $id;
+                if ($get) $get = "?$get";
+                return DOKU_URL . 'doku.php/' . $id . $get;
             } else {
-                return DOKU_URL . 'doku.php?id=' . $id;
+                if ($get) $get = "&$get";
+                return DOKU_URL . 'doku.php?id=' . $id . $get;
             }
 
         }

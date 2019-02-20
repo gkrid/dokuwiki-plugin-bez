@@ -115,8 +115,6 @@ function send_weekly_message() {
         if (count($issues) + count($outdated_tasks) + count($coming_tasks) == 0)
             continue;
 
-        $to =
-
         $tpl = $action->get_tpl();
         $tpl->set('issues', $issues);
         $tpl->set('outdated_tasks', $outdated_tasks);
@@ -125,11 +123,16 @@ function send_weekly_message() {
 
         $mailer = new PHPMailer;
         $mailer->CharSet = 'utf-8';
+        $mailer->isHTML(true);
 
         $mailer->setFrom($conf['mailfrom']);
         $mailer->addReplyTo($conf['mailfrom']);
 
-        $mailer->msgHTML($body);
+        $token = $action->get_model()->factory('subscription')->getUserToken($user);
+        $resign_link = $action->url('unsubscribe', array( 't' => $token));
+        $oneClickUnsubscribe = $action->url('unsubscribe', array( 't' => $token, 'oneclick' => '1'));
+        $mailer->AddCustomHeader("List-Unsubscribe: <$oneClickUnsubscribe>");
+        $mailer->Body = str_replace('%%resign_link%%', $resign_link, $body);
 
         $mailer->addAddress($udata['mail'], $udata['name']);
         $subject = $conf['title'] . ' Nadchodzące zadania';
@@ -137,6 +140,7 @@ function send_weekly_message() {
 
         $mailer->send();
         $mailer->clearAddresses();
+        $mailer->clearCustomHeaders();
         $output[] = array($udata['name'].' <'.$udata['mail'].'>', $subject, $body, array());
     }
 

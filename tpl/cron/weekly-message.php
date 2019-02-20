@@ -78,5 +78,7 @@ switch($issue->priority) {
     <?php include 'weekly-message-tasks.php' ?>
 <?php endif ?>
 
+<?php include __DIR__ . "/../mail/footer.php" ?>
+
 </body>
 </html>
