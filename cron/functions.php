@@ -1,5 +1,11 @@
 <?php
 
+use PHPMailer\PHPMailer\PHPMailer;
+
+require_once DOKU_PLUGIN . 'bez/vendor/phpmailer/phpmailer/src/Exception.php';
+require_once DOKU_PLUGIN . 'bez/vendor/phpmailer/phpmailer/src/PHPMailer.php';
+require_once DOKU_PLUGIN . 'bez/vendor/phpmailer/phpmailer/src/SMTP.php';
+
 $action = new action_plugin_bez_base();
 $action->createObjects(true);
 
@@ -50,6 +56,7 @@ function send_task_reminder() {
 function send_weekly_message() {
     global $action;
     global $auth;
+    global $conf;
 
     //email => array('user' => array('issues' => array(), 'tasks' => array()))
     $msg = array();
@@ -98,6 +105,7 @@ function send_weekly_message() {
 
     foreach ($msg as $user => $data) {
         $udata = $auth->getUserData($user);
+        if (!$udata) continue;
 
         $issues = $data['issues'];
         $outdated_tasks = $data['outdated_tasks'];
@@ -107,7 +115,7 @@ function send_weekly_message() {
         if (count($issues) + count($outdated_tasks) + count($coming_tasks) == 0)
             continue;
 
-        $to = $udata['name'].' <'.$udata['mail'].'>';
+        $to =
 
         $tpl = $action->get_tpl();
         $tpl->set('issues', $issues);
@@ -115,16 +123,21 @@ function send_weekly_message() {
         $tpl->set('coming_tasks', $coming_tasks);
         $body = $action->bez_tpl_include('cron/weekly-message', true);
 
-        $mailer = new Mailer();
-        $rep = array();
-        $mailer->setBody('', $rep, NULL, $body, false);
+        $mailer = new PHPMailer;
+        $mailer->CharSet = 'utf-8';
 
-        $mailer->to($to);
-        $subject = 'Nadchodzące zadania';
-        $mailer->subject($subject);
+        $mailer->setFrom($conf['mailfrom']);
+        $mailer->addReplyTo($conf['mailfrom']);
+
+        $mailer->msgHTML($body);
+
+        $mailer->addAddress($udata['mail'], $udata['name']);
+        $subject = $conf['title'] . ' Nadchodzące zadania';
+        $mailer->Subject = $subject;
 
         $mailer->send();
-        $output[] = array($to, $subject, $body, array());
+        $mailer->clearAddresses();
+        $output[] = array($udata['name'].' <'.$udata['mail'].'>', $subject, $body, array());
     }
 
     return $output;

@@ -19,20 +19,6 @@ class renderer_plugin_bez_xhtmlmail extends Doku_Renderer_xhtml {
     }
 
     /**
-     * Unique media file cid used by Mailer to identify images
-     *
-     * @param string $mediaId
-     * @param string $rev
-     * @param bool   $delimiters wrap emded with '%%'
-     * @return string
-     */
-    private function embed($mediaId, $rev='', $delimiters=false) {
-        $embed = $mediaId . $rev;
-        if ($delimiters) $embed = '%%' . $embed . '%%';
-        return $embed;
-    }
-
-    /**
      * Render an internal media file
      *
      * @param string $src       media ID
@@ -63,7 +49,7 @@ class renderer_plugin_bez_xhtmlmail extends Doku_Renderer_xhtml {
                 'path'  => $path,
                 'mime'  => $mime,
                 'name'  => $title,
-                'embed' => $this->embed($src, $rev)
+                'cid' => $src
             );
         }
 
@@ -143,7 +129,7 @@ class renderer_plugin_bez_xhtmlmail extends Doku_Renderer_xhtml {
             }
             //add image tag
             $rev = $this->_getLastMediaRevisionAt($src);
-            $ret .= '<img src="' . $this->embed($src, $rev, true) . '"';
+            $ret .= '<img src="cid:' . $src . '"';
             $ret .= ' class="media'.$align.'"';
 
             if($title) {

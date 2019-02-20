@@ -11,6 +11,8 @@ namespace dokuwiki\plugin\bez\mdl;
 
 use dokuwiki\plugin\bez\meta\PermissionDeniedException;
 use dokuwiki\plugin\bez\meta\ValidationException;
+use PHPMailer\PHPMailer\Exception;
+use PHPMailer\PHPMailer\PHPMailer;
 
 abstract class Entity {
 
@@ -158,5 +160,51 @@ abstract class Entity {
         }
         return $ret;
 	}
+
+	protected function getMailSubject() {
+	    global $conf;
+        return $conf['title'];
+    }
+
+    //http://data.agaric.com/capture-all-sent-mail-locally-postfix
+    //https://askubuntu.com/questions/192572/how-do-i-read-local-email-in-thunderbird
+	public function mail_notify($content, $users=false, $attachedImages=array()) {
+        global $conf;
+
+        $mailer = new PHPMailer(true);
+        $mailer->CharSet = 'utf-8';
+
+        if (!empty($conf['mailfrom'])) {
+            $mailer->setFrom($conf['mailfrom']);
+            $mailer->addReplyTo($conf['mailfrom']);
+        }
+
+        $mailer->Subject = $this->getMailSubject();
+
+        foreach ($attachedImages as $img) {
+            $mailer->AddEmbeddedImage($img['path'], $img['cid']);
+        }
+
+        $mailer->msgHTML($content);
+
+        if ($users == FALSE) {
+            $users = $this->get_participants('subscribent');
+
+            //don't notify myself
+            unset($users[$this->model->user_nick]);
+        }
+
+        foreach ($users as $user) {
+            if (is_array($user)) {
+                $user = $user['user_id'];
+            }
+            $email = $this->model->userFactory->get_user_email($user);
+            $name = $this->model->userFactory->get_user_full_name($user);
+            $mailer->addAddress($email, $name);
+
+            $mailer->send();
+            $mailer->clearAddresses();
+        }
+    }
 
 }

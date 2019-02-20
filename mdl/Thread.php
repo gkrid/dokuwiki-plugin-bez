@@ -450,43 +450,9 @@ class Thread extends Entity {
         return '#' . $this->id;
     }
 
-    //http://data.agaric.com/capture-all-sent-mail-locally-postfix
-    //https://askubuntu.com/questions/192572/how-do-i-read-local-email-in-thunderbird
-    public function mail_notify($content, $users=false, $attachedImages=array()) {
-        global $conf;
-        $mailer = new \Mailer();
-        if (!empty($conf['mailfrom'])) {
-            $mailer->setParameters("-f {$conf['mailfrom']}");
-        }
-        $mailer->setBody($content, array(), array(), $content, false);
-
-        if ($users == FALSE) {
-            $users = $this->get_participants('subscribent');
-
-            //don't notify myself
-            unset($users[$this->model->user_nick]);
-        }
-
-        $emails = array_map(function($user) {
-            if (is_array($user)) {
-                $user = $user['user_id'];
-            }
-            return $this->model->userFactory->get_user_email($user);
-        }, $users);
-
-
-        $mailer->to($emails);
-        $mailer->subject('#'.$this->id. ' ' .$this->title);
-
-        foreach ($attachedImages as $img) {
-            $mailer->attachFile($img['path'], $img['mime'], $img['name'], $img['embed']);
-        }
-
-        $send = $mailer->send();
-        if ($send === false) {
-            //this may mean empty $emails
-            //throw new Exception("can't send email");
-        }
+    protected function getMailSubject()
+    {
+        return parent::getMailSubject() . ' #'.$this->id. ' ' .$this->title;
     }
 
     public function mail_thread_box(&$attachedImages) {
