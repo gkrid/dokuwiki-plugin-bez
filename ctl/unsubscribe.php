@@ -8,7 +8,3 @@ if (!isset($_GET['t'])) {
 }
 
 $this->model->factory('subscription')->mute($_GET['t']);
-
-if (isset($_GET['oneclick'])) {
-    die('List-Unsubscribe=One-Click');
-}

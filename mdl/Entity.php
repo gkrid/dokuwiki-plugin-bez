@@ -202,13 +202,15 @@ abstract class Entity {
             if (in_array($user, $muted_users)) continue;
 
             $email = $this->model->userFactory->get_user_email($user);
+            //do we have user email address
+            if (!$email) continue;
+
             $name = $this->model->userFactory->get_user_full_name($user);
+
             $mailer->addAddress($email, $name);
 
             $token = $this->model->factory('subscription')->getUserToken($user);
             $resign_link = $this->model->action->url('unsubscribe', array('GET' => array( 't' => $token)));
-            $oneClickUnsubscribe = $this->model->action->url('unsubscribe', array('GET' => array( 't' => $token, 'oneclick' => '1')));
-            $mailer->AddCustomHeader("List-Unsubscribe: <$oneClickUnsubscribe>");
             $mailer->Body = str_replace('%%resign_link%%', $resign_link, $content);
 
             $mailer->send();

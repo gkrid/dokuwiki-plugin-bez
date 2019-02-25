@@ -101,11 +101,14 @@ function send_weekly_message() {
     }
 
     //outdated_tasks, coming_tasks, open_tasks
-
+    $muted_users = $action->get_model()->factory('subscription')->getMutedUsers();
 
     foreach ($msg as $user => $data) {
         $udata = $auth->getUserData($user);
         if (!$udata) continue;
+
+        //omit muted users
+        if (in_array($user, $muted_users)) continue;
 
         $issues = $data['issues'];
         $outdated_tasks = $data['outdated_tasks'];
@@ -130,8 +133,6 @@ function send_weekly_message() {
 
         $token = $action->get_model()->factory('subscription')->getUserToken($user);
         $resign_link = $action->url('unsubscribe', array('GET' => array( 't' => $token)));
-        $oneClickUnsubscribe = $action->url('unsubscribe', array('GET' => array( 't' => $token, 'oneclick' => '1')));
-        $mailer->AddCustomHeader("List-Unsubscribe: <$oneClickUnsubscribe>");
         $mailer->Body = str_replace('%%resign_link%%', $resign_link, $body);
 
         $mailer->addAddress($udata['mail'], $udata['name']);
