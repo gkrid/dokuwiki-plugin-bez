@@ -12,14 +12,9 @@ if (empty($conf['baseurl'])) {
     exit(-1);
 }
 
-$dryrun = false;
-if ($argv[1] == 'dryrun') {
-    $dryrun = true;
-}
-
 require_once 'cron/functions.php';
 
-if ($dryrun || date('l') === $conf['plugin']['bez']['weekly_cron_day_of_the_week']) {
+if (date('l') === $conf['plugin']['bez']['weekly_cron_day_of_the_week']) {
     send_weekly_message();
 }
 
