@@ -1,5 +1,3 @@
-PRAGMA journal_mode=WAL;
-
 ALTER TABLE task_comment
   ADD closing BOOLEAN NOT NULL DEFAULT 0;
 

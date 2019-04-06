@@ -397,4 +397,14 @@ class action_plugin_bez_migration extends DokuWiki_Action_Plugin {
         return true;
     }
 
+    protected function migration8($data) {
+        /** @var helper_plugin_sqlite $sqlite */
+        $sqlite = $data['sqlite'];
+
+        $db = $sqlite->getAdapter()->getDb();
+        $db->query('PRAGMA journal_mode=WAL');
+
+        return true;
+    }
+
 }
