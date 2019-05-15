@@ -684,3 +684,6 @@ $lang['info set baseurl'] = 'Ustaw "baseurl" w konfiguracji wiki aby włączyć�
 
 $lang['mute_notifications'] = 'Wyłącz powiadomienia BEZ dla <strong>%s</strong>';
 $lang['unmute_notifications'] = 'Włącz powiadomienia BEZ dla <strong>%s</strong>';
+
+$lang['js']['close_with_comment'] = 'Zamknij z komentarzem';
+$lang['js']['close_without_comment'] = 'Zamknij bez komentarza';

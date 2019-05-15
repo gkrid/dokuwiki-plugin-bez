@@ -99,8 +99,8 @@ bez.ctl.task = function() {
             collision: "flipfit"
         },
         content: function() {
-            var $this = jQuery(this);
-            name = $this.find('.bez_name').text(),
+            var $this = jQuery(this),
+                name = $this.find('.bez_name').text(),
                 content = '<div style="margin-bottom: 3px;">'+name+'</div>';
             $this.find('.bez_awesome').each(function() {
                 var $this = jQuery(this);
@@ -284,4 +284,21 @@ bez.ctl.task = function() {
             $label.show();
         })
     }
+
+    var $contentTextarea = jQuery('.bez_comment textarea[name=content]');
+    if ($contentTextarea.length > 0) {
+        var $doTaskButton = jQuery('button[name=fn][value=task_do]'),
+            $addCommentButton = jQuery('button[name=fn][value=comment_add]');
+        $contentTextarea.on('keyup', function () {
+            if ($contentTextarea.val() === '') {
+                $doTaskButton.html(LANG.plugins.bez.close_without_comment);
+                $addCommentButton.hide();
+            } else {
+                $doTaskButton.html(LANG.plugins.bez.close_with_comment);
+                $addCommentButton.show();
+            }
+
+        });
+    }
+
 };

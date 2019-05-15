@@ -1,4 +1,6 @@
 var bez = {};
+//increase before each commit to invalidate the cache
+bez.scriptVersion = 1;
 bez.ctl = {};
 
 /* DOKUWIKI:include scripts/thread.js */
@@ -11,8 +13,6 @@ bez.ctl = {};
 /* DOKUWIKI:include scripts/activity_report.js */
 /* DOKUWIKI:include scripts/start.js */
 /* DOKUWIKI:include scripts/report.js */
-
-
 
 jQuery(function () {
     'use strict';
@@ -74,7 +74,7 @@ jQuery(function () {
 	
 	var nparams = getNparams(id),
 		ctl = nparams['bez'];
-    
+
 	if (typeof bez.ctl[ctl] === 'function') {
 		bez.ctl[ctl].call(ctl);
 	}

@@ -33,14 +33,14 @@
                 <?php endif ?>
 
                 <?php if ($tpl->get('task')->state == 'opened'): ?>
-                    <button class="plugin__bez_button plugin__bez_button_green" name="fn" value="comment_add">
+                    <button class="plugin__bez_button plugin__bez_button_green" name="fn" value="comment_add" style="display:none;">
                         <?php echo $tpl->param('zkid') != '' ? $tpl->getLang('correct') : $tpl->getLang('add_comment') ?>
                     </button>
                 <?php endif ?>
                 <?php if ($tpl->param('zkid') == '' && $tpl->get('task')->acl_of('state') >= BEZ_PERMISSION_CHANGE): ?>
                     <?php if ($tpl->get('task')->state == 'opened'): ?>
                         <button class="plugin__bez_button plugin__bez_button_gray" name="fn" value="task_do">
-                            <?php echo $tpl->getLang('js')['do_task'] ?>
+                            <?php echo $tpl->getLang('js')['close_without_comment'] ?>
                         </button>
                     <?php else: ?>
                         <button class="plugin__bez_button plugin__bez_button_gray" name="fn" value="task_reopen">

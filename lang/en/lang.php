@@ -653,3 +653,6 @@ $lang['info set baseurl'] = 'Set "baseurl" to enable bez mail notifications.';
 
 $lang['mute_notifications'] = 'Mute BEZ notifications for <strong>%s</strong>';
 $lang['unmute_notifications'] = 'Unmute BEZ notifications for <strong>%s</strong>';
+
+$lang['js']['close_with_comment'] = 'Close with comment';
+$lang['js']['close_without_comment'] = 'Close without comment';
