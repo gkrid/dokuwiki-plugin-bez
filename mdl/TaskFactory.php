@@ -51,10 +51,11 @@ class TaskFactory extends Factory {
 
     public function get_with_closing_comment($thread) {
         $sql = "SELECT task.id, task.type, task.content_html, task.state, task.cost, task.plan_date, task.close_date,
-                        task_comment.content_html AS task_comment_content_html, task.assignee
-                        FROM task LEFT JOIN task_comment ON task.id = task_comment.task_id
-                        WHERE task.thread_id = ? AND
-                              (task_comment.closing IS NULL OR task_comment.closing=1)
+                        task_closing_comment.content_html AS task_comment_content_html, task.assignee
+                        FROM task LEFT JOIN
+                            (SELECT content_html, task_id FROM task_comment WHERE closing=1)
+                                AS task_closing_comment ON task.id = task_closing_comment.task_id
+                        WHERE task.thread_id = ?
                         ORDER BY task.plan_date";
         $stmt = $this->model->sqlite->query($sql, $thread->id);
         $stmt->setFetchMode(\PDO::FETCH_OBJ);
