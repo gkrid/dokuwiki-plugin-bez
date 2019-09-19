@@ -7,15 +7,6 @@ if ($this->model->get_level() < BEZ_AUTH_USER) {
     throw new bez\meta\PermissionDeniedException();
 }
 
-switch ($_GET['action']) {
-    case 'mute':
-        $this->model->factory('subscription')->mute();
-        break;
-    case 'unmute':
-        $this->model->factory('subscription')->unmute();
-        break;
-}
-
 class Timeline {
     protected $timeline = array();
 
