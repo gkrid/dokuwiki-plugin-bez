@@ -11,12 +11,12 @@ $action->createObjects(true);
 
 function send_inactive_issue() {
     global $action;
-    
+
     $threads = $action->get_model()->threadFactory->get_all(array(
         'last_activity_date' => array('<=', date('c', strtotime('-26 days'))),
         'state' => 'opened'
     ));
-    
+
     foreach ($threads as $thread) {
         //send reminder once a month
         $day_of_issue_last_activity = date('d', strtotime($thread->last_activity_date));
@@ -43,7 +43,7 @@ function send_task_reminder() {
         $filters['plan_date'][1][] = date('Y-m-d', strtotime("+$day day"));
     }
 
-    
+
     $tasks = $action->get_model()->taskFactory->get_all($filters);
 
     $now = new DateTime(date('Y-m-d'));
@@ -128,8 +128,15 @@ function send_weekly_message() {
         $mailer->CharSet = 'utf-8';
         $mailer->isHTML(true);
 
-        $mailer->setFrom($conf['mailfrom']);
-        $mailer->addReplyTo($conf['mailfrom']);
+        if (preg_match('/(.*?)\s*<(.*?)>/', $conf['mailfrom'], $matches)) {
+            $address = $matches[2];
+            $name = $matches[1];
+        } else {
+            $address = $conf['mailfrom'];
+            $name = '';
+        }
+        $mailer->setFrom($address, $name);
+        $mailer->addReplyTo($address, $name);
 
         $token = $action->get_model()->factory('subscription')->getUserToken($user);
         $resign_link = $action->url('unsubscribe', array('GET' => array( 't' => $token)));

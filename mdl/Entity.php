@@ -4,9 +4,9 @@ namespace dokuwiki\plugin\bez\mdl;
 /*
  * All fields are stored in object as strings.
  * NULLs are converted to empty string.
- * If any attribute in object === NULL -> it means that it was not initialized 
+ * If any attribute in object === NULL -> it means that it was not initialized
  * But we always inserts NULLs instead of empty strings.
- * https://stackoverflow.com/questions/1267999/mysql-better-to-insert-null-or-empty-string 
+ * https://stackoverflow.com/questions/1267999/mysql-better-to-insert-null-or-empty-string
  **/
 
 use dokuwiki\plugin\bez\meta\PermissionDeniedException;
@@ -36,7 +36,7 @@ abstract class Entity {
         $class = get_called_class();
         return $class::get_select_columns();
     }
-	
+
 	public function get_assoc($filter=NULL) {
 		$assoc = array();
 
@@ -44,7 +44,7 @@ abstract class Entity {
         if ($filter !== NULL) {
             $columns = array_intersect($columns, $filter);
         }
-        
+
 		foreach ($columns as $col) {
 			$assoc[$col] = $this->$col;
 		}
@@ -68,7 +68,7 @@ abstract class Entity {
         return $this->$property;
 
 	}
-    
+
     protected function set_property($property, $value) {
         if ($this->acl_of($property) < BEZ_PERMISSION_CHANGE) {
             throw new PermissionDeniedException("cannot change field $property");
@@ -106,7 +106,7 @@ abstract class Entity {
         }
 
     }
-    
+
     public function changable_fields($filter=NULL) {
        $fields = $this->acl->get_list();
 
@@ -120,7 +120,7 @@ abstract class Entity {
            return $var >= BEZ_PERMISSION_CHANGE;
        }));
     }
-    
+
     public function can_be_null($field) {
 	    $rule = $this->validator->get_rule($field);
 	    $null = $rule[1];
@@ -130,7 +130,7 @@ abstract class Entity {
 
         return false;
     }
-        
+
     public function __construct($model) {
         $this->model = $model;
         $this->validator = new Validator($this->model);
@@ -176,8 +176,15 @@ abstract class Entity {
         $mailer->isHTML(true);
 
         if (!empty($conf['mailfrom'])) {
-            $mailer->setFrom($conf['mailfrom']);
-            $mailer->addReplyTo($conf['mailfrom']);
+            if (preg_match('/(.*?)\s*<(.*?)>/', $conf['mailfrom'], $matches)) {
+                $address = $matches[2];
+                $name = $matches[1];
+            } else {
+                $address = $conf['mailfrom'];
+                $name = '';
+            }
+            $mailer->setFrom($address, $name);
+            $mailer->addReplyTo($address, $name);
         }
 
         $mailer->Subject = $this->getMailSubject();
