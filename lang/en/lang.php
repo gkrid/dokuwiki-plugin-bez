@@ -656,3 +656,8 @@ $lang['unmute_notifications'] = 'Unmute BEZ notifications for <strong>%s</strong
 
 $lang['js']['close_with_comment'] = 'Close with comment';
 $lang['js']['close_without_comment'] = 'Close without comment';
+
+$lang['notification problems_coming'] = 'You have coming problem %s.';
+$lang['notification problems_outdated'] = 'You have outdated problem %s.';
+$lang['notification tasks_coming'] = 'You have comming task %s.';
+$lang['notification tasks_outdated'] = 'You have outdated task %s.';

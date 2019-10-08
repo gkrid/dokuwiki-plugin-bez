@@ -14,11 +14,11 @@ class action_plugin_bez_default extends action_plugin_bez_base {
     protected $notifications = array();
 
     protected $errors = array();
-    
+
     public function get_action() {
         return $this->action;
     }
-    
+
     public function get_param($id, $default='') {
         return (isset($this->params[$id]) ? $this->params[$id] : $default);
     }
@@ -38,11 +38,11 @@ class action_plugin_bez_default extends action_plugin_bez_base {
             return array();
         }
         $this->notifications = unserialize($_COOKIE[BEZ_NOTIFICATIONS_COOKIE_NAME]);
-        
+
         //remove cookie
         setcookie(BEZ_NOTIFICATIONS_COOKIE_NAME, serialize(array()));
     }
-    
+
     private function add_error($value, $header=NULL) {
         $this->errors[] = array('value' => $value, 'header' => $header);
     }
@@ -58,17 +58,21 @@ class action_plugin_bez_default extends action_plugin_bez_base {
 		$controller->register_hook('TEMPLATE_PAGETOOLS_DISPLAY', 'BEFORE', $this, 'tpl_pagetools_display');
 		$controller->register_hook('TPL_METAHEADER_OUTPUT', 'BEFORE', $this, 'include_dependencies', array());
 		$controller->register_hook('AJAX_CALL_UNKNOWN', 'BEFORE', $this,'_ajax_call');
+
+        $controller->register_hook('PLUGIN_NOTIFICATION_REGISTER_SOURCE', 'AFTER', $this, 'add_notifications_source');
+        $controller->register_hook('PLUGIN_NOTIFICATION_GATHER', 'AFTER', $this, 'add_notifications');
+        $controller->register_hook('PLUGIN_NOTIFICATION_CACHE_DEPENDENCIES', 'AFTER', $this, 'add_notification_cache_dependencies');
 	}
-	
+
 	public function include_dependencies(Doku_Event $event) {
-		// Adding a stylesheet 
+		// Adding a stylesheet
 		$event->data["link"][] = array (
 		  "type" => "text/css",
-		  "rel" => "stylesheet", 
+		  "rel" => "stylesheet",
 		  "href" => DOKU_BASE.
 			"lib/plugins/bez/lib/jquery.timepicker-1.11.9-0/jquery.timepicker.css",
 		);
-		
+
 		// Adding a JavaScript File
 		$event->data["script"][] = array (
 		  "type" => "text/javascript",
@@ -76,7 +80,7 @@ class action_plugin_bez_default extends action_plugin_bez_base {
 			"lib/plugins/bez/lib/jquery.timepicker-1.11.9-0/jquery.timepicker.min.js",
 		  "_data" => "",
 		);
-		
+
 		// Adding a JavaScript File
 		$event->data["script"][] = array (
 		  "type" => "text/javascript",
@@ -84,7 +88,7 @@ class action_plugin_bez_default extends action_plugin_bez_base {
 			"lib/plugins/bez/lib/jquery.datepair/datepair.js",
 		  "_data" => "",
 		);
-		
+
 		// Adding a JavaScript File
 		$event->data["script"][] = array (
 		  "type" => "text/javascript",
@@ -92,15 +96,15 @@ class action_plugin_bez_default extends action_plugin_bez_base {
 			"lib/plugins/bez/lib/jquery.datepair/jquery.datepair.js",
 		  "_data" => "",
 		);
-		
+
 		$event->data["link"][] = array (
 		  "type" => "text/css",
-		  "rel" => "stylesheet", 
+		  "rel" => "stylesheet",
 		  "href" => DOKU_BASE.
 			"lib/plugins/bez/lib/jquery.form-validator/theme-default.min.css",
 		);
-		
-		
+
+
 		$event->data["script"][] = array (
 		  "type" => "text/javascript",
 		  "src" => DOKU_BASE.
@@ -108,17 +112,17 @@ class action_plugin_bez_default extends action_plugin_bez_base {
 		  "_data" => "",
 		);
 	}
-    
+
     public function setup_enviroment(Doku_Event $event, $param) {
         global $ACT, $auth, $conf, $INFO;
-        
+
         if ($ACT !== 'show') {
             return;
         }
 
         $id = $_GET['id'];
 		$ex = explode(':', $id);
- 
+
         //check if we process BEZ
         if ($ex[0] !== 'bez' && $ex[1] !== 'bez') {
             return;
@@ -141,17 +145,17 @@ class action_plugin_bez_default extends action_plugin_bez_base {
         }
         //throw out "bez"
         array_shift($ex);
-        
+
         $this->action = array_shift($ex);
-        
+
         if (count($ex) % 2 !== 0) {
             throw new Exception('invalid params');
         }
-        
+
         for ($i = 0; $i < count($ex); $i += 2) {
             $this->params[$ex[$i]] = $ex[$i+1];
         }
-        
+
         $this->setupLocale();
         $this->createObjects();
 
@@ -189,7 +193,7 @@ class action_plugin_bez_default extends action_plugin_bez_base {
         if ($this->action === '') {
             return;
         }
-        
+
         $event->preventDefault();
 		try {
             $this->flush_notifications();
@@ -209,9 +213,9 @@ class action_plugin_bez_default extends action_plugin_bez_base {
                     $this->getLang('validate_' . $error_code),
                     $field);
             }
-            
+
             $this->tpl->set_values($_POST);
-            
+
         } catch(bez\meta\PermissionDeniedException $e) {
             dbglog('plugin_bez', $e);
             header('Location: ' . DOKU_URL . 'doku.php?id=' . $_GET['id'] . '&do=login');
@@ -238,7 +242,7 @@ class action_plugin_bez_default extends action_plugin_bez_base {
         $event->preventDefault();
 
         if ($this->prevent_rendering) return;
-        
+
 		try {
 
 			foreach ($this->errors as $error) {
@@ -250,7 +254,7 @@ class action_plugin_bez_default extends action_plugin_bez_base {
 				}
 				echo '</div>';
 			}
-            
+
             foreach ($this->notifications as $note) {
                 echo '<div class="info">';
 				if ($note['header'] === NULL) {
@@ -262,7 +266,7 @@ class action_plugin_bez_default extends action_plugin_bez_base {
             }
 
 			$this->bez_tpl_include(str_replace('/', '', $this->get_action()));
-            
+
         } catch(bez\meta\PermissionDeniedException $e) {
             dbglog('plugin_bez', $e);
 		} catch(Exception $e) {
@@ -273,4 +277,115 @@ class action_plugin_bez_default extends action_plugin_bez_base {
             }
 		}
 	}
+
+	public function add_notifications_source(Doku_Event $event)
+    {
+        $event->data[] = 'bez:problems_coming';
+        $event->data[] = 'bez:problems_outdated';
+        $event->data[] = 'bez:tasks_coming';
+        $event->data[] = 'bez:tasks_outdated';
+    }
+
+    public function add_notification_cache_dependencies(Doku_Event $event)
+    {
+        if (!preg_grep('/^bez:.*/', $event->data['plugins'])) return;
+
+        /** @var \helper_plugin_bez_db $db_helper */
+        $db_helper = plugin_load('helper', 'bez_db');
+        $event->data['dependencies'][] = $db_helper->getDB()->getAdapter()->getDbFile();
+    }
+
+    public function add_notifications(Doku_Event $event)
+    {
+        if (!preg_grep('/^bez:.*/', $event->data['plugins'])) return;
+
+        $user = $event->data['user'];
+        $this->createObjects();
+
+        if (in_array('bez:problems_coming', $event->data['plugins'])) {
+            $threads = $this->get_model()->factory('thread')->get_all(array(
+                'type' => 'issue',
+                'priority' => '1',
+                'coordinator' => $user
+            ));
+            /** @var bez\mdl\Thread $thread */
+            foreach ($threads as $thread) {
+                $link = '<a href="' . $this->url('thread', 'id', $thread->id) . '">';
+                $link .= '#' . $thread->id;
+                $link .= '</a>';
+
+                $full = sprintf($this->getLang('notification problems_coming'), $link);
+                $event->data['notifications'][] = [
+                    'plugin' => 'bez:problems_coming',
+                    'full' => $full,
+                    'brief' => $link,
+                    'timestamp' => strtotime($thread->last_activity_date)
+                ];
+            }
+        }
+
+        if (in_array('bez:problems_outdated', $event->data['plugins'])) {
+            $threads = $this->get_model()->threadFactory->get_all(array(
+                'type' => 'issue',
+                'priority' => '2',
+                'coordinator' => $user
+            ));
+            /** @var bez\mdl\Thread $thread */
+            foreach ($threads as $thread) {
+                $link = '<a href="' . $this->url('thread', 'id', $thread->id) . '">';
+                $link .= '#' . $thread->id;
+                $link .= '</a>';
+
+                $full = sprintf($this->getLang('notification problems_outdated'), $link);
+                $event->data['notifications'][] = [
+                    'plugin' => 'bez:problems_coming',
+                    'full' => $full,
+                    'brief' => $link,
+                    'timestamp' => strtotime($thread->last_activity_date)
+                ];
+            }
+        }
+
+        if (in_array('bez:tasks_coming', $event->data['plugins'])) {
+            $tasks = $this->get_model()->factory('task')->get_all(array(
+                'priority' => '1',
+                'assignee' => $user
+            ));
+            /** @var bez\mdl\Thread $thread */
+            foreach ($tasks as $task) {
+                $link = '<a href="' . $this->url('task', 'tid', $task->id) . '">';
+                $link .= '#z' . $task->id;
+                $link .= '</a>';
+
+                $full = sprintf($this->getLang('notification tasks_coming'), $link);
+                $event->data['notifications'][] = [
+                    'plugin' => 'bez:problems_coming',
+                    'full' => $full,
+                    'brief' => $link,
+                    'timestamp' => strtotime($task->plan_date)
+                ];
+            }
+        }
+
+        if (in_array('bez:tasks_outdated', $event->data['plugins'])) {
+            $tasks = $this->get_model()->factory('task')->get_all(array(
+                'priority' => '2',
+                'assignee' => $user
+            ));
+            /** @var bez\mdl\Thread $thread */
+            foreach ($tasks as $task) {
+                $link = '<a href="' . $this->url('task', 'tid', $task->id) . '">';
+                $link .= '#z' . $task->id;
+                $link .= '</a>';
+
+                $full = sprintf($this->getLang('notification tasks_outdated'), $link);
+                $event->data['notifications'][] = [
+                    'plugin' => 'bez:problems_coming',
+                    'full' => $full,
+                    'brief' => $link,
+                    'timestamp' => strtotime($task->plan_date)
+                ];
+            }
+        }
+    }
 }

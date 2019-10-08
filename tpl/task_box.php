@@ -13,14 +13,14 @@
         <strong><?php echo $tpl->getLang('open') ?>:</strong>
         <?php echo $tpl->date($tpl->get('task')->create_date) ?>
     </span>
-	
+
 	<?php if ($tpl->get('task')->state != 'opened'): ?>
-    
+
         <span>
             <strong><?php echo $tpl->getLang('task_' . $tpl->get('task')->state) ?>:</strong>
             <?php echo $tpl->date($tpl->get('task')->close_date) ?>
         </span>
-        
+
 		<span>
 			<strong><?php echo $tpl->getLang('report_priority') ?>: </strong>
             <?php echo $tpl->date_diff_days($tpl->get('task')->create_date, $tpl->get('task')->close_date, '%a'); ?>
@@ -48,7 +48,7 @@
     <td>
         <?php echo $tpl->user_name($tpl->get('task')->original_poster) ?>
     </td>
-    
+
     <th><?php echo $tpl->getLang('executor') ?>:</th>
     <td><?php echo $tpl->user_name($tpl->get('task')->assignee) ?></td>
 </tr>
@@ -59,8 +59,8 @@
         <?php echo $tpl->get('task')->plan_date ?><?php if ($tpl->get('task')->all_day_event == '0'): ?>,
             <?php echo $tpl->get('task')->start_time ?> - <?php echo $tpl->get('task')->finish_time ?>
         <?php endif ?>
-    </td> 
-    
+    </td>
+
     <th><?php echo $tpl->getLang('task_type') ?>:</th>
     <td>
     <?php if ($tpl->get('task')->task_program_id == ''): ?>
@@ -69,7 +69,7 @@
         <?php echo $tpl->get('task')->task_program_name ?>
     <?php endif ?>
     </td>
-</tr>  
+</tr>
 
 <tr>
     <th><?php echo $tpl->getLang('cost') ?>:</th>
@@ -80,7 +80,7 @@
         <?php echo $tpl->get('task')->cost ?>
     <?php endif ?>
     </td>
-</tr>  
+</tr>
 
 </table>
 
@@ -110,7 +110,7 @@
                     </label>
                     <button id="plugin__bez_pin_to_the_issue" class="bds_inline_button"
                        href="<?php echo $tpl->url('task', 'tid', $tpl->get('task')->id) ?>#zk_">
-                        <span style="bez_awesome">&#xf0c6;</span>
+                        <span class="bez_awesome">&#xf0c6;</span>
                         <?php echo $tpl->getLang('pin_to_the_issue') ?>
                     </button>
                 </form>
@@ -118,7 +118,7 @@
                 <a class="bds_inline_button"
                    href="<?php echo $tpl->url('task', 'tid', $tpl->get('task')->id, 'action', 'unpin') ?>"
                    onclick="return confirm('<?php echo $tpl->getLang('confirm_unpin_task') ?>')">
-                    <span style="bez_awesome">&#xf0c6;</span>
+                    <span class="bez_awesome">&#xf0c6;</span>
                     <?php echo $tpl->getLang('unpin_from_the_issue') ?>
                 </a>
             <?php endif ?>

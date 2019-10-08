@@ -220,7 +220,13 @@ abstract class Entity {
             $resign_link = $this->model->action->url('unsubscribe', array('GET' => array( 't' => $token)));
             $mailer->Body = str_replace('%%resign_link%%', $resign_link, $content);
 
-            $mailer->send();
+            try {
+                $mailer->send();
+            } catch (Exception $e) {
+                $msg = $this->get_table_name() . '#' . $this->id . ': ' . $e->getMessage();
+                throw new \Exception($msg);
+            }
+
             $mailer->clearAddresses();
             $mailer->clearCustomHeaders();
         }

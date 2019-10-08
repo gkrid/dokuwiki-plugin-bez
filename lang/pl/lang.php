@@ -255,7 +255,7 @@ $lang ['task_do'] = 'Wykonano';
 $lang ['task_reject'] = 'Odrzuć';
 $lang ['task_reopen'] = 'Otwórz ponownie';
 
-$lang['reason_reopen'] = 'Przyczyna ponownego otwarcia'; 
+$lang['reason_reopen'] = 'Przyczyna ponownego otwarcia';
 $lang['reason_done']  = 'Przyczyna zakończenia';
 $lang['reason_reject'] = 'Przyczyna odrzucenia';
 
@@ -687,3 +687,8 @@ $lang['unmute_notifications'] = 'Włącz powiadomienia BEZ dla <strong>%s</stron
 
 $lang['js']['close_with_comment'] = 'Zamknij z komentarzem';
 $lang['js']['close_without_comment'] = 'Zamknij bez komentarza';
+
+$lang['notification problems_coming'] = 'Masz nadchodzący problem %s.';
+$lang['notification problems_outdated'] = 'Masz przeterminowany problem %s.';
+$lang['notification tasks_coming'] = 'Masz nadchodzące zadanie %s.';
+$lang['notification tasks_outdated'] = 'Masz przeterminowane zadanie %s.';
