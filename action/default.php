@@ -300,7 +300,7 @@ class action_plugin_bez_default extends action_plugin_bez_base {
         if (!preg_grep('/^bez:.*/', $event->data['plugins'])) return;
 
         $user = $event->data['user'];
-        $this->createObjects();
+        $this->createObjects(true);
 
         if (in_array('bez:problems_coming', $event->data['plugins'])) {
             $threads = $this->get_model()->factory('thread')->get_all(array(
@@ -317,6 +317,7 @@ class action_plugin_bez_default extends action_plugin_bez_base {
                 $full = sprintf($this->getLang('notification problems_coming'), $link);
                 $event->data['notifications'][] = [
                     'plugin' => 'bez:problems_coming',
+                    'id' => 'thread:' . $thread->id,
                     'full' => $full,
                     'brief' => $link,
                     'timestamp' => strtotime($thread->last_activity_date)
@@ -338,7 +339,8 @@ class action_plugin_bez_default extends action_plugin_bez_base {
 
                 $full = sprintf($this->getLang('notification problems_outdated'), $link);
                 $event->data['notifications'][] = [
-                    'plugin' => 'bez:problems_coming',
+                    'plugin' => 'bez:problems_outdated',
+                    'id' => 'thread:' . $thread->id,
                     'full' => $full,
                     'brief' => $link,
                     'timestamp' => strtotime($thread->last_activity_date)
@@ -359,7 +361,8 @@ class action_plugin_bez_default extends action_plugin_bez_base {
 
                 $full = sprintf($this->getLang('notification tasks_coming'), $link);
                 $event->data['notifications'][] = [
-                    'plugin' => 'bez:problems_coming',
+                    'plugin' => 'bez:tasks_coming',
+                    'id' => 'task:' . $task->id,
                     'full' => $full,
                     'brief' => $link,
                     'timestamp' => strtotime($task->plan_date)
@@ -380,7 +383,8 @@ class action_plugin_bez_default extends action_plugin_bez_base {
 
                 $full = sprintf($this->getLang('notification tasks_outdated'), $link);
                 $event->data['notifications'][] = [
-                    'plugin' => 'bez:problems_coming',
+                    'plugin' => 'bez:tasks_outdated',
+                    'id' => 'task:' . $task->id,
                     'full' => $full,
                     'brief' => $link,
                     'timestamp' => strtotime($task->plan_date)
