@@ -93,7 +93,24 @@ class action_plugin_bez_base extends DokuWiki_Action_Plugin {
                 $elms[] = $arg;
             }
         }
+        //add bez as a key for controller
         array_unshift($elms, 'bez');
+
+        //make an $elms key->value pair
+        $params = [];
+        for ($i = 0; $i < count($elms); $i += 2) {
+            $key = $elms[$i];
+            $value = isset($elms[$i+1]) ? $elms[$i+1] : '';
+            $params[$key] = $value;
+        }
+        $params = array_filter($params);
+        $elms = [];
+        foreach ($params as $k => $v) {
+            $elms[] = $k;
+            $elms[] = $v;
+        }
+
+
 
 
         //pl is default language

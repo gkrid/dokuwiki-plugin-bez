@@ -94,8 +94,9 @@
         <th><?php echo $tpl->getLang('report_total') ?></th>
         <td><?php echo array_sum(array_column($tpl->get('issues'), 'sum_all')) ?></td>
         <td><?php echo array_sum(array_column($tpl->get('issues'), 'sum_closed')) ?></td>
-        <td><?php echo round(array_sum(array_column($tpl->get('issues'), 'avg_closed'))
-                             / count(array_filter(array_column($tpl->get('issues'), 'avg_closed')))) ?>
+        <?php $numerator = array_sum(array_column($tpl->get('issues'), 'avg_closed')) ?>
+        <?php $denominator = count(array_filter(array_column($tpl->get('issues'), 'avg_closed'))) ?>
+        <td><?php echo $denominator > 0 ? round($numerator/$denominator) : 0 ?>
             <?php echo $tpl->getLang('days') ?></td>
     </tr>
 </table>

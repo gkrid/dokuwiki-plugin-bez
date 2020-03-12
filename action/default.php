@@ -114,7 +114,7 @@ class action_plugin_bez_default extends action_plugin_bez_base {
 	}
 
     public function setup_enviroment(Doku_Event $event, $param) {
-        global $ACT, $auth, $conf, $INFO;
+        global $ACT, $conf, $INFO, $ID;
 
         if ($ACT !== 'show') {
             return;
@@ -127,6 +127,9 @@ class action_plugin_bez_default extends action_plugin_bez_base {
         if ($ex[0] !== 'bez' && $ex[1] !== 'bez') {
             return;
         }
+
+        $INFO['id'] = $id;
+        $ID=$id;
 
 
         if ($ex[1] === 'bez') {
