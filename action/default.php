@@ -52,6 +52,7 @@ class action_plugin_bez_default extends action_plugin_bez_base {
 	 */
 	public function register(Doku_Event_Handler $controller)
 	{
+        $controller->register_hook('DOKUWIKI_STARTED', 'BEFORE', $this, 'setup_id');
         $controller->register_hook('DOKUWIKI_STARTED', 'AFTER', $this, 'setup_enviroment');
 		$controller->register_hook('ACTION_ACT_PREPROCESS', 'BEFORE', $this, 'action_act_preprocess');
 		$controller->register_hook('TPL_ACT_RENDER', 'BEFORE', $this, 'tpl_act_render');
@@ -113,15 +114,11 @@ class action_plugin_bez_default extends action_plugin_bez_base {
 		);
 	}
 
-    public function setup_enviroment(Doku_Event $event, $param) {
-        global $ACT, $conf, $INFO, $ID;
-
-        if ($ACT !== 'show') {
-            return;
-        }
+	public function setup_id(Doku_Event $event, $param) {
+	    global $INFO, $ID;
 
         $id = $_GET['id'];
-		$ex = explode(':', $id);
+        $ex = explode(':', $id);
 
         //check if we process BEZ
         if ($ex[0] !== 'bez' && $ex[1] !== 'bez') {
@@ -129,8 +126,22 @@ class action_plugin_bez_default extends action_plugin_bez_base {
         }
 
         $INFO['id'] = $id;
-        $ID=$id;
+        $ID = $id;
+    }
 
+    public function setup_enviroment(Doku_Event $event, $param) {
+        global $ACT, $conf, $ID;
+
+        if ($ACT !== 'show') {
+            return;
+        }
+
+		$ex = explode(':', $ID);
+
+        //check if we process BEZ
+        if ($ex[0] !== 'bez' && $ex[1] !== 'bez') {
+            return;
+        }
 
         if ($ex[1] === 'bez') {
             //pl is default language
