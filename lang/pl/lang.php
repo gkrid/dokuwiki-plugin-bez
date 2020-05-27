@@ -688,6 +688,7 @@ $lang['unmute_notifications'] = 'Włącz powiadomienia BEZ dla <strong>%s</stron
 $lang['js']['close_with_comment'] = 'Zamknij z komentarzem';
 $lang['js']['close_without_comment'] = 'Zamknij bez komentarza';
 
+$lang['notification problems_without_tasks'] = 'Jesteś koordynatorem problemu bez przypisanych zadań %s.';
 $lang['notification problems_coming'] = 'Masz nadchodzący problem %s.';
 $lang['notification problems_outdated'] = 'Masz przeterminowany problem %s.';
 $lang['notification tasks_coming'] = 'Masz nadchodzące zadanie %s.';

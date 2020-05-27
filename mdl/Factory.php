@@ -42,7 +42,7 @@ abstract class Factory {
 		$where_q = array();
 		foreach ($filters as $filter => $value) {
             $field = $this->filter_field_map($filter);
-			
+
             //parser
 			$operator = '=';
             $function = '';
@@ -50,26 +50,26 @@ abstract class Factory {
 			if (is_array($value)) {
                 $operators = array('!=', '<', '>', '<=', '>=', 'LIKE', 'BETWEEN', 'OR');
                 $functions = array('', 'date');
-                
+
                 $operator = $value[0];
                 $function = isset($value[2]) ? $value[2] : '';
-                
+
                 if (is_array($function)) {
                     $function = $function[0];
                     $function_args = array_slice($value[2], 1);
                 }
-                
+
                 $value = $value[1];
-                
+
 				if (!in_array($operator, $operators)) {
                     throw new \Exception('unknown operator: '.$operator);
                 }
-                
+
                 if (!in_array($function, $functions)) {
                     throw new \Exception('unknown function: '.$function);
                 }
 			}
-            
+
             //builder
             if ($operator === 'BETWEEN') {
                 if (count($value) < 2) {
@@ -87,23 +87,23 @@ abstract class Factory {
                 if (!is_array($value)) {
                     throw new \Exception('$data should be an array');
                 }
-                
+
                 $where_array = array();
-                
+
                 foreach ($value as $k => $v) {
                     $exec = ":${filter}_$k";
                     $where_array[] = "$field = $exec";
                     $execute[$exec] = $v;
                 }
                 $where_q[] = '('.implode(' OR ', $where_array).')';
-                
-                
+
+
             } else {
                 if ($function !== '') {
                     array_unshift($function_args, $field);
                     $where_q[] = "$function(".implode(',', $function_args).") $operator :$filter";
                     $execute[":$filter"] = $value;
-                } elseif (empty($value)) {
+                } elseif ($value == NULL || $value == '') {
                     $where_q[] = "($field IS NULL OR $field = '')";
                 } else {
                     $where_q[] = "$field $operator :$filter";
@@ -112,14 +112,14 @@ abstract class Factory {
 
             }
 		}
-		
+
 		$where = '';
 		if (count($where_q) > 0) {
 			$where = ' WHERE '.implode(' AND ', $where_q);
-		}	
+		}
 		return array($where, $execute);
 	}
-	
+
 	public function __construct(Model $model) {
 		$this->model = $model;
 	}
@@ -127,7 +127,7 @@ abstract class Factory {
     public function get_all($filters=array(), $orderby='', $defaults=array(), $limit=false) {
 
         list($where_q, $execute) = $this->build_where($filters);
-		
+
 		$q = $this->select_query() . $where_q;
 
 		if ($orderby != '') {
@@ -143,12 +143,12 @@ abstract class Factory {
 
         $sth->setFetchMode(\PDO::FETCH_CLASS, $this->get_object_class_name(),
                            array($this->model, $defaults));
-				
+
 		$sth->execute($execute);
-						
+
 		return $sth;
     }
-    
+
     public function count($filters=array()) {
         $table = $this->get_table_view();
         if (!$table) {
@@ -156,11 +156,11 @@ abstract class Factory {
         }
 
         list($where_q, $execute) = $this->build_where($filters);
-        
+
         $q = "SELECT COUNT(*) FROM $table " . $where_q;
         $sth = $this->model->db->prepare($q);
         $sth->execute($execute);
-        
+
         $count = $sth->fetchColumn();
         return $count;
     }
@@ -186,13 +186,13 @@ abstract class Factory {
         }
 
 		$q = $this->select_query()." WHERE $table.id = ?";
-						
+
 		$sth = $this->model->db->prepare($q);
 		$sth->execute(array($id));
-		
+
 		$obj = $sth->fetchObject($this->get_object_class_name(),
 					array($this->model, $defaults));
-        
+
         if ($obj === false) {
             throw new \Exception('there is no '.$this->get_table_name().' with id: '.$id);
         }
@@ -209,10 +209,10 @@ abstract class Factory {
         $class = (new \ReflectionClass($this))->getName();
         return str_replace('Factory', '', $class);
     }
-    
+
     public function create_object($defaults=array()) {
         $object_name = $this->get_object_class_name();
-        
+
 		$obj = new $object_name($this->model, $defaults);
 		return $obj;
 	}
@@ -306,13 +306,13 @@ abstract class Factory {
 	        $this->update($obj);
         }
     }
-	
+
 	protected function delete_from_db($id) {
 		$q = 'DELETE FROM '.$this->get_table_name().' WHERE id = ?';
 		$sth = $this->model->db->prepare($q);
 		$sth->execute(array($id));
 	}
-	
+
 	public function delete(Entity $obj) {
         if ($obj->acl_of('id') < BEZ_PERMISSION_DELETE) {
             throw new PermissionDeniedException('cannot delete');

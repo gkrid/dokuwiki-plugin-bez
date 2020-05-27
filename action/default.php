@@ -294,6 +294,7 @@ class action_plugin_bez_default extends action_plugin_bez_base {
 
 	public function add_notifications_source(Doku_Event $event)
     {
+        $event->data[] = 'bez:problems_without_tasks';
         $event->data[] = 'bez:problems_coming';
         $event->data[] = 'bez:problems_outdated';
         $event->data[] = 'bez:tasks_coming';
@@ -315,6 +316,29 @@ class action_plugin_bez_default extends action_plugin_bez_base {
 
         $user = $event->data['user'];
         $this->createObjects(true);
+
+        if (in_array('bez:problems_without_tasks', $event->data['plugins'])) {
+            $threads = $this->get_model()->factory('thread')->get_all(array(
+                                                                          'type' => 'issue',
+                                                                          'task_count' => '0',
+                                                                          'coordinator' => $user
+                                                                      ));
+            /** @var bez\mdl\Thread $thread */
+            foreach ($threads as $thread) {
+                $link = '<a href="' . $this->url('thread', 'id', $thread->id) . '">';
+                $link .= '#' . $thread->id;
+                $link .= '</a>';
+
+                $full = sprintf($this->getLang('notification problems_without_tasks'), $link);
+                $event->data['notifications'][] = [
+                    'plugin' => 'bez:problems_without_tasks',
+                    'id' => 'thread:' . $thread->id,
+                    'full' => $full,
+                    'brief' => $link,
+                    'timestamp' => strtotime($thread->last_activity_date)
+                ];
+            }
+        }
 
         if (in_array('bez:problems_coming', $event->data['plugins'])) {
             $threads = $this->get_model()->factory('thread')->get_all(array(
