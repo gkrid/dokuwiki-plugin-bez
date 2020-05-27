@@ -321,6 +321,7 @@ class action_plugin_bez_default extends action_plugin_bez_base {
             $threads = $this->get_model()->factory('thread')->get_all(array(
                                                                           'type' => 'issue',
                                                                           'task_count' => '0',
+                                                                          'state' => 'opened',
                                                                           'coordinator' => $user
                                                                       ));
             /** @var bez\mdl\Thread $thread */
