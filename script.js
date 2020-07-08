@@ -14,9 +14,10 @@ bez.ctl = {};
 /* DOKUWIKI:include scripts/start.js */
 /* DOKUWIKI:include scripts/report.js */
 
+
 jQuery(function () {
     'use strict';
-    
+
 	var getUrlVars = function() {
 		var vars = {},
 			parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi,
@@ -39,7 +40,7 @@ jQuery(function () {
 		}
 		return nparams;
 	};
-	
+
 	bez.rich_text_editor = function($textarea, $header) {
 		//clone
 		var tb = toolbar.filter(function (button) {
@@ -53,7 +54,7 @@ jQuery(function () {
 		});
 		initToolbar($header, $textarea.attr('id'), tb);
 	};
-	
+
 	jQuery.validate({
         form: '.bez_form, .bez_form_blank',
 		lang: 'pl'
@@ -71,7 +72,7 @@ jQuery(function () {
 		var found = window.location.href.match(/([^?\/]*)\??[^?\/]*$/);
 		var id = found[1];
 	}
-	
+
 	var nparams = getNparams(id),
 		ctl = nparams['bez'];
 

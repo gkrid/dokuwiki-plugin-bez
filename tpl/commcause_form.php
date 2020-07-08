@@ -28,44 +28,36 @@
                                 echo 'style="display:none;"';
                         ?>
                     >
+                        <input style="display: none" type="radio" name="type" value="comment" <?php if($tpl->value('type') == '' || $tpl->value('type') === 'comment') echo 'checked="checked"' ?>>
                         <a href="#comment"><?php echo $tpl->getLang('comment_noun') ?></a>
                     </li>
-					<li <?php if(strpos($tpl->value('type'), 'cause') === 0) echo 'class="active"' ?>>
-						<a href="#cause"><?php echo $tpl->getLang('cause_noun') ?></a>
+					<li <?php if($tpl->value('type') === 'cause') echo 'class="active"' ?>>
+                        <input style="display: none" type="radio" name="type" value="cause" <?php if($tpl->value('type') === 'cause') echo 'checked="checked"' ?>>
+                        <a href="#cause"><?php echo $tpl->getLang('cause_noun') ?></a>
+                    </li>
+                    <li <?php if($tpl->value('type') === 'risk') echo 'class="active"' ?>>
+                        <input style="display: none" type="radio" name="type" value="risk" <?php if($tpl->value('type') === 'risk') echo 'checked="checked"' ?>>
+                        <a href="#cause"><?php echo $tpl->getLang('risk_noun') ?></a>
+                    </li>
+                    <li <?php if($tpl->value('type') === 'opportunity') echo 'class="active"' ?>>
+                        <input style="display: none" type="radio" name="type" value="opportunity" <?php if($tpl->value('type') === 'opportunity') echo 'checked="checked"' ?>>
+                        <a href="#cause"><?php echo $tpl->getLang('opportunity_noun') ?></a>
                     </li>
 				</ul>
+                <?php else: ?>
+                <ul class="bez_tabs">
+                    <li class="active">
+                        <a href="#comment"><?php echo $tpl->getLang('comment_noun') ?></a>
+                    </li>
+                </ul>
 				<?php endif ?>
-				<div class="bez_toolbar"></div>
 			</h2>
 			</div>
 			<div class="bez_content">
+                <div class="bez_toolbar" style="line-height:0"></div>
 				<textarea name="content" class="bez_textarea_content" id="content1"><?php echo $tpl->value('content') ?></textarea>
-				
-				<input class="bez_comment_type" type="hidden" name="type" value="comment" />
 
                 <div class="plugin__bez_form_buttons">
-
-                <?php if ($tpl->get('thread_comment')->acl_of('type') >= BEZ_PERMISSION_CHANGE &&
-                    $tpl->get('thread')->can_add_causes()): ?>
-                    <div class="bez_cause_type">
-                        <div style="margin-bottom: 10px;">
-                            <label for="potential">
-                                <?php echo $tpl->getLang('cause_type') ?>:
-                            </label>
-                            <label>
-                                <input type="radio" name="type" value="cause_real"
-                                    <?php if($tpl->value('type') != 'cause_potential') echo 'checked' ?>/>
-                                <?php echo $tpl->getLang('cause_real') ?>
-                            </label>
-                            &nbsp;&nbsp;
-                            <label>
-                                <input type="radio" name="type" value="cause_potential"
-                                    <?php if($tpl->value('type') == 'cause_potential') echo 'checked' ?>/>
-                                <?php echo $tpl->getLang('cause_potential') ?>
-                            </label>
-                        </div>
-                    </div>
-                <?php endif ?>
 
                 <div class="plugin__bez_form_buttons_container">
                 <?php if ($tpl->param('kid') != ''): ?>

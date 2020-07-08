@@ -693,3 +693,10 @@ $lang['notification problems_coming'] = 'Masz nadchodzący problem %s.';
 $lang['notification problems_outdated'] = 'Masz przeterminowany problem %s.';
 $lang['notification tasks_coming'] = 'Masz nadchodzące zadanie %s.';
 $lang['notification tasks_outdated'] = 'Masz przeterminowane zadanie %s.';
+
+$lang['risk_noun'] = "Ryzyko";
+$lang['opportunity_noun'] = "Szansa";
+$lang['risk_added'] = "dodał(a) ryzyko";
+$lang['opportunity_added'] = "dodał(a) szansę";
+$lang['improvement_action_add'] = "Dodaj działanie";
+

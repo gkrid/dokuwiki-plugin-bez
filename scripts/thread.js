@@ -6,7 +6,7 @@ bez.ctl.thread = function() {
             event.preventDefault();
 		}
 	});
-		
+
 	var $bez_comment_form = jQuery('.bez_comment_form'),
 		$tabs = $bez_comment_form.find('.bez_tabs');
 	if ($tabs.length > 0) {
@@ -19,24 +19,25 @@ bez.ctl.thread = function() {
 		var setActive = function($a) {
 			$tabs.find('.active').removeClass('active');
 			$a.parent().addClass('active');
+            $a.parent().find('input[name=type]').click();
 		};
 
         var $action_buttons = $bez_comment_form.find("button[value=thread_close], button[value=thread_reject]");
-		
-		var activateComment = function () {		
+
+		var activateComment = function () {
 			$comment_type_input.removeAttr("disabled");
 			$cause_type_div.hide();
 			$cause_type_div.find("input").attr("disabled", "disabled");
-			
+
 			$bez_comment_form.removeClass('bez_cause');
             $action_buttons.show();
 		};
-		
+
 		var activateCause = function() {
 			$comment_type_input.attr("disabled", "disabled");
 			$cause_type_div.show();
 			$cause_type_div.find("input").removeAttr("disabled");
-			
+
 			$bez_comment_form.addClass('bez_cause');
             $action_buttons.hide();
 		};
@@ -49,12 +50,12 @@ bez.ctl.thread = function() {
 			activateCause();
 		}
 
-		
+
 		$tabs.on('click', 'a', function (e) {
 			e.preventDefault();
 			setActive(jQuery(this));
 		});
-		
+
 		$tabs.on('click', 'a[href="#comment"]', activateComment);
 		$tabs.on('click', 'a[href="#cause"]', activateCause);
 	}
@@ -73,28 +74,28 @@ bez.ctl.thread = function() {
 	//show/hide comments
 	var $show_comments = jQuery(".bez_show_comments"),
 		$hide_comments = jQuery(".bez_hide_comments");
-	
-	var bez_show_comments = function() {	
+
+	var bez_show_comments = function() {
 		$show_comments.hide();
 		$hide_comments.show();
 		localStorage.setItem('comments_are_hidden', '0');
 		jQuery('.bez_type_0').show();
 	};
-	
+
 	var bez_hide_comments = function() {
 		$hide_comments.hide();
 		$show_comments.show();
 		localStorage.setItem('comments_are_hidden', '1');
 		jQuery('.bez_type_0').hide();
 	};
-	
+
 	var comments_are_hidden = localStorage.getItem('comments_are_hidden');
 	if (comments_are_hidden === null || comments_are_hidden === '0') {
 		bez_show_comments();
 	} else {
 		bez_hide_comments();
 	}
-	
+
 	$show_comments.on('click', function(e) { e.preventDefault(); bez_show_comments() });
 	$hide_comments.on('click', function(e) { e.preventDefault(); bez_hide_comments() });
 
@@ -102,7 +103,7 @@ bez.ctl.thread = function() {
         "use strict";
         jQuery("button[value=thread_close], button[value=thread_reject], button[value=thread_reopen]").effect("highlight");
     });
-	
+
 	if (jQuery('.bez_task_form').length > 0) {
 		var $task_form = jQuery('.bez_task_form');
 		//date picker
@@ -119,7 +120,7 @@ bez.ctl.thread = function() {
 				jQuery('#task_datapair').show();
 			}
 		});
-		
+
 		//time picker
 		jQuery('#task_datapair .time').timepicker({
 				'showDuration': true,
@@ -131,11 +132,11 @@ bez.ctl.thread = function() {
 
 	}
 
-	
+
 	if (jQuery('#opinion').length > 0) {
 		bez.rich_text_editor(jQuery('#opinion'), jQuery('.bez_opinion_toolbar'));
 	}
-	
+
 	if (jQuery('#reason').length > 0) {
         jQuery('#no_evaluation').on('change', function() {
             if (jQuery(this).prop('checked') === true) {
@@ -145,11 +146,11 @@ bez.ctl.thread = function() {
                 jQuery('#reason').prop('disabled', false).show();
                 jQuery('.bez_reason_toolbar').show();
             }
-            
+
         });
 		bez.rich_text_editor(jQuery('#reason'), jQuery('.bez_reason_toolbar'));
 	}
-	
+
 	//tooltips
 	jQuery(document).tooltip({
 		items: '#issue_participants a[title]',
@@ -166,7 +167,7 @@ bez.ctl.thread = function() {
 				var $this = jQuery(this);
 				content += '<div>'+$this.get(0).outerHTML+' '+$this.attr('title')+'</div>';
 			});
-			
+
 			return content;
 		}
 	});
@@ -187,23 +188,23 @@ bez.ctl.thread = function() {
 		}
 	);
 
-    
+
     //INVITE USERS
     jQuery.widget( "custom.inviteUsersCombobox", {
       _create: function() {
         this.wrapper = jQuery( "<span>" )
           .addClass( "custom-inviteUsersCombobox" )
           .insertAfter( this.element );
- 
+
         this.element.hide();
         this._createAutocomplete();
         this._createShowAllButton();
       },
- 
+
       _createAutocomplete: function() {
         var selected = this.element.children( ":selected" ),
           value = selected.val() ? selected.text() : "";
- 
+
         this.input = jQuery( "<input>" )
           .appendTo( this.wrapper )
           .val( value )
@@ -219,7 +220,7 @@ bez.ctl.thread = function() {
               "ui-tooltip": "ui-state-highlight"
             }
           });
- 
+
         this._on( this.input, {
           autocompleteselect: function( event, ui ) {
             ui.item.option.selected = true;
@@ -227,15 +228,15 @@ bez.ctl.thread = function() {
               item: ui.item.option
             });
           },
- 
+
           autocompletechange: "_removeIfInvalid"
         });
       },
- 
+
       _createShowAllButton: function() {
         var input = this.input,
           wasOpen = false;
- 
+
         jQuery( "<a>" )
           .attr( "tabIndex", -1 )
           .attr( "title", LANG.plugins.bez.combobox_show_all_items )
@@ -254,23 +255,23 @@ bez.ctl.thread = function() {
           })
           .on( "click", function() {
             input.trigger( "focus" );
- 
+
             // Close if already visible
             if ( wasOpen ) {
               return;
             }
- 
+
             // Pass empty string as value to search for, displaying all results
             input.autocomplete( "search", "" );
           });
       },
- 
+
       _source: function( request, response ) {
         var matcher = new RegExp( jQuery.ui.autocomplete.escapeRegex(request.term), "i" );
         response( this.element.children( "option" ).map(function() {
           var text = jQuery( this ).text();
           if ( this.value && ( !request.term || matcher.test(text) ) ) {
-              
+
             return {
               label: text,
               value: text,
@@ -279,14 +280,14 @@ bez.ctl.thread = function() {
           }
         }) );
       },
- 
+
       _removeIfInvalid: function( event, ui ) {
- 
+
         // Selected an item, nothing to do
         if ( ui.item ) {
           return;
         }
- 
+
         // Search for a match (case-insensitive)
         var value = this.input.val(),
           valueLowerCase = value.toLowerCase(),
@@ -297,12 +298,12 @@ bez.ctl.thread = function() {
             return false;
           }
         });
- 
+
         // Found a match, nothing to do
         if ( valid ) {
           return;
         }
- 
+
         // Remove invalid value
         this.input
           .val( "" )
@@ -314,13 +315,13 @@ bez.ctl.thread = function() {
         }, 2500 );
         this.input.autocomplete( "instance" ).term = "";
       },
- 
+
       _destroy: function() {
         this.wrapper.remove();
         this.element.show();
       }
     });
- 
+
     jQuery( "#bez_invite_users select" ).inviteUsersCombobox();
     //INVITE
 };

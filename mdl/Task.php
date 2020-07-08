@@ -122,7 +122,7 @@ class Task extends Entity {
                     $this->thread_comment = $defaults['thread_comment'];
                     $this->thread_comment_id = $this->thread_comment->id;
 
-                    if ($this->thread_comment->type == 'cause_real') {
+                    if ($this->thread_comment->type == 'cause') {
                         $this->type = 'corrective';
                     } else {
                         $this->type = 'preventive';
@@ -260,7 +260,7 @@ class Task extends Entity {
             $this->type = 'program';
         } elseif ($this->thread_comment_id == '') {
             $this->type = 'correction';
-        } elseif ($this->__get('thread_comment')->type == 'cause_real') {
+        } elseif ($this->__get('thread_comment')->type == 'cause') {
             $this->type = 'corrective';
         } else {
             $this->type = 'preventive';

@@ -21,18 +21,10 @@
                 <a href="#k<?php echo $tpl->get('thread_comment')->id ?>">#k<?php echo $tpl->get('thread_comment')->id ?></a>
                 <strong><?php echo $tpl->user_name($tpl->get('thread_comment')->author) ?></strong>
 
-                <?php if ($tpl->get('thread_comment')->type == 'comment'): ?>
-                    <?php echo $tpl->getLang('comment_added') ?>
-                <?php else: ?>
-                    <?php echo $tpl->getLang('cause_added') ?>
-                <?php endif ?>
+               <?php echo $tpl->getLang($tpl->get('thread_comment')->type . '_added') ?>
+
                 <?php echo $tpl->datetime($tpl->get('thread_comment')->create_date) ?>
-                
-                <?php if (strpos($tpl->get('thread_comment')->type, 'cause') === 0): ?>
-                    <span style="color: #000;">
-                        (<?php echo $tpl->getLang($tpl->get('thread_comment')->type) ?>)
-                    </span>
-                <?php endif ?>
+
 
                 <?php if ($tpl->param('kid') != $tpl->get('thread_comment')->id): ?>
                     <div class="bez_comment_buttons">
@@ -58,8 +50,8 @@
 				<?php echo $tpl->get('thread_comment')->content_html; ?>
             </div>
 		</div>
-		
-		<?php if (strpos($tpl->get('thread_comment')->type, 'cause') === 0): ?>
+
+		<?php if ($tpl->get('thread_comment')->type !== 'comment'): ?>
         <?php if ($tpl->get('tasks ' . $tpl->get('thread_comment')->id) == '')
             $tpl->set('causes_without_tasks', true) ?>
 		<div style="margin-top: 10px; margin-left: 40px">
@@ -83,10 +75,10 @@
 						<div class="bez_second_lv_buttons" style="margin-top:10px">
 							<a href="<?php echo $tpl->url('thread', 'id', $tpl->get('thread')->id, 'kid', $tpl->get('thread_comment')->id, 'action', 'task_add') ?>#z_" class="bez_subscribe_button">
 								<span class="bez_awesome">&#xf0fe;</span>&nbsp;&nbsp;
-								<?php if ($tpl->get('thread_comment')->type == 'cause_real'): ?>
+								<?php if ($tpl->get('thread_comment')->type == 'cause'): ?>
 									<?php echo $tpl->getLang('corrective_action_add') ?>
 								<?php else: ?>
-									<?php echo $tpl->getLang('preventive_action_add') ?>
+									<?php echo $tpl->getLang('improvement_action_add') ?>
 								<?php endif ?>
 							</a>
 						</div>
@@ -94,6 +86,6 @@
 			<?php endif ?>
 		</div>
 		<?php endif ?>
-        
+
 	</div>
-</div>			
+</div>

@@ -662,3 +662,9 @@ $lang['notification problems_coming'] = 'You have coming problem %s.';
 $lang['notification problems_outdated'] = 'You have outdated problem %s.';
 $lang['notification tasks_coming'] = 'You have comming task %s.';
 $lang['notification tasks_outdated'] = 'You have outdated task %s.';
+
+$lang['risk_noun'] = "Risk";
+$lang['opportunity_noun'] = "Opportunity";
+$lang['risk_added'] = "added risk";
+$lang['opportunity_added'] = "added opportunity";
+$lang['improvement_action_add'] = "Add action";

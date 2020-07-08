@@ -9,13 +9,13 @@ class Thread_comment extends Entity {
 
 	//real
 	protected $id, $thread_id, $type, $author, $create_date, $last_modification_date, $content, $content_html, $task_count;
-	
+
 	//virtual
 	protected $coordinator;
 
 	/** @var Thread */
 	protected  $thread;
-	
+
     //protected $parse_int = array('tasks_count');
 	public static function get_columns() {
 		return array('id', 'thread_id', 'type', 'author',
@@ -37,7 +37,7 @@ class Thread_comment extends Entity {
         }
         return parent::__get($property);
     }
-    
+
     //defaults: isssue, type
 	public function __construct($model, $defaults=array()) {
 		parent::__construct($model, $defaults);
@@ -45,10 +45,10 @@ class Thread_comment extends Entity {
         $this->validator->set_rules(array(
             'content' => array(array('length', 10000), 'NOT NULL'),
             'type' => array(
-                array('select', array('comment', 'cause_real', 'cause_potential')),
+                array('select', array('comment', 'cause', 'risk', 'opportunity')),
                 'NOT NULL')
         ));
-		
+
 		//new object
 		if ($this->id === NULL) {
 
