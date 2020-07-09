@@ -225,11 +225,11 @@ $lang['preventive_action'] = 'Zapobiegawcze';
 
 $lang['correction_h'] = 'Działania korekcyjne';
 $lang['corrective_action_h'] = 'Działania korygujące';
-$lang['preventive_action_h'] = 'Działania zapobiegawcze';
+$lang['preventive_action_h'] = 'Działania doskonalące';
 
 $lang['correction_add'] = 'Dodaj korekcję';
 $lang['corrective_action_add'] = 'Dodaj działanie korygujące';
-$lang['preventive_action_add'] = 'Dodaj działanie zapobiegawcze';
+$lang['preventive_action_add'] = 'Dodaj działanie doskonalące';
 
 $lang['show_all_tasks'] = 'Pokaż wszystkie działania';
 
@@ -283,7 +283,7 @@ $lang['3d'] = 'Korekcja';
 $lang['4d'] = 'Przyczyny rzeczywiste';
 $lang['5d'] = 'Działania korygujące';
 $lang['6d'] = 'Przyczyny potencjalne';
-$lang['7d'] = 'Działania zapobiegawcze';
+$lang['7d'] = 'Działania doskonalące';
 $lang['8d'] = 'Ocena skuteczności';
 
 $lang['number'] = 'Ilość';
@@ -330,7 +330,7 @@ $lang['change_cause_button'] = "Popraw przyczynę";
 $lang['added'] = 'Dodana';
 
 $lang['delete'] = 'Usuń';
-$lang['info_no_causes_added'] = 'Musisz dodać co najmniej jedną przyczynę, aby dodawać działania korygujące i zapobiegawcze.';
+$lang['info_no_causes_added'] = 'Musisz dodać co najmniej jedną przyczynę, aby dodawać działania korygujące i doskonalące.';
 $lang['info_no_all_tasks_closed'] = 'Musisz zamknąć wszystkie zadania, zanim zamkniesz problem.';
 
 
@@ -595,7 +595,7 @@ $lang['mail_task_change_state'] = 'zmienił status w zadaniu';
 
 $lang['task_type_correction'] = 'Korekcyjne';
 $lang['task_type_corrective'] = 'Korygujące';
-$lang['task_type_preventive'] = 'Zapobiegawcze';
+$lang['task_type_preventive'] = 'Doskonalące';
 $lang['task_type_program'] = 'Programowe';
 
 $lang['nav my_activities'] = 'Moje aktywności';
