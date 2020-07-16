@@ -700,3 +700,9 @@ $lang['risk_added'] = "dodał(a) ryzyko";
 $lang['opportunity_added'] = "dodał(a) szansę";
 $lang['improvement_action_add'] = "Dodaj działanie";
 
+$lang['risks'] = "Ryzyka";
+$lang['opportunities'] = "Szanse";
+
+$lang['4d'] = "Przyczyny";
+$lang['6d'] = "Ryzyka i szanse";
+$lang['7d'] = "Działania do ryzyk i szans";

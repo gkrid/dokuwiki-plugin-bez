@@ -668,3 +668,10 @@ $lang['opportunity_noun'] = "Opportunity";
 $lang['risk_added'] = "added risk";
 $lang['opportunity_added'] = "added opportunity";
 $lang['improvement_action_add'] = "Add action";
+
+$lang['risks'] = "Risks";
+$lang['opportunities'] = "Opportunities";
+
+$lang['4d'] = "Causes";
+$lang['6d'] = "Risks and opportunities";
+$lang['7d'] = "Actions for risks and opportunities";

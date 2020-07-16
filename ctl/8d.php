@@ -17,9 +17,14 @@ if ($this->model->get_level() < BEZ_AUTH_VIEWER) {
 /** @var bez\mdl\Thread $thread */
 $thread = $this->model->threadFactory->get_one($this->get_param('id'));
 $this->tpl->set('thread', $thread);
-$this->tpl->set('causes_real',
-        $this->model->thread_commentFactory->get_from_thread($thread, array('type' => 'cause_real'))->fetchAll());
-$this->tpl->set('causes_potential',
-    $this->model->thread_commentFactory->get_from_thread($thread, array('type' => 'cause_potential'))->fetchAll());
+$this->tpl->set('causes',
+        $this->model->thread_commentFactory->
+        get_from_thread($thread, array('type' => 'cause'))->fetchAll());
+$this->tpl->set('risks',
+    $this->model->thread_commentFactory->
+    get_from_thread($thread, array('type' => 'risk'))->fetchAll());
+$this->tpl->set('opportunities',
+                $this->model->thread_commentFactory->
+                get_from_thread($thread, array('type' => 'opportunity'))->fetchAll());
 $tasks = $this->model->taskFactory->get_by_type($thread);
 $this->tpl->set('8d_tasks', $tasks);

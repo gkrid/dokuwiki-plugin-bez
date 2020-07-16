@@ -1,9 +1,9 @@
 <?php /* @var \dokuwiki\plugin\bez\meta\Tpl $tpl */ ?>
 <?php $D = 2 ?>
 <?php if (count($tpl->get('8d_tasks')['correction']) > 0) $D++ ?>
-<?php if (count($tpl->get('causes_real')) > 0) $D++ ?>
+<?php if (count($tpl->get('causes')) > 0) $D++ ?>
 <?php if (count($tpl->get('8d_tasks')['corrective']) > 0) $D++ ?>
-<?php if (count($tpl->get('causes_potential')) > 0) $D++ ?>
+<?php if (count($tpl->get('risks')) > 0 || count($tpl->get('opportunities')) > 0) $D++ ?>
 <?php if (count($tpl->get('8d_tasks')['preventive']) > 0) $D++ ?>
 <?php if ($tpl->get('thread')->state == 'closed') $D++ ?>
 
@@ -62,9 +62,9 @@
     <?php include '8d_tasks.php' ?>
 <?php endif ?>
 
-<?php if (count($tpl->get('causes_real')) > 0): ?>
+<?php if (count($tpl->get('causes')) > 0): ?>
     <h2><?php echo $D++ ?>D - <?php echo $tpl->getLang('4d') ?></h2>
-    <?php $tpl->set('causes', $tpl->get('causes_real')) ?>
+    <?php $tpl->set('causes', $tpl->get('causes')) ?>
     <?php include '8d_causes.php' ?>
 <?php endif ?>
 
@@ -74,10 +74,18 @@
     <?php include '8d_tasks.php' ?>
 <?php endif ?>
 
-<?php if (count($tpl->get('causes_potential')) > 0): ?>
+<?php if (count($tpl->get('risks')) > 0 || count($tpl->get('opportunities')) > 0): ?>
     <h2><?php echo $D++ ?>D - <?php echo $tpl->getLang('6d') ?></h2>
-    <?php $tpl->set('causes', $tpl->get('causes_potential')) ?>
-    <?php include '8d_causes.php' ?>
+    <?php if (count($tpl->get('risks')) > 0): ?>
+        <h3><?php echo $tpl->getLang('risks') ?></h3>
+        <?php $tpl->set('causes', $tpl->get('risks')) ?>
+        <?php include '8d_causes.php' ?>
+    <?php endif ?>
+    <?php if (count($tpl->get('opportunities')) > 0): ?>
+        <h3><?php echo $tpl->getLang('opportunities') ?></h3>
+        <?php $tpl->set('causes', $tpl->get('opportunities')) ?>
+        <?php include '8d_causes.php' ?>
+    <?php endif ?>
 <?php endif ?>
 
 <?php if (count($tpl->get('8d_tasks')['preventive']) > 0): ?>
