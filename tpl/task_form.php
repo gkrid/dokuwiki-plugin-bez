@@ -22,7 +22,7 @@ if ($tpl->action() == 'thread') {
 				<label for="id"><?php echo $tpl->getLang('id') ?>:</label>
 				<span><strong>#z<?php echo $tpl->get('task')->id ?></strong></span>
 				</div>
-				
+
 				<?php if ($tpl->get('thread') != '' &&
                     $tpl->get('task')->acl_of('thread_comment_id') >= BEZ_PERMISSION_CHANGE): ?>
 				<div class="row">
@@ -57,8 +57,8 @@ if ($tpl->action() == 'thread') {
 				<?php echo $tpl->user_name() ?>
 				</strong>
 			<?php endif ?>
-			
-			
+
+
 			</span>
 			</div>
 
@@ -71,7 +71,7 @@ if ($tpl->action() == 'thread') {
 					<textarea name="content" id="content" data-validation="required" <?php if ($tpl->get('task')->acl_of('content') < BEZ_PERMISSION_CHANGE) echo 'disabled' ?>><?php echo $tpl->value('content') ?></textarea>
 				</span>
 			</div>
-			
+
 			<div class="row task_plan_field">
 				<label for="plan_date"><?php echo $tpl->getLang('plan_date') ?>:</label>
 				<span>
@@ -96,17 +96,17 @@ if ($tpl->action() == 'thread') {
                     </div>
 				</span>
 			</div>
-			
+
 			<div class="row">
 				<label></label>
 				<span>
 					<label>
                         <?php if ($tpl->get('task')->acl_of('all_day_event') >= BEZ_PERMISSION_CHANGE): ?>
-                        <input type="checkbox" name="all_day_event" value="1" 
+                        <input type="checkbox" name="all_day_event" value="1"
                             <?php if ($tpl->value('all_day_event') == '' ||
                                         $tpl->value('all_day_event') == '1'): ?>
                                 checked
-                            <?php endif ?> /> 
+                            <?php endif ?> />
                         <?php else: ?>
                              <input type="checkbox" disabled
                             <?php if ($tpl->get('task')->all_day_event == '1'): ?>
@@ -114,20 +114,24 @@ if ($tpl->action() == 'thread') {
                             <?php endif ?> />
                         <?php endif ?> <?php echo $tpl->getLang('all_day_event') ?>
                     </label>
-                
+
                 </span>
 			</div>
-			
+
 			<div class="row">
 			<label for="tasktype"><?php echo $tpl->getLang('task_type') ?>:</label>
 			<span>
-                <select id="task_program_id" name="task_program_id" <?php if ($tpl->get('task')->acl_of('task_program_id') < BEZ_PERMISSION_CHANGE) echo 'disabled' ?>>
+                <select id="task_program_id" name="task_program_id"
+                    <?php if ($tpl->get('task')->acl_of('task_program_id') < BEZ_PERMISSION_CHANGE) echo 'disabled' ?>
+                    <?php if (!$tpl->get('task')->can_be_null('task_program_id')) echo 'data-validation="required"' ?>>
                     <?php if ($tpl->get('task')->can_be_null('task_program_id')): ?>
                         <option <?php if ($tpl->value('task_program_id') == '') echo 'selected' ?> value="">
                             <?php echo $tpl->getLang('tasks_no_type') ?>
                         </option>
+                    <?php else: ?>
+                        <option value="">--- <?php echo $tpl->getLang('select') ?>---</option>
                     <?php endif ?>
-                    
+
                     <?php foreach ($tpl->get('task_programs') as $task_program): ?>
                         <option <?php if ($tpl->value('task_program_id') == $task_program->id) echo 'selected' ?> value="<?php echo $task_program->id ?>"><?php echo $task_program->name ?></option>
                     <?php endforeach ?>
