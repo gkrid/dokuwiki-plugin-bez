@@ -79,6 +79,7 @@ class action_plugin_bez_default extends action_plugin_bez_base {
 		  "type" => "text/javascript",
 		  "src" => DOKU_BASE.
 			"lib/plugins/bez/lib/jquery.timepicker-1.11.9-0/jquery.timepicker.min.js",
+		  "defer" => "defer",
 		  "_data" => "",
 		);
 
@@ -87,6 +88,7 @@ class action_plugin_bez_default extends action_plugin_bez_base {
 		  "type" => "text/javascript",
 		  "src" => DOKU_BASE.
 			"lib/plugins/bez/lib/jquery.datepair/datepair.js",
+            "defer" => "defer",
 		  "_data" => "",
 		);
 
@@ -95,6 +97,7 @@ class action_plugin_bez_default extends action_plugin_bez_base {
 		  "type" => "text/javascript",
 		  "src" => DOKU_BASE.
 			"lib/plugins/bez/lib/jquery.datepair/jquery.datepair.js",
+            "defer" => "defer",
 		  "_data" => "",
 		);
 
@@ -110,6 +113,7 @@ class action_plugin_bez_default extends action_plugin_bez_base {
 		  "type" => "text/javascript",
 		  "src" => DOKU_BASE.
 			"lib/plugins/bez/lib/jquery.form-validator/jquery.form-validator.min.js",
+            "defer" => "defer",
 		  "_data" => "",
 		);
 	}
