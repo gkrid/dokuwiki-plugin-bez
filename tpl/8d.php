@@ -5,7 +5,7 @@
 <?php if (count($tpl->get('8d_tasks')['corrective']) > 0) $D++ ?>
 <?php if (count($tpl->get('risks')) > 0 || count($tpl->get('opportunities')) > 0) $D++ ?>
 <?php if (count($tpl->get('8d_tasks')['preventive']) > 0) $D++ ?>
-<?php if ($tpl->get('thread')->state == 'closed') $D++ ?>
+<?php if ($tpl->get('thread')->state == 'closed' || $tpl->get('thread')->state == 'rejected') $D++ ?>
 
 <h1>
 	<?php printf($tpl->getLang('8d_report_header'), $D); ?>
