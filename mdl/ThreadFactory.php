@@ -299,6 +299,7 @@ class ThreadFactory extends Factory {
     public function delete(Entity $obj) {
         if ($obj->can_be_removed()) {
             $this->model->sqlite->query('DELETE FROM thread_label WHERE thread_id=?', $obj->id);
+            $this->model->sqlite->query('DELETE FROM thread_participant WHERE thread_id=?', $obj->id);
             parent::delete($obj);
         }
     }
