@@ -55,7 +55,7 @@ class Thread extends Entity {
             return true;
         }
     }
-	
+
 	public function __construct($model, $defaults=array()) {
 		parent::__construct($model);
 
@@ -79,7 +79,7 @@ class Thread extends Entity {
             $this->acl->grant('content', BEZ_PERMISSION_CHANGE);
             $this->acl->grant('type', BEZ_PERMISSION_CHANGE);
 
-            
+
             if ($this->model->get_level() >= BEZ_AUTH_LEADER) {
 
                 $this->state = 'opened';
@@ -116,7 +116,7 @@ class Thread extends Entity {
             }
         }
 	}
-	
+
 	public function set_data($data, $filter=NULL) {
         parent::set_data($data, $filter=NULL);
 
@@ -387,7 +387,7 @@ class Thread extends Entity {
     }
 
     public function get_causes() {
-        $r = $this->model->sqlite->query("SELECT id FROM thread_comment WHERE type LIKE 'cause_%' AND thread_id=?",
+        $r = $this->model->sqlite->query("SELECT id FROM thread_comment WHERE (type='cause' OR type='risk' OR type='opportunity') AND thread_id=?",
                                          $this->id);
         $arr = $this->model->sqlite->res2arr($r);
         $causes = array();
@@ -580,4 +580,10 @@ class Thread extends Entity {
         $this->mail_notify($content, false, $attachedImages);
     }
 
+    public function can_be_removed() {
+        $r = $this->model->sqlite->query("SELECT COUNT(*) FROM thread_comment WHERE thread_id=?",
+                                         $this->id);
+        $comments_count = $this->model->sqlite->res2single($r);
+        return $this->task_count == 0 && $comments_count == 0;
+    }
 }

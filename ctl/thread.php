@@ -134,6 +134,14 @@ if ($this->get_param('action') == 'commcause_add') {
     $task = $this->model->taskFactory->get_one($this->get_param('tid'), array('thread' => $thread));
     $this->model->taskFactory->delete($task);
     $redirect = true;
+} elseif ($this->get_param('action') == 'delete') {
+    if ($thread->type == 'issue') {
+        $redirect_to = 'threads';
+    } else {
+        $redirect_to = 'projects';
+    }
+    $this->model->threadFactory->delete($thread);
+    header('Location: ' . $this->url($redirect_to));
 }
 
 if (isset($redirect) && $redirect == true) {

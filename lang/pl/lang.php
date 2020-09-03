@@ -349,6 +349,7 @@ $lang['yes'] = 'Tak';
 $lang['no'] = 'Nie';
 
 $lang['all'] = 'wszystkie';
+$lang['all_not_rejected'] = 'wszystkie nieodrzucone';
 $lang['year'] = 'Rok';
 $lang['in_year'] = 'w roku';
 $lang['filter'] = 'Filtruj';

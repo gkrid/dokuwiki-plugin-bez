@@ -42,7 +42,7 @@
         <strong><?php echo $tpl->getLang('closed') ?>:</strong>
         <?php echo $tpl->date($tpl->get('thread')->close_date) ?>
     </span>
-    
+
 	<span>
 		<strong><?php echo $tpl->getLang('report_priority') ?>: </strong>
         <?php echo $tpl->date_diff_days($tpl->get('thread')->create_date, $tpl->get('thread')->close_date, '%a') ?>
@@ -56,7 +56,7 @@
     <td>
         <?php echo $tpl->user_name($tpl->get('thread')->original_poster) ?>
     </td>
-    
+
     <th><?php echo $tpl->getLang('coordinator') ?>:</th>
     <td>
         <?php if ($tpl->get('thread')->coordinator == ''): ?>
@@ -94,6 +94,14 @@
         <?php if (count($tpl->get('thread')->changable_fields(array('label_id', 'title', 'content', 'coordinator'))) > 0): ?>
             <a href="<?php echo $tpl->url('thread_report', 'action', 'edit', 'id', $tpl->get('thread')->id) ?>" class="bds_inline_button">
                 ✎ <?php echo $tpl->getLang('edit') ?>
+            </a>
+        <?php endif ?>
+
+        <?php if ($tpl->get('thread')->acl_of('id') >= BEZ_PERMISSION_DELETE && $tpl->get('thread')->can_be_removed()): ?>
+            <a class="bds_inline_button bez_commcause_delete_prompt"
+               href="<?php echo $tpl->url('thread', 'id', $tpl->get('thread')->id, 'action', 'delete');
+               ?>">
+                ✕ <?php echo $tpl->getLang('delete') ?>
             </a>
         <?php endif ?>
 

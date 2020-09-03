@@ -128,3 +128,34 @@
 <?php endif ?>
 
 
+<?php if ($tpl->get('thread')->state == 'closed' || $tpl->get('thread')->state == 'rejected'): ?>
+    <h2><?php echo $D++ ?>D - <?php echo $tpl->getLang('8d') ?></h2>
+    <?php echo  $tpl->get('thread')->closing_comment() ?>
+    <table>
+        <tr>
+            <td>
+                <strong><?php echo $tpl->getLang('true_date') ?>:</strong>
+                <?php echo $tpl->date($tpl->get('thread')->close_date) ?>
+            </td>
+            <td>
+                <strong><?php echo $tpl->getLang('state') ?>:</strong>
+                <?php echo $tpl->getLang('state_' . $tpl->get('thread')->state) ?>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <strong><?php echo $tpl->getLang('totalcost') ?>:</strong>
+                <?php if ($tpl->get('thread')->task_sum_cost != ''): ?>
+                    <?php echo $tpl->get('thread')->task_sum_cost ?>
+                <?php else: ?>
+                    <em>---</em>
+                <?php endif ?>
+            </td>
+            <td>
+                <strong><?php echo $tpl->getLang('coordinator') ?>:</strong>
+                <?php echo $tpl->user_name($tpl->get('thread')->coordinator) ?>
+            </td>
+        </tr>
+    </table>
+<?php endif ?>

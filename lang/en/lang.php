@@ -339,6 +339,7 @@ $lang['yes'] = 'Yes';
 $lang['no'] = 'No';
 
 $lang['all'] = 'everything';
+$lang['all_not_rejected'] = 'everything without rejected';
 $lang['year'] = 'Year';
 $lang['in_year'] = 'in year';
 $lang['filter'] = 'Filter';

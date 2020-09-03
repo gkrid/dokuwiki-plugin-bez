@@ -17,7 +17,7 @@ class ThreadFactory extends Factory {
         //get only year
 		$first =  (int) substr($date, 0, strpos($date, '-'));
         $last = (int) date('Y');
-		
+
 		$years = array();
 		for ($year = $first; $year <= $last; $year++) {
 			$years[] = (string) $year;
@@ -117,7 +117,7 @@ class ThreadFactory extends Factory {
                            COUNT(*) AS count_all,
                            SUM(task_sum_cost) AS sum_all,
                            SUM(CASE WHEN state = 'closed' THEN task_sum_cost END) AS sum_closed,
-                           (CASE WHEN state = 'closed' THEN 
+                           (CASE WHEN state = 'closed' THEN
                             AVG(julianday(close_date) - julianday(create_date))
                             END) AS avg_closed
                       FROM thread_view
@@ -136,7 +136,7 @@ class ThreadFactory extends Factory {
                            COUNT(*) AS count_all,
                            SUM(task_sum_cost) AS sum_all,
                            SUM(CASE WHEN state = 'closed' THEN task_sum_cost END) AS sum_closed,
-                           (CASE WHEN state = 'closed' THEN 
+                           (CASE WHEN state = 'closed' THEN
                             AVG(julianday(close_date) - julianday(create_date))
                             END) AS avg_closed
                       FROM thread_view
@@ -163,7 +163,7 @@ class ThreadFactory extends Factory {
                            COUNT(*) AS count_all,
                            SUM(task_sum_cost) AS sum_all,
                            SUM(CASE WHEN state = 'closed' THEN task_sum_cost END) AS sum_closed,
-                           (CASE WHEN state = 'closed' THEN 
+                           (CASE WHEN state = 'closed' THEN
                             AVG(julianday(close_date) - julianday(create_date))
                             END) AS avg_closed
                       FROM thread_view
@@ -180,7 +180,7 @@ class ThreadFactory extends Factory {
                            COUNT(*) AS count_all,
                            SUM(task_sum_cost) AS sum_all,
                            SUM(CASE WHEN state = 'closed' THEN task_sum_cost END) AS sum_closed,
-                           (CASE WHEN state = 'closed' THEN 
+                           (CASE WHEN state = 'closed' THEN
                             AVG(julianday(close_date) - julianday(create_date))
                             END) AS avg_closed
                       FROM thread_view
@@ -293,6 +293,13 @@ class ThreadFactory extends Factory {
 
         if ($thread->state != 'proposal' && $this->model->user_nick != $thread->coordinator) {
             $thread->mail_inform_coordinator();
+        }
+    }
+
+    public function delete(Entity $obj) {
+        if ($obj->can_be_removed()) {
+            $this->model->sqlite->query('DELETE FROM thread_label WHERE thread_id=?', $obj->id);
+            parent::delete($obj);
         }
     }
 }

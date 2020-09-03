@@ -26,6 +26,7 @@ class Thread_commentFactory extends Factory {
 
             if ($data['fn'] == 'comment_add' ||
                 $data['fn'] == 'thread_close' ||
+                $data['fn'] == 'thread_reject' ||
                 $data['content'] != '') {
                 parent::initial_save($thread_comment, $data);
                 $thread_comment->thread->set_participant_flags($thread_comment->author, array('subscribent', 'commentator'));
@@ -68,7 +69,7 @@ class Thread_commentFactory extends Factory {
 
             //update task types
             if ($thread_comment->type != 'comment' && $thread_comment->type != $prev_type) {
-                if ($thread_comment->type == 'cause_real') {
+                if ($thread_comment->type == 'cause') {
                     $task_type = 'corrective';
                 } else {
                     $task_type = 'preventive';

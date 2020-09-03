@@ -36,7 +36,7 @@
 	<label><?php echo $tpl->getLang('state') ?>:
 		<select name="state">
 			<option <?php if ($tpl->value('state') === '-all') echo 'selected' ?>
-				value="-all">--- <?php echo $tpl->getLang('all') ?> ---</option>
+				value="-all">--- <?php echo $tpl->getLang('all_not_rejected') ?> ---</option>
 		<?php foreach (\dokuwiki\plugin\bez\mdl\Thread::get_states() as $state): ?>
 			<option <?php if ($tpl->value('state') === $state) echo 'selected' ?>
 				value="<?php echo $state ?>"><?php echo $tpl->getLang('state_' . $state) ?></option>
@@ -57,7 +57,7 @@
             </select>
         </label>
     <?php endif ?>
-    
+
 	<label><?php echo $tpl->getLang('coordinator') ?>:
 		<select name="coordinator">
 			<option <?php if ($tpl->value('coordinator') === '-all') echo 'selected' ?>
@@ -69,7 +69,7 @@
 				<option <?php if ($tpl->value('coordinator') === $nick) echo 'selected' ?>
 					value="<?php echo $nick ?>"><?php echo $name ?></option>
 			<?php endforeach ?>
-	</optgroup>	
+	</optgroup>
 	<optgroup label="<?php echo $tpl->getLang('groups') ?>">
 		<?php foreach ($tpl->get('groups') as $name): ?>
 			<?php $group = "@$name" ?>
@@ -79,7 +79,7 @@
 	</optgroup>
 	</select>
 	</label>
-    
+
 	<label><?php echo $tpl->getLang('title') ?>:
 		<input name="title" value="<?php echo $tpl->value('title') ?>" />
 	</label>
