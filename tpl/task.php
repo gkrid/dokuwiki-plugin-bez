@@ -31,8 +31,7 @@
                     <a href="<?php echo $tpl->url('thread', 'id', $tpl->get('task')->thread->id) ?>#k<?php echo $tpl->get('task')->thread_comment->id ?>">
                         #k<?php echo $tpl->get('task')->thread_comment->id ?>
                     </a>
-                    <?php echo ucfirst($tpl->getLang('cause')) ?>
-                    (<?php echo $tpl->getLang($tpl->get('task')->thread_comment->type) ?>)
+                    <?php echo $tpl->getLang($tpl->get('task')->thread_comment->type) ?>
                 </strong>
                 <?php echo $tpl->get('task')->thread_comment->content_html ?>
             </div>

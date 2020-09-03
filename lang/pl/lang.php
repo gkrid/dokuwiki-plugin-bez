@@ -709,3 +709,6 @@ $lang['6d'] = "Ryzyka i szanse";
 $lang['7d'] = "Działania do ryzyk i szans";
 
 $lang['task_program_id'] = 'Program';
+
+$lang['risk'] = "ryzyko";
+$lang['opportunity'] = "szansa";

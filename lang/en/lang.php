@@ -678,3 +678,6 @@ $lang['6d'] = "Risks and opportunities";
 $lang['7d'] = "Actions for risks and opportunities";
 
 $lang['task_program_id'] = 'Programme';
+
+$lang['risk'] = "risk";
+$lang['opportunity'] = "opportunity";
