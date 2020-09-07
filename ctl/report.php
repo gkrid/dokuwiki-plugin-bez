@@ -22,3 +22,4 @@ if(count($_POST) > 0 && ($_POST['from'] != '' || $_POST['to'] != '')) {
 $this->tpl->set('issues', $this->model->threadFactory->report_issue($period)->fetchAll(PDO::FETCH_ASSOC));
 $this->tpl->set('projects', $this->model->threadFactory->report_project($period)->fetchAll(PDO::FETCH_ASSOC));
 $this->tpl->set('tasks', $this->model->taskFactory->report($period)->fetchAll(PDO::FETCH_ASSOC));
+$this->tpl->set('comments', $this->model->thread_commentFactory->report($period));

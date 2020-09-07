@@ -108,4 +108,40 @@ class Thread_commentFactory extends Factory {
             $this->rollbackTransaction();
         }
     }
+
+    public function report(\DatePeriod $period=NULL) {
+        if ($period) {
+            $from = $period->getStartDate()->format(\DateTime::ISO8601);
+            $to = $period->getEndDate()->format(\DateTime::ISO8601);
+
+            $sql = "SELECT type, COUNT(type) AS 'cnt'
+                        FROM thread_comment
+                        WHERE type != 'comment'
+                            AND create_date BETWEEN ? AND ?
+                        GROUP BY type";
+            $r = $this->model->sqlite->query($sql, $from, $to);
+        } else {
+            $sql = "SELECT type, COUNT(type) AS 'cnt'
+                        FROM thread_comment
+                        WHERE type != 'comment'
+                        GROUP BY type";
+            $r = $this->model->sqlite->query($sql);
+        }
+
+        $counted = [
+            'cause' => 0,
+            'risk' => 0,
+            'opportunity' => 0,
+            'all' => 0
+        ];
+
+        $result = $r->fetchAll();
+        foreach ($result as $row) {
+            $cnt = (int) $row['cnt'];
+            $counted[$row['type']] += $cnt;
+            $counted['all'] += $cnt;
+        }
+
+        return $counted;
+    }
 }

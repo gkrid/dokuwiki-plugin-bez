@@ -101,6 +101,22 @@
     </tr>
 </table>
 
+<table class="bez_sumarise">
+    <tr>
+        <th><?php echo ucfirst($tpl->getLang('causes')) ?></th>
+        <th><?php echo ucfirst($tpl->getLang('risks')) ?></th>
+        <th><?php echo ucfirst($tpl->getLang('opportunities')) ?></th>
+        <th><?php echo ucfirst($tpl->getLang('all')) ?></th>
+
+    </tr>
+    <tr>
+        <td><?php echo $tpl->get('comments')['cause'] ?></td>
+        <td><?php echo $tpl->get('comments')['risk'] ?></td>
+        <td><?php echo $tpl->get('comments')['opportunity'] ?></td>
+        <td><?php echo $tpl->get('comments')['all'] ?></td>
+    </tr>
+</table>
+
 <h2><?php echo $tpl->getLang('nav projects') ?></h2>
 
 <table>
