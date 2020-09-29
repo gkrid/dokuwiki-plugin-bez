@@ -57,7 +57,7 @@ abstract class Entity {
 	}
 
 	public function __get($property) {
-        if (!property_exists($this, $property) || !in_array($property, $this->get_columns())) {
+        if (!property_exists($this, $property) || !in_array($property, $this->get_select_columns())) {
             throw new \Exception('there is no column: "'.$property. '"" in table: "' . $this->get_table_name() . '"');
         }
 

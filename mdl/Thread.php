@@ -31,12 +31,12 @@ class Thread extends Entity {
                      'type', 'state',
                      'create_date', 'last_activity_date', 'last_modification_date', 'close_date',
                      'title', 'content', 'content_html',
-                     'task_count', 'task_count_closed', 'task_sum_cost', 'cause_count', 'risk_count', 'opportunity_count');
+                     'task_count', 'task_count_closed', 'task_sum_cost');
     }
 
     public static function get_select_columns() {
         $cols = parent::get_select_columns();
-        array_push($cols, 'label_id', 'label_name');
+        array_push($cols, 'label_id', 'label_name', 'cause_count', 'risk_count', 'opportunity_count');
         return $cols;
     }
 
@@ -56,6 +56,7 @@ class Thread extends Entity {
            $this->model->get_level() >= BEZ_AUTH_ADMIN) {
             return true;
         }
+        return false;
     }
 
 	public function __construct($model, $defaults=array()) {
