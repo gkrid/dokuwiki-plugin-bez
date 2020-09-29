@@ -22,6 +22,8 @@ class Thread extends Entity {
 
     protected $task_count, $task_count_closed, $task_sum_cost;
 
+    protected $cause_count, $risk_count, $opportunity_count;
+
     public static function get_columns() {
         return array('id',
                      'original_poster', 'coordinator', 'closed_by',
@@ -29,7 +31,7 @@ class Thread extends Entity {
                      'type', 'state',
                      'create_date', 'last_activity_date', 'last_modification_date', 'close_date',
                      'title', 'content', 'content_html',
-                     'task_count', 'task_count_closed', 'task_sum_cost');
+                     'task_count', 'task_count_closed', 'task_sum_cost', 'cause_count', 'risk_count', 'opportunity_count');
     }
 
     public static function get_select_columns() {

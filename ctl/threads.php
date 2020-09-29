@@ -22,7 +22,7 @@ if (isset($raw_filters)) {
     $filters = array_filter($raw_filters, function($v) {
        return $v !== '-all' && $v !== '';
     });
-        
+
     if (empty($filters)) {
         $filters['year'] = '-all';
     }
@@ -56,10 +56,10 @@ if (!isset($db_filters['state'])) {
 
 if (isset($filters['year']) && $filters['year'] !== '-all') {
     $year = $filters['year'];
-    
+
     $start_day = "$year-01-01";
     $end_day = "$year-12-31";
-    
+
     $db_filters['create_date'] = array('BETWEEN', array($start_day, $end_day), array('date'));
 }
 
@@ -79,6 +79,20 @@ if (isset($filters['title'])) {
     $title = preg_replace('/\s/', '%', $filters['title']);
     $db_filters['title'] = array('LIKE', "%$title%");
 }
+
+if (isset($filters['has_causes'])) {
+    $db_filters['cause_count'] = array('>', 0);
+}
+
+if (isset($filters['has_risks'])) {
+    $db_filters['risk_count'] = array('>', 0);
+}
+
+if (isset($filters['has_opportunities'])) {
+    $db_filters['opportunity_count'] = array('>', 0);
+}
+
+
 
 $orderby = array('sort', 'priority DESC', 'create_date DESC');
 if (isset($filters['sort_open']) && $filters['sort_open'] == 'on') {

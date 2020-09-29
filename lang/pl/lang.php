@@ -712,3 +712,7 @@ $lang['task_program_id'] = 'Program';
 
 $lang['risk'] = "ryzyko";
 $lang['opportunity'] = "szansa";
+
+$lang['has_causes'] = 'Posiada przyczyny';
+$lang['has_risks'] = 'Posiada ryzyka';
+$lang['has_opportunities'] = 'Posiada szanse';

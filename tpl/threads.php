@@ -100,6 +100,22 @@
 			<input type="checkbox" name="sort_open"
 			<?php if ($tpl->value('sort_open') === 'on') echo 'checked="checked"' ?>>
 	</label>
+<?php if ($tpl->action() == 'threads'): ?>
+    <label><?php echo $tpl->getLang('has_causes') ?>:
+        <input type="checkbox" name="has_causes"
+            <?php if ($tpl->value('has_causes') === 'on') echo 'checked="checked"' ?>>
+    </label>
+
+    <label><?php echo $tpl->getLang('has_risks') ?>:
+        <input type="checkbox" name="has_risks"
+            <?php if ($tpl->value('has_risks') === 'on') echo 'checked="checked"' ?>>
+    </label>
+
+    <label><?php echo $tpl->getLang('has_opportunities') ?>:
+        <input type="checkbox" name="has_opportunities"
+            <?php if ($tpl->value('has_opportunities') === 'on') echo 'checked="checked"' ?>>
+    </label>
+<?php endif ?>
 
 	<label><input type="submit" value="<?php echo $tpl->getLang('filter') ?>" /></label>
 </form>
@@ -121,13 +137,28 @@
 		<th><?php echo $tpl->getLang('closed') ?></th>
 		<th><?php echo $tpl->getLang('cost') ?></th>
 		<th><?php echo $tpl->getLang('closed_tasks') ?></th>
+        <?php if ($tpl->action() == 'threads'): ?>
+            <th><?php echo $tpl->getLang('causes') ?></th>
+            <th><?php echo $tpl->getLang('risks') ?></th>
+            <th><?php echo $tpl->getLang('opportunities') ?></th>
+        <?php endif ?>
 	</tr>
     <?php $count = 0 ?>
     <?php $total_cost = 0.0 ?>
+    <?php $total_task_closed = 0 ?>
+    <?php $total_task = 0 ?>
+    <?php $total_cause = 0 ?>
+    <?php $total_risk = 0 ?>
+    <?php $total_opportunity = 0 ?>
 	<?php foreach ($tpl->get('threads') as $thread): ?>
         <?php if ($thread->acl_of('id') < BEZ_PERMISSION_VIEW) continue ?>
         <?php $count += 1 ?>
         <?php $total_cost += (float) $thread->task_sum_cost ?>
+        <?php $total_task_closed += (int) $thread->task_count_closed ?>
+        <?php $total_task += (int) $thread->task_count ?>
+        <?php $total_cause += (int) $thread->cause_count ?>
+        <?php $total_risk += (int) $thread->risk_count ?>
+        <?php $total_opportunity += (int) $thread->opportunity_count ?>
 		<tr class="<?php
             if ($thread->state == 'opened') {
                 echo 'priority_' . $thread->priority;
@@ -188,11 +219,29 @@
                 <?php echo $thread->task_count_closed ?> / <?php echo $thread->task_count ?>
 
 			</td>
+            <?php if ($tpl->action() == 'threads'): ?>
+                <td>
+                    <?php echo $thread->cause_count ?>
+                </td>
+                <td>
+                    <?php echo $thread->risk_count ?>
+                </td>
+                <td>
+                    <?php echo $thread->opportunity_count ?>
+                </td>
+            <?php endif ?>
 		</tr>
 	<?php endforeach ?>
 	<tr>
 		<th><?php echo $tpl->getLang('report_total') ?></th>
-		<td colspan="7"><?php echo $count ?></td>
-		<td colspan="3"><?php echo $total_cost ?></td>
+		<td colspan="<?php echo $tpl->action() == 'threads' ? '7' : '6' ?>"><?php echo $count ?></td>
+		<td><?php echo $total_cost ?></td>
+        <td><?php echo $total_task_closed.'&nbsp;/&nbsp;'.$total_task ?></td>
+
+        <?php if ($tpl->action() == 'threads'): ?>
+            <td><?php echo $total_cause ?></td>
+            <td><?php echo $total_risk ?></td>
+            <td><?php echo $total_opportunity ?></td>
+        <?php endif ?>
 	</tr>
 </table>

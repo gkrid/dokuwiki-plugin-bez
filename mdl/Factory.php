@@ -103,8 +103,10 @@ abstract class Factory {
                     array_unshift($function_args, $field);
                     $where_q[] = "$function(".implode(',', $function_args).") $operator :$filter";
                     $execute[":$filter"] = $value;
-                } elseif ($value == NULL || $value == '') {
+                } elseif ($value === NULL || $value === '') {
                     $where_q[] = "($field IS NULL OR $field = '')";
+                } elseif(is_int($value)) {
+                    $where_q[] = "$field $operator $value";
                 } else {
                     $where_q[] = "$field $operator :$filter";
                     $execute[":$filter"] = $value;
