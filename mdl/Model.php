@@ -2,10 +2,6 @@
 
 namespace dokuwiki\plugin\bez\mdl;
 
-require_once DOKU_PLUGIN . 'bez/vendor/phpmailer/phpmailer/src/Exception.php';
-require_once DOKU_PLUGIN . 'bez/vendor/phpmailer/phpmailer/src/PHPMailer.php';
-require_once DOKU_PLUGIN . 'bez/vendor/phpmailer/phpmailer/src/SMTP.php';
-
 //ACL level defines
 define('BEZ_AUTH_NONE', 0);
 define('BEZ_AUTH_VIEWER', 2);

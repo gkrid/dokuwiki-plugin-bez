@@ -11,8 +11,7 @@ namespace dokuwiki\plugin\bez\mdl;
 
 use dokuwiki\plugin\bez\meta\PermissionDeniedException;
 use dokuwiki\plugin\bez\meta\ValidationException;
-use PHPMailer\PHPMailer\Exception;
-use PHPMailer\PHPMailer\PHPMailer;
+use Mailer;
 
 abstract class Entity {
 
@@ -171,31 +170,11 @@ abstract class Entity {
 	public function mail_notify($content, $users=false, $attachedImages=array()) {
         global $conf;
 
-        $mailer = new PHPMailer(true);
-        $mailer->CharSet = 'utf-8';
-        $mailer->isHTML(true);
-
-        if (!empty($conf['mailfrom'])) {
-            if (preg_match('/(.*?)\s*<(.*?)>/', $conf['mailfrom'], $matches)) {
-                $address = $matches[2];
-                $name = $matches[1];
-            } else {
-                $address = $conf['mailfrom'];
-                $name = '';
-            }
-            $mailer->setFrom($address, $name);
-            $mailer->addReplyTo($address, $name);
-        }
-
-        $mailer->Subject = $this->getMailSubject();
-
-        foreach ($attachedImages as $img) {
-            $mailer->AddEmbeddedImage($img['path'], $img['cid']);
-        }
+        $mailer = new Mailer();
+        $mailer->subject($this->getMailSubject());
 
         if ($users == FALSE) {
             $users = $this->get_participants('subscribent');
-
             //don't notify myself
             unset($users[$this->model->user_nick]);
         }
@@ -214,21 +193,19 @@ abstract class Entity {
 
             $name = $this->model->userFactory->get_user_full_name($user);
 
-            $mailer->addAddress($email, $name);
+            $mailer->to("$name <$email>");
 
-            $token = $this->model->factory('subscription')->getUserToken($user);
-            $resign_link = $this->model->action->url('unsubscribe', array('GET' => array( 't' => $token)));
-            $mailer->Body = str_replace('%%resign_link%%', $resign_link, $content);
+//            $token = $this->model->factory('subscription')->getUserToken($user);
+//            $resign_link = $this->model->action->url('unsubscribe', array('GET' => array( 't' => $token)));
+//            $html = str_replace('%%resign_link%%', $resign_link, $content);
+            $mailer->setBody('', null, null, $content);
 
             try {
                 $mailer->send();
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $msg = $this->get_table_name() . '#' . $this->id . ': ' . $e->getMessage();
                 throw new \Exception($msg);
             }
-
-            $mailer->clearAddresses();
-            $mailer->clearCustomHeaders();
         }
     }
 

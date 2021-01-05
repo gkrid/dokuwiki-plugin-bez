@@ -1,11 +1,5 @@
 <?php
 
-use PHPMailer\PHPMailer\PHPMailer;
-
-require_once DOKU_PLUGIN . 'bez/vendor/phpmailer/phpmailer/src/Exception.php';
-require_once DOKU_PLUGIN . 'bez/vendor/phpmailer/phpmailer/src/PHPMailer.php';
-require_once DOKU_PLUGIN . 'bez/vendor/phpmailer/phpmailer/src/SMTP.php';
-
 $action = new action_plugin_bez_base();
 $action->createObjects(true);
 
@@ -124,32 +118,21 @@ function send_weekly_message() {
         $tpl->set('coming_tasks', $coming_tasks);
         $body = $action->bez_tpl_include('cron/weekly-message', true);
 
-        $mailer = new PHPMailer;
-        $mailer->CharSet = 'utf-8';
-        $mailer->isHTML(true);
+        $mailer = new Mailer();
 
-        if (preg_match('/(.*?)\s*<(.*?)>/', $conf['mailfrom'], $matches)) {
-            $address = $matches[2];
-            $name = $matches[1];
-        } else {
-            $address = $conf['mailfrom'];
-            $name = '';
-        }
-        $mailer->setFrom($address, $name);
-        $mailer->addReplyTo($address, $name);
+//        $token = $action->get_model()->factory('subscription')->getUserToken($user);
+//        $resign_link = $action->url('unsubscribe', array('GET' => array( 't' => $token)));
+//        $mailer->Body = str_replace('%%resign_link%%', $resign_link, $body);
 
-        $token = $action->get_model()->factory('subscription')->getUserToken($user);
-        $resign_link = $action->url('unsubscribe', array('GET' => array( 't' => $token)));
-        $mailer->Body = str_replace('%%resign_link%%', $resign_link, $body);
-
-        $mailer->addAddress($udata['mail'], $udata['name']);
+        $to = $udata['name'].' <'.$udata['mail'].'>';
+        $mailer->to($to);
         $subject = $conf['title'] . ' Nadchodzące zadania';
-        $mailer->Subject = $subject;
+        $mailer->subject($subject);
+        $mailer->setBody('', null, null, $body);
 
         $mailer->send();
-        $mailer->clearAddresses();
-        $mailer->clearCustomHeaders();
-        $output[] = array($udata['name'].' <'.$udata['mail'].'>', $subject, $body, array());
+
+        $output[] = array($to, $subject, $body, array());
     }
 
     return $output;

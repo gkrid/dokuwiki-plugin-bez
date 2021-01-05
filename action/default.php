@@ -237,8 +237,8 @@ class action_plugin_bez_default extends action_plugin_bez_base {
         } catch(bez\meta\PermissionDeniedException $e) {
             dbglog('plugin_bez', $e);
             header('Location: ' . DOKU_URL . 'doku.php?id=' . $_GET['id'] . '&do=login');
-        } catch (\PHPMailer\PHPMailer\Exception $e) {
-            msg($e->getMessage(), -1);
+//        } catch (\PHPMailer\PHPMailer\Exception $e) {
+//            msg($e->getMessage(), -1);
 		} catch(Exception $e) {
             dbglog('plugin_bez', $e);
             if ($conf['allowdebug']) {
