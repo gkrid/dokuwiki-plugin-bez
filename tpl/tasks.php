@@ -126,15 +126,31 @@
 		<?php endforeach ?>
 		</select>
 	</label>
-	<label><input type="submit" value="<?php echo $tpl->getLang('filter') ?>" /></label>
+	<label><button name="action" value="filter" type="submit"><?php echo $tpl->getLang('filter') ?></button></label>
 </div>
 </form>
 </div>
 
 <?php endif ?>
 
+<?php if ($tpl->user_acl_level() >= BEZ_AUTH_ADMIN): ?>
+<form action="<?php echo $tpl->url('tasks') ?>" method="post">
+<div id="plugin__bez_bulk_actions_box" style="display:none;">
+    <button type="submit" name="action" value="bulk_delete"><?= $tpl->getLang('delete_selected') ?></button>
+    <label><?= $tpl->getLang('move_to') ?>:</label>
+    <select name="task_program">
+        <?php foreach ($tpl->get('task_programs') as $task_program): ?>
+            <option value="<?php echo $task_program->id ?>"><?php echo $task_program->name ?></option>
+        <?php endforeach ?>
+    </select>
+    <button type="submit" name="action" value="bulk_move"><?= $tpl->getLang('button_move') ?></button>
+</div>
+<?php endif ?>
 <table class="bez bez_sumarise">
 <tr>
+    <?php if ($tpl->user_acl_level() >= BEZ_AUTH_ADMIN): ?>
+        <th></th>
+    <?php endif ?>
 	<th><?php echo $tpl->getLang('id') ?></th>
 	<th><?php echo $tpl->getLang('state') ?></th>
 	<th><?php echo $tpl->getLang('task_type') ?></th>
@@ -158,6 +174,9 @@
     <?php $hours = $tpl->date_diff_hours($task->start_time, $task->finish_time) ?>
     <?php $total_hours += $tpl->time_to_float($hours) ?>
 	<tr class="<?php if ($task->state == 'opened') echo 'priority_' . $task->priority ?>" data-bez-row-id="<?php echo $task->id ?>">
+        <?php if ($tpl->user_acl_level() >= BEZ_AUTH_ADMIN): ?>
+            <td><input type="checkbox" name="id[]" class="plugin__bez_bulk_checkbox" value="<?= $task->id ?>"></td>
+        <?php endif ?>
 		<td style="white-space: nowrap">
             <a href="<?php echo $tpl->url('task', 'tid', $task->id) ?>">
                <?php if ($task->thread_id != '') echo '#'.$task->thread_id ?>
@@ -229,8 +248,12 @@
 	<?php endforeach ?>
 	<tr>
 		<th><?php echo $tpl->getLang('report_total') ?></th>
-		<td colspan="5"><?php echo $count ?></td>
+        <?php $colspan = $tpl->user_acl_level() >= BEZ_AUTH_ADMIN ? 6 : 5 ?>
+		<td colspan="<?= $colspan ?>>"><?php echo $count ?></td>
 		<td colspan="2"><?php echo $total_cost ?></td>
 		<td colspan="1"><?php echo $tpl->float_to_time($total_hours) ?></td>
 	</tr>
 </table>
+<?php if ($tpl->user_acl_level() >= BEZ_AUTH_ADMIN): ?>
+    </form>
+<?php endif ?>

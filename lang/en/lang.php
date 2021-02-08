@@ -685,3 +685,9 @@ $lang['opportunity'] = "opportunity";
 $lang['has_causes'] = 'Problem has causes';
 $lang['has_risks'] = 'Problem has risks';
 $lang['has_opportunities'] = 'Problem has opportunities';
+
+$lang['delete_selected'] = 'Delete selected';
+$lang['move_to'] = 'Move to';
+$lang['button_move'] = 'Move';
+$lang['js']['bulk_delete_confirm'] = 'Do you really want to delete these elements?';
+$lang['js']['bulk_move_confirm'] = 'Do you really want to move these elements?';

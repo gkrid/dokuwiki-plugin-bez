@@ -716,3 +716,9 @@ $lang['opportunity'] = "szansa";
 $lang['has_causes'] = 'Posiada przyczyny';
 $lang['has_risks'] = 'Posiada ryzyka';
 $lang['has_opportunities'] = 'Posiada szanse';
+
+$lang['delete_selected'] = 'Usuń wybrane';
+$lang['move_to'] = 'Przenieś do';
+$lang['button_move'] = 'Przenieś';
+$lang['js']['bulk_delete_confirm'] = 'Czy na pewno chcesz usunąć te elementy?';
+$lang['js']['bulk_move_confirm'] = 'Czy na pewno chcesz przenieść te elementy?';

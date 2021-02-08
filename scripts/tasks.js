@@ -45,5 +45,25 @@ bez.ctl.tasks = function() {
 		}
 	};
 	jQuery(".bez_filter_form select").change(highlight).each(highlight);
-	jQuery(".bez_filter_form input:text").blur(highlight_input).each(highlight_input);  
+	jQuery(".bez_filter_form input:text").blur(highlight_input).each(highlight_input);
+
+	jQuery(".plugin__bez_bulk_checkbox").on('change', function(e) {
+		if (jQuery(".plugin__bez_bulk_checkbox:checked").length > 0) {
+			jQuery("#plugin__bez_bulk_actions_box").show();
+		} else {
+			jQuery("#plugin__bez_bulk_actions_box").hide();
+		}
+	});
+
+	jQuery('#plugin__bez_bulk_actions_box button[value=bulk_delete]').click('on', function (event) {
+		if (!window.confirm(LANG.plugins.bez.bulk_delete_confirm)) {
+			event.preventDefault();
+		}
+	});
+
+	jQuery('#plugin__bez_bulk_actions_box button[value=bulk_move]').click('on', function (event) {
+		if (!window.confirm(LANG.plugins.bez.bulk_move_confirm)) {
+			event.preventDefault();
+		}
+	});
 };

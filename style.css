@@ -1048,3 +1048,15 @@ table.bez_sumarise svg {
 #plugin__bez_start_buttons a {
 	margin-right: 10px;
 }
+
+#plugin__bez_bulk_actions_box {
+	display: inline-block;
+	padding: 0.5em;
+	background-color: #eee;
+	border: 1px solid #ccc;
+	margin-bottom: -1px;
+}
+
+#plugin__bez_bulk_actions_box button[value=bulk_delete] {
+	margin-right: 2em;
+}

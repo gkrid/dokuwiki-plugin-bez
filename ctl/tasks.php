@@ -7,9 +7,25 @@ if ($this->model->get_level() < BEZ_AUTH_USER) {
     throw new bez\meta\PermissionDeniedException();
 }
 
+// Admin actions
+if ($this->model->get_level() >= BEZ_AUTH_ADMIN && isset($_POST['action']) && isset($_POST['id'])) {
+    if ($_POST['action'] == 'bulk_delete') {
+        foreach ($_POST['id'] as $id) {
+            $task = $this->model->taskFactory->get_one($id);
+            $this->model->taskFactory->delete($task);
+        }
+    } elseif ($_POST['action'] == 'bulk_move') {
+        foreach ($_POST['id'] as $id) {
+            $task = $this->model->taskFactory->get_one($id);
+            $this->model->taskFactory->update_save($task, ['task_program_id' => $_POST['task_program']]);
+        }
+    }
+}
+
 define('BEZ_THREAD_FILTERS_COOKIE_NAME', 'plugin__bez_task_filters');
 
-if (count($_POST) > 0) {
+if (isset($_POST['action']) && $_POST['action'] == 'filter') {
+    unset($_POST['action']);
     $raw_filters = $_POST;
 } elseif (empty($this->params) && isset($_COOKIE[BEZ_THREAD_FILTERS_COOKIE_NAME])) {
     $raw_filters = json_decode($_COOKIE[BEZ_THREAD_FILTERS_COOKIE_NAME], true);;
@@ -85,7 +101,7 @@ $orderby = array('priority DESC', 'plan_date');
 
 $tasks = $this->model->taskFactory->get_all($db_filters, $orderby);
 
-$this->tpl->set('task_programs', $this->model->task_programFactory->get_all());
+$this->tpl->set('task_programs', $this->model->task_programFactory->get_all()->fetchAll());
 $this->tpl->set('tasks', $tasks);
 $this->tpl->set('months', array(1 => 'jan',
                                 2 => 'feb',

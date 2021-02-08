@@ -1,6 +1,6 @@
 var bez = {};
 //increase before each commit to invalidate the cache
-bez.scriptVersion = 1;
+bez.scriptVersion = 2;
 bez.ctl = {};
 
 /* DOKUWIKI:include scripts/thread.js */
