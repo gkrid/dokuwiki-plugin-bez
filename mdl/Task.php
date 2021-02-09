@@ -312,6 +312,10 @@ class Task extends Entity {
         $this->state = $state;
     }
 
+    public function set_task_program($taks_program_id) {
+	    $this->task_program_id = $taks_program_id;
+    }
+
     public function update_last_activity() {
         $this->last_activity_date = date('c');
         $this->model->sqlite->query('UPDATE task SET last_activity_date=? WHERE id=?',

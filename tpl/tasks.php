@@ -175,7 +175,7 @@
     <?php $total_hours += $tpl->time_to_float($hours) ?>
 	<tr class="<?php if ($task->state == 'opened') echo 'priority_' . $task->priority ?>" data-bez-row-id="<?php echo $task->id ?>">
         <?php if ($tpl->user_acl_level() >= BEZ_AUTH_ADMIN): ?>
-            <td><input type="checkbox" name="id[]" class="plugin__bez_bulk_checkbox" value="<?= $task->id ?>"></td>
+            <td><input type="checkbox" name="task_id[]" class="plugin__bez_bulk_checkbox" value="<?= $task->id ?>"></td>
         <?php endif ?>
 		<td style="white-space: nowrap">
             <a href="<?php echo $tpl->url('task', 'tid', $task->id) ?>">

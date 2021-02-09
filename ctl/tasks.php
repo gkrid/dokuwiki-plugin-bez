@@ -8,16 +8,17 @@ if ($this->model->get_level() < BEZ_AUTH_USER) {
 }
 
 // Admin actions
-if ($this->model->get_level() >= BEZ_AUTH_ADMIN && isset($_POST['action']) && isset($_POST['id'])) {
+if ($this->model->get_level() >= BEZ_AUTH_ADMIN && isset($_POST['action']) && isset($_POST['task_id'])) {
     if ($_POST['action'] == 'bulk_delete') {
-        foreach ($_POST['id'] as $id) {
+        foreach ($_POST['task_id'] as $id) {
             $task = $this->model->taskFactory->get_one($id);
             $this->model->taskFactory->delete($task);
         }
     } elseif ($_POST['action'] == 'bulk_move') {
-        foreach ($_POST['id'] as $id) {
+        foreach ($_POST['task_id'] as $id) {
             $task = $this->model->taskFactory->get_one($id);
-            $this->model->taskFactory->update_save($task, ['task_program_id' => $_POST['task_program']]);
+            $task->set_task_program($_POST['task_program']);
+            $this->model->taskFactory->save($task);
         }
     }
 }
