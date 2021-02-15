@@ -7,7 +7,7 @@ if ($this->model->get_level() < BEZ_AUTH_ADMIN) {
     throw new bez\meta\PermissionDeniedException();
 }
 
-$task_programs = $this->model->task_programFactory->get_all();
+$task_programs = $this->model->task_programFactory->get_all([], 'name');
 
 if ($this->get_param('id') === '') {
     $task_program = $this->model->task_programFactory->create_object();
