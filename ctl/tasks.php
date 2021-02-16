@@ -102,7 +102,7 @@ $orderby = array('priority DESC', 'plan_date');
 
 $tasks = $this->model->taskFactory->get_all($db_filters, $orderby);
 
-$this->tpl->set('task_programs', $this->model->task_programFactory->get_all()->fetchAll());
+$this->tpl->set('task_programs', $this->model->task_programFactory->get_all([], 'name')->fetchAll());
 $this->tpl->set('tasks', $tasks);
 $this->tpl->set('months', array(1 => 'jan',
                                 2 => 'feb',
