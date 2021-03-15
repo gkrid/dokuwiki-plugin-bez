@@ -11,7 +11,7 @@ if ($this->model->get_level() < BEZ_AUTH_USER) {
 $task = $this->model->taskFactory->create_object();
 
 $this->tpl->set('task', $task);
-$this->tpl->set('task_programs',  $this->model->task_programFactory->get_all());
+$this->tpl->set('task_programs',  $this->model->task_programFactory->get_all([], 'name'));
 
 if ($this->get_param('action') == 'add') {
     $this->model->taskFactory->initial_save($task, $_POST);

@@ -36,7 +36,7 @@ usort($timeline, function($a, $b) {
 
 $this->tpl->set('timeline', $timeline);
 $this->tpl->set('tasks', $tasks);
-$this->tpl->set('task_programs',  $this->model->task_programFactory->get_all());
+$this->tpl->set('task_programs',  $this->model->task_programFactory->get_all([], 'name'));
 
 /** @var bez\mdl\Thread_comment $thread_comment */
 $thread_comment = $this->model->thread_commentFactory->create_object(array('thread' => $thread));

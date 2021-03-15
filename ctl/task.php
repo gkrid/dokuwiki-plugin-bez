@@ -15,7 +15,7 @@ if ($this->get_param('tid') == '') {
 $task = $this->model->taskFactory->get_one($this->get_param('tid'));
 $this->tpl->set('task', $task);
 $this->tpl->set('task_comments', $this->model->task_commentFactory->get_from_task($task));
-$this->tpl->set('task_programs',  $this->model->task_programFactory->get_all());
+$this->tpl->set('task_programs',  $this->model->task_programFactory->get_all([], 'name'));
 
 if ($this->get_param('action') == 'comment_add') {
 
