@@ -39,6 +39,39 @@ class action_plugin_bez_migration extends DokuWiki_Action_Plugin {
         }
     }
 
+    protected function migration12($data) {
+        global $INFO;
+
+        $file = $data['file'];
+        /** @var helper_plugin_sqlite $sqlite */
+        $sqlite = $data['sqlite'];
+
+        $sql = file_get_contents($file);
+        if($sql === false) {
+            throw new Exception('cannot open file ' . $file);
+        }
+
+        $matches = array();
+        preg_match_all('/.*?(?(?=BEGIN)BEGIN.*?END)\s*;/is', $sql, $matches);
+        $queries = $matches[0];
+
+        $db = $sqlite->getAdapter()->getDb();
+
+        $db->beginTransaction();
+        foreach($queries as $query) {
+            $res = $db->query($query);
+            if($res === false) {
+                $err = $db->errorInfo();
+                msg($err[0] . ' ' . $err[1] . ' ' . $err[2] . ':<br /><pre>' . hsc($query) . '</pre>', -1);
+                $db->rollBack();
+                return false;
+            }
+        }
+        $db->commit();
+
+        return true;
+    }
+
     protected function migration3($data) {
         global $INFO;
 

@@ -506,7 +506,7 @@ class Task extends Entity {
             throw new PermissionDeniedException();
         }
 
-        $q = "UPDATE task SET type='program', thread_id='', private=0 WHERE id=?";
+        $q = "UPDATE task SET type='program', thread_id='', thread_comment_id='', private=0 WHERE id=?";
         $this->model->sqlite->query($q, $this->id);
     }
 
