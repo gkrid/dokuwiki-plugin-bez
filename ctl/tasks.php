@@ -98,7 +98,7 @@ if (isset($filters['content'])) {
     $db_filters['content'] = array('LIKE', "%$content%");
 }
 
-$orderby = array('priority DESC', 'plan_date');
+$orderby = array('priority DESC', 'close_date DESC', 'plan_date');
 
 $tasks = $this->model->taskFactory->get_all($db_filters, $orderby);
 
