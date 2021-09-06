@@ -132,22 +132,15 @@ class action_plugin_bez_base extends DokuWiki_Action_Plugin {
             }
             $id = call_user_func_array(array($this, 'id'), $args);
 
-            //fix farmer plugin bad DOKU_URL creation for host based setup
-            if('cli' == php_sapi_name() && isset($_SERVER['animal'])) {
-                $dokuUrl = rtrim($conf['baseurl'], '/').'/';
-            } else {
-                $dokuUrl = DOKU_URL;
-            }
-
             if ($conf['userewrite'] == '1') {
                 if ($get) $get = "?$get";
-                return $dokuUrl . $id. $get;
+                return DOKU_URL . $id. $get;
             } elseif ($conf['userewrite'] == '2') {
                 if ($get) $get = "?$get";
-                return $dokuUrl . 'doku.php/' . $id . $get;
+                return DOKU_URL . 'doku.php/' . $id . $get;
             } else {
                 if ($get) $get = "&$get";
-                return $dokuUrl . 'doku.php?id=' . $id . $get;
+                return DOKU_URL . 'doku.php?id=' . $id . $get;
             }
 
         }

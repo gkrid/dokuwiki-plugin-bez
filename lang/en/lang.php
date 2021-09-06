@@ -651,6 +651,7 @@ $lang['report threads cost closed'] = 'Total closed cost';
 $lang['report threads rejected'] = 'Rejected';
 
 $lang['info set baseurl'] = 'Set "baseurl" to enable bez mail notifications.';
+$lang['info set basedir'] = 'Set "basedir" to enable bez mail notifications.';
 
 $lang['mute_notifications'] = 'Mute BEZ notifications for <strong>%s</strong>';
 $lang['unmute_notifications'] = 'Unmute BEZ notifications for <strong>%s</strong>';

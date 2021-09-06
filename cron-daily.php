@@ -8,9 +8,15 @@ define('DOKU_INC', $inc.'/');
 require_once(DOKU_INC.'inc/init.php');
 
 if (empty($conf['baseurl'])) {
-    echo "set baseurl in dokuwiki config: ${conf['basedir']}\n";
+    echo "set baseurl in dokuwiki config\n";
     exit(-1);
 }
+
+if (empty($conf['basedir'])) {
+    echo "set basedir in dokuwiki config\n";
+    exit(-1);
+}
+
 
 require_once 'cron/functions.php';
 
