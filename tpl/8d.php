@@ -83,11 +83,12 @@
     <?php endif ?>
 <?php endif ?>
 
-
 <?php if ($tpl->get('variant') == 2): ?>
-    <h2><?php echo $D++ ?>D - <?php echo $tpl->getLang('6d-var2') ?></h2>
-    <?php $tpl->set('tasks', $tpl->get('8d_tasks')['corrective']) ?>
-    <?php include '8d_tasks.php' ?>
+    <?php if (count($tpl->get('8d_tasks')['corrective']) > 0): ?>
+        <h2><?php echo $D++ ?>D - <?php echo $tpl->getLang('6d-var2') ?></h2>
+        <?php $tpl->set('tasks', $tpl->get('8d_tasks')['corrective']) ?>
+        <?php include '8d_tasks.php' ?>
+    <?php endif ?>
 <?php else: ?>
     <?php if (count($tpl->get('risks')) > 0 || count($tpl->get('opportunities')) > 0): ?>
         <h2><?php echo $D++ ?>D - <?php echo $tpl->getLang('6d') ?></h2>
