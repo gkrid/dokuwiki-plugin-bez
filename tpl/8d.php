@@ -8,7 +8,11 @@
 <?php if ($tpl->get('thread')->state == 'closed' || $tpl->get('thread')->state == 'rejected') $D++ ?>
 
 <h1>
-	<?php printf($tpl->getLang('8d_report_header'), $D); ?>
+    <?php if ($tpl->get('variant') == 2): ?>
+	    <?php printf($tpl->getLang('8d_report_header'), $D); ?>
+    <?php else: ?>
+        <?php echo $tpl->getLang('noneconformities_report') ?>
+    <?php endif ?>
 	<span id="bez_8d_send_button">[<a href="
 		<?php echo $tpl->mailto('',
    $tpl->getLang('8d_report').': #'.$tpl->get('thread')->id.' '.$tpl->get('thread')->title,
@@ -70,23 +74,36 @@
 
 <?php if (count($tpl->get('8d_tasks')['corrective']) > 0): ?>
     <h2><?php echo $D++ ?>D - <?php echo $tpl->getLang('5d') ?></h2>
-    <?php $tpl->set('tasks', $tpl->get('8d_tasks')['corrective']) ?>
-    <?php include '8d_tasks.php' ?>
+    <?php if ($tpl->get('variant') == 2): ?>
+        <?php $tpl->set('tasks', $tpl->get('8d_tasks')['corrective']) ?>
+        <?php include '8d_tasks_no_closing.php' ?>
+    <?php else: ?>
+        <?php $tpl->set('tasks', $tpl->get('8d_tasks')['corrective']) ?>
+        <?php include '8d_tasks.php' ?>
+    <?php endif ?>
 <?php endif ?>
 
-<?php if (count($tpl->get('risks')) > 0 || count($tpl->get('opportunities')) > 0): ?>
-    <h2><?php echo $D++ ?>D - <?php echo $tpl->getLang('6d') ?></h2>
-    <?php if (count($tpl->get('risks')) > 0): ?>
-        <h3><?php echo $tpl->getLang('risks') ?></h3>
-        <?php $tpl->set('causes', $tpl->get('risks')) ?>
-        <?php include '8d_causes.php' ?>
-    <?php endif ?>
-    <?php if (count($tpl->get('opportunities')) > 0): ?>
-        <h3><?php echo $tpl->getLang('opportunities') ?></h3>
-        <?php $tpl->set('causes', $tpl->get('opportunities')) ?>
-        <?php include '8d_causes.php' ?>
+
+<?php if ($tpl->get('variant') == 2): ?>
+    <h2><?php echo $D++ ?>D - <?php echo $tpl->getLang('6d-var2') ?></h2>
+    <?php $tpl->set('tasks', $tpl->get('8d_tasks')['corrective']) ?>
+    <?php include '8d_tasks.php' ?>
+<?php else: ?>
+    <?php if (count($tpl->get('risks')) > 0 || count($tpl->get('opportunities')) > 0): ?>
+        <h2><?php echo $D++ ?>D - <?php echo $tpl->getLang('6d') ?></h2>
+        <?php if (count($tpl->get('risks')) > 0): ?>
+            <h3><?php echo $tpl->getLang('risks') ?></h3>
+            <?php $tpl->set('causes', $tpl->get('risks')) ?>
+            <?php include '8d_causes.php' ?>
+        <?php endif ?>
+        <?php if (count($tpl->get('opportunities')) > 0): ?>
+            <h3><?php echo $tpl->getLang('opportunities') ?></h3>
+            <?php $tpl->set('causes', $tpl->get('opportunities')) ?>
+            <?php include '8d_causes.php' ?>
+        <?php endif ?>
     <?php endif ?>
 <?php endif ?>
+
 
 <?php if (count($tpl->get('8d_tasks')['preventive']) > 0): ?>
     <h2><?php echo $D++ ?>D - <?php echo $tpl->getLang('7d') ?></h2>

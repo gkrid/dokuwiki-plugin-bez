@@ -113,7 +113,10 @@
         </a>
 
         <?php if ($tpl->get('thread')->type == 'issue'): ?>
-            <a href="<?php echo $tpl->url('8d', 'id', $tpl->get('thread')->id) ?>" class="bds_inline_button bds_report_button">
+            <a href="<?php echo $tpl->url('8d', 'id', $tpl->get('thread')->id, 'var', '1') ?>" class="bds_inline_button bds_report_button">
+                ⎙ <?php echo $tpl->getLang('noneconformities_report') ?>
+            </a>
+            <a href="<?php echo $tpl->url('8d', 'id', $tpl->get('thread')->id, 'var', '2') ?>" class="bds_inline_button bds_report_button">
                 ⎙ <?php echo $tpl->getLang('8d_report') ?>
             </a>
         <?php else: ?>

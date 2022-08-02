@@ -676,7 +676,7 @@ $lang['opportunities'] = "Opportunities";
 
 $lang['4d'] = "Causes";
 $lang['6d'] = "Risks and opportunities";
-$lang['7d'] = "Actions for risks and opportunities";
+$lang['7d'] = "Preventive measures";
 
 $lang['task_program_id'] = 'Programme';
 
@@ -692,3 +692,6 @@ $lang['move_to'] = 'Move to';
 $lang['button_move'] = 'Move';
 $lang['js']['bulk_delete_confirm'] = 'Do you really want to delete these elements?';
 $lang['js']['bulk_move_confirm'] = 'Do you really want to move these elements?';
+
+$lang['6d-var2'] = "Implementation of corrective actions";
+$lang['noneconformities_report'] = 'Noneconformities report';
