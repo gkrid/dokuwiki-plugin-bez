@@ -3,7 +3,11 @@
 <?php if (count($tpl->get('8d_tasks')['correction']) > 0) $D++ ?>
 <?php if (count($tpl->get('causes')) > 0) $D++ ?>
 <?php if (count($tpl->get('8d_tasks')['corrective']) > 0) $D++ ?>
-<?php if (count($tpl->get('risks')) > 0 || count($tpl->get('opportunities')) > 0) $D++ ?>
+<?php $corrective_done = array_filter($tpl->get('8d_tasks')['corrective'], function ($task) {
+    return $task->state == 'done';
+}) ?>
+<?php if (($tpl->get('variant') == 2 && count($corrective_done) > 0) ||
+    ($tpl->get('variant') == 1 && (count($tpl->get('risks')) > 0 || count($tpl->get('opportunities')) > 0))) $D++ ?>
 <?php if (count($tpl->get('8d_tasks')['preventive']) > 0) $D++ ?>
 <?php if ($tpl->get('thread')->state == 'closed' || $tpl->get('thread')->state == 'rejected') $D++ ?>
 
@@ -84,10 +88,13 @@
 <?php endif ?>
 
 <?php if ($tpl->get('variant') == 2): ?>
-    <?php if (count($tpl->get('8d_tasks')['corrective']) > 0): ?>
+    <?php $corrective_closed = array_filter($tpl->get('8d_tasks')['corrective'], function ($task) {
+        return $task->state == 'closed';
+    }) ?>
+    <?php if (count($corrective_done) > 0): ?>
         <h2><?php echo $D++ ?>D - <?php echo $tpl->getLang('6d-var2') ?></h2>
-        <?php $tpl->set('tasks', $tpl->get('8d_tasks')['corrective']) ?>
-        <?php include '8d_tasks.php' ?>
+        <?php $tpl->set('tasks', $corrective_done) ?>
+        <?php include '8d_tasks_only_closing.php' ?>
     <?php endif ?>
 <?php else: ?>
     <?php if (count($tpl->get('risks')) > 0 || count($tpl->get('opportunities')) > 0): ?>
@@ -108,8 +115,20 @@
 
 <?php if (count($tpl->get('8d_tasks')['preventive']) > 0): ?>
     <h2><?php echo $D++ ?>D - <?php echo $tpl->getLang('7d') ?></h2>
-    <?php $tpl->set('tasks', $tpl->get('8d_tasks')['preventive']) ?>
-    <?php include '8d_tasks.php' ?>
+    <?php if ($tpl->get('variant') == 2): ?>
+        <?php $preventive = array_merge($tpl->get('risks'), $tpl->get('opportunities')) ?>
+        <?php usort($preventive, function ($a, $b) {
+            return $a->id > $b->id;
+        }); ?>
+        <?php $tpl->set('causes', $preventive) ?>
+        <?php include '8d_causes.php' ?>
+
+        <?php $tpl->set('tasks', $tpl->get('8d_tasks')['preventive']) ?>
+        <?php include '8d_tasks.php' ?>
+    <?php else: ?>
+        <?php $tpl->set('tasks', $tpl->get('8d_tasks')['preventive']) ?>
+        <?php include '8d_tasks.php' ?>
+    <?php endif ?>
 <?php endif ?>
 
 
