@@ -3,20 +3,17 @@
 
 use \dokuwiki\plugin\bez;
 
-$variant = $this->get_param('var', '1');
-
 //if we don't have a token, generate a new one and redirect
 if (!isset($_GET['t']) && $this->model->authentication_tokenFactory->can_create_token()) {
     $token = $this->model->authentication_tokenFactory->create_token($this->id());
     header('Location: ' .
-           wl($this->id('8d', 'id', $this->get_param('id'), 'var', $variant), array('t' => $token), false, '&'));
+           wl($this->id('8d', 'id', $this->get_param('id')), array('t' => $token), false, '&'));
 }
 
 if ($this->model->get_level() < BEZ_AUTH_VIEWER) {
     throw new bez\meta\PermissionDeniedException();
 }
 
-$this->tpl->set('variant', $variant);
 /** @var bez\mdl\Thread $thread */
 $thread = $this->model->threadFactory->get_one($this->get_param('id'));
 $this->tpl->set('thread', $thread);
