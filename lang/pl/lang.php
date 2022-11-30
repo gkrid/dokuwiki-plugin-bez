@@ -283,7 +283,7 @@ $lang['3d'] = 'Korekcja';
 $lang['4d'] = 'Przyczyny rzeczywiste';
 $lang['5d'] = 'Działania korygujące';
 $lang['6d'] = 'Przyczyny potencjalne';
-$lang['8d'] = 'Ocena skuteczności';
+$lang['8d'] = 'Podsumowanie';
 
 $lang['number'] = 'Ilość';
 $lang['true_date'] = 'Data';
@@ -723,6 +723,6 @@ $lang['button_move'] = 'Przenieś';
 $lang['js']['bulk_delete_confirm'] = 'Czy na pewno chcesz usunąć te elementy?';
 $lang['js']['bulk_move_confirm'] = 'Czy na pewno chcesz przenieść te elementy?';
 
-$lang['6d-var2'] = "Weryfikacja akcji korygujących";
+$lang['6d-var2'] = "Ocena skuteczności działań korygujących";
 $lang['noneconformities_report'] = 'Raport niezgodności';
 $lang['action_add'] = 'Dodaj działanie';

@@ -74,16 +74,12 @@
 <?php if (count($tpl->get('8d_tasks')['corrective']) > 0): ?>
     <h2><?php echo $D++ ?>D - <?php echo $tpl->getLang('5d') ?></h2>
     <?php $tpl->set('tasks', $tpl->get('8d_tasks')['corrective']) ?>
-    <?php include '8d_tasks_no_closing.php' ?>
+    <?php include '8d_tasks.php' ?>
 <?php endif ?>
 
-<?php $corrective_closed = array_filter($tpl->get('8d_tasks')['corrective'], function ($task) {
-    return $task->state == 'closed';
-}) ?>
-<?php if (count($corrective_done) > 0): ?>
+<?php if ($tpl->get('thread')->state == 'closed' || $tpl->get('thread')->state == 'rejected'): ?>
     <h2><?php echo $D++ ?>D - <?php echo $tpl->getLang('6d-var2') ?></h2>
-    <?php $tpl->set('tasks', $corrective_done) ?>
-    <?php include '8d_tasks_only_closing.php' ?>
+    <?php echo  $tpl->get('thread')->closing_comment() ?>
 <?php endif ?>
 
 <?php if (count($tpl->get('8d_tasks')['preventive']) > 0): ?>
@@ -100,34 +96,36 @@
 <?php endif ?>
 
 
-<?php if ($tpl->get('thread')->state == 'closed' || $tpl->get('thread')->state == 'rejected'): ?>
-    <h2><?php echo $D++ ?>D - <?php echo $tpl->getLang('8d') ?></h2>
-    <?php echo  $tpl->get('thread')->closing_comment() ?>
-    <table>
-        <tr>
-            <td>
-                <strong><?php echo $tpl->getLang('true_date') ?>:</strong>
-                <?php echo $tpl->date($tpl->get('thread')->close_date) ?>
-            </td>
-            <td>
-                <strong><?php echo $tpl->getLang('state') ?>:</strong>
-                <?php echo $tpl->getLang('state_' . $tpl->get('thread')->state) ?>
-            </td>
-        </tr>
+<h2><?php echo $D++ ?>D - <?php echo $tpl->getLang('8d') ?></h2>
 
-        <tr>
-            <td>
-                <strong><?php echo $tpl->getLang('totalcost') ?>:</strong>
-                <?php if ($tpl->get('thread')->task_sum_cost != ''): ?>
-                    <?php echo $tpl->get('thread')->task_sum_cost ?>
-                <?php else: ?>
-                    <em>---</em>
-                <?php endif ?>
-            </td>
-            <td>
-                <strong><?php echo $tpl->getLang('coordinator') ?>:</strong>
-                <?php echo $tpl->user_name($tpl->get('thread')->coordinator) ?>
-            </td>
-        </tr>
-    </table>
-<?php endif ?>
+<table>
+    <tr>
+        <td>
+            <strong><?php echo $tpl->getLang('close_date') ?>:</strong>
+            <?php if ($tpl->get('thread')->state == 'closed' || $tpl->get('thread')->state == 'rejected'): ?>
+                <?php echo $tpl->date($tpl->get('thread')->close_date) ?>
+            <?php else: ?>
+                ---
+            <?php endif ?>
+        </td>
+        <td>
+            <strong><?php echo $tpl->getLang('state') ?>:</strong>
+            <?php echo $tpl->getLang('state_' . $tpl->get('thread')->state) ?>
+        </td>
+    </tr>
+
+    <tr>
+        <td>
+            <strong><?php echo $tpl->getLang('totalcost') ?>:</strong>
+            <?php if ($tpl->get('thread')->task_sum_cost != ''): ?>
+                <?php echo $tpl->get('thread')->task_sum_cost ?>
+            <?php else: ?>
+                <em>---</em>
+            <?php endif ?>
+        </td>
+        <td>
+            <strong><?php echo $tpl->getLang('coordinator') ?>:</strong>
+            <?php echo $tpl->user_name($tpl->get('thread')->coordinator) ?>
+        </td>
+    </tr>
+</table>
