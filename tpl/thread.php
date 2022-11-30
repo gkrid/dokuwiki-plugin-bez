@@ -34,6 +34,7 @@
 
         <?php if ($tpl->param('action') == 'task_add' && $tpl->param('kid') == ''): ?>
             <br>
+            <?php $tpl->set('task', $tpl->get('task_new')) ?>
             <?php include 'task_form.php' ?>
         <?php elseif ($tpl->get('thread')->state == 'closed'): ?>
             <div class="plugin__bez_status_label">
@@ -64,7 +65,7 @@
     <?php include 'commcause_form.php' ?>
 
     <br>
-    <?php if ($tpl->get('thread')->task_count - $tpl->get('thread')->task_count_closed > 0): ?>
+    <?php if ($tpl->get('thread')->count_opened_nopreventive_tasks() > 0): ?>
         <div class="info"><?php echo $tpl->getLang('issue_unclosed_tasks' . $tpl->get('lang_suffix')) ?></div>
     <?php endif ?>
     <?php if ($tpl->get('thread')->state == 'proposal'): ?>

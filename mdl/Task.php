@@ -87,6 +87,7 @@ class Task extends Entity {
 		parent::__construct($model, $defaults);
 
 		$this->validator->set_rules(array(
+            'type' => array(array('select', array('corrective', 'preventive')), 'NULL'), // only corrective, preventive can be set this way
             'assignee' => array(array('dw_user'), 'NOT NULL'),
             'cost' => array(array('numeric'), 'NULL'),
 			'plan_date' => array(array('iso_date'), 'NOT NULL'),
@@ -260,10 +261,6 @@ class Task extends Entity {
             $this->type = 'program';
         } elseif ($this->thread_comment_id == '') {
             $this->type = 'correction';
-        } elseif ($this->__get('thread_comment')->type == 'cause') {
-            $this->type = 'corrective';
-        } else {
-            $this->type = 'preventive';
         }
 
         if (!isset($post['assignee'])) {
@@ -323,7 +320,7 @@ class Task extends Entity {
     }
 
     public function can_add_comments() {
-        if ($this->thread_id != '' && $this->thread->state == 'closed') {
+        if ($this->thread_id != '' && $this->type != 'preventive' && $this->thread->state == 'closed') {
             return false;
         }
 

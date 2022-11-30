@@ -68,6 +68,7 @@
 			<?php if ($tpl->get('thread')->user_is_coordinator()): ?>
 				<?php if (	$tpl->param('action') == 'task_add' &&
                             $tpl->param('kid') == $tpl->get('thread_comment')->id): ?>
+                    <?php $tpl->set('task', $tpl->get('task_new')) ?>
 					<?php include 'task_form.php' ?>
 				<?php elseif (	$tpl->get('thread_comment')->type != 'comment' &&
                                 $tpl->get('thread')->can_add_tasks() &&
@@ -75,11 +76,7 @@
 						<div class="bez_second_lv_buttons" style="margin-top:10px">
 							<a href="<?php echo $tpl->url('thread', 'id', $tpl->get('thread')->id, 'kid', $tpl->get('thread_comment')->id, 'action', 'task_add') ?>#z_" class="bez_subscribe_button">
 								<span class="bez_awesome">&#xf0fe;</span>&nbsp;&nbsp;
-								<?php if ($tpl->get('thread_comment')->type == 'cause'): ?>
-									<?php echo $tpl->getLang('corrective_action_add') ?>
-								<?php else: ?>
-									<?php echo $tpl->getLang('improvement_action_add') ?>
-								<?php endif ?>
+                                <?php echo $tpl->getLang('action_add') ?>
 							</a>
 						</div>
 					<?php endif ?>

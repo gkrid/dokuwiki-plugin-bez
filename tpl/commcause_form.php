@@ -35,14 +35,6 @@
                         <input style="display: none" type="radio" name="type" value="cause" <?php if($tpl->value('type') === 'cause') echo 'checked="checked"' ?>>
                         <a href="#cause"><?php echo $tpl->getLang('cause_noun') ?></a>
                     </li>
-                    <li <?php if($tpl->value('type') === 'risk') echo 'class="active"' ?>>
-                        <input style="display: none" type="radio" name="type" value="risk" <?php if($tpl->value('type') === 'risk') echo 'checked="checked"' ?>>
-                        <a href="#cause"><?php echo $tpl->getLang('risk_noun') ?></a>
-                    </li>
-                    <li <?php if($tpl->value('type') === 'opportunity') echo 'class="active"' ?>>
-                        <input style="display: none" type="radio" name="type" value="opportunity" <?php if($tpl->value('type') === 'opportunity') echo 'checked="checked"' ?>>
-                        <a href="#cause"><?php echo $tpl->getLang('opportunity_noun') ?></a>
-                    </li>
 				</ul>
                 <?php else: ?>
                 <ul class="bez_tabs">

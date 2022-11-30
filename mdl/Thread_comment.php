@@ -45,7 +45,7 @@ class Thread_comment extends Entity {
         $this->validator->set_rules(array(
             'content' => array(array('length', 10000), 'NOT NULL'),
             'type' => array(
-                array('select', array('comment', 'cause', 'risk', 'opportunity')),
+                array('select', array('comment', 'cause')),
                 'NOT NULL')
         ));
 

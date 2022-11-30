@@ -402,7 +402,7 @@ $lang['version'] = 'wersja';
 $lang['issues_juxtaposition'] = 'Zestawienie problemów';
 $lang['tasks_juxtaposition'] = 'Zestawienie zadań';
 
-$lang['issue_unclosed_tasks'] = 'Nie można zamknąć problemu, dopóki zawiera on nierozwiązane zadania.';
+$lang['issue_unclosed_tasks'] = 'Nie można zamknąć problemu, dopóki zawiera on nierozwiązane zadania korekcyjne i korygujące.';
 $lang['issue_is_proposal'] = 'Nie można dodawać zadań, dopóki problem jest propozycją.';
 $lang['issue_no_tasks'] = 'Nie można zamknąć problemu, dopóki nie posiada żadnego przypisanego zadania.';
 $lang['cause_without_task'] = 'Nie możesz zamknąć problemu jeżeli posiada on przycznyn bez przypisanych działań.';
@@ -725,3 +725,4 @@ $lang['js']['bulk_move_confirm'] = 'Czy na pewno chcesz przenieść te elementy?
 
 $lang['6d-var2'] = "Weryfikacja akcji korygujących";
 $lang['noneconformities_report'] = 'Raport niezgodności';
+$lang['action_add'] = 'Dodaj działanie';

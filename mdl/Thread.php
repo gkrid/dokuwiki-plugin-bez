@@ -417,16 +417,22 @@ class Thread extends Entity {
         return in_array($this->state, array('opened', 'done'));
     }
 
+    public function count_opened_nopreventive_tasks() {
+        $res = $this->model->sqlite->query("SELECT state FROM task WHERE thread_id = ?
+                                                                        AND type != 'preventive'
+                                                                        AND state = 'opened'", $this->id);
+        return $this->model->sqlite->res2count($res);
+    }
+
     public function can_be_closed() {
         $res = $this->model->sqlite->query("SELECT thread_comment.id FROM thread_comment
                                LEFT JOIN task ON thread_comment.id = task.thread_comment_id
                                WHERE thread_comment.thread_id = ? AND
-                                     thread_comment.type LIKE 'cause_%' AND task.id IS NULL", $this->id);
+                                     thread_comment.type = 'cause' AND task.id IS NULL", $this->id);
+        $causes_without_tasks = $this->model->sqlite->res2count($res);
 
-        $causes_without_tasks = $this->model->sqlite->res2row($res) ? true : false;
-        return $this->state == 'done' &&
-            ! $causes_without_tasks;
-
+        return !in_array($this->state, array('closed', 'rejected')) && $this->count_opened_nopreventive_tasks() == 0
+            && $causes_without_tasks == 0;
     }
 
     public function can_be_rejected() {

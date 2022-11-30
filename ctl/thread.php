@@ -106,7 +106,7 @@ if ($this->get_param('action') == 'commcause_add') {
     }
     /** @var bez\mdl\Task $task */
     $task = $this->model->taskFactory->create_object($defaults);
-    $this->tpl->set('task', $task);
+    $this->tpl->set('task_new', $task);
 
     //save
     if (count($_POST) > 0) {

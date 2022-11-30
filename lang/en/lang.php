@@ -389,7 +389,7 @@ $lang['version'] = 'version';
 $lang['issues_juxtaposition'] = 'Juxtaposition of issues';
 $lang['tasks_juxtaposition'] = 'Juxtaposition of tasks';
 
-$lang['issue_unclosed_tasks'] = 'You cannot close issues until some tasks are not closed.';
+$lang['issue_unclosed_tasks'] = 'You cannot close issues until some correction or corrective tasks are not closed.';
 $lang['issue_is_proposal'] = 'You cannot add tasks until the issue is proposal.';
 $lang['issue_no_tasks'] = 'You cannot close the issue until it has no tasks.';
 $lang['cause_without_task'] = 'You cannot close the issue if you have some causes without tasks.';
@@ -695,3 +695,4 @@ $lang['js']['bulk_move_confirm'] = 'Do you really want to move these elements?';
 
 $lang['6d-var2'] = "Implementation of corrective actions";
 $lang['noneconformities_report'] = 'Noneconformities report';
+$lang['action_add'] = 'Add action';

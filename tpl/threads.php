@@ -139,8 +139,6 @@
 		<th><?php echo $tpl->getLang('closed_tasks') ?></th>
         <?php if ($tpl->action() == 'threads'): ?>
             <th><?php echo $tpl->getLang('causes') ?></th>
-            <th><?php echo $tpl->getLang('risks') ?></th>
-            <th><?php echo $tpl->getLang('opportunities') ?></th>
         <?php endif ?>
 	</tr>
     <?php $count = 0 ?>
@@ -222,12 +220,6 @@
             <?php if ($tpl->action() == 'threads'): ?>
                 <td>
                     <?php echo $thread->cause_count ?>
-                </td>
-                <td>
-                    <?php echo $thread->risk_count ?>
-                </td>
-                <td>
-                    <?php echo $thread->opportunity_count ?>
                 </td>
             <?php endif ?>
 		</tr>

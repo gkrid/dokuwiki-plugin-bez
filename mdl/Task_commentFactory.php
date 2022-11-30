@@ -17,7 +17,7 @@ class Task_commentFactory extends Factory {
      */
     public function initial_save(Entity $task_comment, $data) {
 
-        if ($task_comment->task->thread_id != '' && $task_comment->task->thread->state == 'closed') {
+        if ($task_comment->task->thread_id != '' && $task_comment->task->type != 'preventive' && $task_comment->task->thread->state == 'closed') {
             throw new ConsistencyViolationException('cannot add comments to closed threads');
         }
 
@@ -70,7 +70,7 @@ class Task_commentFactory extends Factory {
 
     public function update_save(Entity $task_comment, $data) {
 
-        if ($task_comment->task->thread_id != '' && $task_comment->task->thread->state == 'closed') {
+        if ($task_comment->task->thread_id != '' && $task_comment->task->type != 'preventive' && $task_comment->task->thread->state == 'closed') {
             throw new ConsistencyViolationException('cannot add comments to closed threads');
         }
 
@@ -88,7 +88,7 @@ class Task_commentFactory extends Factory {
 
     public function delete(Entity $obj) {
 
-        if ($obj->task->thread_id != '' && $obj->task->thread->state == 'closed') {
+        if ($obj->task->thread_id != ''  && $obj->task->type != 'preventive' && $obj->task->thread->state == 'closed') {
             throw new ConsistencyViolationException('delete comments of closed threads');
         }
 

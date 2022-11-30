@@ -41,6 +41,21 @@ if ($tpl->action() == 'thread') {
 				</div>
 				<?php endif ?>
 			<?php endif ?>
+
+            <?php if ($tpl->get('task')->thread_comment_id != ''): ?>
+                <div class="row">
+                    <label for="type"><?php echo $tpl->getLang('just_type') ?>:</label>
+                    <span>
+                    <select name="type" id="type" data-validation="required">
+                        <option <?php if ($tpl->value('type') == 'corrective') echo 'selected' ?>
+                         value="corrective"><?php echo $tpl->getLang('corrective_action') ?></option>
+                        <option <?php if ($tpl->value('type') == 'preventive') echo 'selected' ?>
+                         value="preventive"><?php echo $tpl->getLang('preventive_action') ?></option>
+                    </select>
+                </span>
+                </div>
+            <?php endif ?>
+
 			<div class="row">
 			<label for="assignee"><?php echo $tpl->getLang('executor') ?>:</label>
 			<span>
