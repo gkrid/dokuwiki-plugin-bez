@@ -101,7 +101,7 @@
 <table>
     <tr>
         <td>
-            <strong><?php echo $tpl->getLang('close_date') ?>:</strong>
+            <strong><?php echo $tpl->getLang('problem_close_date') ?>:</strong>
             <?php if ($tpl->get('thread')->state == 'closed' || $tpl->get('thread')->state == 'rejected'): ?>
                 <?php echo $tpl->date($tpl->get('thread')->close_date) ?>
             <?php else: ?>
@@ -109,8 +109,12 @@
             <?php endif ?>
         </td>
         <td>
-            <strong><?php echo $tpl->getLang('state') ?>:</strong>
-            <?php echo $tpl->getLang('state_' . $tpl->get('thread')->state) ?>
+            <strong><?php echo $tpl->getLang('preventive_close_date') ?>:</strong>
+            <?php if ($tpl->get('preventive_close_date')): ?>
+                <?php echo $tpl->get('preventive_close_date') ?>
+            <?php else: ?>
+                ---
+            <?php endif ?>
         </td>
     </tr>
 

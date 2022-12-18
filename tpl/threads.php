@@ -105,16 +105,6 @@
         <input type="checkbox" name="has_causes"
             <?php if ($tpl->value('has_causes') === 'on') echo 'checked="checked"' ?>>
     </label>
-
-    <label><?php echo $tpl->getLang('has_risks') ?>:
-        <input type="checkbox" name="has_risks"
-            <?php if ($tpl->value('has_risks') === 'on') echo 'checked="checked"' ?>>
-    </label>
-
-    <label><?php echo $tpl->getLang('has_opportunities') ?>:
-        <input type="checkbox" name="has_opportunities"
-            <?php if ($tpl->value('has_opportunities') === 'on') echo 'checked="checked"' ?>>
-    </label>
 <?php endif ?>
 
 	<label><input type="submit" value="<?php echo $tpl->getLang('filter') ?>" /></label>
@@ -155,8 +145,6 @@
         <?php $total_task_closed += (int) $thread->task_count_closed ?>
         <?php $total_task += (int) $thread->task_count ?>
         <?php $total_cause += (int) $thread->cause_count ?>
-        <?php $total_risk += (int) $thread->risk_count ?>
-        <?php $total_opportunity += (int) $thread->opportunity_count ?>
 		<tr class="<?php
             if ($thread->state == 'opened') {
                 echo 'priority_' . $thread->priority;
@@ -232,8 +220,6 @@
 
         <?php if ($tpl->action() == 'threads'): ?>
             <td><?php echo $total_cause ?></td>
-            <td><?php echo $total_risk ?></td>
-            <td><?php echo $total_opportunity ?></td>
         <?php endif ?>
 	</tr>
 </table>

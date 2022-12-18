@@ -84,15 +84,6 @@ if (isset($filters['has_causes'])) {
     $db_filters['cause_count'] = array('>', 0);
 }
 
-if (isset($filters['has_risks'])) {
-    $db_filters['risk_count'] = array('>', 0);
-}
-
-if (isset($filters['has_opportunities'])) {
-    $db_filters['opportunity_count'] = array('>', 0);
-}
-
-
 
 $orderby = array('sort', 'priority DESC', 'create_date DESC');
 if (isset($filters['sort_open']) && $filters['sort_open'] == 'on') {

@@ -28,3 +28,17 @@ $this->tpl->set('opportunities',
                 get_from_thread($thread, array('type' => 'opportunity'))->fetchAll());
 $tasks = $this->model->taskFactory->get_by_type($thread);
 $this->tpl->set('8d_tasks', $tasks);
+
+$all_preventive_done = true;
+$max_preventive_close_date = '';
+foreach ($tasks['preventive'] as $preventive_action) {
+    if ($preventive_action->state != 'done') {
+        $all_preventive_done = false;
+        break;
+    }
+    $max_preventive_close_date = max($max_preventive_close_date, $preventive_action->close_date);
+}
+
+if ($all_preventive_done) {
+    $this->tpl->set('preventive_close_date', date('Y-m-d', strtotime($max_preventive_close_date)));
+}
