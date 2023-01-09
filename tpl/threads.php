@@ -101,9 +101,13 @@
 			<?php if ($tpl->value('sort_open') === 'on') echo 'checked="checked"' ?>>
 	</label>
 <?php if ($tpl->action() == 'threads'): ?>
-    <label><?php echo $tpl->getLang('has_causes') ?>:
-        <input type="checkbox" name="has_causes"
-            <?php if ($tpl->value('has_causes') === 'on') echo 'checked="checked"' ?>>
+    <label><?php echo $tpl->getLang('has_corrective') ?>:
+        <input type="checkbox" name="has_corrective"
+            <?php if ($tpl->value('has_corrective') === 'on') echo 'checked="checked"' ?>>
+    </label>
+    <label><?php echo $tpl->getLang('has_preventive') ?>:
+        <input type="checkbox" name="has_preventive"
+            <?php if ($tpl->value('has_preventive') === 'on') echo 'checked="checked"' ?>>
     </label>
 <?php endif ?>
 
@@ -128,7 +132,8 @@
 		<th><?php echo $tpl->getLang('cost') ?></th>
 		<th><?php echo $tpl->getLang('closed_tasks') ?></th>
         <?php if ($tpl->action() == 'threads'): ?>
-            <th><?php echo $tpl->getLang('causes') ?></th>
+            <th><?php echo $tpl->getLang('corrective_action_h') ?></th>
+            <th><?php echo $tpl->getLang('preventive_action_h') ?></th>
         <?php endif ?>
 	</tr>
     <?php $count = 0 ?>
@@ -144,7 +149,8 @@
         <?php $total_cost += (float) $thread->task_sum_cost ?>
         <?php $total_task_closed += (int) $thread->task_count_closed ?>
         <?php $total_task += (int) $thread->task_count ?>
-        <?php $total_cause += (int) $thread->cause_count ?>
+        <?php $total_corrective += (int) $thread->corrective_count ?>
+        <?php $total_preventive += (int) $thread->preventive_count ?>
 		<tr class="<?php
             if ($thread->state == 'opened') {
                 echo 'priority_' . $thread->priority;
@@ -207,7 +213,10 @@
 			</td>
             <?php if ($tpl->action() == 'threads'): ?>
                 <td>
-                    <?php echo $thread->cause_count ?>
+                   <?php echo $thread->corrective_count ?>
+                </td>
+                <td>
+                    <?php echo $thread->preventive_count ?>
                 </td>
             <?php endif ?>
 		</tr>
@@ -219,7 +228,8 @@
         <td><?php echo $total_task_closed.'&nbsp;/&nbsp;'.$total_task ?></td>
 
         <?php if ($tpl->action() == 'threads'): ?>
-            <td><?php echo $total_cause ?></td>
+            <td><?php echo $total_corrective ?></td>
+            <td><?php echo $total_preventive ?></td>
         <?php endif ?>
 	</tr>
 </table>

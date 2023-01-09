@@ -22,7 +22,7 @@ class Thread extends Entity {
 
     protected $task_count, $task_count_closed, $task_sum_cost;
 
-    protected $cause_count, $risk_count, $opportunity_count;
+    protected $corrective_count, $preventive_count;
 
     public static function get_columns() {
         return array('id',
@@ -36,7 +36,7 @@ class Thread extends Entity {
 
     public static function get_select_columns() {
         $cols = parent::get_select_columns();
-        array_push($cols, 'label_id', 'label_name', 'cause_count', 'risk_count', 'opportunity_count');
+        array_push($cols, 'label_id', 'label_name', 'corrective_count', 'preventive_count');
         return $cols;
     }
 

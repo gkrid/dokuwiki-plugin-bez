@@ -698,3 +698,6 @@ $lang['js']['bulk_move_confirm'] = 'Do you really want to move these elements?';
 $lang['6d-var2'] = "Effectiveness evaluation of corrective actions";
 $lang['noneconformities_report'] = 'Noneconformities report';
 $lang['action_add'] = 'Add action';
+
+$lang['has_corrective'] = 'Has corrective actions';
+$lang['has_preventive'] = 'Has preventive actions';

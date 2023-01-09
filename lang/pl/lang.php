@@ -727,3 +727,6 @@ $lang['js']['bulk_move_confirm'] = 'Czy na pewno chcesz przenieść te elementy?
 $lang['6d-var2'] = "Ocena skuteczności działań korygujących";
 $lang['noneconformities_report'] = 'Raport niezgodności';
 $lang['action_add'] = 'Dodaj działanie';
+
+$lang['has_corrective'] = 'Posiada działania korygujące';
+$lang['has_preventive'] = 'Posiada działania zapobiegawcze';

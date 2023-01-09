@@ -80,8 +80,12 @@ if (isset($filters['title'])) {
     $db_filters['title'] = array('LIKE', "%$title%");
 }
 
-if (isset($filters['has_causes'])) {
-    $db_filters['cause_count'] = array('>', 0);
+if (isset($filters['has_corrective'])) {
+    $db_filters['corrective_count'] = array('>', 0);
+}
+
+if (isset($filters['has_preventive'])) {
+    $db_filters['preventive_count'] = array('>', 0);
 }
 
 
