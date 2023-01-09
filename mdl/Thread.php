@@ -431,8 +431,10 @@ class Thread extends Entity {
                                      thread_comment.type = 'cause' AND task.id IS NULL", $this->id);
         $causes_without_tasks = $this->model->sqlite->res2count($res);
 
-        return !in_array($this->state, array('closed', 'rejected')) && $this->count_opened_nopreventive_tasks() == 0
-            && $causes_without_tasks == 0;
+        return !in_array($this->state, array('closed', 'rejected'))
+                && $this->task_count > 0
+                && $this->count_opened_nopreventive_tasks() == 0
+                && $causes_without_tasks == 0;
     }
 
     public function can_be_rejected() {
