@@ -724,7 +724,7 @@ $lang['button_move'] = 'Przenieś';
 $lang['js']['bulk_delete_confirm'] = 'Czy na pewno chcesz usunąć te elementy?';
 $lang['js']['bulk_move_confirm'] = 'Czy na pewno chcesz przenieść te elementy?';
 
-$lang['6d-var2'] = "Ocena skuteczności działań korygujących";
+$lang['6d-var2'] = "Ocena skuteczności działań korekcyjnych/korygujących";
 $lang['noneconformities_report'] = 'Raport niezgodności';
 $lang['action_add'] = 'Dodaj działanie';
 

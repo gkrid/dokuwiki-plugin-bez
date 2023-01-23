@@ -695,7 +695,7 @@ $lang['button_move'] = 'Move';
 $lang['js']['bulk_delete_confirm'] = 'Do you really want to delete these elements?';
 $lang['js']['bulk_move_confirm'] = 'Do you really want to move these elements?';
 
-$lang['6d-var2'] = "Effectiveness evaluation of corrective actions";
+$lang['6d-var2'] = "Effectiveness evaluation of correction/corrective actions";
 $lang['noneconformities_report'] = 'Noneconformities report';
 $lang['action_add'] = 'Add action';
 
