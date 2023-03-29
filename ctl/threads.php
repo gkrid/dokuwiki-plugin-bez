@@ -80,6 +80,11 @@ if (isset($filters['title'])) {
     $db_filters['title'] = array('LIKE', "%$title%");
 }
 
+if (isset($filters['content'])) {
+    $content = preg_replace('/\s/', '%', $filters['content']);
+    $db_filters['content'] = array('LIKE', "%$content%");
+}
+
 if (isset($filters['has_corrective'])) {
     $db_filters['corrective_count'] = array('>', 0);
 }

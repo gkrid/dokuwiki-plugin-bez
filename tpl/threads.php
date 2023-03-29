@@ -84,6 +84,9 @@
 		<input name="title" value="<?php echo $tpl->value('title') ?>" />
 	</label>
 
+    <label><?php echo $tpl->getLang('content') ?>:
+        <input name="content" value="<?php echo $tpl->value('content') ?>" />
+    </label>
 
 	<label><?php echo $tpl->getLang('year') ?>:
 		<select name="year">
