@@ -181,7 +181,7 @@ $lang['action'] = "Action";
 $lang['open'] = "Open";
 $lang['closed'] = "Closed";
 
-$lang['cost'] = "Cost (PLN)";
+$lang['cost'] = "Cost";
 $lang['executor'] = "Performer";
 
 $lang['task_state'] = "Status";

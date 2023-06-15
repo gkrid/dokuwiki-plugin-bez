@@ -106,7 +106,14 @@ class Tpl {
     }
     
     public function getLang($id) {
-        return $this->action->getLang($id);
+        $str =  $this->action->getLang($id);
+        if ($id == 'cost') {
+            $currency = $this->action->getConf('currency');
+            if ($currency != '') {
+                $str .= " ($currency)";
+            }
+        }
+        return $str;
     }
 
     /**

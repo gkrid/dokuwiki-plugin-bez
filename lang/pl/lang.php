@@ -181,7 +181,7 @@ $lang['class'] = 'Typ zadania';
 $lang['open'] = 'Otwarte';
 $lang['closed'] = 'Zamknięte';
 
-$lang['cost'] = 'Koszt(zł)';
+$lang['cost'] = 'Koszt';
 
 $lang['executor'] = 'Wykonawca';
 
