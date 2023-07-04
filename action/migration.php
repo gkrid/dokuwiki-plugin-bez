@@ -19,6 +19,7 @@ class action_plugin_bez_migration extends DokuWiki_Action_Plugin {
      */
     public function register(Doku_Event_Handler $controller) {
         $controller->register_hook('PLUGIN_SQLITE_DATABASE_UPGRADE', 'BEFORE', $this, 'handle_migrations');
+//        $controller->register_hook('PLUGIN_SQLITE_DATABASE_UPGRADE', 'AFTER', $this, 'handle_migrations_after');
     }
 
     /**
@@ -28,13 +29,30 @@ class action_plugin_bez_migration extends DokuWiki_Action_Plugin {
      * @param $param
      */
     public function handle_migrations(Doku_Event $event, $param) {
-        if ($event->data['sqlite']->getAdapter()->getDbname() !== 'b3p') {
+        if ($event->data['sqlite']->getAdapter()->getDbName() !== 'b3p') {
             return;
         }
         $to = $event->data['to'];
 
         if(is_callable(array($this, "migration$to"))) {
             $event->preventDefault();
+            $event->result = call_user_func(array($this, "migration$to"), $event->data);
+        }
+    }
+
+    /**
+     * Call our custom migrations when defined
+     *
+     * @param Doku_Event $event
+     * @param $param
+     */
+    public function handle_migrations_after(Doku_Event $event, $param) {
+        if ($event->data['sqlite']->getAdapter()->getDbName() !== 'b3p') {
+            return;
+        }
+        $to = $event->data['to'];
+
+        if(is_callable(array($this, "migration$to"))) {
             $event->result = call_user_func(array($this, "migration$to"), $event->data);
         }
     }
@@ -55,9 +73,9 @@ class action_plugin_bez_migration extends DokuWiki_Action_Plugin {
         preg_match_all('/.*?(?(?=BEGIN)BEGIN.*?END)\s*;/is', $sql, $matches);
         $queries = $matches[0];
 
-        $db = $sqlite->getAdapter()->getDb();
+        $db = $sqlite->getAdapter()->getPdo();
 
-        $db->beginTransaction();
+//        $db->beginTransaction();   // translation already started
         foreach($queries as $query) {
             $res = $db->query($query);
             if($res === false) {
@@ -67,7 +85,7 @@ class action_plugin_bez_migration extends DokuWiki_Action_Plugin {
                 return false;
             }
         }
-        $db->commit();
+//        $db->commit();  // commit will be done inside SQLiteDB
 
         return true;
     }
@@ -88,9 +106,9 @@ class action_plugin_bez_migration extends DokuWiki_Action_Plugin {
         preg_match_all('/.*?(?(?=BEGIN)BEGIN.*?END)\s*;/is', $sql, $matches);
         $queries = $matches[0];
 
-        $db = $sqlite->getAdapter()->getDb();
+        $db = $sqlite->getAdapter()->getPdo();
 
-        $db->beginTransaction();
+//        $db->beginTransaction();  // translation already started
         foreach($queries as $query) {
             $res = $db->query($query);
             if($res === false) {
@@ -100,7 +118,7 @@ class action_plugin_bez_migration extends DokuWiki_Action_Plugin {
                 return false;
             }
         }
-        $db->commit();
+//        $db->commit();  // commit will be done inside SQLiteDB
 
         return true;
     }
@@ -129,9 +147,9 @@ class action_plugin_bez_migration extends DokuWiki_Action_Plugin {
         preg_match_all('/.*?(?(?=BEGIN)BEGIN.*?END)\s*;/is', $sql, $matches);
         $queries = $matches[0];
 
-        $db = $sqlite->getAdapter()->getDb();
+        $db = $sqlite->getAdapter()->getPdo();
 
-        $db->beginTransaction();
+//        $db->beginTransaction(); // translation already started
         foreach ($queries as $query) {
             $res = $db->query($query);
             if($res === false) {
@@ -144,7 +162,7 @@ class action_plugin_bez_migration extends DokuWiki_Action_Plugin {
 
         $bez_file = DOKU_INC . 'data/meta/bez.sqlite3';
         if (!file_exists($bez_file)) {
-            $db->commit();
+//        $db->commit();  // commit will be done inside SQLiteDB
             return true;
         }
 
@@ -425,7 +443,7 @@ class action_plugin_bez_migration extends DokuWiki_Action_Plugin {
 
         }
 
-        $db->commit();
+//        $db->commit();  // commit will be done inside SQLiteDB
 
         return true;
     }
@@ -434,9 +452,10 @@ class action_plugin_bez_migration extends DokuWiki_Action_Plugin {
         /** @var helper_plugin_sqlite $sqlite */
         $sqlite = $data['sqlite'];
 
-        $db = $sqlite->getAdapter()->getDb();
+        $db = $sqlite->getAdapter()->getPdo();
+        $db->commit(); // stop current transatction
         $db->query('PRAGMA journal_mode=WAL');
-
+        $db->beginTransaction(); // recreate transaction
         return true;
     }
 

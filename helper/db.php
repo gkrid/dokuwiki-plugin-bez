@@ -7,8 +7,6 @@
  */
 
 // must be run within Dokuwiki
-use dokuwiki\plugin\struct\meta\StructException;
-
 if(!defined('DOKU_INC')) die();
 
 class helper_plugin_bez_db extends DokuWiki_Plugin {
@@ -63,7 +61,7 @@ class helper_plugin_bez_db extends DokuWiki_Plugin {
             $this->init();
         }
         if(!$this->sqlite && $throw) {
-            throw new StructException('no sqlite');
+            throw new \Exception('no sqlite');
         }
         return $this->sqlite;
     }

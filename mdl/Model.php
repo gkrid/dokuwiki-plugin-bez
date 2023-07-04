@@ -87,7 +87,7 @@ class Model {
         $this->db_helper =  plugin_load('helper', 'bez_db');
 
         $this->sqlite = $this->db_helper->getDB();
-        $this->db = $this->sqlite->getAdapter()->getDb();
+        $this->db = $this->sqlite->getAdapter()->getPdo();
         $this->db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
         $busy_timeout = 1000 * (int)$this->action->getConf('busy_timeout');
         $this->db->exec("PRAGMA busy_timeout = $busy_timeout");
