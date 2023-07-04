@@ -19,7 +19,6 @@ class action_plugin_bez_migration extends DokuWiki_Action_Plugin {
      */
     public function register(Doku_Event_Handler $controller) {
         $controller->register_hook('PLUGIN_SQLITE_DATABASE_UPGRADE', 'BEFORE', $this, 'handle_migrations');
-//        $controller->register_hook('PLUGIN_SQLITE_DATABASE_UPGRADE', 'AFTER', $this, 'handle_migrations_after');
     }
 
     /**
@@ -36,23 +35,6 @@ class action_plugin_bez_migration extends DokuWiki_Action_Plugin {
 
         if(is_callable(array($this, "migration$to"))) {
             $event->preventDefault();
-            $event->result = call_user_func(array($this, "migration$to"), $event->data);
-        }
-    }
-
-    /**
-     * Call our custom migrations when defined
-     *
-     * @param Doku_Event $event
-     * @param $param
-     */
-    public function handle_migrations_after(Doku_Event $event, $param) {
-        if ($event->data['sqlite']->getAdapter()->getDbName() !== 'b3p') {
-            return;
-        }
-        $to = $event->data['to'];
-
-        if(is_callable(array($this, "migration$to"))) {
             $event->result = call_user_func(array($this, "migration$to"), $event->data);
         }
     }
