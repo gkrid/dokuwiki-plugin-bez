@@ -100,7 +100,7 @@
 
 <table>
     <tr>
-        <td>
+        <td <?php if (count($tpl->get('8d_tasks')['preventive']) == 0) echo 'colspan="2"' ?>>
             <strong><?php echo $tpl->getLang('problem_close_date') ?>:</strong>
             <?php if ($tpl->get('thread')->state == 'closed' || $tpl->get('thread')->state == 'rejected'): ?>
                 <?php echo $tpl->date($tpl->get('thread')->close_date) ?>
@@ -108,14 +108,16 @@
                 ---
             <?php endif ?>
         </td>
-        <td>
-            <strong><?php echo $tpl->getLang('preventive_close_date') ?>:</strong>
-            <?php if ($tpl->get('preventive_close_date')): ?>
-                <?php echo $tpl->get('preventive_close_date') ?>
-            <?php else: ?>
-                ---
-            <?php endif ?>
-        </td>
+        <?php if (count($tpl->get('8d_tasks')['preventive']) > 0): ?>
+            <td>
+                <strong><?php echo $tpl->getLang('preventive_close_date') ?>:</strong>
+                <?php if ($tpl->get('preventive_close_date')): ?>
+                    <?php echo $tpl->get('preventive_close_date') ?>
+                <?php else: ?>
+                    ---
+                <?php endif ?>
+            </td>
+        <?php endif ?>
     </tr>
 
     <tr>
