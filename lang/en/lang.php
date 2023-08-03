@@ -16,7 +16,7 @@ $lang['reports'] = 'Registers';
 $lang['issue'] = 'Issue';
 $lang['task'] = 'Task';
 
-$lang['report_therads'] = "Report a problem";
+$lang['report_threads'] = "Report a problem";
 $lang['report_projects'] = "Add project";
 $lang['project'] = "projekt";
 $lang['kp_report'] = "Project Card";
@@ -37,7 +37,7 @@ $lang['executor'] = "Performer";
 $lang['coordinator'] = "Coordinator";
 $lang['description'] = "Description";
 $lang['date'] = "Reported";
-$lang['last_mod_date'] = "last change";
+$lang['last_mod_date'] = "Last change";
 $lang['opened_for'] = "Open since";
 $lang['last_modified'] = "Last change";
 $lang['last_modified_by'] = "Last changed by";
@@ -224,6 +224,8 @@ $lang['change_state_button'] = "Change the status";
 
 $lang['correction'] = "Correction";
 $lang['correction_h'] = 'Correction';
+$lang['corrective_action_h'] = 'Corrective action';
+$lang['preventive_action_h'] = 'Preventive action';
 $lang['corrective_action'] = "Corrective action";
 $lang['preventive_action'] = "Preventive action";
 
@@ -418,7 +420,7 @@ $lang['vald_valid_finish_hour_required'] = 'Valid finish time required.';
 $lang['download_in_icalendar'] = 'iCalendar';
 
 $lang['task_types'] = 'Task types';
-$lang['task_type'] = 'Typ zadań';
+$lang['task_type'] = 'Task type';
 
 $lang['programme'] = 'Programme';
 

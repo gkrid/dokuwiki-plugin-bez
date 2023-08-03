@@ -103,7 +103,7 @@
 			<input type="checkbox" name="sort_open"
 			<?php if ($tpl->value('sort_open') === 'on') echo 'checked="checked"' ?>>
 	</label>
-<?php if ($tpl->action() == 'threads'): ?>
+<?php if ($tpl->action() != 'projects'): ?>
     <label><?php echo $tpl->getLang('has_corrective') ?>:
         <input type="checkbox" name="has_corrective"
             <?php if ($tpl->value('has_corrective') === 'on') echo 'checked="checked"' ?>>
@@ -134,7 +134,7 @@
 		<th><?php echo $tpl->getLang('closed') ?></th>
 		<th><?php echo $tpl->getLang('cost') ?></th>
 		<th><?php echo $tpl->getLang('closed_tasks') ?></th>
-        <?php if ($tpl->action() == 'threads'): ?>
+        <?php if ($tpl->action() != 'projects'): ?>
             <th><?php echo $tpl->getLang('corrective_action_h') ?></th>
             <th><?php echo $tpl->getLang('preventive_action_h') ?></th>
         <?php endif ?>
@@ -214,7 +214,7 @@
                 <?php echo $thread->task_count_closed ?> / <?php echo $thread->task_count ?>
 
 			</td>
-            <?php if ($tpl->action() == 'threads'): ?>
+            <?php if ($tpl->action() != 'projects'): ?>
                 <td>
                    <?php echo $thread->corrective_count ?>
                 </td>
@@ -226,11 +226,11 @@
 	<?php endforeach ?>
 	<tr>
 		<th><?php echo $tpl->getLang('report_total') ?></th>
-		<td colspan="<?php echo $tpl->action() == 'threads' ? '7' : '6' ?>"><?php echo $count ?></td>
+		<td colspan="<?php echo $tpl->action() != 'projects' ? '7' : '6' ?>"><?php echo $count ?></td>
 		<td><?php echo $total_cost ?></td>
         <td><?php echo $total_task_closed.'&nbsp;/&nbsp;'.$total_task ?></td>
 
-        <?php if ($tpl->action() == 'threads'): ?>
+        <?php if ($tpl->action() != 'projects'): ?>
             <td><?php echo $total_corrective ?></td>
             <td><?php echo $total_preventive ?></td>
         <?php endif ?>
