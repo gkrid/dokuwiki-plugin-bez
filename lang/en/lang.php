@@ -419,12 +419,12 @@ $lang['vald_valid_finish_hour_required'] = 'Valid finish time required.';
 
 $lang['download_in_icalendar'] = 'iCalendar';
 
-$lang['task_types'] = 'Task types';
-$lang['task_type'] = 'Task type';
+$lang['task_types'] = 'Task scopes';
+$lang['task_type'] = 'Scope';
 
 $lang['programme'] = 'Programme';
 
-$lang['tasks_no_type'] = '--- without type ---';
+$lang['tasks_no_type'] = '--- without scope ---';
 
 $lang ['plan'] = "Plan";
 

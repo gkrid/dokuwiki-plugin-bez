@@ -432,12 +432,12 @@ $lang['vald_valid_finish_hour_required'] = 'Podaj prawidłową godzinę zakoń
 
 $lang['download_in_icalendar'] = 'iCalendar';
 
-$lang['task_types'] = 'Typy zadań';
-$lang['task_type'] = 'Typ zadania';
+$lang['task_types'] = 'Zakresy zadań';
+$lang['task_type'] = 'Zakres';
 
 $lang['programme'] = 'Programowe';
 
-$lang['tasks_no_type'] = '--- nieprogramowe ---';
+$lang['tasks_no_type'] = '--- brak zakresu ---';
 
 $lang ['plan'] = 'Plan';
 
