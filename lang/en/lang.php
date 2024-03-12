@@ -69,7 +69,7 @@ $lang['by'] = "by";
 $lang['from'] = "from";
 $lang['to'] = "to";
 $lang['diff'] = "Differences";
-$lang['comment'] = "Skomentuj";
+$lang['comment'] = "Comment";
 $lang['replay'] = "Reply";
 $lang['edit'] = "Edit";
 $lang['change_task_state'] = "Change a status of task";
@@ -375,7 +375,7 @@ $lang['cause_type'] = 'Cause type';
 $lang['cause_real'] = 'real';
 $lang['cause_potential'] = 'potential';
 
-$lang['evaluation'] = 'Ocena';
+$lang['evaluation'] = 'Evaluation';
 
 $lang['rr_report'] = 'RR Report';
 
@@ -637,7 +637,7 @@ $lang['timeline thread_comment_added'] = 'Comment added by <strong>%s</strong>';
 $lang['timeline task_opened'] = 'Task opened. Performer: <strong>%s</strong>';
 $lang['timeline task_done'] = 'Task closed. Performer: <strong>%s</strong>';
 
-$lang['timeline task_comment_added'] = 'Komentarz dodany przez <strong>%s</strong>';
+$lang['timeline task_comment_added'] = 'Comment added by <strong>%s</strong>';
 
 $lang['timeline thread_proposal_project'] = 'Proposal added by <strong>%s</strong>';
 $lang['timeline thread_opened_project'] = 'Project opened. Coordinator: <strong>%s</strong>';
