@@ -1,4 +1,5 @@
 <?php /* @var \dokuwiki\plugin\bez\meta\Tpl $tpl */ ?>
+<form action="<?php echo $tpl->url('types') ?>" method="POST">
 <table>
 <tr>
 	<th>Name</th>
@@ -7,21 +8,17 @@
 <?php foreach ($tpl->get('labels') as $label): ?>
 <tr>
 	<?php if (  in_array($tpl->param('action'), array('edit', 'update')) &&
-                $tpl->param('id') === $label->id): ?>
-        <form action="
-        <?php echo $tpl->url('types', 'action', 'update', 'id', $label->id) ?>"
-        method="POST">
+                $tpl->param('id') == $label->id): ?>
             <td>
+                <input type="hidden" name="id" value="<?php echo $label->id ?>" />
                 <input name="name" value="<?php echo $tpl->value('name') ?>" />
             </td>
             <td colspan="2">
-                <input type="submit"
-                    value="<?php echo $tpl->getLang('save') ?>" />
+                <button name="action" value="update"><?php echo $tpl->getLang('save') ?></button>
                 <a href="<?php echo $tpl->url('types') ?>">
                     <?php echo $tpl->getLang('cancel') ?>
                 </a>
             </td>
-        </form>
 	<?php else: ?>
         <td><?php echo $label->name ?></td>
         <td <?php if ($label->count > 0) echo 'colspan="2"'; ?>>
@@ -38,7 +35,7 @@
             </td>
         <?php endif ?>
     <?php endif ?>
-    
+
         <td>
         <a href="<?php echo $tpl->url('threads', 'label_id', $label->id) ?>">
             <?php echo $label->count ?>
@@ -48,11 +45,12 @@
 <?php endforeach ?>
 <?php if (  $tpl->param('action') !== 'edit' &&
             $tpl->param('action') !== 'update'): ?>
-<form action="<?php echo $tpl->url('types', 'action', 'add') ?>" method="POST">
 <tr>
 	<td><input name="name" value="<?php echo $tpl->value('name') ?>" /></td>
-	<td colspan="3"><input type="submit" value="<?php echo $tpl->getLang('save') ?>" /></td>
+	<td colspan="3">
+        <button name="action" value="add"><?php echo $tpl->getLang('save') ?></button>
+    </td>
 </tr>
 <?php endif ?>
-</form>
 </table>
+</form>
