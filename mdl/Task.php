@@ -7,6 +7,7 @@ use dokuwiki\plugin\bez\meta\Mailer;
 use dokuwiki\plugin\bez\meta\PermissionDeniedException;
 use dokuwiki\plugin\bez\meta\ValidationException;
 use dokuwiki\plugin\struct\types\DateTime;
+use LesserPHP\Lessc;
 
 class Task extends Entity {
 
@@ -534,7 +535,7 @@ class Task extends Entity {
         $tpl = $this->model->action->get_tpl();
 
         //render style
-        $less = new \lessc();
+        $less = new Lessc();
         $less->addImportDir(DOKU_PLUGIN . 'bez/style/');
         $style = $less->compileFile(DOKU_PLUGIN . 'bez/style/task.less');
 

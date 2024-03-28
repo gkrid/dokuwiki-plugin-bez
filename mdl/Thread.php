@@ -5,6 +5,7 @@ namespace dokuwiki\plugin\bez\mdl;
 use dokuwiki\plugin\bez\meta\ConsistencyViolationException;
 use dokuwiki\plugin\bez\meta\PermissionDeniedException;
 use dokuwiki\plugin\bez\meta\ValidationException;
+use LesserPHP\Lessc;
 
 class Thread extends Entity {
 
@@ -470,7 +471,7 @@ class Thread extends Entity {
         $tpl = $this->model->action->get_tpl();
 
         //render style
-        $less = new \lessc();
+        $less = new Lessc();
         $less->addImportDir(DOKU_PLUGIN . 'bez/style/');
         $style = $less->compileFile(DOKU_PLUGIN . 'bez/style/thread.less');
 
