@@ -331,20 +331,27 @@ class action_plugin_bez_default extends action_plugin_bez_base {
                                                                           'state' => 'opened',
                                                                           'coordinator' => $user
                                                                       ));
+            $now = new DateTime('now', new DateTimeZone('Europe/Warsaw'));
+            $tomorrow = $now->add(new DateInterval('P1D'));
+
             /** @var bez\mdl\Thread $thread */
             foreach ($threads as $thread) {
-                $link = '<a href="' . $this->url('thread', 'id', $thread->id) . '">';
-                $link .= '#' . $thread->id;
-                $link .= '</a>';
+                $givenDate = new DateTime($thread->last_activity_date);
 
-                $full = sprintf($this->getLang('notification problems_without_tasks'), $link);
-                $event->data['notifications'][] = [
-                    'plugin' => 'bez:problems_without_tasks',
-                    'id' => 'thread:' . $thread->id,
-                    'full' => $full,
-                    'brief' => $link,
-                    'timestamp' => strtotime($thread->last_activity_date)
-                ];
+                if ($givenDate >= $tomorrow) { // prevent cold start problem
+                    $link = '<a href="' . $this->url('thread', 'id', $thread->id) . '">';
+                    $link .= '#' . $thread->id;
+                    $link .= '</a>';
+
+                    $full = sprintf($this->getLang('notification problems_without_tasks'), $link);
+                    $event->data['notifications'][] = [
+                        'plugin' => 'bez:problems_without_tasks',
+                        'id' => 'thread:' . $thread->id . ':without_tasks:' . $thread->last_activity_date,
+                        'full' => $full,
+                        'brief' => $link,
+                        'timestamp' => strtotime($thread->last_activity_date)
+                    ];
+                }
             }
         }
 
@@ -363,7 +370,7 @@ class action_plugin_bez_default extends action_plugin_bez_base {
                 $full = sprintf($this->getLang('notification problems_coming'), $link);
                 $event->data['notifications'][] = [
                     'plugin' => 'bez:problems_coming',
-                    'id' => 'thread:' . $thread->id,
+                    'id' => 'thread:' . $thread->id . ':coming:' . $thread->last_activity_date,
                     'full' => $full,
                     'brief' => $link,
                     'timestamp' => strtotime($thread->last_activity_date)
@@ -386,7 +393,7 @@ class action_plugin_bez_default extends action_plugin_bez_base {
                 $full = sprintf($this->getLang('notification problems_outdated'), $link);
                 $event->data['notifications'][] = [
                     'plugin' => 'bez:problems_outdated',
-                    'id' => 'thread:' . $thread->id,
+                    'id' => 'thread:' . $thread->id . ':outdated:' . $thread->last_activity_date,
                     'full' => $full,
                     'brief' => $link,
                     'timestamp' => strtotime($thread->last_activity_date)
@@ -408,7 +415,7 @@ class action_plugin_bez_default extends action_plugin_bez_base {
                 $full = sprintf($this->getLang('notification tasks_coming'), $link);
                 $event->data['notifications'][] = [
                     'plugin' => 'bez:tasks_coming',
-                    'id' => 'task:' . $task->id,
+                    'id' => 'task:' . $task->id. ':coming:' . $task->plan_date,
                     'full' => $full,
                     'brief' => $link,
                     'timestamp' => strtotime($task->plan_date)
@@ -430,7 +437,7 @@ class action_plugin_bez_default extends action_plugin_bez_base {
                 $full = sprintf($this->getLang('notification tasks_outdated'), $link);
                 $event->data['notifications'][] = [
                     'plugin' => 'bez:tasks_outdated',
-                    'id' => 'task:' . $task->id,
+                    'id' => 'task:' . $task->id . ':outdated:' . $task->plan_date,
                     'full' => $full,
                     'brief' => $link,
                     'timestamp' => strtotime($task->plan_date)
