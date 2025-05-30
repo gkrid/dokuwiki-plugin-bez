@@ -17,7 +17,7 @@
 </h1>
 
 <p>
-    <?php echo $tpl->user_name($tpl->get('who')) ?> <?php echo $tpl->getLang($tpl->get('action')) ?>
+    Użytkownik <?php echo $tpl->user_name($tpl->get('who')) ?> <?php echo $tpl->getLang($tpl->get('action')) ?>
     <a href="<?php echo $tpl->url('thread', 'id', $tpl->get('thread')->id) ?>">
         #<?php echo $tpl->get('thread')->id ?>
     </a>.

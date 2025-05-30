@@ -406,11 +406,11 @@ $lang['tasks_juxtaposition'] = 'Zestawienie zadań';
 $lang['issue_unclosed_tasks'] = 'Nie można zamknąć problemu, dopóki zawiera on nierozwiązane zadania korekcyjne i korygujące.';
 $lang['issue_is_proposal'] = 'Nie można dodawać zadań, dopóki problem jest propozycją.';
 $lang['issue_no_tasks'] = 'Nie można zamknąć problemu, dopóki nie posiada żadnego przypisanego zadania.';
-$lang['cause_without_task'] = 'Nie możesz zamknąć problemu jeżeli posiada on przycznyn bez przypisanych działań.';
+$lang['cause_without_task'] = 'Nie możesz zamknąć problemu jeżeli posiada on przyczyny bez przypisanych działań.';
 
 
 
-$lang['number_of_open'] = 'Ilość otwartych';
+$lang['number_of_open'] = 'Liczba otwartych';
 $lang['number_of_close'] = 'W tym zamkniętych';
 $lang['number_of_close_on_time'] = 'Zamknięte na czas';
 $lang['number_of_close_off_time'] = 'Zamknięte po terminie';
@@ -556,11 +556,11 @@ $lang['js']['remove_confirm'] = 'Czy na pewno chcesz usunąć ten element?';
 
 $lang['unsubscribed_com'] = 'Zostałeś wypisany z tego problemu.';
 
-$lang['mail_comment_added'] = 'dodał(a) komentarz';
-$lang['mail_cause_added'] = 'dodał(a) przyczynę';
+$lang['mail_comment_added'] = 'dodał komentarz';
+$lang['mail_cause_added'] = 'dodał przyczynę';
 
-$lang['mail_task_added_programme'] = 'przypisał(a) ci zadanie';
-$lang['mail_task_reopened'] = 'otworzył(a) ponownie zadanie';
+$lang['mail_task_added_programme'] = 'przypisał ci zadanie';
+$lang['mail_task_reopened'] = 'otworzył ponownie zadanie';
 $lang['mail_task_remind'] = 'Za %d dni upłynie termin realizacji zadania';
 
 
@@ -627,22 +627,22 @@ $lang['correction_add_project'] = 'Dodaj zadanie';
 
 $lang['task_unsubscribed_com'] = 'Zostałeś wypisany z tego zadania';
 
-$lang['mail_task_comment_added'] = 'dodał(a) komentarz w zadaniu';
+$lang['mail_task_comment_added'] = 'dodał komentarz w zadaniu';
 
 
-$lang['mail_thread_closed'] = 'zamknął(ęła) problem';
-$lang['mail_thread_rejected'] = 'odrzucił(a) problem';
-$lang['mail_thread_reopened'] = 'otworzył(a) ponownie problem';
+$lang['mail_thread_closed'] = 'zamknął problem';
+$lang['mail_thread_rejected'] = 'odrzucił problem';
+$lang['mail_thread_reopened'] = 'otworzył ponownie problem';
 $lang['mail_mail_notify_invite_action'] = 'zaprosił cię do wzięcia udziału w dyskusji w problemie';
-$lang['mail_mail_inform_coordinator_action'] = 'przypisał cię jako koordynatora w problemie';
+$lang['mail_mail_inform_coordinator_action'] = 'przypisał cię jako koordynatora w problemie';
 $lang['mail_mail_notify_issue_inactive'] = 'Brak aktywności w problemie';
-$lang['mail_thread_task_added'] = 'dodał(a) zadanie w problemie';
-$lang['mail_thread_task_done'] = 'zamkną zadanie w problemie';
+$lang['mail_thread_task_added'] = 'dodał zadanie w problemie';
+$lang['mail_thread_task_done'] = 'zamknął zadanie w problemie';
 $lang['mail_thread_task_reopened'] = 'otworzył ponownie zadanie w problemie';
-$lang['mail_task_done'] = 'zamknął(a) zdanie';
-$lang['mail_task_repened'] = 'otworzył(a) ponownie zdanie';
+$lang['mail_task_done'] = 'zamknął zadanie';
+$lang['mail_task_repened'] = 'otworzył ponownie zdanie';
 
-$lang['mail_task_assignee'] = 'przypisał cię do zadania';
+$lang['mail_task_assignee'] = 'przypisał cię do zadania';
 $lang['mail_mail_inform_admins_action'] = 'zgłosił propozycję';
 
 $lang['participant_removed'] = '<strong>%s</strong> został wypisany.';
