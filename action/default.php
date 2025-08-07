@@ -177,12 +177,9 @@ class action_plugin_bez_default extends action_plugin_bez_base {
         $this->setupLocale();
         $this->createObjects();
 
-        if (empty($conf['baseurl'])) {
-            msg($this->getLang('info set baseurl'));
-        }
-        if (empty($conf['basedir'])) {
-            msg($this->getLang('info set basedir'));
-        }
+//        if (empty($conf['baseurl'])) {
+//            msg($this->getLang('info set baseurl'));
+//        }
     }
 
 	/**
